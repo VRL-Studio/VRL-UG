@@ -10,5 +10,5 @@ package edu.gcsc.vrl.ug4;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class UG4 {
-
+    public native String[] helloUG();
 }
