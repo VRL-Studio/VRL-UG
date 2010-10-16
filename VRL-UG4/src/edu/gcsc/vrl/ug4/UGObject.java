@@ -4,15 +4,18 @@
  */
 package edu.gcsc.vrl.ug4;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class UGObject {
+public class UGObject implements Serializable{
+    private static final long serialVersionUID=1L;
 
-    private transient Pointer pointer;
+    private transient Pointer objPointer;
+    private transient Pointer exportedClassPointer;
     private String className;
     private ArrayList<String> classNames;
 
@@ -20,14 +23,21 @@ public class UGObject {
      * @return the pointer
      */
     public Pointer getPointer() {
-        return pointer;
+        if (objPointer == null) {
+            long address = (long) edu.gcsc.vrl.ug4.UG4.getUG4().
+                    newInstance(
+                    edu.gcsc.vrl.ug4.UG4.getUG4().
+                    getExportedClassPtrByName(getClassName()));
+            setPointer(new edu.gcsc.vrl.ug4.Pointer(address));
+        }
+        return objPointer;
     }
 
     /**
      * @param pointer the pointer to set
      */
     public void setPointer(Pointer pointer) {
-        this.pointer = pointer;
+        this.objPointer = pointer;
     }
 
     /**
@@ -45,8 +55,12 @@ public class UGObject {
     }
 
     public Pointer getExportedClassPointer() {
-        return new Pointer(
+        if (exportedClassPointer == null) {
+            exportedClassPointer =
+                    new Pointer(
                 UG4.getUG4().getExportedClassPtrByName(getClassName()));
+        }
+        return exportedClassPointer;
     }
 
     /**
