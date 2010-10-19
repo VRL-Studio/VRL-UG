@@ -4,16 +4,22 @@
  */
 package edu.gcsc.vrl.ug4;
 
+import eu.mihosoft.vrl.reflection.MethodInfo;
+import eu.mihosoft.vrl.reflection.MethodRepresentation;
+import eu.mihosoft.vrl.reflection.ParamInfo;
+import eu.mihosoft.vrl.reflection.VisualCanvas;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class UGObject implements Serializable{
-    private static final long serialVersionUID=1L;
+public class UGObject implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    private transient VisualCanvas mainCanvas;
     private transient Pointer objPointer;
     private transient Pointer exportedClassPointer;
     private String className;
@@ -22,6 +28,7 @@ public class UGObject implements Serializable{
     /**
      * @return the pointer
      */
+//    @MethodInfo(interactive = false)
     public Pointer getPointer() {
         if (objPointer == null) {
             long address = (long) edu.gcsc.vrl.ug4.UG4.getUG4().
@@ -33,11 +40,19 @@ public class UGObject implements Serializable{
         return objPointer;
     }
 
+    @MethodInfo(noGUI = true, callOptions = "assign-canvas")
+    public void setMainCanvas(VisualCanvas mainCanvas) {
+        this.mainCanvas = mainCanvas;
+    }
+
     /**
      * @param pointer the pointer to set
      */
-    public void setPointer(Pointer pointer) {
-        this.objPointer = pointer;
+//    @MethodInfo(interactive = false)
+    public void setPointer(@ParamInfo(nullIsValid = true) Pointer pointer) {
+        if (pointer != null) {
+            this.objPointer = pointer;
+        }
     }
 
     /**
@@ -58,7 +73,7 @@ public class UGObject implements Serializable{
         if (exportedClassPointer == null) {
             exportedClassPointer =
                     new Pointer(
-                UG4.getUG4().getExportedClassPtrByName(getClassName()));
+                    UG4.getUG4().getExportedClassPtrByName(getClassName()));
         }
         return exportedClassPointer;
     }
@@ -75,5 +90,16 @@ public class UGObject implements Serializable{
      */
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    /**
+     * Invokes <code>setPopinter()</code> and <code>getPointer()</code> methods
+     * from GUI.
+     */
+    public void updatePointer(int visualID) {
+        mainCanvas.getInspector().invokeFromInvokeButton(
+                this, visualID, "setPointer",Pointer.class);
+        mainCanvas.getInspector().invokeFromInvokeButton(
+                this, visualID, "getPointer");
     }
 }
