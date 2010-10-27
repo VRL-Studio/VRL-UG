@@ -52,7 +52,10 @@ public class UGObject implements Serializable {
     public void setPointer(@ParamInfo(nullIsValid = true) Pointer pointer) {
         if (pointer != null) {
             this.objPointer = pointer;
-        }
+            System.out.println("Pointer is: " + pointer.getAddress());
+        } else {
+            System.out.println("Pointer is: null");
+        } 
     }
 
     /**
@@ -97,9 +100,9 @@ public class UGObject implements Serializable {
      * from GUI.
      */
     public void updatePointer(int visualID) {
-        mainCanvas.getInspector().invokeFromInvokeButton(
+        mainCanvas.getInspector().invokeFromGUI(
                 this, visualID, "setPointer",Pointer.class);
-        mainCanvas.getInspector().invokeFromInvokeButton(
+        mainCanvas.getInspector().invokeFromGUI(
                 this, visualID, "getPointer");
     }
 }

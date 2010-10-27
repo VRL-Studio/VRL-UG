@@ -88,17 +88,4 @@ public class PointerType extends TypeRepresentationBase {
             readOnly = (Boolean) property;
         }
     }
-//    /**
-//     * @return the className
-//     */
-//    public String getClassName() {
-//        return className;
-//    }
-//
-//    /**
-//     * @return the classNames
-//     */
-//    public ArrayList<String> getClassNames() {
-//        return classNames;
-//    }
 }

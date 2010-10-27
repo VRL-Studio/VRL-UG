@@ -64,7 +64,7 @@ public class UG4 {
 
     native int ugInit(String[] args);
 
-    native void attachCanvas(VisualCanvas canvas);
+//    native void attachCanvas(VisualCanvas canvas);
 
     /**
      * @return the mainCanvas
@@ -78,16 +78,16 @@ public class UG4 {
      */
     public void setMainCanvas(VisualCanvas mainCanvas) {
         this.mainCanvas = mainCanvas;
-        attachCanvas(mainCanvas);
+//        attachCanvas(mainCanvas);
     }
-
-    public void addMessage(final String msg) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                mainCanvas.getMessageBox().
-                        addMessage("UG4:", msg, MessageType.INFO);
-            }
-        });
-    }
+//
+//    public void addMessage(final String msg) {
+//        SwingUtilities.invokeLater(new Runnable() {
+//
+//            public void run() {
+//                mainCanvas.getMessageBox().
+//                        addMessage("UG4:", msg, MessageType.INFO);
+//            }
+//        });
+//    }
 }
