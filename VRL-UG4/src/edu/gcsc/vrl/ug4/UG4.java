@@ -59,8 +59,7 @@ public class UG4 {
 
     native long getExportedClassPtrByName(String name);
 
-//    native long getExportedFunctionPtrBySignature(String name, Object[] params);
-    native Object invokeFunction(long fPtr, boolean readOnly, Object[] params);
+    native Object invokeFunction(String name, boolean readOnly, Object[] params);
 
     native int ugInit(String[] args);
 

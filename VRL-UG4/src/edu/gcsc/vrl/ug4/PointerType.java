@@ -88,4 +88,9 @@ public class PointerType extends TypeRepresentationBase {
             readOnly = (Boolean) property;
         }
     }
+
+    @Override
+    public boolean noSerialization() {
+        return true;
+    }
 }
