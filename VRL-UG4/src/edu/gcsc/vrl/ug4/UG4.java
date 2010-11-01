@@ -6,6 +6,8 @@ package edu.gcsc.vrl.ug4;
 
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.visual.MessageType;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 /**
@@ -23,6 +25,7 @@ public class UG4 {
     }
     private static UG4 ug4;
     private VisualCanvas mainCanvas;
+    private MessageThread messagingThread;
 
     public static UG4 getUG4(VisualCanvas canvas) {
         if (ug4 == null) {
@@ -64,7 +67,6 @@ public class UG4 {
     native int ugInit(String[] args);
 
 //    native void attachCanvas(VisualCanvas canvas);
-
     /**
      * @return the mainCanvas
      */
@@ -77,7 +79,68 @@ public class UG4 {
      */
     public void setMainCanvas(VisualCanvas mainCanvas) {
         this.mainCanvas = mainCanvas;
+        stopLogging();
+        startLogging();
 //        attachCanvas(mainCanvas);
+    }
+
+    public void startLogging() {
+        stopLogging();
+        messagingThread = new MessageThread();
+        messagingThread.start();
+    }
+
+    public void stopLogging() {
+        if (messagingThread != null) {
+            messagingThread.stopLogging();
+        }
+    }
+
+    native String getMessages();
+
+    class MessageThread extends Thread {
+
+        private boolean logging = true;
+        String messages = getMessages();
+        String oldMessages = "";
+
+        public MessageThread() {
+            //
+        }
+
+        @Override
+        public void run() {
+            messages = getMessages();
+            oldMessages = "";
+
+            while (logging) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    //
+                }
+
+                if (!messages.equals(oldMessages)) {
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        public void run() {
+                            mainCanvas.getMessageBox().addUniqueMessage(
+                                    "UG-Output:", messages, null, MessageType.INFO);
+                        }
+                    });
+                }
+
+                oldMessages = messages;
+                messages = getMessages();
+            }
+        }
+
+        /**
+         * @param logging the logging to set
+         */
+        public void stopLogging() {
+            this.logging = false;
+        }
     }
 //
 //    public void addMessage(final String msg) {
