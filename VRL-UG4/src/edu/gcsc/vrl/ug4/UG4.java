@@ -43,6 +43,8 @@ public class UG4 {
             String[] args = {""};
             ug4.ugInit(args);
 
+        } else if (canvas != null) {
+            ug4.setMainCanvas(canvas);
         }
 
         return ug4;
