@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,6 +46,8 @@ public class Compiler {
 //            System.out.println("ClassName[before]: "
 //                    + classNames.get(classNames.size() - 1));
         }
+
+        Collections.sort(classNames);
 
 //        String scriptLocation = f.getPath();
         File scriptPath = null;
@@ -114,6 +117,7 @@ public class Compiler {
      * Create a new temporary directory. Use something like
      * {@link #recursiveDelete(File)} to clean this directory up since it isn't
      * deleted automatically
+     * http://stackoverflow.com/questions/617414/create-a-temporary-directory-in-java
      * @return  the new directory
      * @throws IOException if there is an error creating the temporary directory
      */
