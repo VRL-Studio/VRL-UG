@@ -68,6 +68,10 @@ public class UG4 {
 
     native int ugInit(String[] args);
 
+    native String getSvnRevision();
+
+    native String getCompileDate();
+
 //    native void attachCanvas(VisualCanvas canvas);
     /**
      * @return the mainCanvas

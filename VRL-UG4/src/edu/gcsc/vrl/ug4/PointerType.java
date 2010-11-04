@@ -18,9 +18,10 @@ public class PointerType extends TypeRepresentationBase {
     private String className;
     private ArrayList<String> classNames;
     private boolean readOnly;
+    private static final String UNDEFINED_NAME="Pointer";
 
     public PointerType() {
-        setValueName("Pointer");
+        setValueName(UNDEFINED_NAME);
         setType(Pointer.class);
         addSupportedRepresentationType(RepresentationType.INPUT);
         addSupportedRepresentationType(RepresentationType.OUTPUT);
@@ -64,6 +65,9 @@ public class PointerType extends TypeRepresentationBase {
 
         if (property != null) {
             className = (String) property;
+            if (getValueName().equals(UNDEFINED_NAME)) {
+                setValueName(className);
+            }
         }
 
         property = null;

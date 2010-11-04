@@ -8,6 +8,7 @@ import eu.mihosoft.vrl.reflection.MethodInfo;
 import eu.mihosoft.vrl.reflection.MethodRepresentation;
 import eu.mihosoft.vrl.reflection.ParamInfo;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
+import eu.mihosoft.vrl.types.VisualIDRequest;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +56,7 @@ public class UGObject implements Serializable {
             System.out.println("Pointer is: " + pointer.getAddress());
         } else {
             System.out.println("Pointer is: null");
-        } 
+        }
     }
 
     /**
@@ -99,10 +100,12 @@ public class UGObject implements Serializable {
      * Invokes <code>setPopinter()</code> and <code>getPointer()</code> methods
      * from GUI.
      */
-    public void updatePointer(int visualID) {
-        mainCanvas.getInspector().invokeFromGUI(
-                this, visualID, "setPointer",Pointer.class);
-        mainCanvas.getInspector().invokeFromGUI(
-                this, visualID, "getPointer");
+    public void updatePointer(VisualIDRequest visualID) {
+        if (visualID != null) {
+            mainCanvas.getInspector().invokeFromGUI(
+                    this, visualID.getID(), "setPointer", Pointer.class);
+            mainCanvas.getInspector().invokeFromGUI(
+                    this, visualID.getID(), "getPointer");
+        }
     }
 }
