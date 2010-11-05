@@ -85,6 +85,7 @@ public class UG4 {
      */
     public void setMainCanvas(VisualCanvas mainCanvas) {
         this.mainCanvas = mainCanvas;
+        mainCanvas.getMessageBox().setScrollToMessageEnd(true);
         stopLogging();
         startLogging();
 //        attachCanvas(mainCanvas);
