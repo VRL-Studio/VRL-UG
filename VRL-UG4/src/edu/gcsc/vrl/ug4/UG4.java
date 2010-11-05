@@ -85,7 +85,6 @@ public class UG4 {
      */
     public void setMainCanvas(VisualCanvas mainCanvas) {
         this.mainCanvas = mainCanvas;
-        mainCanvas.getMessageBox().setScrollToMessageEnd(true);
         stopLogging();
         startLogging();
 //        attachCanvas(mainCanvas);
@@ -131,8 +130,8 @@ public class UG4 {
                     SwingUtilities.invokeLater(new Runnable() {
 
                         public void run() {
-                            mainCanvas.getMessageBox().addUniqueMessage(
-                                    "UG-Output:", messages, null, MessageType.INFO);
+                            mainCanvas.getMessageBox().addMessageAsLog(
+                                    "UG-Output:", messages, MessageType.INFO);
                         }
                     });
                 }
