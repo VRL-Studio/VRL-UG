@@ -20,9 +20,11 @@ public class UG4 {
         System.loadLibrary("ug4");
     }
 
+    // instanciation only allowed in this class
     private UG4() {
         //
     }
+    
     private static UG4 ug4;
     private VisualCanvas mainCanvas;
     private MessageThread messagingThread;

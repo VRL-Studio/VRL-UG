@@ -5,13 +5,11 @@
 package edu.gcsc.vrl.ug4;
 
 import eu.mihosoft.vrl.reflection.MethodInfo;
-import eu.mihosoft.vrl.reflection.MethodRepresentation;
 import eu.mihosoft.vrl.reflection.ParamInfo;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.types.VisualIDRequest;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  *
