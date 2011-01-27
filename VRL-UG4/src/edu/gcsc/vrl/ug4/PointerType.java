@@ -6,6 +6,8 @@ package edu.gcsc.vrl.ug4;
 
 import eu.mihosoft.vrl.reflection.RepresentationType;
 import eu.mihosoft.vrl.reflection.TypeRepresentationBase;
+import eu.mihosoft.vrl.visual.ConnectionResult;
+import eu.mihosoft.vrl.visual.ConnectionStatus;
 import groovy.lang.Script;
 import java.util.ArrayList;
 
@@ -42,16 +44,25 @@ public class PointerType extends TypeRepresentationBase {
     }
 
     @Override
-    public boolean compatible(TypeRepresentationBase tRep) {
+    public ConnectionResult compatible(TypeRepresentationBase tRep) {
         PointerType pT = null;
         if (!(tRep instanceof PointerType)) {
-            return false;
+            return new ConnectionResult(
+                    null,ConnectionStatus.ERROR_VALUE_TYPE_MISSMATCH);
         } else {
             pT = (PointerType) tRep;
         }
 
-        return pT.classNames.contains(className)
+        boolean result = pT.classNames.contains(className)
                 && (readOnly == pT.readOnly || readOnly && !pT.readOnly);
+
+        if (result) {
+            return new ConnectionResult(
+                    null,ConnectionStatus.VALID);
+        }
+
+        return new ConnectionResult(
+                    null,ConnectionStatus.ERROR_VALUE_TYPE_MISSMATCH);
     }
 
     @Override

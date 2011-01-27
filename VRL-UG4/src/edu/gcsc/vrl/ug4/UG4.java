@@ -6,8 +6,6 @@ package edu.gcsc.vrl.ug4;
 
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.visual.MessageType;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 /**
@@ -20,9 +18,11 @@ public class UG4 {
         System.loadLibrary("ug4");
     }
 
+    // instanciation only allowed in this class
     private UG4() {
         //
     }
+    
     private static UG4 ug4;
     private VisualCanvas mainCanvas;
     private MessageThread messagingThread;

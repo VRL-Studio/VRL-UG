@@ -5,7 +5,7 @@
 package edu.gcsc.vrl.ug4;
 
 import eu.mihosoft.vrl.lang.VLangUtils;
-import eu.mihosoft.vrl.reflection.AbstractCode;
+import eu.mihosoft.vrl.io.vrlx.AbstractCode;
 import groovy.lang.GroovyClassLoader;
 import java.io.File;
 import java.io.IOException;
@@ -21,11 +21,17 @@ import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.CompilerConfiguration;
 
 /**
- *
+ * A fast Groovy code compiler wrapper.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class Compiler {
 
+    /**
+     * Compiles classes defined as groovy source code and returns them
+     * as class objects.
+     * @param codes codes to compile
+     * @return class objects of the compiled codes
+     */
     public Class<?>[] compile(String[] codes) {
 
 
@@ -35,7 +41,8 @@ public class Compiler {
 
         String code =
                 "import eu.mihosoft.vrl.reflection.*;\n"
-                + "import eu.mihosoft.vrl.types.*;\n";
+                + "import eu.mihosoft.vrl.types.*;\n"
+                + "import eu.mihosoft.vrl.annotation.*;\n";
 
         for (String c : codes) {
             code += c + "\n\n";// + "/*--------NEW_CLASS--------*/\n\n";
@@ -149,7 +156,7 @@ public class Compiler {
     }
 
     /**
-     * Delete class files or directory on exit
+     * Request deletion of class files or directory on exit
      * @param fileOrDir
      *          the dir to delete
      * @return
