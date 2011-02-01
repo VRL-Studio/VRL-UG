@@ -107,8 +107,8 @@ public class UG4 {
     class MessageThread extends Thread {
 
         private boolean logging = true;
-        String messages = getMessages();
-        String oldMessages = "";
+        String messages;
+        String oldMessages;
 
         public MessageThread() {
             //
@@ -117,11 +117,11 @@ public class UG4 {
         @Override
         public void run() {
             messages = getMessages();
-            oldMessages = "";
+            oldMessages = getMessages();
 
             while (logging) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(100);
                 } catch (InterruptedException ex) {
                     //
                 }
