@@ -7,7 +7,9 @@ package edu.gcsc.vrl.ug4;
 import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.io.vrlx.AbstractCode;
 import groovy.lang.GroovyClassLoader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,13 +36,16 @@ public class Compiler {
      */
     public Class<?>[] compile(String[] codes) {
 
+        String packageName = "edu.gcsc.ug4";
+
 
 //        String code = "class UG4_Functionality {\n"
 
         ArrayList<String> classNames = new ArrayList<String>();
 
         String code =
-                "import eu.mihosoft.vrl.reflection.*;\n"
+                "package " + packageName +"\n"
+                + "import eu.mihosoft.vrl.reflection.*;\n"
                 + "import eu.mihosoft.vrl.types.*;\n"
                 + "import eu.mihosoft.vrl.annotation.*;\n";
 
@@ -69,6 +74,18 @@ public class Compiler {
         if (scriptPath.isFile()) {
             scriptPath = scriptPath.getParentFile();
         }
+//        try {
+//            BufferedWriter writer =
+//                    new BufferedWriter(new FileWriter(
+//                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
+//
+//            writer.append(code);
+//            writer.flush();
+//            writer.close();
+//        } catch (IOException ex) {
+//            Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
 
 // Configure
         CompilerConfiguration conf = new CompilerConfiguration();
@@ -99,7 +116,7 @@ public class Compiler {
 
         for (String className : classNames) {
             try {
-                Class<?> clazz = gcl.loadClass(className);
+                Class<?> clazz = gcl.loadClass(packageName+"."+className);
                 if (clazz != null) {
                     classes.add(clazz);
 //                    System.out.println("ClassName[after, ok]: " + className);

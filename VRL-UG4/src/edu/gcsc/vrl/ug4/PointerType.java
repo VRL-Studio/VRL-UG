@@ -10,6 +10,7 @@ import eu.mihosoft.vrl.visual.ConnectionResult;
 import eu.mihosoft.vrl.visual.ConnectionStatus;
 import groovy.lang.Script;
 import java.util.ArrayList;
+import javax.swing.JPopupMenu;
 
 /**
  *
@@ -29,6 +30,12 @@ public class PointerType extends TypeRepresentationBase {
         addSupportedRepresentationType(RepresentationType.OUTPUT);
 
         add(nameLabel);
+
+
+        JPopupMenu menu = new JPopupMenu("Pointer");
+
+
+
     }
 
     @Override
@@ -53,7 +60,7 @@ public class PointerType extends TypeRepresentationBase {
             pT = (PointerType) tRep;
         }
 
-        boolean result = pT.classNames.contains(className)
+        boolean result = pT.classNames==null || pT.classNames.contains(className)
                 && (readOnly == pT.readOnly || readOnly && !pT.readOnly);
 
         if (result) {
