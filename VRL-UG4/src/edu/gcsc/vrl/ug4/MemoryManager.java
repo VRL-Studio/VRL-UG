@@ -15,11 +15,10 @@ public class MemoryManager {
         throw new AssertionError(); // not in this class either!
     }
 
-    public static void deletePointer(long ptr) {
-        System.out.println(
-                "MemoryManager[Java]: delete pointer [" + ptr + "]\n");
-        delete(ptr);
+    public static void deletePointer(long ptr, String className) {
+        
+        delete(ptr,UG4.getUG4().getExportedClassPtrByName(className));
     }
 
-    native static void delete(long objPtr);
+    native static void delete(long objPtr, long exportedClassPtr);
 }

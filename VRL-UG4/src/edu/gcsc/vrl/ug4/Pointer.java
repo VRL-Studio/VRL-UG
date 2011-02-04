@@ -12,15 +12,18 @@ public class Pointer {
 
     private boolean readOnly;
     private long address;
+    private String className;
 
-    public Pointer(long address, boolean readOnly) {
+    public Pointer(String className, long address, boolean readOnly) {
         this.address = address;
         this.readOnly = readOnly;
+        this.className = className;
     }
 
-    public Pointer(long address) {
+    public Pointer(String className, long address) {
         this.address = address;
         this.readOnly = false;
+        this.className = className;
     }
 
     /**
@@ -44,12 +47,24 @@ public class Pointer {
 
     @Override
     protected void finalize() throws Throwable {
+
         try {
-            MemoryManager.deletePointer(this.getAddress());
+            if (className != null) {
+                MemoryManager.deletePointer(this.getAddress(), className);
+            } else {
+                System.out.println("Bad name: " + this.getAddress());
+            }
         } catch (Throwable ex) {
             //
         } finally {
             super.finalize();
         }
+    }
+
+    /**
+     * @return the className
+     */
+    public String getClassName() {
+        return className;
     }
 }

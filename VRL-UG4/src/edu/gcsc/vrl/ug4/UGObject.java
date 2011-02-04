@@ -34,7 +34,7 @@ public class UGObject implements Serializable {
                     newInstance(
                     edu.gcsc.vrl.ug4.UG4.getUG4().
                     getExportedClassPtrByName(getClassName()));
-            setPointer(new edu.gcsc.vrl.ug4.Pointer(address));
+            setPointer(new edu.gcsc.vrl.ug4.Pointer(getClassName(), address));
             System.out.println("New Instance: "+ address);
         }
         return objPointer;
@@ -75,7 +75,7 @@ public class UGObject implements Serializable {
     public Pointer getExportedClassPointer() {
         if (exportedClassPointer == null) {
             exportedClassPointer =
-                    new Pointer(
+                    new Pointer(null,
                     UG4.getUG4().getExportedClassPtrByName(getClassName()));
         }
         return exportedClassPointer;
