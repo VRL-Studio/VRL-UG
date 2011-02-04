@@ -22,7 +22,6 @@ public class UG4 {
     private UG4() {
         //
     }
-    
     private static UG4 ug4;
     private VisualCanvas mainCanvas;
     private MessageThread messagingThread;
@@ -30,11 +29,11 @@ public class UG4 {
     public static UG4 getUG4(VisualCanvas canvas) {
         if (ug4 == null) {
 
-            if (canvas == null) {
-                throw new IllegalArgumentException(
-                        "UG4 not initialized."
-                        + "Thus, a valid canvas instance must be assigned!");
-            }
+//            if (canvas == null) {
+//                throw new IllegalArgumentException(
+//                        "UG4 not initialized."
+//                        + "Thus, a valid canvas instance must be assigned!");
+//            }
 
             ug4 = new UG4();
 
@@ -71,7 +70,6 @@ public class UG4 {
     native String getSvnRevision();
 
     native String getCompileDate();
-
 
 //    native void attachCanvas(VisualCanvas canvas);
     /**
@@ -131,8 +129,11 @@ public class UG4 {
                     SwingUtilities.invokeLater(new Runnable() {
 
                         public void run() {
-                            mainCanvas.getMessageBox().addMessageAsLog(
-                                    "UG-Output:", messages, MessageType.INFO);
+                            if (mainCanvas != null) {
+                                mainCanvas.getMessageBox().addMessageAsLog(
+                                        "UG-Output:", messages,
+                                        MessageType.INFO);
+                            }
                         }
                     });
                 }
