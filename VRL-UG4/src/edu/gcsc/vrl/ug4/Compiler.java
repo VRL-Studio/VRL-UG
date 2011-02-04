@@ -43,14 +43,15 @@ public class Compiler {
 
         ArrayList<String> classNames = new ArrayList<String>();
 
-        String code =
-                "package " + packageName +"\n"
-                + "import eu.mihosoft.vrl.reflection.*;\n"
-                + "import eu.mihosoft.vrl.types.*;\n"
-                + "import eu.mihosoft.vrl.annotation.*;\n";
+        StringBuilder code = new StringBuilder();
+
+                code.append("package ").append(packageName).append("\n").
+                append("import eu.mihosoft.vrl.reflection.*;\n").
+                append("import eu.mihosoft.vrl.types.*;\n").
+                append("import eu.mihosoft.vrl.annotation.*;\n");
 
         for (String c : codes) {
-            code += c + "\n\n";// + "/*--------NEW_CLASS--------*/\n\n";
+            code.append(c).append("\n\n");// + "/*--------NEW_CLASS--------*/\n\n";
             AbstractCode aCode = new AbstractCode();
             aCode.setCode(c);
             classNames.add(VLangUtils.classNameFromCode(aCode));
@@ -77,6 +78,7 @@ public class Compiler {
 //        try {
 //            BufferedWriter writer =
 //                    new BufferedWriter(new FileWriter(
+////                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
 //                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
 //
 //            writer.append(code);
@@ -96,7 +98,7 @@ public class Compiler {
         GroovyClassLoader gcl = new GroovyClassLoader();
         CompilationUnit cu = new CompilationUnit(gcl);
         cu.configure(conf);
-        cu.addSource("UG_Classes", code);
+        cu.addSource("UG_Classes", code.toString());
 // Add more source files to the compilation unit if needed
         cu.compile();
 

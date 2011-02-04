@@ -35,6 +35,7 @@ public class UGObject implements Serializable {
                     edu.gcsc.vrl.ug4.UG4.getUG4().
                     getExportedClassPtrByName(getClassName()));
             setPointer(new edu.gcsc.vrl.ug4.Pointer(address));
+            System.out.println("New Instance: "+ address);
         }
         return objPointer;
     }
@@ -99,11 +100,12 @@ public class UGObject implements Serializable {
      * from GUI.
      */
     public void updatePointer(VisualIDRequest visualID) {
-        if (visualID != null) {
-            mainCanvas.getInspector().invokeFromGUI(
-                    this, visualID.getID(), "setPointer", Pointer.class);
-            mainCanvas.getInspector().invokeFromGUI(
-                    this, visualID.getID(), "getPointer");
-        }
+        System.out.println("UpdatePointer:");
+//        if (visualID != null) {
+//            mainCanvas.getInspector().invokeFromGUI(
+//                    this, visualID.getID(), "setPointer", Pointer.class);
+//            mainCanvas.getInspector().invokeFromGUI(
+//                    this, visualID.getID(), "getPointer");
+//        }
     }
 }

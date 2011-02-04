@@ -72,6 +72,7 @@ public class UG4 {
 
     native String getCompileDate();
 
+
 //    native void attachCanvas(VisualCanvas canvas);
     /**
      * @return the mainCanvas

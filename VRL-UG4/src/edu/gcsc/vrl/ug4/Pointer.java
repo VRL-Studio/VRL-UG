@@ -37,4 +37,19 @@ public class Pointer {
     public boolean isConst() {
         return readOnly;
     }
+
+    public void setConst(boolean b) {
+        readOnly = b;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            MemoryManager.deletePointer(this.getAddress());
+        } catch (Throwable ex) {
+            //
+        } finally {
+            super.finalize();
+        }
+    }
 }

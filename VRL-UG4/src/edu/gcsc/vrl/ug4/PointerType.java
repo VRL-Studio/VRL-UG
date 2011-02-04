@@ -21,7 +21,7 @@ public class PointerType extends TypeRepresentationBase {
     private String className;
     private ArrayList<String> classNames;
     private boolean readOnly;
-    private static final String UNDEFINED_NAME="Pointer";
+    private static final String UNDEFINED_NAME = "Pointer";
 
     public PointerType() {
         setValueName(UNDEFINED_NAME);
@@ -44,7 +44,7 @@ public class PointerType extends TypeRepresentationBase {
 
         if (v instanceof Pointer) {
             Pointer p = (Pointer) v;
-            v = new Pointer(p.getAddress(), readOnly);
+            p.setConst(readOnly);
         }
 
         return v;
@@ -55,21 +55,22 @@ public class PointerType extends TypeRepresentationBase {
         PointerType pT = null;
         if (!(tRep instanceof PointerType)) {
             return new ConnectionResult(
-                    null,ConnectionStatus.ERROR_VALUE_TYPE_MISSMATCH);
+                    null, ConnectionStatus.ERROR_VALUE_TYPE_MISSMATCH);
         } else {
             pT = (PointerType) tRep;
         }
 
-        boolean result = pT.classNames==null || pT.classNames.contains(className)
+        boolean result = pT.classNames == null || classNames == null || className == null
+                || pT.classNames.contains(className)
                 && (readOnly == pT.readOnly || readOnly && !pT.readOnly);
 
         if (result) {
             return new ConnectionResult(
-                    null,ConnectionStatus.VALID);
+                    null, ConnectionStatus.VALID);
         }
 
         return new ConnectionResult(
-                    null,ConnectionStatus.ERROR_VALUE_TYPE_MISSMATCH);
+                null, ConnectionStatus.ERROR_VALUE_TYPE_MISSMATCH);
     }
 
     @Override
