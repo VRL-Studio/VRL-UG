@@ -36,7 +36,7 @@ public class Compiler {
      */
     public Class<?>[] compile(String[] codes) {
 
-        String packageName = "edu.gcsc.ug4";
+        String packageName = "edu.gcsc.vrl.ug4";
 
 
 //        String code = "class UG4_Functionality {\n"

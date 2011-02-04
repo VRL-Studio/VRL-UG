@@ -16,8 +16,16 @@ public class MemoryManager {
     }
 
     public static void deletePointer(long ptr, String className) {
-        
-        delete(ptr,UG4.getUG4().getExportedClassPtrByName(className));
+
+        long exportedClassPtr = 0;
+
+        if (className != null) {
+            UG4.getUG4().getExportedClassPtrByName(className);
+        }
+
+        if (ptr != 0 && exportedClassPtr != 0) {
+            delete(ptr, exportedClassPtr);
+        }
     }
 
     native static void delete(long objPtr, long exportedClassPtr);
