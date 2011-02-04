@@ -26,6 +26,16 @@ public class Pointer {
         this.className = className;
     }
 
+    public Pointer(long address, boolean readOnly) {
+        this.address = address;
+        this.readOnly = readOnly;
+    }
+
+    public Pointer(long address) {
+        this.address = address;
+        this.readOnly = false;
+    }
+
     /**
      * @return the ptr
      */
@@ -49,8 +59,8 @@ public class Pointer {
     protected void finalize() throws Throwable {
 
         try {
-            if (className != null) {
-                MemoryManager.deletePointer(this.getAddress(), className);
+            if (getClassName() != null) {
+                MemoryManager.deletePointer(this.getAddress(), getClassName());
             } else {
                 System.out.println("Bad name: " + this.getAddress());
             }
@@ -66,5 +76,12 @@ public class Pointer {
      */
     public String getClassName() {
         return className;
+    }
+
+    /**
+     * @param className the className to set
+     */
+    public void setClassName(String className) {
+        this.className = className;
     }
 }

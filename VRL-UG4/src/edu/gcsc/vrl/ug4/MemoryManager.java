@@ -20,8 +20,9 @@ public class MemoryManager {
         long exportedClassPtr = 0;
 
         if (className != null) {
-            UG4.getUG4().getExportedClassPtrByName(className);
+             exportedClassPtr = UG4.getUG4().getExportedClassPtrByName(className);
         }
+
 
         if (ptr != 0 && exportedClassPtr != 0) {
             delete(ptr, exportedClassPtr);

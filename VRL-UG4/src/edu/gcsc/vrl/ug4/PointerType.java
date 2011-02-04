@@ -45,6 +45,11 @@ public class PointerType extends TypeRepresentationBase {
         if (v instanceof Pointer) {
             Pointer p = (Pointer) v;
             p.setConst(readOnly);
+            // important for garbage collection. this will not work if
+            // classname is not defined. for return values this is the case
+            // because the method that creates the object does not know the
+            // class name.
+            p.setClassName(className);
         }
 
         return v;
