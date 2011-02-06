@@ -101,11 +101,20 @@ public class UGObject implements Serializable {
      */
     public void updatePointer(VisualIDRequest visualID) {
         System.out.println("UpdatePointer:");
-//        if (visualID != null) {
-//            mainCanvas.getInspector().invokeFromGUI(
-//                    this, visualID.getID(), "setPointer", Pointer.class);
-//            mainCanvas.getInspector().invokeFromGUI(
-//                    this, visualID.getID(), "getPointer");
-//        }
+        if (visualID != null) {
+            mainCanvas.getInspector().invokeFromGUI(
+                    this, visualID.getID(), "setPointer", Pointer.class);
+            mainCanvas.getInspector().invokeFromGUI(
+                    this, visualID.getID(), "getPointer");
+        }
+    }
+
+
+    /**
+     * Releases pointer.
+     */
+    @MethodInfo(noGUI=true)
+    public void release() {
+        objPointer=null;
     }
 }

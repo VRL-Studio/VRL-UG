@@ -78,10 +78,16 @@ public class Pointer {
         return className;
     }
 
+    public boolean isClsNameLocked() {
+        return className != null;
+    }
+
     /**
      * @param className the className to set
      */
     public void setClassName(String className) {
-        this.className = className;
+        if (!isClsNameLocked()) {
+            this.className = className;
+        }
     }
 }
