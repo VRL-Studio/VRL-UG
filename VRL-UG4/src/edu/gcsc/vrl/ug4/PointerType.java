@@ -68,7 +68,7 @@ public class PointerType extends TypeRepresentationBase {
                             + VLangUtils.addEscapeCharsToCode(info.name())
                             + "\", options=\""
                             + VLangUtils.addEscapeCharsToCode(info.options())
-                            + ", nullIsValid=" + info.nullIsValid() + ")";
+                            + "\", nullIsValid=" + info.nullIsValid() + ")";
                 } else {
                     MethodInfo mInfo = getParentMethod().getDescription().
                             getMethodInfo();
@@ -81,7 +81,7 @@ public class PointerType extends TypeRepresentationBase {
                             + "\", valueOptions=\""
                             + VLangUtils.addEscapeCharsToCode(
                             mInfo.valueOptions())
-                            +")";
+                            +"\")";
                 }
 
                 VSysUtil.copyToClipboard(infoString);
