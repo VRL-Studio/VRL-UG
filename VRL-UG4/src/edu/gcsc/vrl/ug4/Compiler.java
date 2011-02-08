@@ -36,108 +36,110 @@ public class Compiler {
      */
     public Class<?>[] compile(String[] codes) {
 
-        String packageName = "edu.gcsc.vrl.ug4";
+        return new Class<?>[]{Class.class};
 
-
-//        String code = "class UG4_Functionality {\n"
-
-        ArrayList<String> classNames = new ArrayList<String>();
-
-        StringBuilder code = new StringBuilder();
-
-                code.append("package ").append(packageName).append("\n").
-                append("import eu.mihosoft.vrl.reflection.*;\n").
-                append("import eu.mihosoft.vrl.types.*;\n").
-                append("import eu.mihosoft.vrl.annotation.*;\n");
-
-        for (String c : codes) {
-            code.append(c).append("\n\n");// + "/*--------NEW_CLASS--------*/\n\n";
-            AbstractCode aCode = new AbstractCode();
-            aCode.setCode(c);
-            classNames.add(VLangUtils.classNameFromCode(aCode));
-
-//            System.out.println("ClassName[before]: "
-//                    + classNames.get(classNames.size() - 1));
-        }
-
-        Collections.sort(classNames);
-
-//        String scriptLocation = f.getPath();
-        File scriptPath = null;
-        try {
-            scriptPath = createTempDir();
-            System.out.println("TempClassDir: " + scriptPath.getAbsolutePath());
-        } catch (IOException ex) {
-            Logger.getLogger(
-                    Compiler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        if (scriptPath.isFile()) {
-            scriptPath = scriptPath.getParentFile();
-        }
-
-        try {
-            BufferedWriter writer =
-                    new BufferedWriter(new FileWriter(
-//                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
-                    new File("/Users/miho/UG_Classes.groovy")));
-
-            writer.append(code);
-            writer.flush();
-            writer.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-
-// Configure
-        CompilerConfiguration conf = new CompilerConfiguration();
-        conf.setTargetDirectory(scriptPath.getPath());
-//conf.setClasspath(new File[]{additonalPath});
-
-// Compile…
-        GroovyClassLoader gcl = new GroovyClassLoader();
-        CompilationUnit cu = new CompilationUnit(gcl);
-        cu.configure(conf);
-        cu.addSource("UG_Classes", code.toString());
-// Add more source files to the compilation unit if needed
-        cu.compile();
-
-// Load…
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        URL[] urls = null;
-        try {
-            urls = new URL[]{scriptPath.toURL()};
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(
-                    Compiler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        URLClassLoader ucl = new URLClassLoader(urls, cl);
-        gcl = new GroovyClassLoader(ucl, conf);
-
-        ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-
-        for (String className : classNames) {
-            try {
-                Class<?> clazz = gcl.loadClass(packageName+"."+className);
-                if (clazz != null) {
-                    classes.add(clazz);
-//                    System.out.println("ClassName[after, ok]: " + className);
-                }
-            } catch (ClassNotFoundException ex) {
-                System.out.println("ClassName[after, failed]: " + className);
-                Logger.getLogger(
-                        Compiler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        Class<?>[] result = new Class<?>[classes.size()];
-
-        classes.toArray(result);
-
-        deleteClassFiles(scriptPath);
-
-        return result;
+//        String packageName = "edu.gcsc.vrl.ug4";
+//
+//
+////        String code = "class UG4_Functionality {\n"
+//
+//        ArrayList<String> classNames = new ArrayList<String>();
+//
+//        StringBuilder code = new StringBuilder();
+//
+//                code.append("package ").append(packageName).append("\n").
+//                append("import eu.mihosoft.vrl.reflection.*;\n").
+//                append("import eu.mihosoft.vrl.types.*;\n").
+//                append("import eu.mihosoft.vrl.annotation.*;\n");
+//
+//        for (String c : codes) {
+//            code.append(c).append("\n\n");// + "/*--------NEW_CLASS--------*/\n\n";
+//            AbstractCode aCode = new AbstractCode();
+//            aCode.setCode(c);
+//            classNames.add(VLangUtils.classNameFromCode(aCode));
+//
+////            System.out.println("ClassName[before]: "
+////                    + classNames.get(classNames.size() - 1));
+//        }
+//
+//        Collections.sort(classNames);
+//
+////        String scriptLocation = f.getPath();
+//        File scriptPath = null;
+//        try {
+//            scriptPath = createTempDir();
+//            System.out.println("TempClassDir: " + scriptPath.getAbsolutePath());
+//        } catch (IOException ex) {
+//            Logger.getLogger(
+//                    Compiler.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        if (scriptPath.isFile()) {
+//            scriptPath = scriptPath.getParentFile();
+//        }
+//
+//        try {
+//            BufferedWriter writer =
+//                    new BufferedWriter(new FileWriter(
+////                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
+//                    new File("/Users/miho/UG_Classes.groovy")));
+//
+//            writer.append(code);
+//            writer.flush();
+//            writer.close();
+//        } catch (IOException ex) {
+//            Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//
+//// Configure
+//        CompilerConfiguration conf = new CompilerConfiguration();
+//        conf.setTargetDirectory(scriptPath.getPath());
+////conf.setClasspath(new File[]{additonalPath});
+//
+//// Compile…
+//        GroovyClassLoader gcl = new GroovyClassLoader();
+//        CompilationUnit cu = new CompilationUnit(gcl);
+//        cu.configure(conf);
+//        cu.addSource("UG_Classes", code.toString());
+//// Add more source files to the compilation unit if needed
+//        cu.compile();
+//
+//// Load…
+//        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+//        URL[] urls = null;
+//        try {
+//            urls = new URL[]{scriptPath.toURL()};
+//        } catch (MalformedURLException ex) {
+//            Logger.getLogger(
+//                    Compiler.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        URLClassLoader ucl = new URLClassLoader(urls, cl);
+//        gcl = new GroovyClassLoader(ucl, conf);
+//
+//        ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+//
+//        for (String className : classNames) {
+//            try {
+//                Class<?> clazz = gcl.loadClass(packageName+"."+className);
+//                if (clazz != null) {
+//                    classes.add(clazz);
+////                    System.out.println("ClassName[after, ok]: " + className);
+//                }
+//            } catch (ClassNotFoundException ex) {
+//                System.out.println("ClassName[after, failed]: " + className);
+//                Logger.getLogger(
+//                        Compiler.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+//
+//        Class<?>[] result = new Class<?>[classes.size()];
+//
+//        classes.toArray(result);
+//
+//        deleteClassFiles(scriptPath);
+//
+//        return result;
     }
 
     /**
