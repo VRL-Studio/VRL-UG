@@ -23,6 +23,7 @@ public class UGObject implements Serializable {
     private transient Pointer exportedClassPointer;
     private String className;
     private ArrayList<String> classNames;
+    private transient ArrayList<Pointer> pointerList;
 
     /**
      * @return the pointer
@@ -35,7 +36,8 @@ public class UGObject implements Serializable {
                     edu.gcsc.vrl.ug4.UG4.getUG4().
                     getExportedClassPtrByName(getClassName()));
             setPointer(new edu.gcsc.vrl.ug4.Pointer(getClassName(), address));
-            System.out.println("New Instance: "+ address);
+            System.out.println(getClassName() + " >> New Instance: "
+                    + getClassName() + " [" + address + "]");
         }
         return objPointer;
     }
@@ -52,10 +54,14 @@ public class UGObject implements Serializable {
     public void setPointer(@ParamInfo(nullIsValid = true) Pointer pointer) {
         if (pointer != null) {
             this.objPointer = pointer;
-            System.out.println("Pointer is: " + pointer.getAddress());
+            System.out.println(getClassName() + " >> SetPointer: "
+                    + pointer.getClassName()
+                    + " [" + pointer.getAddress() + "]");
         } else {
-            System.out.println("Pointer is: null");
+            System.out.println(getClassName() + " >> SetPointer: [null]");
         }
+
+        releasePointerList();
     }
 
     /**
@@ -100,7 +106,7 @@ public class UGObject implements Serializable {
      * from GUI.
      */
     public void updatePointer(VisualIDRequest visualID) {
-        System.out.println("UpdatePointer:");
+        System.out.println(getClassName() + " >> UpdatePointer:");
         if (visualID != null) {
             mainCanvas.getInspector().invokeFromGUI(
                     this, visualID.getID(), "setPointer", Pointer.class);
@@ -109,12 +115,42 @@ public class UGObject implements Serializable {
         }
     }
 
+    /**
+     * Adds a parameter pointer.
+     * @param p pointer to add
+     */
+    @MethodInfo(noGUI = true)
+    public void addPointer(Pointer p) {
+        if (pointerList == null) {
+            pointerList = new ArrayList<Pointer>();
+        }
+        pointerList.add(p);
+        System.out.println(getClassName() + " >> Added: "
+                + p.getClassName() + " [" + p.getAddress() + "]");
+    }
 
     /**
      * Releases pointer.
      */
-    @MethodInfo(noGUI=true)
-    public void release() {
-        objPointer=null;
+    @MethodInfo(noGUI = true)
+    public void releaseThis() {
+        objPointer = null;
+    }
+
+    @MethodInfo(noGUI = true)
+    public void releasePointerList() {
+        if (pointerList != null) {
+            System.out.println(getClassName() + " >> PointerList released! ");
+            pointerList.clear();
+        }
+    }
+
+    /**
+     * Releases pointer.
+     */
+    @MethodInfo(noGUI = true)
+    public void releaseAll() {
+        releaseThis();
+        releasePointerList();
     }
 }

@@ -76,7 +76,8 @@ public class PointerType extends TypeRepresentationBase {
                     infoString = "@MethodInfo("
 //                            + " name=\""
 //                            + VLangUtils.addEscapeCharsToCode(mInfo.name())
-                            + "\", valueName=\""
+//                            + "\","
+                            + "valueName=\""
                             + VLangUtils.addEscapeCharsToCode(mInfo.valueName())
                             + "\", valueOptions=\""
                             + VLangUtils.addEscapeCharsToCode(
@@ -112,7 +113,7 @@ public class PointerType extends TypeRepresentationBase {
             // classname is not defined. for return values this is the case
             // because the method that creates the object does not know the
             // class name.
-            p.setClassName(className);
+//            p.setClassName(className);
         }
 
         return v;
