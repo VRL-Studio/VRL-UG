@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package edu.gcsc.vrl.ug4;
 
 /**
@@ -10,7 +9,10 @@ package edu.gcsc.vrl.ug4;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeParamInfo {
+
     private NativeType type;
+    private String className;
+    private String[] classNames;
     private int id;
     private String help;
     private String tooltip;
@@ -35,8 +37,35 @@ public class NativeParamInfo {
      */
     public void setType(int type) {
         // convert type
+        switch (type) {
+            case -1:
+                setType(NativeType.VOID);
+                break;
+            case 0:
+                setType(NativeType.UNDEFINED);
+                break;
+            case 1:
+                setType(NativeType.BOOL);
+                break;
+            case 2:
+                setType(NativeType.INTEGER);
+                break;
+            case 3:
+                setType(NativeType.NUMBER);
+                break;
+            case 4:
+                setType(NativeType.STRING);
+                break;
+            case 5:
+                setType(NativeType.POINTER);
+                break;
+            case 6:
+                setType(NativeType.CONST_POINTER);
+                break;
+            default:
+                setType(NativeType.UNDEFINED);
+        }
     }
-    
 
     /**
      * @return the id
@@ -92,5 +121,55 @@ public class NativeParamInfo {
      */
     public void setParamInfo(String[] paramInfo) {
         this.paramInfo = paramInfo;
+    }
+
+    /**
+     * @return the className
+     */
+    public String getClassName() {
+        return className;
+    }
+
+    /**
+     * @param className the className to set
+     */
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    /**
+     * @return the classNames
+     */
+    public String[] getClassNames() {
+        return classNames;
+    }
+
+    /**
+     * @param classNames the classNames to set
+     */
+    public void setClassNames(String[] classNames) {
+        this.classNames = classNames;
+    }
+
+    public String getTypeClassName() {
+
+        switch (getType()) {
+            case VOID:
+                return "void";
+            case BOOL:
+                return "boolean";
+            case INTEGER:
+                return "Integer";
+            case NUMBER:
+                return "Double";
+            case STRING:
+                return "String";
+            case POINTER:
+                return CodeUtils.interfaceName(getClassName());
+            case CONST_POINTER:
+                return CodeUtils.interfaceName(getClassName());
+        }
+
+        return "/*ERROR!!! INVALID TYPE*/ void";
     }
 }

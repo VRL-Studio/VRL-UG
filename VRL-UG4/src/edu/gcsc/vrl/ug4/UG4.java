@@ -55,7 +55,7 @@ public class UG4 {
 
     native String[] createJavaBindings();
 
-    native NativeClassInfo[] convertRegistryInfo();
+    native NativeAPIInfo convertRegistryInfo();
 
     native Object invokeMethod(
             String exportedClassName,

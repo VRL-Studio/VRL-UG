@@ -54,6 +54,19 @@ public class NativeClassInfo {
         return classNames;
     }
 
+    public String[] getBaseClassNames() {
+        String[] baseClassNames = null;
+        if (getClassNames().length>0) {
+            baseClassNames = new String[getClassNames().length-1];
+
+            for (int i = 0; i < getClassNames().length-1; i++) {
+                baseClassNames[i] = getClassNames()[i+1];
+            }
+        }
+
+        return baseClassNames;
+    }
+
     /**
      * @param classNames the classNames to set
      */

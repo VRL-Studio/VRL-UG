@@ -98,4 +98,8 @@ public class NativeMethodInfo {
     public void setHelp(String help) {
         this.help = help;
     }
+
+    public boolean returnsVoid() {
+        return getReturnValue().getType()==NativeType.VOID;
+    }
 }
