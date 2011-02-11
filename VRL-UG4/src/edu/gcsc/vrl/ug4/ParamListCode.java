@@ -27,18 +27,17 @@ public class ParamListCode {
 
     public CodeBuilder toString(CodeBuilder builder) {
 
-        StringBuilder sB = new StringBuilder();
 
         for (int i = 0; i < params.length; i++) {
+
             if (i > 0) {
-                sB.append(builder.getIndentString()).
-                        append(builder.getIndentString()).append(",\n");
+                builder.append(", ").newLine();;
             }
-            sB.append(builder.getIndentString()).
-                    append(new ParamCode(params[i],i,withParamInfo));
+            
+
+            new ParamCode(params[i],i,withParamInfo).toString(builder);
         }
 
-        builder.addLine(sB.toString());
 
         return builder;
     }

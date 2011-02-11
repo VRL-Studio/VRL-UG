@@ -27,7 +27,7 @@ public class MethodInfoCode {
     public CodeBuilder toString(CodeBuilder builder) {
 
         if (!method.returnsVoid()) {
-            builder.addLine("@MethodInfo(options=\""
+            builder.append("@MethodInfo(options=\""
                     + VLangUtils.addEscapeCharsToCode(method.getOptions())
                     + "\", valueName=\""
                     + VLangUtils.addEscapeCharsToCode(

@@ -39,18 +39,26 @@ public class MethodCode {
         }
 
         new MethodInfoCode(method).toString(builder).
-                addLine("public "
+                newLine().append("public "
                 + method.getReturnValue().getTypeClassName() + " "
                 + methodPrefix
                 + CodeUtils.methodName(
                 method.getName()) + " (");
+
+        if (method.getParameters().length > 0) {
+            builder.newLine().incIndentation();
+        }
         new ParamListCode(method.getParameters(),
                 !asInterface).toString(builder);
-        builder.addLine(")");
+        if (method.getParameters().length > 0) {
+            builder.newLine().decIndentation();
+        }
+        
+        builder.append(")");
 
         if (!asInterface) {
 
-            builder.addLine("{").incIndentation();
+            builder.append(" {").newLine().incIndentation();
 
             String params = "Object[] params = [";
 
@@ -61,20 +69,17 @@ public class MethodCode {
                 }
                 params += "p" + i;
             }
-            params+="]";
+            params += "]";
 
             builder.addLine(params).
                     addLine("edu.gcsc.vrl.ug4.UG4.getUG4().invokeMethod("
                     + "getClassName(), getPointer().getAddress(),"
                     + asConst + ", \"" + method.getName() + "\", params);");
 
-            builder.decIndentation();
-            builder.addLine("}");
+            builder.decIndentation().addLine("}");
         } else {
-            builder.addLine(";").decIndentation();
+            builder.append(";").newLine();
         }
-
-        
 
 
         return builder;

@@ -26,7 +26,7 @@ public class ParamInfoCode {
 
     public CodeBuilder toString(CodeBuilder builder) {
 
-        builder.addLine("@ParamInfo(name=\"" 
+        builder.append("@ParamInfo(name=\""
                 + VLangUtils.addEscapeCharsToCode(param.getParamInfo()[0])
                 + "\", style=\""
                 + VLangUtils.addEscapeCharsToCode(

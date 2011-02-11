@@ -32,10 +32,11 @@ class ClassCode {
         if (asInterface) {
             classHeaderCode =
                     "public interface "
-                    + CodeUtils.interfaceName(classInfo.getName());
+                    + CodeUtils.interfaceName(classInfo.getName())
+                    +  " extends UGObjectInterface ";
             if (classInfo.getClassNames() != null
-                    && classInfo.getClassNames().length > 0) {
-                classHeaderCode += " extends "
+                    && classInfo.getBaseClassNames().length > 0) {
+                classHeaderCode +=", "
                         + CodeUtils.namesToInterfaceNameList(
                         classInfo.getBaseClassNames());
             }
@@ -51,17 +52,15 @@ class ClassCode {
                 incIndentation();
         if (!asInterface) {
             builder.addLine(
-                    "private static final long serialVersionUID=1L\n");
+                    "private static final long serialVersionUID=1L").newLine();
         }
 
         for (NativeMethodInfo m : classInfo.getMethods()) {
-            new MethodCode(m, asInterface, false, true).toString(builder).
-                    addLine("");
+            new MethodCode(m, asInterface, false, true).toString(builder).newLine();
         }
 
         for (NativeMethodInfo m : classInfo.getConstMethods()) {
-            new MethodCode(m, asInterface, true, true).toString(builder).
-                    addLine("");
+            new MethodCode(m, asInterface, true, true).toString(builder).newLine();
         }
 
         builder.decIndentation();

@@ -29,15 +29,15 @@ public class ParamCode {
 
     public CodeBuilder toString(CodeBuilder builder) {
 
+        builder.incIndentation();
+
         if (withParamInfo) {
-            builder.incIndentation();
             new ParamInfoCode(param).toString(builder);
-            builder.decIndentation();
         }
 
-        builder.addLine(
-                builder.getIndentString()+builder.getIndentString()
-                +param.getTypeClassName() + " p"+index);
+        builder.append(param.getTypeClassName()).append(" p"+index);
+
+        builder.decIndentation();
 
         return builder;
     }
