@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class UGObject implements Serializable, UGObjectInterface {
 
     private static final long serialVersionUID = 1L;
+    
     private transient VisualCanvas mainCanvas;
     private transient Pointer objPointer;
     private transient Pointer exportedClassPointer;

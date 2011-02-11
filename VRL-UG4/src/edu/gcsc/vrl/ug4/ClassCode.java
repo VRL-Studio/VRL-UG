@@ -6,6 +6,7 @@ package edu.gcsc.vrl.ug4;
 
 import eu.mihosoft.vrl.lang.CodeBuilder;
 import eu.mihosoft.vrl.lang.VLangUtils;
+import java.util.ArrayList;
 
 /**
  *
@@ -13,10 +14,13 @@ import eu.mihosoft.vrl.lang.VLangUtils;
  */
 class ClassCode {
 
+    private NativeAPIInfo nativeAPI;
     private NativeClassInfo classInfo;
     private boolean asInterface;
 
-    public ClassCode(NativeClassInfo classInfo, boolean asInterface) {
+    public ClassCode(NativeAPIInfo nativeAPI,
+            NativeClassInfo classInfo, boolean asInterface) {
+        this.nativeAPI = nativeAPI;
         this.classInfo = classInfo;
         this.asInterface = asInterface;
     }
@@ -52,34 +56,56 @@ class ClassCode {
             builder.addLine(new ComponentInfoCode(classInfo).toString()).
                     addLine("@ObjectInfo(name=\""
                     + VLangUtils.addEscapeCharsToCode(classInfo.getName()) + "\")");
+        } else {
+            builder.addLine("@ComponentInfo(ignore=true)");
         }
 
         builder.addLine(classHeaderCode + " {").
                 incIndentation();
-        
+
         if (!asInterface) {
             builder.addLine(
-                    "private static final long serialVersionUID=1L").newLine();
+                    "private static final long serialVersionUID=1L").
+                    addLine("public " + CodeUtils.className(classInfo.getName())
+                    + "() { setClassName(\"" + classInfo.getName()
+                    + "\");}").newLine();
         }
+
+
+        ArrayList<MethodSignature> signatures = new ArrayList<MethodSignature>();
+
+        Setting[] settings = new Setting[4];
 
         // visual
+        settings[0] = new Setting(false, true);
+        settings[1] = new Setting(true, true);
 
-        for (NativeMethodInfo m : classInfo.getMethods()) {
-            new MethodCode(m, asInterface, false, true).toString(builder).newLine();
-        }
+        //non-visual
+        settings[2] = new Setting(false, false);
+        settings[3] = new Setting(true, false);
 
-        for (NativeMethodInfo m : classInfo.getConstMethods()) {
-            new MethodCode(m, asInterface, true, true).toString(builder).newLine();
-        }
 
-        // non-visual
+        NativeClassInfo[] baseClasses = nativeAPI.baseClasses(classInfo);
+        NativeClassInfo[] classes = new NativeClassInfo[baseClasses.length + 1];
 
-        for (NativeMethodInfo m : classInfo.getMethods()) {
-            new MethodCode(m, asInterface, false, false).toString(builder).newLine();
-        }
+        classes[0] = classInfo;
 
-        for (NativeMethodInfo m : classInfo.getConstMethods()) {
-            new MethodCode(m, asInterface, true, false).toString(builder).newLine();
+        // copy base classes to classes array with offset 1
+        System.arraycopy(baseClasses, 0, classes, 1, baseClasses.length);
+
+        for (Setting s : settings) {
+
+            for (NativeClassInfo cls : classes) {
+                for (NativeMethodInfo m : cls.getMethods()) {
+                    if (!signatures.contains(new MethodSignature(m))) {
+                        new MethodCode(m, asInterface, s.isConst, s.visual).toString(
+                                builder).newLine();
+                        signatures.add(new MethodSignature(m));
+                    }
+                }
+            }
+
+            signatures.clear();
         }
 
         builder.decIndentation();
@@ -87,6 +113,17 @@ class ClassCode {
         builder.addLine("}\n").addLine("// ------------------------------ //\n");
 
         return builder;
+    }
+
+    private static class Setting {
+
+        public boolean isConst;
+        public boolean visual;
+
+        public Setting(boolean isConst, boolean visual) {
+            this.isConst = isConst;
+            this.visual = visual;
+        }
     }
 
     /**

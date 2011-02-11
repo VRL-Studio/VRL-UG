@@ -30,9 +30,8 @@ public class MethodInfoCode {
 
         if (!method.returnsVoid() && visual) {
             builder.append("@MethodInfo(");
-                    
-            
-            if (method.getOptions()!=null && !method.getOptions().isEmpty()) {
+
+            if (method.getOptions() != null && !method.getOptions().isEmpty()) {
                 builder.append(method.getOptions()).append(", ");
             }
 
@@ -43,7 +42,7 @@ public class MethodInfoCode {
                     + method.getReturnValue().getParamInfo()[1]
                     + "\", valueOptions=\""
                     + method.getReturnValue().getParamInfo()[2] + "\")");
-        } else if(!visual) {
+        } else if (!visual) {
             builder.append("@MethodInfo(noGUI=true)");
         }
 

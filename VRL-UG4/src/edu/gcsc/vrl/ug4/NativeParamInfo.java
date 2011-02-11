@@ -157,7 +157,7 @@ public class NativeParamInfo {
             case VOID:
                 return "void";
             case BOOL:
-                return "boolean";
+                return "Boolean";
             case INTEGER:
                 return "Integer";
             case NUMBER:

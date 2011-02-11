@@ -38,7 +38,7 @@ public class MethodCode {
             methodPrefix = "const_";
         }
 
-        new MethodInfoCode(method,visual).toString(builder).
+        new MethodInfoCode(method, visual).toString(builder).
                 newLine().append("public "
                 + method.getReturnValue().getTypeClassName() + " "
                 + methodPrefix
@@ -49,12 +49,12 @@ public class MethodCode {
             builder.newLine().incIndentation();
         }
         new ParamListCode(method.getParameters(),
-                !asInterface,visual).toString(builder);
+                !asInterface, visual).toString(builder);
 
         if (method.getParameters().length > 0 || visual) {
             builder.newLine().decIndentation();
         }
-        
+
         builder.append(")");
 
         if (!asInterface) {
@@ -72,14 +72,14 @@ public class MethodCode {
             }
             params += "]";
 
+//            if (visual) {
+//                builder.addLine("updatePointer(id);");
+//            }
+
             builder.addLine(params).
                     addLine("edu.gcsc.vrl.ug4.UG4.getUG4().invokeMethod("
                     + "getClassName(), getPointer().getAddress(),"
                     + asConst + ", \"" + method.getName() + "\", params);");
-
-            if (visual) {
-                builder.addLine("updatePointer(id);");
-            }
 
             builder.decIndentation().addLine("}");
         } else {
