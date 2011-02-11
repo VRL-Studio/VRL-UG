@@ -31,10 +31,9 @@ public class ParamListCode {
         for (int i = 0; i < params.length; i++) {
 
             if (i > 0) {
-                builder.append(", ").newLine();;
+                builder.append(", ").newLine();
             }
             
-
             new ParamCode(params[i],i,withParamInfo).toString(builder);
         }
 

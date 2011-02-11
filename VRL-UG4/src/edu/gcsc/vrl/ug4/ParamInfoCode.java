@@ -30,7 +30,7 @@ public class ParamInfoCode {
                 + VLangUtils.addEscapeCharsToCode(param.getParamInfo()[0])
                 + "\", style=\""
                 + VLangUtils.addEscapeCharsToCode(
-                param.getParamInfo()[1]) + "\")");
+                param.getParamInfo()[1]) + "\") ");
 
         return builder;
     }
