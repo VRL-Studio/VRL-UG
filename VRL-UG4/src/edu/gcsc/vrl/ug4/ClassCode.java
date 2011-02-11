@@ -5,6 +5,7 @@
 package edu.gcsc.vrl.ug4;
 
 import eu.mihosoft.vrl.lang.CodeBuilder;
+import eu.mihosoft.vrl.lang.VLangUtils;
 
 /**
  *
@@ -33,10 +34,10 @@ class ClassCode {
             classHeaderCode =
                     "public interface "
                     + CodeUtils.interfaceName(classInfo.getName())
-                    +  " extends UGObjectInterface ";
+                    + " extends UGObjectInterface ";
             if (classInfo.getClassNames() != null
                     && classInfo.getBaseClassNames().length > 0) {
-                classHeaderCode +=", "
+                classHeaderCode += ", "
                         + CodeUtils.namesToInterfaceNameList(
                         classInfo.getBaseClassNames());
             }
@@ -47,13 +48,21 @@ class ClassCode {
                     + CodeUtils.interfaceName(classInfo.getName());
         }
 
-        builder.addLine(new ComponentInfoCode(classInfo).toString()).
-                addLine(classHeaderCode + " {").
+        if (!asInterface) {
+            builder.addLine(new ComponentInfoCode(classInfo).toString()).
+                    addLine("@ObjectInfo(name=\""
+                    + VLangUtils.addEscapeCharsToCode(classInfo.getName()) + "\")");
+        }
+
+        builder.addLine(classHeaderCode + " {").
                 incIndentation();
+        
         if (!asInterface) {
             builder.addLine(
                     "private static final long serialVersionUID=1L").newLine();
         }
+
+        // visual
 
         for (NativeMethodInfo m : classInfo.getMethods()) {
             new MethodCode(m, asInterface, false, true).toString(builder).newLine();
@@ -61,6 +70,16 @@ class ClassCode {
 
         for (NativeMethodInfo m : classInfo.getConstMethods()) {
             new MethodCode(m, asInterface, true, true).toString(builder).newLine();
+        }
+
+        // non-visual
+
+        for (NativeMethodInfo m : classInfo.getMethods()) {
+            new MethodCode(m, asInterface, false, false).toString(builder).newLine();
+        }
+
+        for (NativeMethodInfo m : classInfo.getConstMethods()) {
+            new MethodCode(m, asInterface, true, false).toString(builder).newLine();
         }
 
         builder.decIndentation();
