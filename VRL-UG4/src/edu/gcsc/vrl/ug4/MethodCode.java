@@ -38,19 +38,20 @@ public class MethodCode {
             methodPrefix = "const_";
         }
 
-        new MethodInfoCode(method).toString(builder).
+        new MethodInfoCode(method,visual).toString(builder).
                 newLine().append("public "
                 + method.getReturnValue().getTypeClassName() + " "
                 + methodPrefix
                 + CodeUtils.methodName(
                 method.getName()) + " (");
 
-        if (method.getParameters().length > 0) {
+        if (method.getParameters().length > 0 || visual) {
             builder.newLine().incIndentation();
         }
         new ParamListCode(method.getParameters(),
-                !asInterface).toString(builder);
-        if (method.getParameters().length > 0) {
+                !asInterface,visual).toString(builder);
+
+        if (method.getParameters().length > 0 || visual) {
             builder.newLine().decIndentation();
         }
         
@@ -75,6 +76,10 @@ public class MethodCode {
                     addLine("edu.gcsc.vrl.ug4.UG4.getUG4().invokeMethod("
                     + "getClassName(), getPointer().getAddress(),"
                     + asConst + ", \"" + method.getName() + "\", params);");
+
+            if (visual) {
+                builder.addLine("updatePointer(id);");
+            }
 
             builder.decIndentation().addLine("}");
         } else {

@@ -14,9 +14,11 @@ import eu.mihosoft.vrl.lang.VLangUtils;
 public class MethodInfoCode {
 
     private NativeMethodInfo method;
+    private boolean visual;
 
-    public MethodInfoCode(NativeMethodInfo method) {
+    public MethodInfoCode(NativeMethodInfo method, boolean visual) {
         this.method = method;
+        this.visual = visual;
     }
 
     @Override
@@ -26,7 +28,7 @@ public class MethodInfoCode {
 
     public CodeBuilder toString(CodeBuilder builder) {
 
-        if (!method.returnsVoid()) {
+        if (!method.returnsVoid() && visual) {
             builder.append("@MethodInfo(options=\""
                     + VLangUtils.addEscapeCharsToCode(method.getOptions())
                     + "\", valueName=\""
@@ -36,6 +38,8 @@ public class MethodInfoCode {
                     + method.getReturnValue().getParamInfo()[1]
                     + "\", valueOptions=\""
                     + method.getReturnValue().getParamInfo()[2] + "\")");
+        } else if(!visual) {
+            builder.append("@MethodInfo(noGUI=true)");
         }
 
         return builder;
