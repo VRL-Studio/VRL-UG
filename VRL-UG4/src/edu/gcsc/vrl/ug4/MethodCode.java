@@ -72,23 +72,58 @@ public class MethodCode {
             }
             params += "]";
 
+            builder.addLine(params);
+
 //            if (visual) {
 //                builder.addLine("updatePointer(id);");
 //            }
 
-            if (isFunction) {
-                builder.addLine(params).
-                        addLine("edu.gcsc.vrl.ug4.UG4.getUG4().invokeFunction("
-                        + "\""+ method.getName() + "\", false, params);");
-            } else {
-                builder.addLine(params).
-                        addLine("edu.gcsc.vrl.ug4.UG4.getUG4().invokeMethod("
-                        + "getClassName(), getPointer().getAddress(),"
-                        + method.isConst()
-                        + ", \"" + method.getName() + "\", params);");
+//            if (isFunction) {
+//                builder.addLine(params).
+//                        addLine("edu.gcsc.vrl.ug4.UG4.getUG4().invokeFunction("
+//                        + "\"" + method.getName() + "\", false, params);");
+//            } else {
+//                builder.addLine(params).
+//                        addLine("edu.gcsc.vrl.ug4.UG4.getUG4().invokeMethod("
+//                        + "getClassName(), getPointer().getAddress(),"
+//                        + method.isConst()
+//                        + ", \"" + method.getName() + "\", params);");
+//            }
+
+            boolean returnsPointer =
+                    method.getReturnValue().getType()
+                    == NativeType.CONST_POINTER
+                    || method.getReturnValue().getType() == NativeType.POINTER;
+
+            if (!method.returnsVoid()) {
+                builder.append("result = ");
             }
 
-            builder.decIndentation().addLine("}").newLine();
+            builder.append("invokeMethod("
+                    + isFunction + ", "
+                    + method.isConst()
+                    + ", \"" + method.getName() + "\", params);").newLine();
+
+            if (returnsPointer) {
+                String returnTypeClassName =
+                        CodeUtils.className(
+                        method.getReturnValue().getClassName());
+
+                builder.append("edu.gcsc.vrl.ug4.").append(returnTypeClassName).
+                        append(" convertedResult = new ").
+                        append("edu.gcsc.vrl.ug4.").
+                        append(returnTypeClassName).append("();").newLine();
+
+                builder.append("convertedResult.newInstance((Pointer)result);").
+                        newLine().
+                        append("result = convertedResult;").newLine();
+            }
+
+            if (!method.returnsVoid()) {
+                builder.newLine().append("return result;");
+            }
+
+            builder.newLine().decIndentation().append("}").newLine().newLine();
         } else {
             builder.append(";").newLine();
         }

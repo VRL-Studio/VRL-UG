@@ -8,6 +8,7 @@ import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.types.VisualIDRequest;
+import eu.mihosoft.vrl.visual.MessageType;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -15,22 +16,31 @@ import java.util.ArrayList;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class UGObject implements Serializable, UGObjectInterface {
+public abstract class UGObject implements Serializable, UGObjectInterface {
 
     private static final long serialVersionUID = 1L;
-    
     private transient VisualCanvas mainCanvas;
     private transient Pointer objPointer;
-    private transient Pointer exportedClassPointer;
+//    private transient Pointer exportedClassPointer;
     private String className;
     private ArrayList<String> classNames;
-    private transient ArrayList<Pointer> pointerList;
+    private transient ArrayList<UGObject> referenceList;
+
+
+    protected void setThis(UGObject o) {
+        releaseAll();
+        setPointer(o.getPointer());
+        referenceList.addAll(o.referenceList);
+        setClassName(o.getClassName());
+        setClassNames(o.getClassNames());
+    }
+
 
     /**
      * @return the pointer
      */
 //    @MethodInfo(interactive = false)
-    public Pointer getPointer() {
+    protected Pointer getPointer() {
         if (objPointer == null) {
             long address = (long) edu.gcsc.vrl.ug4.UG4.getUG4().
                     newInstance(
@@ -52,7 +62,7 @@ public class UGObject implements Serializable, UGObjectInterface {
      * @param pointer the pointer to set
      */
 //    @MethodInfo(interactive = false)
-    public void setPointer(@ParamInfo(nullIsValid = true) Pointer pointer) {
+    protected void setPointer(@ParamInfo(nullIsValid = true) Pointer pointer) {
         if (pointer != null) {
             this.objPointer = pointer;
             System.out.println(getClassName() + " >> SetPointer: "
@@ -62,7 +72,7 @@ public class UGObject implements Serializable, UGObjectInterface {
             System.out.println(getClassName() + " >> SetPointer: [null]");
         }
 
-        releasePointerList();
+        releaseReferences();
     }
 
     /**
@@ -79,14 +89,14 @@ public class UGObject implements Serializable, UGObjectInterface {
         this.classNames = classNames;
     }
 
-    public Pointer getExportedClassPointer() {
-        if (exportedClassPointer == null) {
-            exportedClassPointer =
-                    new Pointer(null,
-                    UG4.getUG4().getExportedClassPtrByName(getClassName()));
-        }
-        return exportedClassPointer;
-    }
+//    public Pointer getExportedClassPointer() {
+//        if (exportedClassPointer == null) {
+//            exportedClassPointer =
+//                    new Pointer(null,
+//                    UG4.getUG4().getExportedClassPtrByName(getClassName()));
+//        }
+//        return exportedClassPointer;
+//    }
 
     /**
      * @return the className
@@ -98,37 +108,73 @@ public class UGObject implements Serializable, UGObjectInterface {
     /**
      * @param className the className to set
      */
-    public void setClassName(String className) {
+    protected void setClassName(String className) {
         this.className = className;
     }
 
-    /**
-     * Invokes <code>setPopinter()</code> and <code>getPointer()</code> methods
-     * from GUI.
-     */
-    public void updatePointer(VisualIDRequest visualID) {
-        System.out.println(getClassName() + " >> UpdatePointer:");
-        if (visualID != null) {
-            mainCanvas.getInspector().invokeFromGUI(
-                    this, visualID.getID(), "setPointer", Pointer.class);
-            mainCanvas.getInspector().invokeFromGUI(
-                    this, visualID.getID(), "getPointer");
-        }
-    }
+//    /**
+//     * Invokes <code>setPopinter()</code> and <code>getPointer()</code> methods
+//     * from GUI.
+//     */
+//    public void updatePointer(VisualIDRequest visualID) {
+//        System.out.println(getClassName() + " >> UpdatePointer:");
+//        if (visualID != null) {
+//            mainCanvas.getInspector().invokeFromGUI(
+//                    this, visualID.getID(), "setPointer", Pointer.class);
+//            mainCanvas.getInspector().invokeFromGUI(
+//                    this, visualID.getID(), "getPointer");
+//        }
+//    }
 
     /**
      * Adds a parameter pointer.
-     * @param p pointer to add
+     * @param o pointer to add
      */
     @MethodInfo(noGUI = true)
-    public void addPointer(Pointer p) {
-        if (pointerList == null) {
-            pointerList = new ArrayList<Pointer>();
+    private void addReference(UGObject o) {
+        if (referenceList == null) {
+            referenceList = new ArrayList<UGObject>();
         }
-        pointerList.add(p);
+        referenceList.add(o);
         System.out.println(getClassName() + " >> Added: "
-                + p.getClassName() + " [" + p.getAddress() + "]");
+                + o.getClassName() + " [" + o.getPointer().getAddress() + "]");
     }
+
+    protected Object invokeMethod(boolean isFunction, boolean isConst,
+            String methodName, Object[] params) {
+
+        Object[] convertedParams = new Object[params.length];
+
+        for (int i = 0; i < convertedParams.length; i++) {
+            Object p = params[i];
+            if (p instanceof UGObject) {
+                UGObject o = (UGObject) p;
+                convertedParams[i] = o.getPointer();
+                addReference(o);
+            } else {
+                convertedParams[i] = p;
+            }
+        }
+
+        Object result = null;
+
+        if (isFunction) {
+            result = edu.gcsc.vrl.ug4.UG4.getUG4().invokeFunction(
+                    methodName, false, convertedParams);
+        } else {
+            result = edu.gcsc.vrl.ug4.UG4.getUG4().invokeMethod(getClassName(),
+                    getPointer().getAddress(), isConst,
+                    methodName, convertedParams);
+        }
+
+        if (result instanceof Pointer) {
+            result = newInstance((Pointer) result);
+        }
+
+        return result;
+    }
+
+    protected abstract UGObject newInstance(Pointer p);
 
     /**
      * Releases pointer.
@@ -139,10 +185,10 @@ public class UGObject implements Serializable, UGObjectInterface {
     }
 
     @MethodInfo(noGUI = true)
-    public void releasePointerList() {
-        if (pointerList != null) {
-            System.out.println(getClassName() + " >> PointerList released! ");
-            pointerList.clear();
+    public void releaseReferences() {
+        if (referenceList != null) {
+            System.out.println(getClassName() + " >> ReferenceList released! ");
+            referenceList.clear();
         }
     }
 
@@ -152,6 +198,6 @@ public class UGObject implements Serializable, UGObjectInterface {
     @MethodInfo(noGUI = true)
     public void releaseAll() {
         releaseThis();
-        releasePointerList();
+        releaseReferences();
     }
 }

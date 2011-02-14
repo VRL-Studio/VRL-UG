@@ -18,13 +18,6 @@ import java.util.ArrayList;
 public interface UGObjectInterface {
 
     /**
-     * Adds a parameter pointer.
-     * @param p pointer to add
-     */
-    @MethodInfo(noGUI = true)
-    void addPointer(Pointer p);
-
-    /**
      * @return the className
      */
     String getClassName();
@@ -34,12 +27,12 @@ public interface UGObjectInterface {
      */
     ArrayList<String> getClassNames();
 
-    Pointer getExportedClassPointer();
+//    Pointer getExportedClassPointer();
 
     /**
      * @return the pointer
      */
-    Pointer getPointer();
+//    Pointer getPointer();
 
     /**
      * Releases pointer.
@@ -48,7 +41,7 @@ public interface UGObjectInterface {
     void releaseAll();
 
     @MethodInfo(noGUI = true)
-    void releasePointerList();
+    void releaseReferences();
 
     /**
      * Releases pointer.
@@ -59,7 +52,7 @@ public interface UGObjectInterface {
     /**
      * @param className the className to set
      */
-    void setClassName(String className);
+//    void setClassName(String className);
 
     /**
      * @param classNames the classNames to set
@@ -69,16 +62,16 @@ public interface UGObjectInterface {
     @MethodInfo(noGUI = true, callOptions = "assign-canvas")
     void setMainCanvas(VisualCanvas mainCanvas);
 
-    /**
-     * @param pointer the pointer to set
-     */
-    void setPointer(@ParamInfo(nullIsValid = true)
-    Pointer pointer);
+//    /**
+//     * @param pointer the pointer to set
+//     */
+//    void setPointer(@ParamInfo(nullIsValid = true)
+//    Pointer pointer);
 
-    /**
-     * Invokes <code>setPopinter()</code> and <code>getPointer()</code> methods
-     * from GUI.
-     */
-    void updatePointer(VisualIDRequest visualID);
+//    /**
+//     * Invokes <code>setPopinter()</code> and <code>getPointer()</code> methods
+//     * from GUI.
+//     */
+//    void updatePointer(VisualIDRequest visualID);
 
 }

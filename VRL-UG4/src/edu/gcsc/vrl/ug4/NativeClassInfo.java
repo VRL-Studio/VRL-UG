@@ -117,8 +117,6 @@ public class NativeClassInfo {
     public void setConstMethods(NativeMethodGroupInfo[] constMethods) {
         this.constMethods = constMethods;
 
-        System.out.println("Const-Methods:" + constMethods.length);
-
         for (NativeMethodGroupInfo m : constMethods) {
             m.setConst(true);
         }

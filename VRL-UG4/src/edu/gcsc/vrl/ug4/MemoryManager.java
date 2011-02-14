@@ -33,7 +33,7 @@ public class MemoryManager {
 
         if (ptr != 0 && exportedClassPtr != 0) {
             System.out.println("Delete: " + className + " [" + ptr + "]");
-            delete(ptr, exportedClassPtr);
+//            delete(ptr, exportedClassPtr);
         }
     }
 

@@ -53,6 +53,16 @@ public class FunctionCode {
         new MethodGroupCode(function, false, true).toString(builder);
         new MethodGroupCode(function, false, false).toString(builder);
 
+
+        builder.newLine().
+                append("protected UGObject newInstance(Pointer p) {").
+                newLine().incIndentation().
+                append("UGObject result = new edu.gcsc.vrl.ug4.").
+                append(className).append("();").
+                newLine().append("result.setPointer(p);").
+                newLine().append("return result;").newLine().
+                decIndentation().append("}").newLine();
+
         builder.newLine().decIndentation();
         builder.append("}").newLine().
                 addLine("// ------------------------------ //\n");

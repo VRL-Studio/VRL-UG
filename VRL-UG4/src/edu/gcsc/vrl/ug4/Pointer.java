@@ -71,7 +71,7 @@ public class Pointer {
     protected void finalize() throws Throwable {
 
         try {
-//            MemoryManager.deletePointer(this);
+            MemoryManager.deletePointer(this);
         } catch (Throwable ex) {
             //
         } finally {

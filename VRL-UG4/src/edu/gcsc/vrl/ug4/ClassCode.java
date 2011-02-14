@@ -71,19 +71,8 @@ class ClassCode {
                     + "\");}").newLine();
         }
 
-
-        ArrayList<MethodGroupSignature> signatures = new ArrayList<MethodGroupSignature>();
-
-//        Setting[] settings = new Setting[4];
-//
-//        // visual
-//        settings[0] = new Setting(false, true);
-//        settings[1] = new Setting(true, true);
-//
-//        //non-visual
-//        settings[2] = new Setting(false, false);
-//        settings[3] = new Setting(true, false);
-
+        ArrayList<MethodGroupSignature> signatures =
+                new ArrayList<MethodGroupSignature>();
 
         NativeClassInfo[] baseClasses = nativeAPI.baseClasses(classInfo);
         NativeClassInfo[] classes = new NativeClassInfo[baseClasses.length + 1];
@@ -93,7 +82,7 @@ class ClassCode {
         // copy base classes to classes array with offset 1
         System.arraycopy(baseClasses, 0, classes, 1, baseClasses.length);
 
-        boolean[] visual = new boolean[]{false,true};
+        boolean[] visual = new boolean[]{false, true};
 
         for (boolean b : visual) {
 
@@ -117,6 +106,34 @@ class ClassCode {
 
             signatures.clear();
         }  // end fore visual
+
+        if (!isAsInterface()) {
+
+            String interfaceName = CodeUtils.interfaceName(classInfo.getName());
+            String className = CodeUtils.className(classInfo.getName());
+
+            builder.newLine().append("@MethodInfo()").
+                    newLine().append("public ").
+                    append("void setThis(@ParamInfo(name=\"").
+                    append(classInfo.getName()).append("\") ").
+                    append(interfaceName).
+                    append(" o ) {super.setThis(o)}").newLine();
+
+            builder.newLine().append("@MethodInfo(valueName=\"").
+                    append(classInfo.getName()).append("\")").
+                    newLine().append("public ").
+                    append(CodeUtils.interfaceName(classInfo.getName())).
+                    append(" getThis() {return this;}").newLine();
+
+            builder.newLine().
+                    append("protected UGObject newInstance(Pointer p) {").
+                    newLine().incIndentation().
+                    append("UGObject result = new edu.gcsc.vrl.ug4.").
+                    append(className).append("();").
+                    newLine().append("result.setPointer(p);").
+                    newLine().append("return result;").newLine().
+                    decIndentation().append("}").newLine();
+        }
 
         builder.decIndentation();
 
