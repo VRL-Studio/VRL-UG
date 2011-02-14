@@ -11,7 +11,7 @@ package edu.gcsc.vrl.ug4;
 public class NativeAPIInfo {
 
     private NativeClassInfo[] classes;
-    private NativeMethodInfo[] functions;
+    private NativeFunctionGroupInfo[] functions;
 
     /**
      * @return the classes
@@ -30,14 +30,14 @@ public class NativeAPIInfo {
     /**
      * @return the functions
      */
-    public NativeMethodInfo[] getFunctions() {
+    public NativeFunctionGroupInfo[] getFunctions() {
         return functions;
     }
 
     /**
      * @param functions the functions to set
      */
-    public void setFunctions(NativeMethodInfo[] functions) {
+    public void setFunctions(NativeFunctionGroupInfo[] functions) {
         this.functions = functions;
     }
 

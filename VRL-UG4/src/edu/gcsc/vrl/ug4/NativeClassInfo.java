@@ -5,18 +5,16 @@
 
 package edu.gcsc.vrl.ug4;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeClassInfo {
     private String name;
-    private String categoryGroup;
+    private String category;
     private String[] classNames;
-    private NativeMethodInfo[] methods;
-    private NativeMethodInfo[] constMethods;
+    private NativeMethodGroupInfo[] methods;
+    private NativeMethodGroupInfo[] constMethods;
     private boolean instantiable;
 
     /**
@@ -36,15 +34,15 @@ public class NativeClassInfo {
     /**
      * @return the categoryGroup
      */
-    public String getCategoryGroup() {
-        return categoryGroup;
+    public String getCategory() {
+        return category;
     }
 
     /**
      * @param categoryGroup the categoryGroup to set
      */
-    public void setCategoryGroup(String categoryGroup) {
-        this.categoryGroup = categoryGroup;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     /**
@@ -91,28 +89,38 @@ public class NativeClassInfo {
     /**
      * @return the methods
      */
-    public NativeMethodInfo[] getMethods() {
+    public NativeMethodGroupInfo[] getMethods() {
         return methods;
     }
 
     /**
      * @return the constMethods
      */
-    public NativeMethodInfo[] getConstMethods() {
+    public NativeMethodGroupInfo[] getConstMethods() {
         return constMethods;
     }
 
     /**
      * @param methods the methods to set
      */
-    public void setMethods(NativeMethodInfo[] methods) {
+    public void setMethods(NativeMethodGroupInfo[] methods) {
         this.methods = methods;
+
+        for (NativeMethodGroupInfo m : methods) {
+            m.setConst(false);
+        }
     }
 
     /**
      * @param constMethods the constMethods to set
      */
-    public void setConstMethods(NativeMethodInfo[] constMethods) {
+    public void setConstMethods(NativeMethodGroupInfo[] constMethods) {
         this.constMethods = constMethods;
+
+        System.out.println("Const-Methods:" + constMethods.length);
+
+        for (NativeMethodGroupInfo m : constMethods) {
+            m.setConst(true);
+        }
     }
 }

@@ -23,7 +23,7 @@ public class CodeUtils {
         if (!result.isEmpty()) {
             result = Character.toLowerCase(name.charAt(0)) + name.substring(1);
         }
-        return name;
+        return result;
     }
 
     public static String constMethodName(String name) {
@@ -33,7 +33,7 @@ public class CodeUtils {
             result = "const" + Character.toUpperCase(name.charAt(0))
                     + name.substring(1);
         }
-        return name;
+        return result;
     }
 
     public static String className(String name) {

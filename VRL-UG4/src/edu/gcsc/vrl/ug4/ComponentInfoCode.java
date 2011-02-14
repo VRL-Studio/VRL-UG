@@ -23,7 +23,7 @@ public class ComponentInfoCode {
         return "@ComponentInfo(name=\""
                 +VLangUtils.addEscapeCharsToCode(classInfo.getName())
                 +"\", category=\""
-                + VLangUtils.addEscapeCharsToCode(classInfo.getCategoryGroup())
+                + VLangUtils.addEscapeCharsToCode(classInfo.getCategory())
                 +"\")";
 
     }

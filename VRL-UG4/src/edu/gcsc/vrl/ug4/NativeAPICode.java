@@ -43,8 +43,7 @@ public class NativeAPICode {
 
         ArrayList<String> codes = new ArrayList<String>();
 
-        for (int i = 0; i < apiInfo.getClasses().length; i++) {
-            NativeClassInfo classInfo = apiInfo.getClasses()[i];
+        for (NativeClassInfo classInfo : apiInfo.getClasses()) {
 
             if (classInfo.isInstantiable() || interfaces) {
                 codes.add(new ClassCode(
@@ -56,26 +55,53 @@ public class NativeAPICode {
         return codes.toArray(new String[codes.size()]);
     }
 
-    public String[] getInterfacesCodes() {
+    public String[] getInterfaceCodes() {
         return getCodes(true);
     }
 
-    public String[] getClassesCodes() {
+    public String[] getClassCodes() {
         return getCodes(false);
     }
 
-    public String[] getAllCodes() {
-        String[] classesCodes = getClassesCodes();
-        String[] interfaceCodes = getInterfacesCodes();
+    public String[] getFunctionCodes() {
+        ArrayList<String> codes = new ArrayList<String>();
 
-        int finalLength = classesCodes.length+interfaceCodes.length;
+        for (NativeFunctionGroupInfo group : apiInfo.getFunctions()) {
+
+            if (group == null) {
+                System.out.println("GROUP==NULL!!!");
+            } else {
+                System.out.println("Group.numOverloads" + group.getOverloads().length);
+            }
+
+//            for (NativeMethodInfo f : group.getOverloads()) {
+//                codes.add(new FunctionCode((NativeFunctionInfo) f).toString(
+//                        new CodeBuilder()).toString());
+//            }
+
+            codes.add(new FunctionCode(group).toString(
+                        new CodeBuilder()).toString());
+        }
+        return codes.toArray(new String[codes.size()]);
+    }
+
+    public String[] getAllCodes() {
+        String[] classesCodes = getClassCodes();
+        String[] interfaceCodes = getInterfaceCodes();
+        String[] functionCodes = getFunctionCodes();
+
+        int finalLength = classesCodes.length
+                + interfaceCodes.length + functionCodes.length;
 
         String[] result = new String[finalLength];
 
         System.arraycopy(classesCodes, 0, result, 0, classesCodes.length);
-        System.arraycopy(interfaceCodes, 0, result, classesCodes.length, interfaceCodes.length);
+        System.arraycopy(interfaceCodes, 0, result,
+                classesCodes.length, interfaceCodes.length);
+        System.arraycopy(functionCodes, 0, result,
+                classesCodes.length + interfaceCodes.length,
+                functionCodes.length);
 
         return result;
     }
-
 }

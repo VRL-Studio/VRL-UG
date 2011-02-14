@@ -14,14 +14,12 @@ public class MethodCode {
 
     private NativeMethodInfo method;
     private final boolean asInterface;
-    private final boolean asConst;
     private final boolean visual;
 
     public MethodCode(NativeMethodInfo method,
-            boolean asInterface, boolean asConst, boolean visual) {
+            boolean asInterface, boolean visual) {
         this.method = method;
         this.asInterface = asInterface;
-        this.asConst = asConst;
         this.visual = visual;
     }
 
@@ -32,9 +30,11 @@ public class MethodCode {
 
     public CodeBuilder toString(CodeBuilder builder) {
 
+        boolean isFunction = method instanceof NativeFunctionInfo;
+
         String methodPrefix = "";
 
-        if (asConst) {
+        if (method.isConst() && !isFunction) {
             methodPrefix = "const_";
         }
 
@@ -76,12 +76,19 @@ public class MethodCode {
 //                builder.addLine("updatePointer(id);");
 //            }
 
-            builder.addLine(params).
-                    addLine("edu.gcsc.vrl.ug4.UG4.getUG4().invokeMethod("
-                    + "getClassName(), getPointer().getAddress(),"
-                    + asConst + ", \"" + method.getName() + "\", params);");
+            if (isFunction) {
+                builder.addLine(params).
+                        addLine("edu.gcsc.vrl.ug4.UG4.getUG4().invokeFunction("
+                        + "\""+ method.getName() + "\", false, params);");
+            } else {
+                builder.addLine(params).
+                        addLine("edu.gcsc.vrl.ug4.UG4.getUG4().invokeMethod("
+                        + "getClassName(), getPointer().getAddress(),"
+                        + method.isConst()
+                        + ", \"" + method.getName() + "\", params);");
+            }
 
-            builder.decIndentation().addLine("}");
+            builder.decIndentation().addLine("}").newLine();
         } else {
             builder.append(";").newLine();
         }

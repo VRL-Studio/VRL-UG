@@ -72,17 +72,17 @@ class ClassCode {
         }
 
 
-        ArrayList<MethodSignature> signatures = new ArrayList<MethodSignature>();
+        ArrayList<MethodGroupSignature> signatures = new ArrayList<MethodGroupSignature>();
 
-        Setting[] settings = new Setting[4];
-
-        // visual
-        settings[0] = new Setting(false, true);
-        settings[1] = new Setting(true, true);
-
-        //non-visual
-        settings[2] = new Setting(false, false);
-        settings[3] = new Setting(true, false);
+//        Setting[] settings = new Setting[4];
+//
+//        // visual
+//        settings[0] = new Setting(false, true);
+//        settings[1] = new Setting(true, true);
+//
+//        //non-visual
+//        settings[2] = new Setting(false, false);
+//        settings[3] = new Setting(true, false);
 
 
         NativeClassInfo[] baseClasses = nativeAPI.baseClasses(classInfo);
@@ -93,37 +93,36 @@ class ClassCode {
         // copy base classes to classes array with offset 1
         System.arraycopy(baseClasses, 0, classes, 1, baseClasses.length);
 
-        for (Setting s : settings) {
+        boolean[] visual = new boolean[]{false,true};
+
+        for (boolean b : visual) {
 
             for (NativeClassInfo cls : classes) {
-                for (NativeMethodInfo m : cls.getMethods()) {
-                    if (!signatures.contains(new MethodSignature(m))) {
-                        new MethodCode(m, asInterface, s.isConst, s.visual).toString(
+                for (NativeMethodGroupInfo m : cls.getMethods()) {
+                    if (!signatures.contains(new MethodGroupSignature(m))) {
+                        new MethodGroupCode(m, asInterface, b).toString(
                                 builder).newLine();
-                        signatures.add(new MethodSignature(m));
+                        signatures.add(new MethodGroupSignature(m));
                     }
                 }
-            }
+
+                for (NativeMethodGroupInfo m : cls.getConstMethods()) {
+                    if (!signatures.contains(new MethodGroupSignature(m))) {
+                        new MethodGroupCode(m, asInterface, b).toString(
+                                builder).newLine();
+                        signatures.add(new MethodGroupSignature(m));
+                    }
+                }
+            } // end fore classes
 
             signatures.clear();
-        }
+        }  // end fore visual
 
         builder.decIndentation();
 
         builder.addLine("}\n").addLine("// ------------------------------ //\n");
 
         return builder;
-    }
-
-    private static class Setting {
-
-        public boolean isConst;
-        public boolean visual;
-
-        public Setting(boolean isConst, boolean visual) {
-            this.isConst = isConst;
-            this.visual = visual;
-        }
     }
 
     /**

@@ -16,6 +16,7 @@ public class NativeMethodInfo {
     private NativeParamInfo[] parameters;
     private String toolTip;
     private String help;
+    private boolean isConst;
 
     /**
      * @return the name
@@ -101,5 +102,19 @@ public class NativeMethodInfo {
 
     public boolean returnsVoid() {
         return getReturnValue().getType()==NativeType.VOID;
+    }
+
+    /**
+     * @return the asConst
+     */
+    public boolean isConst() {
+        return isConst;
+    }
+
+    /**
+     * @param asConst the asConst to set
+     */
+    public void setConst(boolean isConst) {
+        this.isConst = isConst;
     }
 }
