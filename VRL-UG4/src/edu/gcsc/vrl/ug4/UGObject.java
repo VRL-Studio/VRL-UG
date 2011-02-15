@@ -16,7 +16,7 @@ import java.util.ArrayList;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public abstract class UGObject implements Serializable, UGObjectInterface {
+public class UGObject implements Serializable, UGObjectInterface {
 
     private static final long serialVersionUID = 1L;
     private transient VisualCanvas mainCanvas;
@@ -26,15 +26,21 @@ public abstract class UGObject implements Serializable, UGObjectInterface {
     private ArrayList<String> classNames;
     private transient ArrayList<UGObject> referenceList;
 
-
     protected void setThis(UGObject o) {
-        releaseAll();
+        System.out.println(className + ">> Set This: "
+                + o.getClassName() + ", " + o.getPointer());
+//        releaseAll();
         setPointer(o.getPointer());
-        referenceList.addAll(o.referenceList);
-        setClassName(o.getClassName());
-        setClassNames(o.getClassNames());
-    }
 
+        if (referenceList == null) {
+            referenceList = new ArrayList<UGObject>();
+        }
+        if (o.referenceList != null) {
+            referenceList.addAll(o.referenceList);
+        }
+//        setClassName(o.getClassName());
+//        setClassNames(o.getClassNames());
+    }
 
     /**
      * @return the pointer
@@ -65,6 +71,7 @@ public abstract class UGObject implements Serializable, UGObjectInterface {
     protected void setPointer(@ParamInfo(nullIsValid = true) Pointer pointer) {
         if (pointer != null) {
             this.objPointer = pointer;
+            this.objPointer.setClassName(className);
             System.out.println(getClassName() + " >> SetPointer: "
                     + pointer.getClassName()
                     + " [" + pointer.getAddress() + "]");
@@ -72,7 +79,7 @@ public abstract class UGObject implements Serializable, UGObjectInterface {
             System.out.println(getClassName() + " >> SetPointer: [null]");
         }
 
-        releaseReferences();
+//        releaseReferences();
     }
 
     /**
@@ -89,15 +96,6 @@ public abstract class UGObject implements Serializable, UGObjectInterface {
         this.classNames = classNames;
     }
 
-//    public Pointer getExportedClassPointer() {
-//        if (exportedClassPointer == null) {
-//            exportedClassPointer =
-//                    new Pointer(null,
-//                    UG4.getUG4().getExportedClassPtrByName(getClassName()));
-//        }
-//        return exportedClassPointer;
-//    }
-
     /**
      * @return the className
      */
@@ -112,32 +110,18 @@ public abstract class UGObject implements Serializable, UGObjectInterface {
         this.className = className;
     }
 
-//    /**
-//     * Invokes <code>setPopinter()</code> and <code>getPointer()</code> methods
-//     * from GUI.
-//     */
-//    public void updatePointer(VisualIDRequest visualID) {
-//        System.out.println(getClassName() + " >> UpdatePointer:");
-//        if (visualID != null) {
-//            mainCanvas.getInspector().invokeFromGUI(
-//                    this, visualID.getID(), "setPointer", Pointer.class);
-//            mainCanvas.getInspector().invokeFromGUI(
-//                    this, visualID.getID(), "getPointer");
-//        }
-//    }
-
     /**
      * Adds a parameter pointer.
      * @param o pointer to add
      */
     @MethodInfo(noGUI = true)
     private void addReference(UGObject o) {
-        if (referenceList == null) {
-            referenceList = new ArrayList<UGObject>();
-        }
-        referenceList.add(o);
-        System.out.println(getClassName() + " >> Added: "
-                + o.getClassName() + " [" + o.getPointer().getAddress() + "]");
+//        if (referenceList == null) {
+//            referenceList = new ArrayList<UGObject>();
+//        }
+//        referenceList.add(o);
+//        System.out.println(getClassName() + " >> Added: "
+//                + o.getClassName() + " [" + o.getPointer().getAddress() + "]");
     }
 
     protected Object invokeMethod(boolean isFunction, boolean isConst,
@@ -165,17 +149,16 @@ public abstract class UGObject implements Serializable, UGObjectInterface {
             result = edu.gcsc.vrl.ug4.UG4.getUG4().invokeMethod(getClassName(),
                     getPointer().getAddress(), isConst,
                     methodName, convertedParams);
+
+            System.out.println("Pointer: " + getPointer());
         }
 
-        if (result instanceof Pointer) {
-            result = newInstance((Pointer) result);
-        }
+        System.out.println("Method Result(" + methodName + "): " + result);
 
         return result;
     }
 
-    protected abstract UGObject newInstance(Pointer p);
-
+//    protected abstract UGObject newInstance(Pointer p);
     /**
      * Releases pointer.
      */
@@ -189,6 +172,8 @@ public abstract class UGObject implements Serializable, UGObjectInterface {
         if (referenceList != null) {
             System.out.println(getClassName() + " >> ReferenceList released! ");
             referenceList.clear();
+        } else {
+            referenceList = new ArrayList<UGObject>();
         }
     }
 
@@ -200,4 +185,5 @@ public abstract class UGObject implements Serializable, UGObjectInterface {
         releaseThis();
         releaseReferences();
     }
+
 }

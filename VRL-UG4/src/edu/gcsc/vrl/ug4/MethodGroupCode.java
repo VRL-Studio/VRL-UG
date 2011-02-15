@@ -14,19 +14,19 @@ public class MethodGroupCode {
 
     private NativeMethodGroupInfo methodInfo;
     private boolean visual;
-    boolean asInterface;
+    private CodeType type;
 
     public MethodGroupCode(NativeMethodGroupInfo methodInfo,
-            boolean asInterface, boolean visual) {
+            CodeType type, boolean visual) {
         this.methodInfo = methodInfo;
         this.visual = visual;
-        this.asInterface = asInterface;
+        this.type = type;
     }
 
     public CodeBuilder toString(CodeBuilder builder) {
 
         for (NativeMethodInfo m : methodInfo.getOverloads()) {
-            new MethodCode(m, asInterface, visual).toString(builder);
+            new MethodCode(m, type, visual).toString(builder);
         }
 
         return builder;

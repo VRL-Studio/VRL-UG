@@ -19,35 +19,25 @@ public class NativeAPICode {
         this.apiInfo = apiInfo;
     }
 
-    @Override
-    public String toString() {
-        return toString(new CodeBuilder()).toString();
-    }
-
-    public CodeBuilder toString(CodeBuilder builder) {
-
-        for (NativeClassInfo classInfo : apiInfo.getClasses()) {
-            if (classInfo.isInstantiable()) {
-                new ClassCode(apiInfo, classInfo, false).toString(builder);
-            }
-        }
-
-        for (NativeClassInfo classInfo : apiInfo.getClasses()) {
-            new ClassCode(apiInfo, classInfo, true).toString(builder);
-        }
-
-        return builder;
-    }
-
-    private String[] getCodes(boolean interfaces) {
+    private String[] getCodes(CodeType type) {
 
         ArrayList<String> codes = new ArrayList<String>();
 
+        boolean interfaces = type == CodeType.INTERFACE;
+
         for (NativeClassInfo classInfo : apiInfo.getClasses()) {
 
-            if (classInfo.isInstantiable() || interfaces) {
+            if ((classInfo.isInstantiable() && type == CodeType.FULL_CLASS)
+                    || interfaces) {
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, interfaces).toString(
+                        apiInfo, classInfo, type).toString(
+                        new CodeBuilder()).toString());
+
+            } else if (!classInfo.isInstantiable()
+                    && type == CodeType.WRAP_POINTER_CLASS) {
+                
+                codes.add(new ClassCode(
+                        apiInfo, classInfo, type).toString(
                         new CodeBuilder()).toString());
             }
         }
@@ -56,11 +46,15 @@ public class NativeAPICode {
     }
 
     public String[] getInterfaceCodes() {
-        return getCodes(true);
+        return getCodes(CodeType.INTERFACE);
     }
 
     public String[] getClassCodes() {
-        return getCodes(false);
+        return getCodes(CodeType.FULL_CLASS);
+    }
+
+    public String[] getWrapperCodes() {
+        return getCodes(CodeType.WRAP_POINTER_CLASS);
     }
 
     public String[] getFunctionCodes() {
@@ -68,11 +62,11 @@ public class NativeAPICode {
 
         for (NativeFunctionGroupInfo group : apiInfo.getFunctions()) {
 
-            if (group == null) {
-                System.out.println("GROUP==NULL!!!");
-            } else {
-                System.out.println("Group.numOverloads" + group.getOverloads().length);
-            }
+//            if (group == null) {
+//                System.out.println("GROUP==NULL!!!");
+//            } else {
+//                System.out.println("Group.numOverloads" + group.getOverloads().length);
+//            }
 
 //            for (NativeMethodInfo f : group.getOverloads()) {
 //                codes.add(new FunctionCode((NativeFunctionInfo) f).toString(
@@ -80,18 +74,20 @@ public class NativeAPICode {
 //            }
 
             codes.add(new FunctionCode(group).toString(
-                        new CodeBuilder()).toString());
+                    new CodeBuilder()).toString());
         }
         return codes.toArray(new String[codes.size()]);
     }
 
     public String[] getAllCodes() {
-        String[] classesCodes = getClassCodes();
+
         String[] interfaceCodes = getInterfaceCodes();
+        String[] wrapperCodes = getWrapperCodes();
+        String[] classesCodes = getClassCodes();
         String[] functionCodes = getFunctionCodes();
 
         int finalLength = classesCodes.length
-                + interfaceCodes.length + functionCodes.length;
+                + interfaceCodes.length + functionCodes.length + wrapperCodes.length;
 
         String[] result = new String[finalLength];
 
@@ -101,6 +97,9 @@ public class NativeAPICode {
         System.arraycopy(functionCodes, 0, result,
                 classesCodes.length + interfaceCodes.length,
                 functionCodes.length);
+        System.arraycopy(wrapperCodes, 0, result,
+                classesCodes.length + interfaceCodes.length + functionCodes.length,
+                wrapperCodes.length);
 
         return result;
     }

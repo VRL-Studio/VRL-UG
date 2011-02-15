@@ -128,7 +128,8 @@ public class PointerType extends TypeRepresentationBase {
             pT = (PointerType) tRep;
         }
 
-        boolean result = pT.classNames == null || classNames == null || className == null
+        boolean result = pT.classNames == null || classNames == null
+                || className == null
                 || pT.classNames.contains(className)
                 && (readOnly == pT.readOnly || readOnly && !pT.readOnly);
 

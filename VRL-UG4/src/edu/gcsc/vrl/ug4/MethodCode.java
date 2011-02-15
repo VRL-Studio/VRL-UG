@@ -13,13 +13,13 @@ import eu.mihosoft.vrl.lang.CodeBuilder;
 public class MethodCode {
 
     private NativeMethodInfo method;
-    private final boolean asInterface;
+    private final CodeType type;
     private final boolean visual;
 
     public MethodCode(NativeMethodInfo method,
-            boolean asInterface, boolean visual) {
+            CodeType type, boolean visual) {
         this.method = method;
-        this.asInterface = asInterface;
+        this.type = type;
         this.visual = visual;
     }
 
@@ -31,6 +31,10 @@ public class MethodCode {
     public CodeBuilder toString(CodeBuilder builder) {
 
         boolean isFunction = method instanceof NativeFunctionInfo;
+
+        boolean asInterface = type == CodeType.INTERFACE;
+        boolean asWrapper = type == CodeType.WRAP_POINTER_CLASS;
+        boolean asFullClass = type == CodeType.FULL_CLASS;
 
         String methodPrefix = "";
 
@@ -57,7 +61,7 @@ public class MethodCode {
 
         builder.append(")");
 
-        if (!asInterface) {
+        if (asFullClass) {
 
             builder.append(" {").newLine().incIndentation();
 
@@ -96,7 +100,7 @@ public class MethodCode {
                     || method.getReturnValue().getType() == NativeType.POINTER;
 
             if (!method.returnsVoid()) {
-                builder.append("result = ");
+                builder.append("Object result = ");
             }
 
             builder.append("invokeMethod("
@@ -114,7 +118,9 @@ public class MethodCode {
                         append("edu.gcsc.vrl.ug4.").
                         append(returnTypeClassName).append("();").newLine();
 
-                builder.append("convertedResult.newInstance((Pointer)result);").
+                builder.addLine("println result;");
+
+                builder.append("convertedResult.setPointer((Pointer)result);").
                         newLine().
                         append("result = convertedResult;").newLine();
             }
@@ -124,10 +130,19 @@ public class MethodCode {
             }
 
             builder.newLine().decIndentation().append("}").newLine().newLine();
-        } else {
+        } else if (asInterface){
             builder.append(";").newLine();
+        } else if (asWrapper) {
+             builder.append("{").newLine().incIndentation().
+                     append("/*NO IMPLEMENTATION*/").newLine().
+                     append("throw new UnsupportedOperationException(").
+                     newLine().incIndentation().
+                     append("\"This class does not support\"").
+                     newLine().
+                     append("+\"native method execution.\");").
+                     newLine().decIndentation().decIndentation().
+                     append("}").newLine();
         }
-
 
         return builder;
     }

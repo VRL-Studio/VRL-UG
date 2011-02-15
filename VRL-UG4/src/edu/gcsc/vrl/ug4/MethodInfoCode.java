@@ -35,9 +35,16 @@ public class MethodInfoCode {
                 builder.append(method.getOptions()).append(", ");
             }
 
+            String valueName = VLangUtils.addEscapeCharsToCode(
+                    method.getReturnValue().getParamInfo()[0]);
+
+            if (valueName.isEmpty()) {
+                valueName = CodeUtils.className(
+                        method.getReturnValue().getClassName());
+            }
+
             builder.append("valueName=\""
-                    + VLangUtils.addEscapeCharsToCode(
-                    method.getReturnValue().getParamInfo()[0])
+                    + valueName
                     + "\", valueStyle=\""
                     + method.getReturnValue().getParamInfo()[1]
                     + "\", valueOptions=\""

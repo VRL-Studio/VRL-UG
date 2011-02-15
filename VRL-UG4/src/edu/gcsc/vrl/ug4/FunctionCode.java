@@ -50,18 +50,18 @@ public class FunctionCode {
 //        new MethodCode(function, false, true).toString(builder);
 //        new MethodCode(function, false, false).toString(builder);
 
-        new MethodGroupCode(function, false, true).toString(builder);
-        new MethodGroupCode(function, false, false).toString(builder);
+        new MethodGroupCode(function, CodeType.FULL_CLASS, true).toString(builder);
+        new MethodGroupCode(function, CodeType.FULL_CLASS, false).toString(builder);
 
 
-        builder.newLine().
-                append("protected UGObject newInstance(Pointer p) {").
-                newLine().incIndentation().
-                append("UGObject result = new edu.gcsc.vrl.ug4.").
-                append(className).append("();").
-                newLine().append("result.setPointer(p);").
-                newLine().append("return result;").newLine().
-                decIndentation().append("}").newLine();
+//        builder.newLine().
+//                append("protected UGObject newInstance(Pointer p) {").
+//                newLine().incIndentation().
+//                append("UGObject result = new edu.gcsc.vrl.ug4.").
+//                append(className).append("();").
+//                newLine().append("result.setPointer(p);").
+//                newLine().append("return result;").newLine().
+//                decIndentation().append("}").newLine();
 
         builder.newLine().decIndentation();
         builder.append("}").newLine().

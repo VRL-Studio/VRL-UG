@@ -14,6 +14,14 @@ public class Pointer {
     private long address;
     private String className;
 
+    public Pointer(Pointer p) {
+        this.address = p.address;
+        this.readOnly = p.readOnly;
+        this.className = p.className;
+
+        init();
+    }
+
     public Pointer(String className, long address, boolean readOnly) {
         this.address = address;
         this.readOnly = readOnly;
@@ -97,5 +105,11 @@ public class Pointer {
         if (!isClsNameLocked()) {
             this.className = className;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Pointer: class=" + className
+                + ", address=" + address + ", const=" + isConst();
     }
 }

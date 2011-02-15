@@ -4,6 +4,9 @@
  */
 package edu.gcsc.vrl.ug4;
 
+import eu.mihosoft.vrl.reflection.VisualCanvas;
+import java.util.Collection;
+
 
 /**
  *
@@ -57,6 +60,19 @@ public class MemoryManager {
 //            }
 //        }
 //    }
+
+    public static void releaseAll(VisualCanvas canvas) {
+        Collection<Object> objects =
+                canvas.getInspector().
+                getObjects();
+
+        for (Object o : objects) {
+            if (o instanceof UGObject) {
+                UGObject obj = (UGObject) o;
+                obj.releaseAll();
+            }
+        }
+    }
 
     native static void delete(long objPtr, long exportedClassPtr);
 }
