@@ -24,6 +24,6 @@ public class ComponentInfoCode {
                 +VLangUtils.addEscapeCharsToCode(classInfo.getName())
                 +"\", category=\""
                 + VLangUtils.addEscapeCharsToCode(classInfo.getCategory())
-                +"\")";
+                +"\", allowRemoval=false)";
     }
 }

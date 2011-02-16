@@ -53,7 +53,7 @@ public class Pointer {
     }
 
     private void init() {
-//        MemoryManager.retain(this);
+        MemoryManager.retain(this);
     }
 
     /**
@@ -75,17 +75,17 @@ public class Pointer {
         readOnly = b;
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-
-        try {
-            MemoryManager.deletePointer(this);
-        } catch (Throwable ex) {
-            //
-        } finally {
-            super.finalize();
-        }
-    }
+//    @Override
+//    protected void finalize() throws Throwable {
+//
+//        try {
+//            MemoryManager.deletePointer(this);
+//        } catch (Throwable ex) {
+//            //
+//        } finally {
+//            super.finalize();
+//        }
+//    }
 
     /**
      * @return the className

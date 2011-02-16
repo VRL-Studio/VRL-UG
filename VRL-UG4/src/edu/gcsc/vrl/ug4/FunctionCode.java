@@ -31,7 +31,7 @@ public class FunctionCode {
                 VLangUtils.addEscapeCharsToCode(
                 functionName)).append("\", category=\"").
                 append(VLangUtils.addEscapeCharsToCode(functionCategory)).
-                append("\")").newLine().
+                append("\", allowRemoval=false)").newLine().
                 append("@ObjectInfo(name=\"").
                 append(VLangUtils.addEscapeCharsToCode(functionName)).
                 append("\")").newLine();
@@ -52,7 +52,6 @@ public class FunctionCode {
 
         new MethodGroupCode(function, CodeType.FULL_CLASS, true).toString(builder);
         new MethodGroupCode(function, CodeType.FULL_CLASS, false).toString(builder);
-
 
 //        builder.newLine().
 //                append("protected UGObject newInstance(Pointer p) {").

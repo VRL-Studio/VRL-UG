@@ -105,6 +105,10 @@ public class UG4 {
 
     native String getMessages();
 
+    native void clearMessages();
+
+    native void setMaxQueueSize(int n);
+
     class MessageThread extends Thread {
 
         private boolean logging = true;

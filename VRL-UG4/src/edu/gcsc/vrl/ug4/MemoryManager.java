@@ -6,7 +6,8 @@ package edu.gcsc.vrl.ug4;
 
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import java.util.Collection;
-
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  *
@@ -14,8 +15,7 @@ import java.util.Collection;
  */
 public class MemoryManager {
 
-//    private static HashMap<Long, Integer> references =
-//            new HashMap<Long, Integer>();
+    private static HashSet<Pointer> references = new HashSet<Pointer>();
 
     // no instanciation allowed
     private MemoryManager() {
@@ -36,17 +36,21 @@ public class MemoryManager {
 
         if (ptr != 0 && exportedClassPtr != 0) {
             System.out.println("Delete: " + className + " [" + ptr + "]");
-//            delete(ptr, exportedClassPtr);
+            delete(ptr, exportedClassPtr);
         }
     }
 
-//    public static void retain(Pointer p) {
+    public static void retain(Pointer p) {
 //        Integer refs = references.get(p.getAddress());
 //
 //        if (refs != null) {
 //            references.put(p.getAddress(), refs++);
 //        }
-//    }
+
+        if (p != null && p.getAddress() != 0 && p.getClassName() != null) {
+            references.add(p);
+        }
+    }
 //
 //    public static void release(Pointer p) {
 //
@@ -62,14 +66,23 @@ public class MemoryManager {
 //    }
 
     public static void releaseAll(VisualCanvas canvas) {
-        Collection<Object> objects =
-                canvas.getInspector().
-                getObjects();
 
-        for (Object o : objects) {
-            if (o instanceof UGObject) {
-                UGObject obj = (UGObject) o;
-                obj.releaseAll();
+        for (Pointer p : references) {
+            deletePointer(p);
+        }
+
+        references.clear();
+
+        if (canvas != null) {
+            Collection<Object> objects =
+                    canvas.getInspector().
+                    getObjects();
+
+            for (Object o : objects) {
+                if (o instanceof UGObject) {
+                    UGObject obj = (UGObject) o;
+                    obj.releaseAll();
+                }
             }
         }
     }

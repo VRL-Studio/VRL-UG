@@ -61,7 +61,7 @@ public class MethodCode {
 
         builder.append(")");
 
-        if (asFullClass) {
+        if (asFullClass || asWrapper) {
 
             builder.append(" {").newLine().incIndentation();
 
@@ -132,17 +132,18 @@ public class MethodCode {
             builder.newLine().decIndentation().append("}").newLine().newLine();
         } else if (asInterface){
             builder.append(";").newLine();
-        } else if (asWrapper) {
-             builder.append("{").newLine().incIndentation().
-                     append("/*NO IMPLEMENTATION*/").newLine().
-                     append("throw new UnsupportedOperationException(").
-                     newLine().incIndentation().
-                     append("\"This class does not support\"").
-                     newLine().
-                     append("+\"native method execution.\");").
-                     newLine().decIndentation().decIndentation().
-                     append("}").newLine();
         }
+//        else if (asWrapper) {
+//             builder.append("{").newLine().incIndentation().
+//                     append("/*NO IMPLEMENTATION*/").newLine().
+//                     append("throw new UnsupportedOperationException(").
+//                     newLine().incIndentation().
+//                     append("\"This class does not support\"").
+//                     newLine().
+//                     append("+\"native method execution.\");").
+//                     newLine().decIndentation().decIndentation().
+//                     append("}").newLine();
+//        }
 
         return builder;
     }
