@@ -29,6 +29,11 @@ public class MethodCode {
     }
 
     public CodeBuilder toString(CodeBuilder builder) {
+        return toString(builder, null);
+    }
+
+    public CodeBuilder toString(CodeBuilder builder,
+            String customInvocationCode) {
 
         boolean isFunction = method instanceof NativeFunctionInfo;
 
@@ -103,10 +108,14 @@ public class MethodCode {
                 builder.append("Object result = ");
             }
 
-            builder.append("invokeMethod("
-                    + isFunction + ", "
-                    + method.isConst()
-                    + ", \"" + method.getName() + "\", params);").newLine();
+            if (customInvocationCode != null) {
+                builder.append(customInvocationCode).newLine();
+            } else {
+                builder.append("invokeMethod("
+                        + isFunction + ", "
+                        + method.isConst()
+                        + ", \"" + method.getName() + "\", params);").newLine();
+            }
 
             if (returnsPointer) {
                 String returnTypeClassName =
@@ -130,7 +139,7 @@ public class MethodCode {
             }
 
             builder.newLine().decIndentation().append("}").newLine().newLine();
-        } else if (asInterface){
+        } else if (asInterface) {
             builder.append(";").newLine();
         }
 //        else if (asWrapper) {

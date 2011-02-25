@@ -12,5 +12,6 @@ package edu.gcsc.vrl.ug4;
 public enum CodeType {
     INTERFACE,
     WRAP_POINTER_CLASS,
-    FULL_CLASS
+    FULL_CLASS,
+    ANY_REF
 }

@@ -42,6 +42,10 @@ public class NativeAPICode {
             }
         }
 
+//        if (type != CodeType.WRAP_POINTER_CLASS) {
+//            codes.add(new UGAnyCode(apiInfo, type).toString());
+//        }
+
         return codes.toArray(new String[codes.size()]);
     }
 

@@ -38,8 +38,8 @@ public class UGObject implements Serializable, UGObjectInterface {
         if (o.referenceList != null) {
             referenceList.addAll(o.referenceList);
         }
-//        setClassName(o.getClassName());
-//        setClassNames(o.getClassNames());
+        setClassName(o.getClassName());
+        setClassNames(o.getClassNames());
     }
 
     /**
