@@ -14,8 +14,24 @@ import javax.swing.SwingUtilities;
  */
 public class UG4 {
 
+    private static Class<?>[] nativeClasses;
+
     static {
         System.loadLibrary("ug4");
+    }
+
+    /**
+     * @return the nativeClasses
+     */
+    public static Class<?>[] getNativeClasses() {
+        return nativeClasses;
+    }
+
+    /**
+     * @param aNativeClasses the nativeClasses to set
+     */
+    static void setNativeClasses(Class<?>[] aNativeClasses) {
+        nativeClasses = aNativeClasses;
     }
 
     // instanciation only allowed in this class
@@ -53,7 +69,7 @@ public class UG4 {
         return getUG4(null);
     }
 
-    native String[] createJavaBindings();
+//    native String[] createJavaBindings();
 
     native NativeAPIInfo convertRegistryInfo();
 

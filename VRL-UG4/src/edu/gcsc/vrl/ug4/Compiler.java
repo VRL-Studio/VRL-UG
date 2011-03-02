@@ -146,6 +146,8 @@ public class Compiler {
 
         deleteClassFiles(scriptPath);
 
+        UG4.setNativeClasses(result);
+
         return result;
     }
 

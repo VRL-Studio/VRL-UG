@@ -24,7 +24,7 @@ public class UGObject implements Serializable, UGObjectInterface {
 //    private transient Pointer exportedClassPointer;
     private String className;
     private ArrayList<String> classNames;
-    private transient ArrayList<UGObject> referenceList;
+//    private transient ArrayList<UGObject> referenceList;
 
     protected void setThis(UGObject o) {
         System.out.println(className + ">> Set This: "
@@ -32,12 +32,12 @@ public class UGObject implements Serializable, UGObjectInterface {
 //        releaseAll();
         setPointer(o.getPointer());
 
-        if (referenceList == null) {
-            referenceList = new ArrayList<UGObject>();
-        }
-        if (o.referenceList != null) {
-            referenceList.addAll(o.referenceList);
-        }
+//        if (referenceList == null) {
+//            referenceList = new ArrayList<UGObject>();
+//        }
+//        if (o.referenceList != null) {
+//            referenceList.addAll(o.referenceList);
+//        }
         setClassName(o.getClassName());
         setClassNames(o.getClassNames());
     }
@@ -167,23 +167,23 @@ public class UGObject implements Serializable, UGObjectInterface {
         objPointer = null;
     }
 
-    @MethodInfo(noGUI = true)
-    public void releaseReferences() {
-        if (referenceList != null) {
-            System.out.println(getClassName() + " >> ReferenceList released! ");
-            referenceList.clear();
-        } else {
-            referenceList = new ArrayList<UGObject>();
-        }
-    }
+//    @MethodInfo(noGUI = true)
+//    public void releaseReferences() {
+//        if (referenceList != null) {
+//            System.out.println(getClassName() + " >> ReferenceList released! ");
+//            referenceList.clear();
+//        } else {
+//            referenceList = new ArrayList<UGObject>();
+//        }
+//    }
 
-    /**
-     * Releases pointer.
-     */
-    @MethodInfo(noGUI = true)
-    public void releaseAll() {
-        releaseThis();
-        releaseReferences();
-    }
+//    /**
+//     * Releases pointer.
+//     */
+//    @MethodInfo(noGUI = true)
+//    public void releaseAll() {
+//        releaseThis();
+//        releaseReferences();
+//    }
 
 }

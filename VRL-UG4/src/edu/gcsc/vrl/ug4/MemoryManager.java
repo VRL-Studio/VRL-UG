@@ -15,42 +15,44 @@ import java.util.HashSet;
  */
 public class MemoryManager {
 
-    private static HashSet<Pointer> references = new HashSet<Pointer>();
+//    private static HashSet<Pointer> references = new HashSet<Pointer>();
 
     // no instanciation allowed
     private MemoryManager() {
         throw new AssertionError(); // not in this class either!
     }
 
-    public static void deletePointer(Pointer p) {
 
-        long ptr = p.getAddress();
-        String className = p.getClassName();
 
-        long exportedClassPtr = 0;
-
-        if (className != null) {
-            exportedClassPtr =
-                    UG4.getUG4().getExportedClassPtrByName(className);
-        }
-
-        if (ptr != 0 && exportedClassPtr != 0) {
-            System.out.println("Delete: " + className + " [" + ptr + "]");
-            delete(ptr, exportedClassPtr);
-        }
-    }
-
-    public static void retain(Pointer p) {
-//        Integer refs = references.get(p.getAddress());
+//    public static void deletePointer(Pointer p) {
 //
-//        if (refs != null) {
-//            references.put(p.getAddress(), refs++);
+//        long ptr = p.getAddress();
+//        String className = p.getClassName();
+//
+//        long exportedClassPtr = 0;
+//
+//        if (className != null) {
+//            exportedClassPtr =
+//                    UG4.getUG4().getExportedClassPtrByName(className);
 //        }
+//
+//        if (ptr != 0 && exportedClassPtr != 0) {
+//            System.out.println("Delete: " + className + " [" + ptr + "]");
+//            delete(ptr, exportedClassPtr);
+//        }
+//    }
 
-        if (p != null && p.getAddress() != 0 && p.getClassName() != null) {
-            references.add(p);
-        }
-    }
+//    public static void retain(Pointer p) {
+////        Integer refs = references.get(p.getAddress());
+////
+////        if (refs != null) {
+////            references.put(p.getAddress(), refs++);
+////        }
+//
+//        if (p != null && p.getAddress() != 0 && p.getClassName() != null) {
+//            references.add(p);
+//        }
+//    }
 //
 //    public static void release(Pointer p) {
 //
@@ -67,11 +69,11 @@ public class MemoryManager {
 
     public static void releaseAll(VisualCanvas canvas) {
 
-        for (Pointer p : references) {
-            deletePointer(p);
-        }
+//        for (Pointer p : references) {
+//            deletePointer(p);
+//        }
 
-        references.clear();
+//        references.clear();
 
         if (canvas != null) {
             Collection<Object> objects =
@@ -81,11 +83,14 @@ public class MemoryManager {
             for (Object o : objects) {
                 if (o instanceof UGObject) {
                     UGObject obj = (UGObject) o;
-                    obj.releaseAll();
+//                    obj.releaseAll();
+                    obj.releaseThis();
                 }
             }
         }
     }
 
     native static void delete(long objPtr, long exportedClassPtr);
+
+    native static void invalidate(SmartPointer p);
 }

@@ -29,7 +29,6 @@ public class ParamListCode {
 
     public CodeBuilder toString(CodeBuilder builder) {
 
-
         for (int i = 0; i < params.length; i++) {
 
             if (i > 0) {
@@ -47,7 +46,6 @@ public class ParamListCode {
                 builder.append("VisualIDRequest id");
             }
         }
-
 
         return builder;
     }

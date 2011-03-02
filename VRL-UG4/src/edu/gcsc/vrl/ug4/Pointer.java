@@ -14,19 +14,19 @@ public class Pointer {
     private long address;
     private String className;
 
-    public Pointer(Pointer p) {
-        this.address = p.address;
-        this.readOnly = p.readOnly;
-        this.className = p.className;
+//    public Pointer(Pointer p) {
+//        this.address = p.address;
+//        this.readOnly = p.readOnly;
+//        this.className = p.className;
+//
+//        init();
+//    }
 
-        init();
-    }
-
-    public Pointer(String className, long address, boolean readOnly) {
+    public Pointer(String className, long address,
+            boolean readOnly) {
         this.address = address;
         this.readOnly = readOnly;
         this.className = className;
-
         init();
     }
 
@@ -53,7 +53,7 @@ public class Pointer {
     }
 
     private void init() {
-        MemoryManager.retain(this);
+//        MemoryManager.retain(this);
     }
 
     /**
@@ -74,18 +74,6 @@ public class Pointer {
     public void setConst(boolean b) {
         readOnly = b;
     }
-
-//    @Override
-//    protected void finalize() throws Throwable {
-//
-//        try {
-//            MemoryManager.deletePointer(this);
-//        } catch (Throwable ex) {
-//            //
-//        } finally {
-//            super.finalize();
-//        }
-//    }
 
     /**
      * @return the className
@@ -110,6 +98,9 @@ public class Pointer {
     @Override
     public String toString() {
         return "Pointer: class=" + className
-                + ", address=" + address + ", const=" + isConst();
+                + ", address=" + address
+                + ", const=" + isConst();
     }
+
+
 }

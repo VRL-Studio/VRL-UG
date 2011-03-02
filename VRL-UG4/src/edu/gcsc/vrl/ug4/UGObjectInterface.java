@@ -34,15 +34,21 @@ public interface UGObjectInterface {
      */
 //    Pointer getPointer();
 
+
+
+
     /**
      * Releases pointer.
      */
-    @MethodInfo(noGUI = true)
-    void releaseAll();
+//    @MethodInfo(noGUI = true)
+//    void releaseAll();
 
-    @MethodInfo(noGUI = true)
-    void releaseReferences();
+//    @MethodInfo(noGUI = true)
+//    void releaseReferences();
 
+
+
+    
     /**
      * Releases pointer.
      */

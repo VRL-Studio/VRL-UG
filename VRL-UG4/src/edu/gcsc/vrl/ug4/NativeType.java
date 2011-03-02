@@ -16,6 +16,8 @@ public enum NativeType {
     STRING,
     POINTER,
     CONST_POINTER,
+    SMART_POINTER,
+    CONST_SMART_POINTER,
     VOID,
     UNDEFINED
 }

@@ -62,6 +62,12 @@ public class NativeParamInfo {
             case 6:
                 setType(NativeType.CONST_POINTER);
                 break;
+            case 7:
+                setType(NativeType.SMART_POINTER);
+                break;
+            case 8:
+                setType(NativeType.CONST_SMART_POINTER);
+                break;
             default:
                 setType(NativeType.UNDEFINED);
         }
@@ -167,6 +173,10 @@ public class NativeParamInfo {
             case POINTER:
                 return CodeUtils.interfaceName(getClassName());
             case CONST_POINTER:
+                return CodeUtils.interfaceName(getClassName());
+            case SMART_POINTER:
+                return CodeUtils.interfaceName(getClassName());
+            case CONST_SMART_POINTER:
                 return CodeUtils.interfaceName(getClassName());
         }
 

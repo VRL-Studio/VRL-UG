@@ -222,13 +222,13 @@ class UGAny implements UGObjectInterface, Serializable {
         return reference.getClassNames();
     }
 
-    public void releaseAll() {
-        reference.releaseAll();
-    }
-
-    public void releaseReferences() {
-        reference.releaseReferences();
-    }
+//    public void releaseAll() {
+//        reference.releaseAll();
+//    }
+//
+//    public void releaseReferences() {
+//        reference.releaseReferences();
+//    }
 
     public void releaseThis() {
         reference.releaseThis();

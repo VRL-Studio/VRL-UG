@@ -102,7 +102,12 @@ public class MethodCode {
             boolean returnsPointer =
                     method.getReturnValue().getType()
                     == NativeType.CONST_POINTER
-                    || method.getReturnValue().getType() == NativeType.POINTER;
+                    || method.getReturnValue().getType()
+                    == NativeType.POINTER
+                    || method.getReturnValue().getType()
+                    == NativeType.CONST_SMART_POINTER
+                    || method.getReturnValue().getType()
+                    == NativeType.SMART_POINTER;
 
             if (!method.returnsVoid()) {
                 builder.append("Object result = ");
