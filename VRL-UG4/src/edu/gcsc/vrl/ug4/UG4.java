@@ -15,6 +15,7 @@ import javax.swing.SwingUtilities;
 public class UG4 {
 
     private static Class<?>[] nativeClasses;
+    private static StringBuffer messages = new StringBuffer();
 
     static {
         System.loadLibrary("ug4");
@@ -70,7 +71,6 @@ public class UG4 {
     }
 
 //    native String[] createJavaBindings();
-
     native NativeAPIInfo convertRegistryInfo();
 
     native Object invokeMethod(
@@ -118,12 +118,32 @@ public class UG4 {
             messagingThread.stopLogging();
         }
     }
+//
+//    native String getMessages();
 
-    native String getMessages();
-
-    native void clearMessages();
-
+//    native void clearMessages();
     native void setMaxQueueSize(int n);
+
+    /**
+     * @return the messages
+     */
+    private StringBuffer getMessages() {
+        return messages;
+    }
+
+    public static void addMessage(String s) {
+        messages.append(s);
+
+        if (messages.length() > 1000000) {
+            messages.delete(0, 1000000 - 1);
+        }
+    }
+
+    public void clearMessages() {
+        if (messages.length() > 0) {
+            messages.delete(0, messages.length() - 1);
+        }
+    }
 
     class MessageThread extends Thread {
 
@@ -137,8 +157,8 @@ public class UG4 {
 
         @Override
         public void run() {
-            messages = getMessages();
-            oldMessages = getMessages();
+            messages = getMessages().toString();
+            oldMessages = getMessages().toString();
 
             while (logging) {
                 try {
@@ -153,7 +173,8 @@ public class UG4 {
                         public void run() {
                             if (mainCanvas != null) {
                                 mainCanvas.getMessageBox().addMessageAsLog(
-                                        "UG-Output:", messages,
+                                        "UG-Output:",
+                                        "<pre>" + messages + "</pre>",
                                         MessageType.INFO);
                             }
                         }
@@ -161,7 +182,7 @@ public class UG4 {
                 }
 
                 oldMessages = messages;
-                messages = getMessages();
+                messages = getMessages().toString();
             }
         }
 
