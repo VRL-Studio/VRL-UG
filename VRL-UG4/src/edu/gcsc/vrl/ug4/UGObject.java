@@ -48,6 +48,10 @@ public class UGObject implements Serializable, UGObjectInterface {
 //    @MethodInfo(interactive = false)
     protected Pointer getPointer() {
         if (objPointer == null) {
+
+            System.out.println("ClassName=" + getClassName());
+
+            
             long address = (long) edu.gcsc.vrl.ug4.UG4.getUG4().
                     newInstance(
                     edu.gcsc.vrl.ug4.UG4.getUG4().

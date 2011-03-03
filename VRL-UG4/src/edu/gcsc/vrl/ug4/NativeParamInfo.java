@@ -158,6 +158,7 @@ public class NativeParamInfo {
     }
 
     public String getTypeClassName() {
+        String prefix = "Const";
 
         switch (getType()) {
             case VOID:
@@ -173,11 +174,11 @@ public class NativeParamInfo {
             case POINTER:
                 return CodeUtils.interfaceName(getClassName());
             case CONST_POINTER:
-                return CodeUtils.interfaceName(getClassName());
+                return prefix + CodeUtils.interfaceName(getClassName());
             case SMART_POINTER:
                 return CodeUtils.interfaceName(getClassName());
             case CONST_SMART_POINTER:
-                return CodeUtils.interfaceName(getClassName());
+                return prefix + CodeUtils.interfaceName(getClassName());
         }
 
         return "/*ERROR!!! INVALID TYPE*/ void";

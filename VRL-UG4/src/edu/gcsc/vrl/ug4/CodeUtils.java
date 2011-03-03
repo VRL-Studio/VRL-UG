@@ -65,7 +65,8 @@ public class CodeUtils {
         return builder.toString();
     }
 
-    public static String namesToInterfaceNameList(String[] classNames) {
+    public static String namesToInterfaceNameList(
+            String[] classNames, String prefix) {
 
         StringBuilder builder = new StringBuilder();
 
@@ -74,7 +75,7 @@ public class CodeUtils {
                 builder.append(", ");
             }
 
-            builder.append(interfaceName(classNames[i]));
+            builder.append(prefix).append(interfaceName(classNames[i]));
         }
 
         return builder.toString();

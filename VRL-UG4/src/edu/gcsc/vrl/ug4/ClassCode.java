@@ -17,12 +17,14 @@ class ClassCode {
     private NativeAPIInfo nativeAPI;
     private NativeClassInfo classInfo;
     private CodeType type;
+    private boolean isConst;
 
     public ClassCode(NativeAPIInfo nativeAPI,
-            NativeClassInfo classInfo, CodeType type) {
+            NativeClassInfo classInfo, CodeType type, boolean isConst) {
         this.nativeAPI = nativeAPI;
         this.classInfo = classInfo;
         this.type = type;
+        this.isConst = isConst;
     }
 
     @Override
@@ -38,32 +40,46 @@ class ClassCode {
         boolean asWrapper = type == CodeType.WRAP_POINTER_CLASS;
         boolean asFullClass = type == CodeType.FULL_CLASS;
 
+        String prefix = "";
+
+        if (isConst) {
+            prefix = "Const";
+        }
+
         if (asInterface) {
             classHeaderCode =
                     "public interface "
-                    + CodeUtils.interfaceName(classInfo.getName())
+                    + prefix + CodeUtils.interfaceName(classInfo.getName())
                     + " extends UGObjectInterface ";
+
+            if (!isConst) {
+                classHeaderCode += ", Const"
+                        + CodeUtils.interfaceName(classInfo.getName());
+            }
+
             if (classInfo.getClassNames() != null
                     && classInfo.getBaseClassNames().length > 0) {
+
                 classHeaderCode += ", "
                         + CodeUtils.namesToInterfaceNameList(
-                        classInfo.getBaseClassNames());
+                        classInfo.getBaseClassNames(), prefix);
             }
         } else if (asFullClass) {
             classHeaderCode = "public class "
-                    + CodeUtils.className(classInfo.getName())
+                    + prefix + CodeUtils.className(classInfo.getName())
                     + " extends edu.gcsc.vrl.ug4.UGObject implements "
-                    + CodeUtils.interfaceName(classInfo.getName());
+                    + prefix + CodeUtils.interfaceName(classInfo.getName());
         } else if (asWrapper) {
             classHeaderCode = "public final class "
-                    + CodeUtils.className(classInfo.getName())
+                    + prefix + CodeUtils.className(classInfo.getName())
                     + " extends edu.gcsc.vrl.ug4.UGObject implements "
-                    + CodeUtils.interfaceName(classInfo.getName());
+                    + prefix + CodeUtils.interfaceName(classInfo.getName());
         }
 
-        if (asFullClass) {
-            builder.addLine(new ComponentInfoCode(classInfo).toString()).
+        if (asFullClass && !isConst) {
+            builder.addLine(new ComponentInfoCode(classInfo, prefix).toString()).
                     addLine("@ObjectInfo(name=\""
+                    + prefix
                     + VLangUtils.addEscapeCharsToCode(classInfo.getName()) + "\")");
         } else {
             builder.addLine("@ComponentInfo(ignore=true)");
@@ -75,13 +91,13 @@ class ClassCode {
         if (asFullClass) {
             builder.addLine(
                     "private static final long serialVersionUID=1L").
-                    addLine("public " + CodeUtils.className(classInfo.getName())
+                    addLine("public " + prefix + CodeUtils.className(classInfo.getName())
                     + "() { setClassName(\"" + classInfo.getName()
                     + "\");}").newLine();
         } else if (asWrapper) {
             builder.addLine(
                     "private static final long serialVersionUID=1L").
-                    addLine("protected " + CodeUtils.className(classInfo.getName())
+                    addLine("protected " + prefix + CodeUtils.className(classInfo.getName())
                     + "() { setClassName(\"" + classInfo.getName()
                     + "\");}").newLine();
         }
@@ -105,11 +121,14 @@ class ClassCode {
         for (boolean createVisual : visual) {
 
             for (NativeClassInfo cls : classes) {
-                for (NativeMethodGroupInfo m : cls.getMethods()) {
-                    if (!signatures.contains(new MethodGroupSignature(m))) {
-                        new MethodGroupCode(m, type, createVisual).toString(
-                                builder).newLine();
-                        signatures.add(new MethodGroupSignature(m));
+
+                if (!isConst) {
+                    for (NativeMethodGroupInfo m : cls.getMethods()) {
+                        if (!signatures.contains(new MethodGroupSignature(m))) {
+                            new MethodGroupCode(m, type, createVisual).toString(
+                                    builder).newLine();
+                            signatures.add(new MethodGroupSignature(m));
+                        }
                     }
                 }
 
@@ -129,20 +148,20 @@ class ClassCode {
 
         if (asFullClass) {
 
-            String interfaceName = CodeUtils.interfaceName(classInfo.getName());
+            String interfaceName = prefix + CodeUtils.interfaceName(classInfo.getName());
             String className = CodeUtils.className(classInfo.getName());
 
             builder.newLine().append("@MethodInfo()").
                     newLine().append("public ").
                     append("void setThis(@ParamInfo(name=\"").
-                    append(classInfo.getName()).append("\") ").
+                    append(prefix+classInfo.getName()).append("\") ").
                     append(interfaceName).
                     append(" o ) {super.setThis(o)}").newLine();
 
             builder.newLine().append("@MethodInfo(valueName=\"").
-                    append(classInfo.getName()).append("\")").
+                    append(prefix+classInfo.getName()).append("\")").
                     newLine().append("public ").
-                    append(CodeUtils.interfaceName(classInfo.getName())).
+                    append(interfaceName).
                     append(" getThis() {return this;}").newLine();
 
 //            builder.newLine().

@@ -13,14 +13,16 @@ import eu.mihosoft.vrl.lang.VLangUtils;
  */
 public class ComponentInfoCode {
     private NativeClassInfo classInfo;
+    private String prefix;
 
-    public ComponentInfoCode(NativeClassInfo classInfo) {
+    public ComponentInfoCode(NativeClassInfo classInfo, String prefix) {
         this.classInfo = classInfo;
+        this.prefix = prefix;
     }
 
     @Override
     public String toString() {
-        return "@ComponentInfo(name=\""
+        return "@ComponentInfo(name=\"" + prefix
                 +VLangUtils.addEscapeCharsToCode(classInfo.getName())
                 +"\", category=\""
                 + VLangUtils.addEscapeCharsToCode(classInfo.getCategory())

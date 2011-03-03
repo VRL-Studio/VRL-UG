@@ -27,17 +27,26 @@ public class NativeAPICode {
 
         for (NativeClassInfo classInfo : apiInfo.getClasses()) {
 
-            if ((classInfo.isInstantiable() && type == CodeType.FULL_CLASS)
-                    || interfaces) {
+            if ((classInfo.isInstantiable() && type == CodeType.FULL_CLASS)) {
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, type).toString(
+                        apiInfo, classInfo, type, false).toString(
+                        new CodeBuilder()).toString());
+                codes.add(new ClassCode(
+                        apiInfo, classInfo, type, true).toString(
                         new CodeBuilder()).toString());
 
+            } else if(interfaces) {
+                codes.add(new ClassCode(
+                        apiInfo, classInfo, type, false).toString(
+                        new CodeBuilder()).toString());
+                codes.add(new ClassCode(
+                        apiInfo, classInfo, type, true).toString(
+                        new CodeBuilder()).toString());
             } else if (!classInfo.isInstantiable()
                     && type == CodeType.WRAP_POINTER_CLASS) {
-                
+
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, type).toString(
+                        apiInfo, classInfo, type, false).toString(
                         new CodeBuilder()).toString());
             }
         }
