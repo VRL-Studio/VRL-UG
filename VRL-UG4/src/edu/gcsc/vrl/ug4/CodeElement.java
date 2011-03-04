@@ -8,7 +8,7 @@ package edu.gcsc.vrl.ug4;
 import eu.mihosoft.vrl.lang.CodeBuilder;
 
 /**
- *
+ * Code element.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public interface CodeElement {
