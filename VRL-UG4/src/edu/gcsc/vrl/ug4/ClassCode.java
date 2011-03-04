@@ -9,16 +9,23 @@ import eu.mihosoft.vrl.lang.VLangUtils;
 import java.util.ArrayList;
 
 /**
- *
+ * Represents the code of a class.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-class ClassCode {
+class ClassCode implements CodeElement{
 
     private NativeAPIInfo nativeAPI;
     private NativeClassInfo classInfo;
     private CodeType type;
     private boolean isConst;
 
+    /**
+     * Constructor.
+     * @param nativeAPI native api
+     * @param classInfo class info
+     * @param type code type
+     * @param isConst defines whether to compile as const
+     */
     public ClassCode(NativeAPIInfo nativeAPI,
             NativeClassInfo classInfo, CodeType type, boolean isConst) {
         this.nativeAPI = nativeAPI;
@@ -29,10 +36,11 @@ class ClassCode {
 
     @Override
     public String toString() {
-        return toString(new CodeBuilder()).toString();
+        return build(new CodeBuilder()).toString();
     }
 
-    public CodeBuilder toString(CodeBuilder builder) {
+    @Override
+    public CodeBuilder build(CodeBuilder builder) {
 
         String classHeaderCode = "";
 
@@ -125,7 +133,7 @@ class ClassCode {
                 if (!isConst) {
                     for (NativeMethodGroupInfo m : cls.getMethods()) {
                         if (!signatures.contains(new MethodGroupSignature(m))) {
-                            new MethodGroupCode(m, type, createVisual).toString(
+                            new MethodGroupCode(m, type, createVisual).build(
                                     builder).newLine();
                             signatures.add(new MethodGroupSignature(m));
                         }
@@ -134,7 +142,7 @@ class ClassCode {
 
                 for (NativeMethodGroupInfo m : cls.getConstMethods()) {
                     if (!signatures.contains(new MethodGroupSignature(m))) {
-                        new MethodGroupCode(m, type, createVisual).toString(
+                        new MethodGroupCode(m, type, createVisual).build(
                                 builder).newLine();
                         signatures.add(new MethodGroupSignature(m));
                     }

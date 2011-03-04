@@ -10,7 +10,7 @@ import eu.mihosoft.vrl.lang.CodeBuilder;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class MethodCode {
+public class MethodCode implements CodeElement{
 
     private NativeMethodInfo method;
     private final CodeType type;
@@ -25,10 +25,10 @@ public class MethodCode {
 
     @Override
     public String toString() {
-        return toString(new CodeBuilder()).toString();
+        return build(new CodeBuilder()).toString();
     }
 
-    public CodeBuilder toString(CodeBuilder builder) {
+    public CodeBuilder build(CodeBuilder builder) {
         return toString(builder, null);
     }
 
@@ -47,7 +47,7 @@ public class MethodCode {
             methodPrefix = "const_";
         }
 
-        new MethodInfoCode(method, visual).toString(builder).
+        new MethodInfoCode(method, visual).build(builder).
                 newLine().append("public "
                 + method.getReturnValue().getTypeClassName() + " "
                 + methodPrefix
@@ -58,7 +58,7 @@ public class MethodCode {
             builder.newLine().incIndentation();
         }
         new ParamListCode(method.getParameters(),
-                !asInterface, visual).toString(builder);
+                !asInterface, visual).build(builder);
 
         if (method.getParameters().length > 0 || visual) {
             builder.newLine().decIndentation();

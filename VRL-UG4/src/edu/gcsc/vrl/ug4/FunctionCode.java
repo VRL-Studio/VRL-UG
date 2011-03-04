@@ -11,7 +11,7 @@ import eu.mihosoft.vrl.lang.VLangUtils;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class FunctionCode {
+public class FunctionCode implements CodeElement{
 
     private NativeFunctionGroupInfo function;
 
@@ -19,7 +19,7 @@ public class FunctionCode {
         this.function = function;
     }
 
-    public CodeBuilder toString(CodeBuilder builder) {
+    public CodeBuilder build(CodeBuilder builder) {
 
         String functionName = function.getOverloads()[0].getName();
         String functionCategory = function.getOverloads()[0].getCategory();
@@ -50,8 +50,8 @@ public class FunctionCode {
 //        new MethodCode(function, false, true).toString(builder);
 //        new MethodCode(function, false, false).toString(builder);
 
-        new MethodGroupCode(function, CodeType.FULL_CLASS, true).toString(builder);
-        new MethodGroupCode(function, CodeType.FULL_CLASS, false).toString(builder);
+        new MethodGroupCode(function, CodeType.FULL_CLASS, true).build(builder);
+        new MethodGroupCode(function, CodeType.FULL_CLASS, false).build(builder);
 
 //        builder.newLine().
 //                append("protected UGObject newInstance(Pointer p) {").

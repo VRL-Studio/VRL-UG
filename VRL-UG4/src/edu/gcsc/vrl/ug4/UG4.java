@@ -39,6 +39,7 @@ public class UG4 {
     private UG4() {
         //
     }
+    
     private static UG4 ug4;
     private VisualCanvas mainCanvas;
     private MessageThread messagingThread;

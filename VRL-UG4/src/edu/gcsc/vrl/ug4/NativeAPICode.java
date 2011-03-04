@@ -11,7 +11,7 @@ import java.util.ArrayList;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class NativeAPICode {
+public class NativeAPICode{
 
     private NativeAPIInfo apiInfo;
 
@@ -29,24 +29,24 @@ public class NativeAPICode {
 
             if ((classInfo.isInstantiable() && type == CodeType.FULL_CLASS)) {
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, type, false).toString(
+                        apiInfo, classInfo, type, false).build(
                         new CodeBuilder()).toString());
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, type, true).toString(
+                        apiInfo, classInfo, type, true).build(
                         new CodeBuilder()).toString());
 
             } else if(interfaces) {
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, type, false).toString(
+                        apiInfo, classInfo, type, false).build(
                         new CodeBuilder()).toString());
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, type, true).toString(
+                        apiInfo, classInfo, type, true).build(
                         new CodeBuilder()).toString());
             } else if (!classInfo.isInstantiable()
                     && type == CodeType.WRAP_POINTER_CLASS) {
 
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, type, false).toString(
+                        apiInfo, classInfo, type, false).build(
                         new CodeBuilder()).toString());
             }
         }
@@ -86,7 +86,7 @@ public class NativeAPICode {
 //                        new CodeBuilder()).toString());
 //            }
 
-            codes.add(new FunctionCode(group).toString(
+            codes.add(new FunctionCode(group).build(
                     new CodeBuilder()).toString());
         }
         return codes.toArray(new String[codes.size()]);

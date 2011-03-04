@@ -12,7 +12,7 @@ import eu.mihosoft.vrl.lang.VLangUtils;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class ParamInfoCode {
+public class ParamInfoCode implements CodeElement {
     private NativeParamInfo param;
 
     public ParamInfoCode(NativeParamInfo param) {
@@ -21,10 +21,10 @@ public class ParamInfoCode {
 
     @Override
     public String toString() {
-        return toString(new CodeBuilder()).toString();
+        return build(new CodeBuilder()).toString();
     }
 
-    public CodeBuilder toString(CodeBuilder builder) {
+    public CodeBuilder build(CodeBuilder builder) {
 
         builder.append("@ParamInfo(name=\""
                 + VLangUtils.addEscapeCharsToCode(param.getParamInfo()[0])

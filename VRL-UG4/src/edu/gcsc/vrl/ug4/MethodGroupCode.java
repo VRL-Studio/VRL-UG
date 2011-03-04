@@ -10,7 +10,7 @@ import eu.mihosoft.vrl.lang.CodeBuilder;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class MethodGroupCode {
+public class MethodGroupCode implements CodeElement {
 
     private NativeMethodGroupInfo methodInfo;
     private boolean visual;
@@ -23,10 +23,10 @@ public class MethodGroupCode {
         this.type = type;
     }
 
-    public CodeBuilder toString(CodeBuilder builder) {
+    public CodeBuilder build(CodeBuilder builder) {
 
         for (NativeMethodInfo m : methodInfo.getOverloads()) {
-            new MethodCode(m, type, visual).toString(builder);
+            new MethodCode(m, type, visual).build(builder);
         }
 
         return builder;
@@ -34,6 +34,6 @@ public class MethodGroupCode {
 
     @Override
     public String toString() {
-        return toString(new CodeBuilder()).toString();
+        return build(new CodeBuilder()).toString();
     }
 }

@@ -10,7 +10,7 @@ import eu.mihosoft.vrl.lang.CodeBuilder;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class ParamCode {
+public class ParamCode implements CodeElement {
 
     private NativeParamInfo param;
     private boolean withParamInfo;
@@ -24,15 +24,15 @@ public class ParamCode {
 
     @Override
     public String toString() {
-        return toString(new CodeBuilder()).toString();
+        return build(new CodeBuilder()).toString();
     }
 
-    public CodeBuilder toString(CodeBuilder builder) {
+    public CodeBuilder build(CodeBuilder builder) {
 
         builder.incIndentation();
 
         if (withParamInfo) {
-            new ParamInfoCode(param).toString(builder);
+            new ParamInfoCode(param).build(builder);
         }
 
         builder.append(param.getTypeClassName()).append(" p"+index);

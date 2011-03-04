@@ -10,7 +10,7 @@ import eu.mihosoft.vrl.lang.CodeBuilder;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class ParamListCode {
+public class ParamListCode implements CodeElement {
 
     private NativeParamInfo[] params;
     private boolean withParamInfo;
@@ -24,10 +24,10 @@ public class ParamListCode {
 
     @Override
     public String toString() {
-        return toString(new CodeBuilder()).toString();
+        return build(new CodeBuilder()).toString();
     }
 
-    public CodeBuilder toString(CodeBuilder builder) {
+    public CodeBuilder build(CodeBuilder builder) {
 
         for (int i = 0; i < params.length; i++) {
 
@@ -35,7 +35,7 @@ public class ParamListCode {
                 builder.append(", ").newLine();
             }
 
-            new ParamCode(params[i], i, withParamInfo).toString(builder);
+            new ParamCode(params[i], i, withParamInfo).build(builder);
         }
 
         if (visual) {

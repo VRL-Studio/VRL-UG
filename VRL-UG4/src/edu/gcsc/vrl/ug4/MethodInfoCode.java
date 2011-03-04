@@ -11,7 +11,7 @@ import eu.mihosoft.vrl.lang.VLangUtils;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class MethodInfoCode {
+public class MethodInfoCode implements CodeElement {
 
     private NativeMethodInfo method;
     private boolean visual;
@@ -23,10 +23,10 @@ public class MethodInfoCode {
 
     @Override
     public String toString() {
-        return toString(new CodeBuilder()).toString();
+        return build(new CodeBuilder()).toString();
     }
 
-    public CodeBuilder toString(CodeBuilder builder) {
+    public CodeBuilder build(CodeBuilder builder) {
 
         if (!method.returnsVoid() && visual) {
             builder.append("@MethodInfo(");
