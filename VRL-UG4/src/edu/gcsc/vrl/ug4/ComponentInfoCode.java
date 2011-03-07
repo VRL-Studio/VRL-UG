@@ -38,7 +38,9 @@ public class ComponentInfoCode implements CodeElement {
                 append("\", category=\"").
                 append(VLangUtils.addEscapeCharsToCode(
                 classInfo.getCategory())).
-                append("\", allowRemoval=false)");
+                append("\", allowRemoval=false)").newLine();
+
+        
 
         return builder;
     }
