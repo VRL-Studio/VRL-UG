@@ -5,7 +5,8 @@
 package edu.gcsc.vrl.ug4;
 
 /**
- *
+ * Defines a method signature. This is used to check whether a method has
+ * already been generated.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class MethodSignature {
@@ -36,7 +37,8 @@ public class MethodSignature {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 59 * hash + (this.signature != null ? this.signature.hashCode() : 0);
+        hash = 59 * hash
+                + (this.signature != null ? this.signature.hashCode() : 0);
         return hash;
     }
 
@@ -52,9 +54,6 @@ public class MethodSignature {
         boolean result = this.signature == null && other.signature == null
                 || ((this.signature != null && other.signature != null)
                 && this.signature.equals(other.signature));
-
-//        System.out.println("EQUALS: " + this.signature + " " + other.signature + "  RESULT=" + result);
-
 
         return result;
     }

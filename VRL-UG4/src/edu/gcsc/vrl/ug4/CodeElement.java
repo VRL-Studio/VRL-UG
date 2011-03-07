@@ -15,7 +15,7 @@ public interface CodeElement {
     /**
      * Builds this code element.
      * @param builder code builder
-     * @return code builder
+     * @return specified code builder
      */
     public CodeBuilder build(CodeBuilder builder);
     

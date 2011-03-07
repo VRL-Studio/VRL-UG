@@ -9,19 +9,32 @@ import eu.mihosoft.vrl.visual.MessageType;
 import javax.swing.SwingUtilities;
 
 /**
- *
+ * UG4 class represents UG4 and its scripting functionality. It allows only one
+ * instance which can be obtained via
+ * {@link #getUG4(eu.mihosoft.vrl.reflection.VisualCanvas) }.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class UG4 {
 
+    /**
+     * native classes
+     */
     private static Class<?>[] nativeClasses;
+    /**
+     * ug messages
+     */
     private static StringBuffer messages = new StringBuffer();
 
+    /**
+     * Loads native library.
+     */
     static {
         System.loadLibrary("ug4");
     }
 
     /**
+     * Returns all native UG4 classes that are exported via the UG registry,
+     * i.e., the equivalent Java wrapper classes.
      * @return the nativeClasses
      */
     public static Class<?>[] getNativeClasses() {
@@ -29,21 +42,43 @@ public class UG4 {
     }
 
     /**
+     * Defines all native UG4 classes that are exported via the UG registry,
+     * i.e., the equivalent Java wrapper classes.
      * @param aNativeClasses the nativeClasses to set
      */
-    static void setNativeClasses(Class<?>[] aNativeClasses) {
-        nativeClasses = aNativeClasses;
+    static void setNativeClasses(Class<?>[] nativeClasses) {
+        UG4.nativeClasses = nativeClasses;
     }
 
-    // instanciation only allowed in this class
+    /**
+     * instanciation only allowed in this class
+     */
     private UG4() {
         //
     }
-    
+
+    /**
+     * ug instance
+     */
     private static UG4 ug4;
+
+    /**
+     * VRL canvas used to visualize ug classes
+     */
     private VisualCanvas mainCanvas;
+
+    /**
+     * Messaging thread which displays messages generated from native UG
+     * methods.
+     */
     private MessageThread messagingThread;
 
+    /**
+     * Returns the instance of this singleton. If it does not exist it will be
+     * created.
+     * @param canvas VRL canvas that shall be used to visualize ug classes
+     * @return the instance of this singleton
+     */
     public static UG4 getUG4(VisualCanvas canvas) {
         if (ug4 == null) {
 
@@ -67,39 +102,37 @@ public class UG4 {
         return ug4;
     }
 
+    /**
+     * <p>
+     * Returns the instance of this singleton.
+     * </p>
+     * <p>
+     * <b>Notice:</b> It is necessary to use this method to create the UG
+     * instance if the UG classes shall be visualized via VRL. If the UG
+     * instance has been created the method {@link #getUG4() } can be used
+     * to get a reference to it.
+     * </p>
+     */
     public static UG4 getUG4() {
         return getUG4(null);
     }
 
-//    native String[] createJavaBindings();
-    native NativeAPIInfo convertRegistryInfo();
-
-    native Object invokeMethod(
-            String exportedClassName,
-            long objPtr, boolean readOnly, String methodName, Object[] params);
-
-    native long newInstance(long objPtr);
-
-    native long getExportedClassPtrByName(String name);
-
-    native Object invokeFunction(String name, boolean readOnly, Object[] params);
-
-    native int ugInit(String[] args);
-
-    native String getSvnRevision();
-
-    native String getCompileDate();
-
-//    native void attachCanvas(VisualCanvas canvas);
     /**
-     * @return the mainCanvas
+     * Returns the VRL canvas that is used to visualize the UG classes.
+     * @return the VRL canvas that is used to visualize the UG classes
      */
     public VisualCanvas getMainCanvas() {
         return mainCanvas;
     }
 
     /**
-     * @param mainCanvas the mainCanvas to set
+     * <p>
+     * The VRL canvas that shall be used to visualize the UG classes
+     * </p>
+     * <p>
+     * <b>Notice:</b> as a side effect this method starts UG message logging
+     * </p>
+     * @param mainCanvas the VRL canvas to set
      */
     public void setMainCanvas(VisualCanvas mainCanvas) {
         this.mainCanvas = mainCanvas;
@@ -108,22 +141,23 @@ public class UG4 {
 //        attachCanvas(mainCanvas);
     }
 
+    /**
+     * Starts UG message logging.
+     */
     public void startLogging() {
         stopLogging();
         messagingThread = new MessageThread();
         messagingThread.start();
     }
 
+    /**
+     * Stops UG message logging.
+     */
     public void stopLogging() {
         if (messagingThread != null) {
             messagingThread.stopLogging();
         }
     }
-//
-//    native String getMessages();
-
-//    native void clearMessages();
-    native void setMaxQueueSize(int n);
 
     /**
      * @return the messages
@@ -204,4 +238,33 @@ public class UG4 {
 //            }
 //        });
 //    }
+
+
+
+
+    // ********************************************
+    // ************** NATIVE METHODS **************
+    // ********************************************
+
+    native NativeAPIInfo convertRegistryInfo();
+
+    native Object invokeMethod(
+            String exportedClassName,
+            long objPtr, boolean readOnly,
+            String methodName, Object[] params);
+
+    native long newInstance(long objPtr);
+
+    native long getExportedClassPtrByName(String name);
+
+    native Object invokeFunction(String name,
+            boolean readOnly, Object[] params);
+
+    native int ugInit(String[] args);
+
+    native String getSvnRevision();
+
+    native String getCompileDate();
+
+//    native void attachCanvas(VisualCanvas canvas);
 }

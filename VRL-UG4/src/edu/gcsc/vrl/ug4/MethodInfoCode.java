@@ -8,7 +8,7 @@ import eu.mihosoft.vrl.lang.CodeBuilder;
 import eu.mihosoft.vrl.lang.VLangUtils;
 
 /**
- *
+ * Code element that generates method code.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class MethodInfoCode implements CodeElement {
@@ -16,6 +16,11 @@ public class MethodInfoCode implements CodeElement {
     private NativeMethodInfo method;
     private boolean visual;
 
+    /**
+     * Constructor
+     * @param method method
+     * @param visual defines whether to visualize this method
+     */
     public MethodInfoCode(NativeMethodInfo method, boolean visual) {
         this.method = method;
         this.visual = visual;
@@ -26,6 +31,7 @@ public class MethodInfoCode implements CodeElement {
         return build(new CodeBuilder()).toString();
     }
 
+    @Override
     public CodeBuilder build(CodeBuilder builder) {
 
         if (!method.returnsVoid() && visual) {

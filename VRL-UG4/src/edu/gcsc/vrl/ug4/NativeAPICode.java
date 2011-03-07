@@ -8,17 +8,27 @@ import eu.mihosoft.vrl.lang.CodeBuilder;
 import java.util.ArrayList;
 
 /**
- *
+ * This class provides methods to generate the code of the native API.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class NativeAPICode{
+public class NativeAPICode {
 
     private NativeAPIInfo apiInfo;
 
+    /**
+     * Constructor.
+     * @param apiInfo api
+     */
     public NativeAPICode(NativeAPIInfo apiInfo) {
         this.apiInfo = apiInfo;
     }
 
+    /**
+     * Returns API codes depending on the specified code type.
+     * @param type code type that indicates whether to generate interface code,
+     *        class code, etc.
+     * @return API codes
+     */
     private String[] getCodes(CodeType type) {
 
         ArrayList<String> codes = new ArrayList<String>();
@@ -35,7 +45,7 @@ public class NativeAPICode{
                         apiInfo, classInfo, type, true).build(
                         new CodeBuilder()).toString());
 
-            } else if(interfaces) {
+            } else if (interfaces) {
                 codes.add(new ClassCode(
                         apiInfo, classInfo, type, false).build(
                         new CodeBuilder()).toString());
@@ -58,33 +68,38 @@ public class NativeAPICode{
         return codes.toArray(new String[codes.size()]);
     }
 
-    public String[] getInterfaceCodes() {
+    /**
+     * Returns the API interfaces code.
+     * @return the API interfaces code
+     */
+    private String[] getInterfaceCodes() {
         return getCodes(CodeType.INTERFACE);
     }
 
-    public String[] getClassCodes() {
+    /**
+     * Returns the API class code.
+     * @return the API class code
+     */
+    private String[] getClassCodes() {
         return getCodes(CodeType.FULL_CLASS);
     }
 
-    public String[] getWrapperCodes() {
+    /**
+     * Returns the API wrapper class code
+     * @return the API wrapper class code
+     */
+    private String[] getWrapperCodes() {
         return getCodes(CodeType.WRAP_POINTER_CLASS);
     }
 
-    public String[] getFunctionCodes() {
+    /**
+     * Returns the API function code.
+     * @return the API function code
+     */
+    private String[] getFunctionCodes() {
         ArrayList<String> codes = new ArrayList<String>();
 
         for (NativeFunctionGroupInfo group : apiInfo.getFunctions()) {
-
-//            if (group == null) {
-//                System.out.println("GROUP==NULL!!!");
-//            } else {
-//                System.out.println("Group.numOverloads" + group.getOverloads().length);
-//            }
-
-//            for (NativeMethodInfo f : group.getOverloads()) {
-//                codes.add(new FunctionCode((NativeFunctionInfo) f).toString(
-//                        new CodeBuilder()).toString());
-//            }
 
             codes.add(new FunctionCode(group).build(
                     new CodeBuilder()).toString());
@@ -92,6 +107,10 @@ public class NativeAPICode{
         return codes.toArray(new String[codes.size()]);
     }
 
+    /**
+     * Returns all API codes.
+     * @return all API codes
+     */
     public String[] getAllCodes() {
 
         String[] interfaceCodes = getInterfaceCodes();
@@ -100,7 +119,8 @@ public class NativeAPICode{
         String[] functionCodes = getFunctionCodes();
 
         int finalLength = classesCodes.length
-                + interfaceCodes.length + functionCodes.length + wrapperCodes.length;
+                + interfaceCodes.length
+                + functionCodes.length + wrapperCodes.length;
 
         String[] result = new String[finalLength];
 
@@ -111,7 +131,8 @@ public class NativeAPICode{
                 classesCodes.length + interfaceCodes.length,
                 functionCodes.length);
         System.arraycopy(wrapperCodes, 0, result,
-                classesCodes.length + interfaceCodes.length + functionCodes.length,
+                classesCodes.length
+                + interfaceCodes.length + functionCodes.length,
                 wrapperCodes.length);
 
         return result;

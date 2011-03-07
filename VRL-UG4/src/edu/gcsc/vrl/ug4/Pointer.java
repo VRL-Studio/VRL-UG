@@ -5,7 +5,9 @@
 package edu.gcsc.vrl.ug4;
 
 /**
- *
+ * This class wrapps native C/C++ pointers with additional type info
+ * (class name) that can be used by UGs registry to call native
+ * functions or methods.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class Pointer {
@@ -14,14 +16,12 @@ public class Pointer {
     private long address;
     private String className;
 
-//    public Pointer(Pointer p) {
-//        this.address = p.address;
-//        this.readOnly = p.readOnly;
-//        this.className = p.className;
-//
-//        init();
-//    }
-
+    /**
+     * Constructor.
+     * @param className class name
+     * @param address address (native pointer)
+     * @param readOnly indicates whether this shall be a const pointer
+     */
     public Pointer(String className, long address,
             boolean readOnly) {
         this.address = address;
@@ -30,14 +30,11 @@ public class Pointer {
         init();
     }
 
-    public Pointer(String className, long address) {
-        this.address = address;
-        this.readOnly = false;
-        this.className = className;
-
-        init();
-    }
-
+    /**
+     * Constructor.
+     * @param address address (native pointer)
+     * @param readOnly indicates whether this shall be a const pointer
+     */
     public Pointer(long address, boolean readOnly) {
         this.address = address;
         this.readOnly = readOnly;
@@ -45,49 +42,64 @@ public class Pointer {
         init();
     }
 
-    public Pointer(long address) {
-        this.address = address;
-        this.readOnly = false;
-
-        init();
-    }
-
+    /**
+     * Initializes this pointer.
+     */
     private void init() {
 //        MemoryManager.retain(this);
     }
 
     /**
-     * @return the ptr
+     * Returns the pointer address.
+     * @return the pointer address
      */
     public long getAddress() {
         return address;
     }
 
     /**
-     *
-     * @return
+     * Indicates whether this pointer is const.
+     * @return <code>true</code> if this pointer is const;
+     *         <code>false</code> otherwise
      */
     public boolean isConst() {
         return readOnly;
     }
 
+    /**
+     * Defines whether this pointer is const.
+     * @param b state to set
+     */
     public void setConst(boolean b) {
         readOnly = b;
     }
 
     /**
-     * @return the className
+     * Returns the class name
+     * @return the class name
      */
     public String getClassName() {
         return className;
     }
 
+    /**
+     * Indicates whether the class name of the type is locked.
+     * @return <code>true</code> if the class name of the type is locked;
+     *         <code>false</code> otherwise
+     */
     public boolean isClsNameLocked() {
         return className != null;
     }
 
     /**
-     * @param className the className to set
+     * <p>
+     * Defines the class name.
+     * </p>
+     * <p>
+     * <b>Note:</b> This method only has an effect if
+     * {@link #isClsNameLocked() } returns false
+     * </p>
+     * @param className the class name to set
      */
     public void setClassName(String className) {
         if (!isClsNameLocked()) {
@@ -101,6 +113,4 @@ public class Pointer {
                 + ", address=" + address
                 + ", const=" + isConst();
     }
-
-
 }

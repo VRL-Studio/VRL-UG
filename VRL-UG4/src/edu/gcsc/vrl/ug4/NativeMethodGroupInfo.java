@@ -6,24 +6,30 @@
 package edu.gcsc.vrl.ug4;
 
 /**
- *
+ * This class contains all properties of a native method group that are 
+ * necessary to generate code for wrapper methods.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeMethodGroupInfo {
     private NativeMethodInfo[] overloads;
     private boolean isConst;
 
+    /**
+     * Constructor.
+     */
     public NativeMethodGroupInfo() {
     }
 
     /**
-     * @return the overloads
+     * Returns the overloads of this method group.
+     * @return the overloads of this method group
      */
     public NativeMethodInfo[] getOverloads() {
         return overloads;
     }
 
     /**
+     * Defines the overloads of this method group.
      * @param overloads the overloads to set
      */
     public void setOverloads(NativeMethodInfo[] overloads) {
@@ -31,14 +37,17 @@ public class NativeMethodGroupInfo {
     }
 
     /**
-     * @return the isConst
+     * Indicates whether this method group contains const methods.
+     * @return <code>true</code> if this method group contains const methods;
+     *         <code>false</code> otherwise
      */
     public boolean isConst() {
         return isConst;
     }
 
     /**
-     * @param isConst the isConst to set
+     * Defines whether this method group defines const methods.
+     * @param isConst the state to set
      */
     public void setConst(boolean isConst) {
         this.isConst = isConst;

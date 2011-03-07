@@ -8,17 +8,22 @@ import eu.mihosoft.vrl.lang.CodeBuilder;
 import eu.mihosoft.vrl.lang.VLangUtils;
 
 /**
- *
+ * Code element that gererates code for UG functions.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class FunctionCode implements CodeElement{
 
     private NativeFunctionGroupInfo function;
 
+    /**
+     * Constructor.
+     * @param function function
+     */
     public FunctionCode(NativeFunctionGroupInfo function) {
         this.function = function;
     }
 
+    @Override
     public CodeBuilder build(CodeBuilder builder) {
 
         String functionName = function.getOverloads()[0].getName();

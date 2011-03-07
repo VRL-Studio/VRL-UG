@@ -5,7 +5,7 @@
 package edu.gcsc.vrl.ug4;
 
 /**
- *
+ * Enum that represents native parameter types.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public enum NativeType {

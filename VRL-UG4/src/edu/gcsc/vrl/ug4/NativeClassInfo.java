@@ -6,7 +6,8 @@
 package edu.gcsc.vrl.ug4;
 
 /**
- *
+ * This class contains all properties of a native class that are necessary to
+ * generate code for wrapper classes.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeClassInfo {
@@ -18,13 +19,15 @@ public class NativeClassInfo {
     private boolean instantiable;
 
     /**
-     * @return the name
+     * Returns the class name.
+     * @return the class name
      */
     public String getName() {
         return name;
     }
 
     /**
+     * Defines the class name.
      * @param name the name to set
      */
     public void setName(String name) {
@@ -32,21 +35,24 @@ public class NativeClassInfo {
     }
 
     /**
-     * @return the categoryGroup
+     * Returns the component category.
+     * @return the component category
      */
     public String getCategory() {
         return category;
     }
 
     /**
-     * @param categoryGroup the categoryGroup to set
+     * Defines the component category of this class info.
+     * @param category the category to set
      */
     public void setCategory(String category) {
         this.category = category;
     }
 
     /**
-     * @return the classNames
+     * Returns the names of the base classes.
+     * @return names of the base classes
      */
     public String[] getClassNames() {
         return classNames;
@@ -66,42 +72,49 @@ public class NativeClassInfo {
     }
 
     /**
-     * @param classNames the classNames to set
+     * Defines the names of the base classes.
+     * @param classNames the names to set
      */
     public void setClassNames(String[] classNames) {
         this.classNames = classNames;
     }
 
     /**
-     * @return the isInstantiable
+     * Indicates wehther this class is instantiable.
+     * @return <code>true</code> if this class is instantiable;
+     *         <code>false</code> otherwise
      */
     public boolean isInstantiable() {
         return instantiable;
     }
 
     /**
-     * @param isInstantiable the isInstantiable to set
+     * Defines whether this class shall be instantiable.
+     * @param isInstantiable the state to set
      */
     public void setInstantiable(boolean isInstantiable) {
         this.instantiable = isInstantiable;
     }
 
     /**
-     * @return the methods
+     * Returns the method groups of this class.
+     * @return method groups of this class
      */
     public NativeMethodGroupInfo[] getMethods() {
         return methods;
     }
 
     /**
-     * @return the constMethods
+     * Returns the const method groups of this class.
+     * @return const method groups of this class
      */
     public NativeMethodGroupInfo[] getConstMethods() {
         return constMethods;
     }
 
     /**
-     * @param methods the methods to set
+     * Defines the method groups of this class
+     * @param methods method groups to set
      */
     public void setMethods(NativeMethodGroupInfo[] methods) {
         this.methods = methods;
@@ -112,7 +125,8 @@ public class NativeClassInfo {
     }
 
     /**
-     * @param constMethods the constMethods to set
+     * Defines the const method groups of this class
+     * @param constMethods const method groups to set
      */
     public void setConstMethods(NativeMethodGroupInfo[] constMethods) {
         this.constMethods = constMethods;

@@ -7,9 +7,7 @@ package edu.gcsc.vrl.ug4;
 import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.io.vrlx.AbstractCode;
 import groovy.lang.GroovyClassLoader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,12 +34,7 @@ public class Compiler {
      */
     public Class<?>[] compile(String[] codes) {
 
-//        return new Class<?>[]{Class.class};
-
         String packageName = "edu.gcsc.vrl.ug4";
-
-
-//        String code = "class UG4_Functionality {\n"
 
         ArrayList<String> classNames = new ArrayList<String>();
 
@@ -53,7 +46,7 @@ public class Compiler {
                 append("import eu.mihosoft.vrl.annotation.*;\n");
 
         for (String c : codes) {
-            code.append(c).append("\n\n");// + "/*--------NEW_CLASS--------*/\n\n";
+            code.append(c).append("\n\n");
             AbstractCode aCode = new AbstractCode();
             aCode.setCode(c);
 
@@ -65,17 +58,14 @@ public class Compiler {
 
             classNames.add(className);
 
-//            System.out.println("ClassName[before]: "
-//                    + classNames.get(classNames.size() - 1));
         }
 
         Collections.sort(classNames);
 
-//        String scriptLocation = f.getPath();
         File scriptPath = null;
         try {
             scriptPath = createTempDir();
-            System.out.println("TempClassDir: " + scriptPath.getAbsolutePath());
+            System.out.println("UG4-ClassDir: " + scriptPath.getAbsolutePath());
         } catch (IOException ex) {
             Logger.getLogger(
                     Compiler.class.getName()).log(Level.SEVERE, null, ex);
@@ -85,34 +75,32 @@ public class Compiler {
             scriptPath = scriptPath.getParentFile();
         }
 
-        try {
-            BufferedWriter writer =
-                    new BufferedWriter(new FileWriter(
-//                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
-                    new File("/Users/miho/UG_Classes.groovy")));
+//        try {
+//            BufferedWriter writer =
+//                    new BufferedWriter(new FileWriter(
+////                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
+//                    new File("/Users/miho/UG_Classes.groovy")));
+//
+//            writer.append(code);
+//            writer.flush();
+//            writer.close();
+//        } catch (IOException ex) {
+//            Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
-            writer.append(code);
-            writer.flush();
-            writer.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
-
-// Configure
+        // Configure
         CompilerConfiguration conf = new CompilerConfiguration();
         conf.setTargetDirectory(scriptPath.getPath());
-//conf.setClasspath(new File[]{additonalPath});
 
-// Compile…
+        // Compile…
         GroovyClassLoader gcl = new GroovyClassLoader();
         CompilationUnit cu = new CompilationUnit(gcl);
         cu.configure(conf);
         cu.addSource("UG_Classes", code.toString());
-// Add more source files to the compilation unit if needed
         cu.compile();
 
-// Load…
+        // Load classes via URL classloader
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         URL[] urls = null;
         try {
@@ -134,14 +122,13 @@ public class Compiler {
 //                    System.out.println("ClassName[after, ok]: " + className);
                 }
             } catch (ClassNotFoundException ex) {
-                System.out.println("ClassName[after, failed]: " + className);
+//                System.out.println("ClassName[after, failed]: " + className);
                 Logger.getLogger(
                         Compiler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
         Class<?>[] result = new Class<?>[classes.size()];
-
         classes.toArray(result);
 
         deleteClassFiles(scriptPath);
@@ -153,9 +140,9 @@ public class Compiler {
 
     /**
      * Create a new temporary directory. Use something like
-     * {@link #recursiveDelete(File)} to clean this directory up since it isn't
-     * deleted automatically
-     * http://stackoverflow.com/questions/617414/create-a-temporary-directory-in-java
+     * {@link #deleteClassFiles(File)} to clean this directory up since it isn't
+     * deleted automatically.
+     * @see http://stackoverflow.com/questions/617414/create-a-temporary-directory-in-java
      * @return  the new directory
      * @throws IOException if there is an error creating the temporary directory
      */
@@ -188,10 +175,8 @@ public class Compiler {
 
     /**
      * Request deletion of class files or directory on exit
-     * @param fileOrDir
-     *          the dir to delete
-     * @return
-     *          true iff all files are successfully deleted
+     * @param fileOrDir the dir to delete
+     * @return <code>true</code> if all files are successfully deleted
      */
     private void deleteClassFiles(File fileOrDir) {
         if (fileOrDir.isDirectory()) {

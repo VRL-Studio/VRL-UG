@@ -5,13 +5,22 @@
 package edu.gcsc.vrl.ug4;
 
 /**
- *
+ * This class wrapps native UG smart pointers with additional type info
+ * (class name) that can be used by UGs registry to call native
+ * functions or methods.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 class SmartPointer extends Pointer {
 
+    /**
+     * Memory the native smart pointer object is stored
+     */
     private byte[] smartPointer;
 
+    /*
+     * No public instanciation allowed. This constructor is only accessible from
+     * within this class or native methods.
+     */
     private SmartPointer(long address, byte[] smartPtr, boolean readOnly) {
         super(address, readOnly);
 
@@ -21,6 +30,7 @@ class SmartPointer extends Pointer {
     }
 
     /**
+     * Returns the memory that contains the native smart pointer.
      * @return the smartPointer
      */
     public byte[] getSmartPointer() {
@@ -29,6 +39,10 @@ class SmartPointer extends Pointer {
         return result;
     }
 
+    /**
+     * Invalidates native smart pointer.
+     * @throws Throwable
+     */
     @Override
     protected void finalize() throws Throwable {
         try {

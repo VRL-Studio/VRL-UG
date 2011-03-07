@@ -6,7 +6,8 @@
 package edu.gcsc.vrl.ug4;
 
 /**
- *
+ * This class contains all properties of a native method that are
+ * necessary to generate code for wrapper methods.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeMethodInfo {
@@ -19,13 +20,15 @@ public class NativeMethodInfo {
     private boolean isConst;
 
     /**
-     * @return the name
+     * Returns the method name.
+     * @return the method name
      */
     public String getName() {
         return name;
     }
 
     /**
+     * Defines the name of this method.
      * @param name the name to set
      */
     public void setName(String name) {
@@ -33,13 +36,15 @@ public class NativeMethodInfo {
     }
 
     /**
-     * @return the options
+     * Returns the VRL method options.
+     * @return the method options
      */
     public String getOptions() {
         return options;
     }
 
     /**
+     * Defines the VRL method options.
      * @param options the options to set
      */
     public void setOptions(String options) {
@@ -47,72 +52,91 @@ public class NativeMethodInfo {
     }
 
     /**
-     * @return the returnValue
+     * Returns the return value info of this method.
+     * @return the return value info of this method
      */
     public NativeParamInfo getReturnValue() {
         return returnValue;
     }
 
     /**
-     * @param returnValue the returnValue to set
+     * Defines the return value info of this method.
+     * @param returnValue the value info to set
      */
     public void setReturnValue(NativeParamInfo returnValue) {
         this.returnValue = returnValue;
     }
 
     /**
-     * @return the parameters
+     * Returns the method parameter infos.
+     * @return the method parameter infos
      */
     public NativeParamInfo[] getParameters() {
         return parameters;
     }
 
+    /**
+     * Defines the method parameter infos.
+     * @param params the parameter infos to set
+     */
     public void setParameters(NativeParamInfo[] params) {
         this.parameters = params;
     }
     
 
     /**
-     * @return the tooltip
+     * Returns the tooltip string of this method.
+     * @return the tooltip string of this method
      */
     public String getToolTip() {
         return toolTip;
     }
 
     /**
-     * @param tooltip the tooltip to set
+     * Defines the tooltip string of this method.
+     * @param tooltip the tooltip string to set
      */
     public void setToolTip(String toolTip) {
         this.toolTip = toolTip;
     }
 
     /**
-     * @return the help
+     * Returns the help string of this method.
+     * @return the help string of this method
      */
     public String getHelp() {
         return help;
     }
 
     /**
-     * @param help the help to set
+     * Defines the help string of this method.
+     * @param help the help string to set
      */
     public void setHelp(String help) {
         this.help = help;
     }
 
+    /**
+     * Indicates whether this method does not return a value.
+     * @return <code>true</code> if this method does not return a value;
+     *         <code>false</code> otherwise
+     */
     public boolean returnsVoid() {
         return getReturnValue().getType()==NativeType.VOID;
     }
 
     /**
-     * @return the asConst
+     * Indicates whether this is a const method.
+     * @return <code>true</code> if this method is const;
+     *         <code>false</code> otherwise
      */
     public boolean isConst() {
         return isConst;
     }
 
     /**
-     * @param asConst the asConst to set
+     * Defines whether this shall be a const method.
+     * @param asConst the state to set
      */
     public void setConst(boolean isConst) {
         this.isConst = isConst;

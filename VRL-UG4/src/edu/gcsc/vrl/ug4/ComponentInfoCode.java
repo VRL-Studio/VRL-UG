@@ -2,19 +2,25 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package edu.gcsc.vrl.ug4;
 
+import eu.mihosoft.vrl.lang.CodeBuilder;
 import eu.mihosoft.vrl.lang.VLangUtils;
 
 /**
- *
+ * Code element that generates component info code.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class ComponentInfoCode {
+public class ComponentInfoCode implements CodeElement {
+
     private NativeClassInfo classInfo;
     private String prefix;
 
+    /**
+     * Constructor.
+     * @param classInfo class info
+     * @param prefix class name prefix
+     */
     public ComponentInfoCode(NativeClassInfo classInfo, String prefix) {
         this.classInfo = classInfo;
         this.prefix = prefix;
@@ -22,10 +28,18 @@ public class ComponentInfoCode {
 
     @Override
     public String toString() {
-        return "@ComponentInfo(name=\"" + prefix
-                +VLangUtils.addEscapeCharsToCode(classInfo.getName())
-                +"\", category=\""
-                + VLangUtils.addEscapeCharsToCode(classInfo.getCategory())
-                +"\", allowRemoval=false)";
+        return build(new CodeBuilder()).getCode();
+    }
+
+    @Override
+    public CodeBuilder build(CodeBuilder builder) {
+        builder.append("@ComponentInfo(name=\"").append(prefix).
+                append(VLangUtils.addEscapeCharsToCode(classInfo.getName())).
+                append("\", category=\"").
+                append(VLangUtils.addEscapeCharsToCode(
+                classInfo.getCategory())).
+                append("\", allowRemoval=false)");
+
+        return builder;
     }
 }

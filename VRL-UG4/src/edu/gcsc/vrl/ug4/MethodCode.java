@@ -7,7 +7,7 @@ package edu.gcsc.vrl.ug4;
 import eu.mihosoft.vrl.lang.CodeBuilder;
 
 /**
- *
+ * Code element that generates method code.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class MethodCode implements CodeElement{
@@ -16,6 +16,12 @@ public class MethodCode implements CodeElement{
     private final CodeType type;
     private final boolean visual;
 
+    /**
+     * Constructor
+     * @param method method
+     * @param type code type
+     * @param visual defines whether to generate code that shall be visualized
+     */
     public MethodCode(NativeMethodInfo method,
             CodeType type, boolean visual) {
         this.method = method;
@@ -28,11 +34,19 @@ public class MethodCode implements CodeElement{
         return build(new CodeBuilder()).toString();
     }
 
+    @Override
     public CodeBuilder build(CodeBuilder builder) {
-        return toString(builder, null);
+        return build(builder, null);
     }
 
-    public CodeBuilder toString(CodeBuilder builder,
+    /**
+     * Builds this code element.
+     * @param builder bulder to use
+     * @param customInvocationCode optional custom invocation code;
+     *        if <code>null</code> is specified default invocation code is used
+     * @return specified code builder
+     */
+    public CodeBuilder build(CodeBuilder builder,
             String customInvocationCode) {
 
         boolean isFunction = method instanceof NativeFunctionInfo;
@@ -83,22 +97,6 @@ public class MethodCode implements CodeElement{
 
             builder.addLine(params);
 
-//            if (visual) {
-//                builder.addLine("updatePointer(id);");
-//            }
-
-//            if (isFunction) {
-//                builder.addLine(params).
-//                        addLine("edu.gcsc.vrl.ug4.UG4.getUG4().invokeFunction("
-//                        + "\"" + method.getName() + "\", false, params);");
-//            } else {
-//                builder.addLine(params).
-//                        addLine("edu.gcsc.vrl.ug4.UG4.getUG4().invokeMethod("
-//                        + "getClassName(), getPointer().getAddress(),"
-//                        + method.isConst()
-//                        + ", \"" + method.getName() + "\", params);");
-//            }
-
             boolean returnsPointer =
                     method.getReturnValue().getType()
                     == NativeType.CONST_POINTER
@@ -147,17 +145,6 @@ public class MethodCode implements CodeElement{
         } else if (asInterface) {
             builder.append(";").newLine();
         }
-//        else if (asWrapper) {
-//             builder.append("{").newLine().incIndentation().
-//                     append("/*NO IMPLEMENTATION*/").newLine().
-//                     append("throw new UnsupportedOperationException(").
-//                     newLine().incIndentation().
-//                     append("\"This class does not support\"").
-//                     newLine().
-//                     append("+\"native method execution.\");").
-//                     newLine().decIndentation().decIndentation().
-//                     append("}").newLine();
-//        }
 
         return builder;
     }

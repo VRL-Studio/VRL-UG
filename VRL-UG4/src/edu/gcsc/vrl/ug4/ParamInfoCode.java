@@ -9,12 +9,16 @@ import eu.mihosoft.vrl.lang.CodeBuilder;
 import eu.mihosoft.vrl.lang.VLangUtils;
 
 /**
- *
+ * Code element that gererates code for parameter infos (annotation code).
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class ParamInfoCode implements CodeElement {
     private NativeParamInfo param;
 
+    /**
+     * Constructor.
+     * @param param parameter
+     */
     public ParamInfoCode(NativeParamInfo param) {
         this.param = param;
     }
@@ -24,6 +28,7 @@ public class ParamInfoCode implements CodeElement {
         return build(new CodeBuilder()).toString();
     }
 
+    @Override
     public CodeBuilder build(CodeBuilder builder) {
 
         builder.append("@ParamInfo(name=\""
