@@ -40,8 +40,6 @@ public class ComponentInfoCode implements CodeElement {
                 classInfo.getCategory())).
                 append("\", allowRemoval=false)");
 
-        
-
         return builder;
     }
 }

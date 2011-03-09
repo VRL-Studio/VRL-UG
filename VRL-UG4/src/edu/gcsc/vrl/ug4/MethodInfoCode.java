@@ -39,6 +39,8 @@ public class MethodInfoCode implements CodeElement {
 
             if (method.getOptions() != null && !method.getOptions().isEmpty()) {
                 builder.append(method.getOptions()).append(", ");
+            } else {
+                builder.append("hide=true, ");
             }
 
             String valueName = VLangUtils.addEscapeCharsToCode(

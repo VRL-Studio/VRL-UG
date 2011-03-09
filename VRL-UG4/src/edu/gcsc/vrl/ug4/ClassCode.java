@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * Represents the code of a class.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-class ClassCode implements CodeElement{
+class ClassCode implements CodeElement {
 
     private NativeAPIInfo nativeAPI;
     private NativeClassInfo classInfo;
@@ -85,10 +85,12 @@ class ClassCode implements CodeElement{
         }
 
         if (asFullClass && !isConst) {
-            builder.addLine(new ComponentInfoCode(classInfo, prefix).toString()).
+            builder.addLine(new ComponentInfoCode(
+                    classInfo, prefix).toString()).
                     addLine("@ObjectInfo(name=\""
                     + prefix
-                    + VLangUtils.addEscapeCharsToCode(classInfo.getName()) + "\")");
+                    + VLangUtils.addEscapeCharsToCode(
+                    classInfo.getName()) + "\")");
         } else {
             builder.addLine("@ComponentInfo(ignore=true)");
         }
@@ -99,18 +101,18 @@ class ClassCode implements CodeElement{
         if (asFullClass) {
             builder.addLine(
                     "private static final long serialVersionUID=1L").
-                    addLine("public " + prefix + CodeUtils.className(classInfo.getName())
+                    addLine("public " + prefix + CodeUtils.className(
+                    classInfo.getName())
                     + "() { setClassName(\"" + classInfo.getName()
                     + "\");}").newLine();
         } else if (asWrapper) {
             builder.addLine(
                     "private static final long serialVersionUID=1L").
-                    addLine("protected " + prefix + CodeUtils.className(classInfo.getName())
+                    addLine("protected " + prefix + CodeUtils.className(
+                    classInfo.getName())
                     + "() { setClassName(\"" + classInfo.getName()
                     + "\");}").newLine();
         }
-
-//        if (asInterface || asFullClass) {
 
         ArrayList<MethodGroupSignature> signatures =
                 new ArrayList<MethodGroupSignature>();
@@ -152,38 +154,26 @@ class ClassCode implements CodeElement{
             signatures.clear();
         }  // end fore visual
 
-//        } // end if (asInterface || asFullClass)
-
         if (asFullClass) {
 
-            String interfaceName = prefix + CodeUtils.interfaceName(classInfo.getName());
-            String className = CodeUtils.className(classInfo.getName());
-
-            builder.newLine().append("@MethodInfo()").
-                    newLine().append("public ").
-                    append("void setThis(@ParamInfo(name=\"").
-                    append(prefix+classInfo.getName()).append("\") ").
-                    append(interfaceName).
-                    append(" o ) {super.setThis(o)}").newLine();
+            String interfaceName = prefix + CodeUtils.interfaceName(
+                    classInfo.getName());
 
             builder.newLine().append("@MethodInfo(valueName=\"").
-                    append(prefix+classInfo.getName()).append("\")").
+                    append(prefix + classInfo.getName()).append("\")").
                     newLine().append("public ").
                     append(interfaceName).
-                    append(" getThis() {return this;}").newLine();
+                    append(" This(@ParamInfo(nullIsValid=true, name=\"").
+                    append(prefix + classInfo.getName()).append("\") ").
+                    append(interfaceName).
+                    append(" o ) { if(o!=null){setThis(o)}else{return this} }").
+                    newLine();
 
-//            builder.newLine().
-//                    append("protected UGObject newInstance(Pointer p) {").
-//                    newLine().incIndentation().
-//                    append("UGObject result = new edu.gcsc.vrl.ug4.").
-//                    append(className).append("();").
-//                    newLine().append("result.setPointer(p);").
-//                    newLine().append("return result;").newLine().
-//                    decIndentation().append("}").newLine();
+            builder.newLine().append("@MethodInfo(noGUI=true)").
+                    newLine().append("public ").
+                    append(interfaceName).
+                    append(" This() {return this;}").newLine();
         }
-//        else if (type == CodeType.WRAP_POINTER_CLASS) {
-//
-//        }
 
         builder.decIndentation();
 
