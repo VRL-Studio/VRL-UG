@@ -6,6 +6,8 @@ package edu.gcsc.vrl.ug4;
 
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.visual.MessageType;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 /**
@@ -25,13 +27,12 @@ public class UG4 {
      */
     private static StringBuffer messages = new StringBuffer();
 
-    /**
-     * Loads native library.
-     */
-    static {
-        System.loadLibrary("ug4");
-    }
-
+//    /**
+//     * Loads native library.
+//     */
+//    static {
+//        System.loadLibrary("ug4");
+//    }
     /**
      * Returns all native UG4 classes that are exported via the UG registry,
      * i.e., the equivalent Java wrapper classes.
@@ -54,19 +55,29 @@ public class UG4 {
      * instanciation only allowed in this class
      */
     private UG4() {
-        //
-    }
+        String[] args = {""};
+        System.loadLibrary("ug4");
+        ugInit(args);
 
+        try {
+            NativeAPIInfo nativeAPI = convertRegistryInfo();
+            Compiler compiler = new edu.gcsc.vrl.ug4.Compiler();
+            compiler.compile(new edu.gcsc.vrl.ug4.NativeAPICode(
+                    nativeAPI).getAllCodes());
+        } catch (Exception ex) {
+            Logger.getLogger(UG4.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        }
+
+    }
     /**
      * ug instance
      */
     private static UG4 ug4;
-
     /**
      * VRL canvas used to visualize ug classes
      */
     private VisualCanvas mainCanvas;
-
     /**
      * Messaging thread which displays messages generated from native UG
      * methods.
@@ -79,21 +90,14 @@ public class UG4 {
      * @param canvas VRL canvas that shall be used to visualize ug classes
      * @return the instance of this singleton
      */
-    public static UG4 getUG4(VisualCanvas canvas) {
+    public static synchronized UG4 getUG4(VisualCanvas canvas) {
         if (ug4 == null) {
-
-//            if (canvas == null) {
-//                throw new IllegalArgumentException(
-//                        "UG4 not initialized."
-//                        + "Thus, a valid canvas instance must be assigned!");
-//            }
 
             ug4 = new UG4();
 
-            ug4.setMainCanvas(canvas);
-
-            String[] args = {""};
-            ug4.ugInit(args);
+            if (canvas != null) {
+                ug4.setMainCanvas(canvas);
+            }
 
         } else if (canvas != null) {
             ug4.setMainCanvas(canvas);
@@ -239,14 +243,10 @@ public class UG4 {
 //        });
 //    }
 
-
-
-
     // ********************************************
     // ************** NATIVE METHODS **************
     // ********************************************
-
-    native NativeAPIInfo convertRegistryInfo();
+    final native NativeAPIInfo convertRegistryInfo();
 
     native Object invokeMethod(
             String exportedClassName,
@@ -260,11 +260,10 @@ public class UG4 {
     native Object invokeFunction(String name,
             boolean readOnly, Object[] params);
 
-    native int ugInit(String[] args);
+    final native int ugInit(String[] args);
 
     native String getSvnRevision();
 
     native String getCompileDate();
-
 //    native void attachCanvas(VisualCanvas canvas);
 }

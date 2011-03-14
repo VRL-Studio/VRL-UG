@@ -59,7 +59,6 @@ public class Compiler {
             }
 
             classNames.add(className);
-
         }
 
         Collections.sort(classNames);
@@ -106,7 +105,7 @@ public class Compiler {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         URL[] urls = null;
         try {
-            urls = new URL[]{scriptPath.toURL()};
+            urls = new URL[]{scriptPath.toURI().toURL()};
         } catch (MalformedURLException ex) {
             Logger.getLogger(
                     Compiler.class.getName()).log(Level.SEVERE, null, ex);
