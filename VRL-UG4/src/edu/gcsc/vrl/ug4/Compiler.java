@@ -177,7 +177,6 @@ public class Compiler {
     /**
      * Request deletion of class files or directory on exit
      * @param fileOrDir the dir to delete
-     * @return <code>true</code> if all files are successfully deleted
      */
     private void deleteClassFiles(File fileOrDir) {
         if (fileOrDir.isDirectory()) {
