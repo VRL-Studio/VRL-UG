@@ -47,6 +47,9 @@ public class NativeClassInfo {
      * @param category the category to set
      */
     public void setCategory(String category) {
+        if (category==null || category.equals("")) {
+            category = "ug4";
+        }
         this.category = category;
     }
 
