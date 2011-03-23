@@ -58,6 +58,9 @@ public class NativeAPICode {
                 codes.add(new ClassCode(
                         apiInfo, classInfo, type, false).build(
                         new CodeBuilder()).toString());
+                codes.add(new ClassCode(
+                        apiInfo, classInfo, type, true).build(
+                        new CodeBuilder()).toString());
             }
         }
 
