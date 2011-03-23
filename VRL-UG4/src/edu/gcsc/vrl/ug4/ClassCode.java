@@ -84,7 +84,7 @@ class ClassCode implements CodeElement {
                     + prefix + CodeUtils.interfaceName(classInfo.getName());
         }
 
-        if (asFullClass && !isConst) {
+        if ((asFullClass && !isConst) || (asWrapper && !isConst)) {
             builder.addLine(new ComponentInfoCode(
                     classInfo, prefix).toString()).
                     addLine("@ObjectInfo(name=\""
@@ -98,21 +98,22 @@ class ClassCode implements CodeElement {
         builder.addLine(classHeaderCode + " {").
                 incIndentation();
 
-        if (asFullClass) {
+        if (asFullClass || asWrapper) {
             builder.addLine(
                     "private static final long serialVersionUID=1L").
                     addLine("public " + prefix + CodeUtils.className(
                     classInfo.getName())
                     + "() { setClassName(\"" + classInfo.getName()
-                    + "\");}").newLine();
-        } else if (asWrapper) {
-            builder.addLine(
-                    "private static final long serialVersionUID=1L").
-                    addLine("protected " + prefix + CodeUtils.className(
-                    classInfo.getName())
-                    + "() { setClassName(\"" + classInfo.getName()
-                    + "\");}").newLine();
+                    + "\"); setInstantiable(" + asFullClass +" );}").newLine();
         }
+//        else if (asWrapper) {
+//            builder.addLine(
+//                    "private static final long serialVersionUID=1L").
+//                    addLine("protected " + prefix + CodeUtils.className(
+//                    classInfo.getName())
+//                    + "() { setClassName(\"" + classInfo.getName()
+//                    + "\");}").newLine();
+//        }
 
         ArrayList<MethodGroupSignature> signatures =
                 new ArrayList<MethodGroupSignature>();
@@ -156,6 +157,24 @@ class ClassCode implements CodeElement {
 
         if (asFullClass) {
 
+            String interfaceName = prefix + CodeUtils.interfaceName(
+                    classInfo.getName());
+
+            builder.newLine().append("@MethodInfo(valueName=\"").
+                    append(prefix + classInfo.getName()).append("\")").
+                    newLine().append("public ").
+                    append(interfaceName).
+                    append(" This(@ParamInfo(nullIsValid=true, name=\"").
+                    append(prefix + classInfo.getName()).append("\") ").
+                    append(interfaceName).
+                    append(" o ) { if(o!=null){setThis(o)}else{return this} }").
+                    newLine();
+
+            builder.newLine().append("@MethodInfo(noGUI=true)").
+                    newLine().append("public ").
+                    append(interfaceName).
+                    append(" This() {return this;}").newLine();
+        } else if (asWrapper) {
             String interfaceName = prefix + CodeUtils.interfaceName(
                     classInfo.getName());
 

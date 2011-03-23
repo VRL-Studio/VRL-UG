@@ -24,6 +24,7 @@ public class UGObject implements Serializable, UGObjectInterface {
 //    private transient Pointer exportedClassPointer;
     private String className;
     private ArrayList<String> classNames;
+    private boolean isInstantiable;
 
     protected void setThis(UGObject o) {
         System.out.println(className + ">> Set This: "
@@ -38,7 +39,7 @@ public class UGObject implements Serializable, UGObjectInterface {
      * @return a pointer to this object
      */
     protected Pointer getPointer() {
-        if (objPointer == null) {
+        if (objPointer == null && isInstantiable()) {
 
             System.out.println("ClassName=" + getClassName());
 
@@ -51,6 +52,15 @@ public class UGObject implements Serializable, UGObjectInterface {
                     getClassName(), address, false));
             System.out.println(getClassName() + " >> New Instance: "
                     + getClassName() + " [" + address + "]");
+        } else if (objPointer == null && !isInstantiable()) {
+            System.err.println(
+                    "Class \"" + getClassName()
+                    + "\" is not instantiable via default constructor!");
+            getMainCanvas().getMessageBox().addMessage(
+                    "Cannot instantiate class:",
+                    "Class \"" + getClassName()
+                    + "\" is not instantiable via default constructor!",
+                    MessageType.ERROR);
         }
         return objPointer;
     }
@@ -61,7 +71,7 @@ public class UGObject implements Serializable, UGObjectInterface {
         this.mainCanvas = mainCanvas;
     }
 
-    @MethodInfo(noGUI=true)
+    @MethodInfo(noGUI = true)
     public VisualCanvas getMainCanvas() {
         return mainCanvas;
     }
@@ -86,7 +96,6 @@ public class UGObject implements Serializable, UGObjectInterface {
     public ArrayList<String> getClassNames() {
         return classNames;
     }
-
 
     @Override
     public void setClassNames(ArrayList<String> classNames) {
@@ -133,10 +142,12 @@ public class UGObject implements Serializable, UGObjectInterface {
         if (isFunction) {
             result = edu.gcsc.vrl.ug4.UG4.getUG4().invokeFunction(
                     methodName, false, convertedParams);
-        } else {
+        } else if (getPointer() != null) {
             result = edu.gcsc.vrl.ug4.UG4.getUG4().invokeMethod(getClassName(),
                     getPointer().getAddress(), isConst,
                     methodName, convertedParams);
+        } else {
+            // cannot invoke method because instantiation is impossible
         }
 
         return result;
@@ -148,5 +159,19 @@ public class UGObject implements Serializable, UGObjectInterface {
     @MethodInfo(noGUI = true)
     public void releaseThis() {
         objPointer = null;
+    }
+
+    /**
+     * @return the isInstantiable
+     */
+    public boolean isInstantiable() {
+        return isInstantiable;
+    }
+
+    /**
+     * @param isInstantiable the isInstantiable to set
+     */
+    protected final void setInstantiable(boolean isInstantiable) {
+        this.isInstantiable = isInstantiable;
     }
 }

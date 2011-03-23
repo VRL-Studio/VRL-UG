@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package edu.gcsc.vrl.ug4;
 
 /**
@@ -11,6 +10,7 @@ package edu.gcsc.vrl.ug4;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeClassInfo {
+
     private String name;
     private String category;
     private String[] classNames;
@@ -47,9 +47,20 @@ public class NativeClassInfo {
      * @param category the category to set
      */
     public void setCategory(String category) {
-        if (category==null || category.equals("")) {
-            category = "ug4";
+        if (category == null || category.equals("")) {
+            category = "UG4";
+        } else {
+            
+            if (category.startsWith("/")) {
+                category = category.substring(1);
+            }
+            
+            if (category.toUpperCase().startsWith("UG4")) {
+                category = category.substring(3);
+                category = "UG4" + category;
+            }
         }
+
         this.category = category;
     }
 
@@ -63,11 +74,11 @@ public class NativeClassInfo {
 
     public String[] getBaseClassNames() {
         String[] baseClassNames = null;
-        if (getClassNames().length>0) {
-            baseClassNames = new String[getClassNames().length-1];
+        if (getClassNames().length > 0) {
+            baseClassNames = new String[getClassNames().length - 1];
 
-            for (int i = 0; i < getClassNames().length-1; i++) {
-                baseClassNames[i] = getClassNames()[i+1];
+            for (int i = 0; i < getClassNames().length - 1; i++) {
+                baseClassNames[i] = getClassNames()[i + 1];
             }
         }
 

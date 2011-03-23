@@ -26,9 +26,20 @@ public class NativeFunctionInfo extends NativeMethodInfo {
      * @param categoryGroup the component category to set
      */
     public void setCategory(String category) {
-        if (category==null || category.equals("")) {
-            category = "ug4";
+        if (category == null || category.equals("")) {
+            category = "UG4";
+        } else {
+
+            if (category.startsWith("/")) {
+                category = category.substring(1);
+            }
+
+            if (category.toUpperCase().startsWith("UG4")) {
+                category = category.substring(3);
+                category = "UG4" + category;
+            }
         }
+        
         this.category = category;
     }
 }
