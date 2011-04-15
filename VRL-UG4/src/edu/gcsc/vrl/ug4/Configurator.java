@@ -24,6 +24,8 @@ public class Configurator implements PluginConfigurator {
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
             UG4.getUG4().setMainCanvas(vCanvas);
             vCanvas.addClasses(UG4.getNativeClasses());
+
+            vCanvas.getTypeFactory().addType(new UserDataType());
         }
     }
 
