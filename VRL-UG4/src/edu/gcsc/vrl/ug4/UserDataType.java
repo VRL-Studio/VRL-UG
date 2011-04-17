@@ -8,7 +8,6 @@ import eu.mihosoft.vrl.lang.groovy.GroovyCompiler;
 import eu.mihosoft.vrl.types.InputTextType;
 import groovy.lang.Script;
 import java.util.ArrayList;
-import org.codehaus.groovy.control.SourceUnit;
 
 /**
  *
@@ -40,11 +39,12 @@ public class UserDataType extends InputTextType {
             if (i > 0) {
                 paramString += ", ";
             }
-            paramString += "double " + paramNames.get(i);
+            paramString += "double " + paramNames.get(i) + " = p[" + i +"];";
         }
 
         String text = "class UserData { ";
-        text += returnType + " run (" + paramString + ") { ";
+        text += returnType + " run (double[] p) { ";
+        text += paramString;
         text += s + " } }";
 
         // check if code compiles
@@ -95,6 +95,5 @@ public class UserDataType extends InputTextType {
 
             setViewValue(paramString + "\n\n");
         }
-
     }
 }
