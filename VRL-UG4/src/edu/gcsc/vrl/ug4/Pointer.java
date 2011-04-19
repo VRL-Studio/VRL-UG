@@ -113,4 +113,15 @@ public class Pointer {
                 + ", address=" + address
                 + ", const=" + isConst();
     }
+
+    /**
+     * Indicates whether the specified object is an ug pointer.
+     * @param o object to check
+     * @return <code>true</code> if the specified object is an ug pointer;
+     *         <code>false</code> otherwise
+     */
+    public static boolean isInstance(Object o) {
+        boolean result = Pointer.class.isInstance(o);
+        return result;
+    }
 }
