@@ -6,6 +6,8 @@ package edu.gcsc.vrl.ug4;
 
 import eu.mihosoft.vrl.lang.groovy.GroovyCompiler;
 import eu.mihosoft.vrl.types.InputTextType;
+import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import java.util.ArrayList;
 
@@ -16,7 +18,7 @@ import java.util.ArrayList;
 public class UserDataType extends InputTextType {
 
     private ArrayList<String> paramNames;
-    private String returnType;
+    private int dim = 1;
 
     public UserDataType() {
         setType(String.class);
@@ -31,42 +33,41 @@ public class UserDataType extends InputTextType {
 
     @Override
     public Object getViewValue() {
-        String s = (String) super.getViewValue();
+        String result = "";
+        if (getMainCanvas().isSavingSession()) {
+            result = (String) super.getViewValue();
+        } else {
+            String originalInput = (String) super.getViewValue();
 
-        String paramString = "";
+            String text = UserDataCompiler.getUserDataImplCode(originalInput, dim,
+                    paramNames, UserData.returnTypes[dim]);
 
-        for (int i = 0; i < paramNames.size(); i++) {
-            if (i > 0) {
-                paramString += ", ";
+            // check if code compiles
+            if (!isNoValidation()) {
+                GroovyCompiler compiler = new GroovyCompiler(getMainCanvas());
+                compiler.addImport("import " + UserDataCompiler.PACKAGE_NAME + ".*;");
+                compiler.compileClass(
+                        UserDataCompiler.PACKAGE_NAME, text, getEditor());
             }
-            paramString += "double " + paramNames.get(i) + " = p[" + i +"];";
+
+            result = text;
         }
 
-        String text = "class UserData { ";
-        text += returnType + " run (double[] p) { ";
-        text += paramString;
-        text += s + " } }";
-
-        // check if code compiles
-        if (!isNoValidation()) {
-            GroovyCompiler compiler = new GroovyCompiler(getMainCanvas());
-            compiler.compileClass("edu.gcsc.ug4", text, getEditor());
-        }
-
-        return text;
+        return result;
     }
 
     @Override
     public void evaluationRequest(Script s) {
         Object property = null;
 
+        property = null;
 
-        if (getValueOptions().contains("returnType")) {
-            property = getOptionEvaluator().getProperty("returnType");
+        if (getValueOptions().contains("dim")) {
+            property = getOptionEvaluator().getProperty("dim");
         }
 
         if (property != null) {
-            returnType = (String) property;
+            dim = (Integer) property;
         }
 
         property = null;
@@ -87,13 +88,11 @@ public class UserDataType extends InputTextType {
                 paramString += paramNames.get(i);
             }
 
-            if (returnType == null) {
-                returnType = "void";
+            paramString += " \n// valid return type: " + UserData.returnTypes[dim] + " ";
+
+            if (getMainCanvas() != null && !getMainCanvas().isLoadingSession()) {
+                setViewValue(paramString + "\n\n");
             }
-
-            paramString += " \n// valid return type: " + returnType + " ";
-
-            setViewValue(paramString + "\n\n");
         }
     }
 }
