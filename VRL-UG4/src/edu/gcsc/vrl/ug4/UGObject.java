@@ -143,7 +143,15 @@ public class UGObject implements Serializable, UGObjectInterface {
             result = edu.gcsc.vrl.ug4.UG4.getUG4().invokeFunction(
                     methodName, false, convertedParams);
         } else if (getPointer() != null) {
-            result = edu.gcsc.vrl.ug4.UG4.getUG4().invokeMethod(getClassName(),
+
+//            System.out.println("**CLS:" + getClassName());
+//            System.out.println("**PTR:" + getPointer().getAddress());
+//            System.out.println("**CONST:" + isConst);
+//            System.out.println("**M:" + methodName);
+//            System.out.println("**P:" + convertedParams);
+
+            result = edu.gcsc.vrl.ug4.UG4.getUG4().invokeMethod(
+                    getClassName(),
                     getPointer().getAddress(), isConst,
                     methodName, convertedParams);
         } else {

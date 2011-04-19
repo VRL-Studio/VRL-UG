@@ -15,14 +15,13 @@ import java.util.ArrayList;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class UserDataType extends InputTextType {
+public class BoundaryUserDataType extends InputTextType {
 
     private ArrayList<String> paramNames;
-    private int dim = 1;
 
-    public UserDataType() {
+    public BoundaryUserDataType() {
         setType(String.class);
-        setStyleName("user-data");
+        setStyleName("boundary-user-data");
         setValueName(" ");
     }
 
@@ -39,15 +38,17 @@ public class UserDataType extends InputTextType {
         } else {
             String originalInput = (String) super.getViewValue();
 
-            String text = UserDataCompiler.getUserDataImplCode(originalInput, dim,
-                    paramNames, UserData.returnTypes[dim]);
+            String text = BoundaryUserDataCompiler.getUserDataImplCode(
+                    originalInput, paramNames);
 
             // check if code compiles
             if (!isNoValidation()) {
                 GroovyCompiler compiler = new GroovyCompiler(getMainCanvas());
-                compiler.addImport("import " + UserDataCompiler.PACKAGE_NAME + ".*;");
+                compiler.addImport(
+                        "import "
+                        + BoundaryUserDataCompiler.PACKAGE_NAME + ".*;");
                 compiler.compileClass(
-                        UserDataCompiler.PACKAGE_NAME, text, getEditor());
+                        BoundaryUserDataCompiler.PACKAGE_NAME, text, getEditor());
             }
 
             result = text;
@@ -59,18 +60,6 @@ public class UserDataType extends InputTextType {
     @Override
     public void evaluationRequest(Script s) {
         Object property = null;
-
-        property = null;
-
-        if (getValueOptions().contains("dim")) {
-            property = getOptionEvaluator().getProperty("dim");
-        }
-
-        if (property != null) {
-            dim = (Integer) property;
-        }
-
-        property = null;
 
         if (getValueOptions().contains("params")) {
             property = getOptionEvaluator().getProperty("params");
@@ -88,7 +77,7 @@ public class UserDataType extends InputTextType {
                 paramString += paramNames.get(i);
             }
 
-            paramString += " \n// valid return type: " + UserData.returnTypes[dim] + " ";
+            paramString += " \n// valid return type: Boundary(boolean,number) ";
 
             if (getMainCanvas() != null && !getMainCanvas().isLoadingSession()) {
                 setViewValue(paramString + "\n\n");

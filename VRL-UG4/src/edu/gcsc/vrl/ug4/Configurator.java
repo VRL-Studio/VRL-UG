@@ -4,7 +4,6 @@
  */
 package edu.gcsc.vrl.ug4;
 
-import eu.mihosoft.vrl.io.AbstractVersionInfo;
 import eu.mihosoft.vrl.io.VersionInfo;
 import eu.mihosoft.vrl.system.PluginAPI;
 import eu.mihosoft.vrl.system.PluginConfigurator;
@@ -26,6 +25,7 @@ public class Configurator implements PluginConfigurator {
             vCanvas.addClasses(UG4.getNativeClasses());
 
             vCanvas.getTypeFactory().addType(new UserDataType());
+            vCanvas.getTypeFactory().addType(new BoundaryUserDataType());
         }
     }
 
