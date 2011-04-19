@@ -173,7 +173,19 @@ public class UGObject implements Serializable, UGObjectInterface {
      * @return the isInstantiable
      */
     public boolean isInstantiable() {
+
         return isInstantiable;
+    }
+
+    /**
+     * Indicates whether the specified object is an ug object.
+     * @param o object to check
+     * @return <code>true</code> if the specified object is an ug object;
+     *         <code>false</code> otherwise
+     */
+    public static boolean isInstance(Object o) {
+        boolean result =  UGObject.class.isInstance(o);
+        return result;
     }
 
     /**
