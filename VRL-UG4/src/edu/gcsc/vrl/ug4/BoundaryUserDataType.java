@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug4;
 
+import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.lang.groovy.GroovyCompiler;
 import eu.mihosoft.vrl.types.InputTextType;
 import groovy.lang.GroovyClassLoader;
@@ -83,5 +84,16 @@ public class BoundaryUserDataType extends InputTextType {
                 setViewValue(paramString + "\n\n");
             }
         }
+    }
+
+    @Override
+    public String getValueAsCode() {
+        Object o = getViewValueWithoutValidation();
+        if (o != null) {
+            return "\""+VLangUtils.addEscapeNewLinesToCode(
+                    VLangUtils.addEscapeCharsToCode((String) o))+"\"";
+        }
+
+        return "";
     }
 }
