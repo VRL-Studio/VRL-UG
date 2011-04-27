@@ -174,21 +174,19 @@ public class UG4 {
         messages.append(s);
 
         if (messages.length() > 1000000) {
-            messages.delete(0, 1000000 - 1);
+            messages.delete(0, 1000000);
         }
     }
 
     public void clearMessages() {
         if (messages.length() > 0) {
-            messages.delete(0, messages.length() - 1);
+            messages.delete(0, messages.length());
         }
     }
 
     class MessageThread extends Thread {
 
         private boolean logging = true;
-        String messages;
-        String oldMessages;
 
         public MessageThread() {
             //
@@ -196,17 +194,15 @@ public class UG4 {
 
         @Override
         public void run() {
-            messages = getMessages().toString();
-            oldMessages = getMessages().toString();
 
             while (logging) {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(200);
                 } catch (InterruptedException ex) {
                     //
                 }
 
-                if (!messages.equals(oldMessages)) {
+                 if (getMessages().length()>0) {
                     SwingUtilities.invokeLater(new Runnable() {
 
                         public void run() {
@@ -215,13 +211,11 @@ public class UG4 {
                                         "UG-Output:",
                                         "<pre>" + messages + "</pre>",
                                         MessageType.INFO);
+                                clearMessages();
                             }
                         }
                     });
                 }
-
-                oldMessages = messages;
-                messages = getMessages().toString();
             }
         }
 
@@ -232,16 +226,7 @@ public class UG4 {
             this.logging = false;
         }
     }
-//
-//    public void addMessage(final String msg) {
-//        SwingUtilities.invokeLater(new Runnable() {
-//
-//            public void run() {
-//                mainCanvas.getMessageBox().
-//                        addMessage("UG4:", msg, MessageType.INFO);
-//            }
-//        });
-//    }
+
 
     // ********************************************
     // ************** NATIVE METHODS **************
