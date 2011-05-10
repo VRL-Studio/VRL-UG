@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug4;
 
+import eu.mihosoft.vrl.lang.InstanceCreator;
 import eu.mihosoft.vrl.lang.groovy.GroovyCompiler;
 import java.util.ArrayList;
 
@@ -19,8 +20,8 @@ public class UserDataCompiler {
     public static Object compile(String s, int dim) {
         GroovyCompiler c = new GroovyCompiler();
         c.addImport("import " + UserDataCompiler.PACKAGE_NAME + ".*;");
-        Object result =  c.newInstanceWithoutErrorNotification(
-                c.compileClass("edu.gcsc.vrl.ug4", s, null));
+        InstanceCreator creator = new InstanceCreator();
+        Object result = creator.newInstance(c.compile(s, null));
 
         return result;
     }
@@ -33,7 +34,8 @@ public class UserDataCompiler {
             paramString += "double " + paramNames.get(i) + " = p[" + i + "];";
         }
 
-        String text = "class " + UserDataCompiler.CLASS_NAME
+        String text = "package " + PACKAGE_NAME+";" 
+                +"class " + UserDataCompiler.CLASS_NAME
                 + " extends UserData { ";
         text += returnType + " run" + dim+ " (double[] p) { ";
         text += paramString;
