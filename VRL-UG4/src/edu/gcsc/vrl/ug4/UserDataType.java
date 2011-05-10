@@ -47,8 +47,7 @@ public class UserDataType extends InputTextType {
             if (!isNoValidation()) {
                 GroovyCompiler compiler = new GroovyCompiler(getMainCanvas());
                 compiler.addImport("import " + UserDataCompiler.PACKAGE_NAME + ".*;");
-                compiler.compileClass(
-                        UserDataCompiler.PACKAGE_NAME, text, getEditor());
+                compiler.compile(text, getEditor());
             }
 
             result = text;
@@ -102,7 +101,7 @@ public class UserDataType extends InputTextType {
         Object o = getViewValueWithoutValidation();
         if (o != null) {
             return "\"" + VLangUtils.addEscapeNewLinesToCode(
-                    VLangUtils.addEscapeCharsToCode((String) o))+"\"";
+                    VLangUtils.addEscapeCharsToCode((String) o)) + "\"";
         }
 
         return "";
