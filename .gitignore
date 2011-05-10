@@ -14,3 +14,7 @@ VRL-UG4/dist
 .DS_Store
 
 tmp
+/VRL-UG4/nbproject/private/
+/VRL-UG/nbproject/private/
+/VRL-UG/dist/
+/VRL-UG/build/
