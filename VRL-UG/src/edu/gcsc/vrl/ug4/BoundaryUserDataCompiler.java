@@ -36,12 +36,14 @@ public class BoundaryUserDataCompiler {
         }
 
         String text = "package " + PACKAGE_NAME+";" 
-                +"class " + BoundaryUserDataCompiler.CLASS_NAME
+                +" class " + BoundaryUserDataCompiler.CLASS_NAME
                 + " extends BoundaryUserData { ";
         text += returnType + " run (double[] p) { ";
         text += paramString;
         text += s + " } }";
 
+        System.out.println(text);
+        
         return text;
     }
 }

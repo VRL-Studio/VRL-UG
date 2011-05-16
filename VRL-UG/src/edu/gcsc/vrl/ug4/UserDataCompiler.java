@@ -35,7 +35,7 @@ public class UserDataCompiler {
         }
 
         String text = "package " + PACKAGE_NAME+";" 
-                +"class " + UserDataCompiler.CLASS_NAME
+                +" class " + UserDataCompiler.CLASS_NAME
                 + " extends UserData { ";
         text += returnType + " run" + dim+ " (double[] p) { ";
         text += paramString;
