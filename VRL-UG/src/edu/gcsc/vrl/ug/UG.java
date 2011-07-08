@@ -14,7 +14,7 @@ import javax.swing.SwingUtilities;
  * <p>
  * UG class represents UG and its scripting functionality. It allows only one
  * instance which can be obtained via
- * {@link #getUG4(eu.mihosoft.vrl.reflection.VisualCanvas) }.
+ * {@link #getInstance(eu.mihosoft.vrl.reflection.VisualCanvas) }.
  * </p>
  * <p>
  * <b>Note:</b> this singleton must not be loaded by more than one
@@ -38,7 +38,7 @@ public class UG {
     private static StringBuffer messages = new StringBuffer();
 
     /**
-     * Returns all native UG4 classes that are exported via the UG registry,
+     * Returns all native UG classes that are exported via the UG registry,
      * i.e., the equivalent Java wrapper classes.
      * @return the nativeClasses
      */
@@ -47,7 +47,7 @@ public class UG {
     }
 
     /**
-     * Defines all native UG4 classes that are exported via the UG registry,
+     * Defines all native UG classes that are exported via the UG registry,
      * i.e., the equivalent Java wrapper classes.
      * @param aNativeClasses the nativeClasses to set
      */
@@ -125,10 +125,10 @@ public class UG {
      * Returns the instance of this singleton.
      * </p>
      * <p>
-     * <b>Notice:</b> It is necessary to use this method to create the UG
-     * instance if the UG classes shall be visualized via VRL. If the UG
-     * instance has been created the method {@link #getUG4() } can be used
-     * to get a reference to it.
+     * <b>Note:</b>If message
+     * logging shall be used, please assign a visible canvas. For this
+     * {@link #getInstance(eu.mihosoft.vrl.reflection.VisualCanvas)  }
+     * can be used.
      * </p>
      * <p>
      * <b>Note:</b> this singleton must not be loaded by more than one

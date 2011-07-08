@@ -9,7 +9,8 @@ package edu.gcsc.vrl.ug;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeAPIInfo {
-
+    
+    private NativeClassGroupInfo[] classGroups;
     private NativeClassInfo[] classes;
     private NativeFunctionGroupInfo[] functions;
 
@@ -42,6 +43,7 @@ public class NativeAPIInfo {
     }
 
     public NativeClassInfo getClassByName(String name) {
+        
         NativeClassInfo result = null;
 
         for (NativeClassInfo nC : classes) {
@@ -50,7 +52,7 @@ public class NativeAPIInfo {
                 break;
             }
         }
-
+        
         return result;
     }
 
@@ -66,5 +68,19 @@ public class NativeAPIInfo {
         }
 
         return result;
+    }
+
+    /**
+     * @return the classGroups
+     */
+    public NativeClassGroupInfo[] getClassGroups() {
+        return classGroups;
+    }
+
+    /**
+     * @param classGroups the classGroups to set
+     */
+    public void setClassGroups(NativeClassGroupInfo[] classGroups) {
+        this.classGroups = classGroups;
     }
 }

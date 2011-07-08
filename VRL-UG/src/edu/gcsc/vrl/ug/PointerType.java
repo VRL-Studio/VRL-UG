@@ -4,7 +4,7 @@ package edu.gcsc.vrl.ug;
 // * To change this template, choose Tools | Templates
 // * and open the template in the editor.
 // */
-//package edu.gcsc.vrl.ug4;
+//package edu.gcsc.vrl.ug;
 //
 //import eu.mihosoft.vrl.annotation.MethodInfo;
 //import eu.mihosoft.vrl.annotation.ParamInfo;

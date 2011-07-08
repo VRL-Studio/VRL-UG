@@ -42,7 +42,7 @@ public class FunctionCode implements CodeElement{
                 append("\")").newLine();
 
         builder.append("public class ").append(className).append(
-                " extends edu.gcsc.vrl.ug4.UGObject {").newLine().
+                " extends edu.gcsc.vrl.ug.UGObject {").newLine().
                 incIndentation().
                 append("private static final long serialVersionUID=1L;").
                 newLine().newLine().
@@ -61,7 +61,7 @@ public class FunctionCode implements CodeElement{
 //        builder.newLine().
 //                append("protected UGObject newInstance(Pointer p) {").
 //                newLine().incIndentation().
-//                append("UGObject result = new edu.gcsc.vrl.ug4.").
+//                append("UGObject result = new edu.gcsc.vrl.ug.").
 //                append(className).append("();").
 //                newLine().append("result.setPointer(p);").
 //                newLine().append("return result;").newLine().
