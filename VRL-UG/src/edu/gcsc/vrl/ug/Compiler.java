@@ -36,7 +36,7 @@ public class Compiler {
      */
     public Class<?>[] compile(String[] codes) {
 
-        String packageName = "edu.gcsc.vrl.ug4";
+        String packageName = "edu.gcsc.vrl.ug";
 
         ArrayList<String> classNames = new ArrayList<String>();
 
@@ -76,18 +76,18 @@ public class Compiler {
             scriptPath = scriptPath.getParentFile();
         }
 
-//        try {
-//            BufferedWriter writer =
-//                    new BufferedWriter(new FileWriter(
-////                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
-//                    new File("/home/miho/UG_Classes.groovy")));
-//
-//            writer.append(code);
-//            writer.flush();
-//            writer.close();
-//        } catch (IOException ex) {
-//            Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        try {
+            BufferedWriter writer =
+                    new BufferedWriter(new FileWriter(
+//                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
+                    new File("/home/miho/UG_Classes.groovy")));
+
+            writer.append(code);
+            writer.flush();
+            writer.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
 
         // Configure

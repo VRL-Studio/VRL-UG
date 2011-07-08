@@ -32,6 +32,16 @@ class ClassCode implements CodeElement {
         this.classInfo = classInfo;
         this.type = type;
         this.isConst = isConst;
+        
+        if (classInfo.getName().isEmpty()) {
+            System.out.println("EXIT EMPTY");
+            System.exit(1);
+        }
+        
+        if (classInfo.getName().trim().isEmpty()) {
+            System.out.println("EXIT EMPTY2");
+            System.exit(1);
+        }
     }
 
     @Override
@@ -75,12 +85,12 @@ class ClassCode implements CodeElement {
         } else if (asFullClass) {
             classHeaderCode = "public class "
                     + prefix + CodeUtils.className(classInfo.getName())
-                    + " extends edu.gcsc.vrl.ug4.UGObject implements "
+                    + " extends edu.gcsc.vrl.ug.UGObject implements "
                     + prefix + CodeUtils.interfaceName(classInfo.getName());
         } else if (asWrapper) {
             classHeaderCode = "public final class "
                     + prefix + CodeUtils.className(classInfo.getName())
-                    + " extends edu.gcsc.vrl.ug4.UGObject implements "
+                    + " extends edu.gcsc.vrl.ug.UGObject implements "
                     + prefix + CodeUtils.interfaceName(classInfo.getName());
         }
 
@@ -106,14 +116,7 @@ class ClassCode implements CodeElement {
                     + "() { setClassName(\"" + classInfo.getName()
                     + "\"); setInstantiable(" + asFullClass +" );}").newLine();
         }
-//        else if (asWrapper) {
-//            builder.addLine(
-//                    "private static final long serialVersionUID=1L").
-//                    addLine("protected " + prefix + CodeUtils.className(
-//                    classInfo.getName())
-//                    + "() { setClassName(\"" + classInfo.getName()
-//                    + "\");}").newLine();
-//        }
+
 
         ArrayList<MethodGroupSignature> signatures =
                 new ArrayList<MethodGroupSignature>();
@@ -130,10 +133,10 @@ class ClassCode implements CodeElement {
         boolean[] visual = new boolean[]{false, true};
 
         for (boolean createVisual : visual) {
-
+            
             for (NativeClassInfo cls : classes) {
 
-                if (!isConst) {
+                if (!isConst && cls.getMethods()!=null) {
                     for (NativeMethodGroupInfo m : cls.getMethods()) {
                         if (!signatures.contains(new MethodGroupSignature(m))) {
                             new MethodGroupCode(m, type, createVisual).build(

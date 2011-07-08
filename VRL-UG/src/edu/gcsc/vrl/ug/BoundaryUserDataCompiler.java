@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class BoundaryUserDataCompiler {
 
     public static final String CLASS_NAME = "BoundaryUserDataImpl";
-    public static final String PACKAGE_NAME = "edu.gcsc.vrl.ug4";
+    public static final String PACKAGE_NAME = "edu.gcsc.vrl.ug";
 
     public static Object compile(String s) {
         GroovyCompiler c = new GroovyCompiler();

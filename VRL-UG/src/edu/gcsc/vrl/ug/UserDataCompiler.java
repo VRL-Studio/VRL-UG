@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class UserDataCompiler {
 
     public static final String CLASS_NAME = "UserDataImpl";
-    public static final String PACKAGE_NAME = "edu.gcsc.vrl.ug4";
+    public static final String PACKAGE_NAME = "edu.gcsc.vrl.ug";
 
     public static Object compile(String s, int dim) {
         GroovyCompiler c = new GroovyCompiler();
