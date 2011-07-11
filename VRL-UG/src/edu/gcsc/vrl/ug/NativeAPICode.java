@@ -34,10 +34,11 @@ public class NativeAPICode {
         ArrayList<String> codes = new ArrayList<String>();
 
         boolean interfaces = type == CodeType.INTERFACE;
-
+        
         for (NativeClassInfo classInfo : apiInfo.getClasses()) {
-
-            if ((classInfo.isInstantiable() && type == CodeType.FULL_CLASS)) {
+            
+            if ((classInfo.isInstantiable() 
+                    && type == CodeType.FULL_CLASS)) {
                 codes.add(new ClassCode(
                         apiInfo, classInfo, type, false).build(
                         new CodeBuilder()).toString());

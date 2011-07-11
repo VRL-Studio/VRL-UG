@@ -57,4 +57,9 @@ public class MethodSignature {
 
         return result;
     }
+    
+    @Override
+    public String toString() {
+        return signature;
+    }
 }
