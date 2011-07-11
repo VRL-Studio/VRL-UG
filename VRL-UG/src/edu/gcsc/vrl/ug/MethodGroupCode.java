@@ -5,6 +5,7 @@
 package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.lang.CodeBuilder;
+import java.util.ArrayList;
 
 /**
  * Code element that generates method group code.
@@ -32,8 +33,16 @@ public class MethodGroupCode implements CodeElement {
     @Override
     public CodeBuilder build(CodeBuilder builder) {
 
+        ArrayList<MethodSignature> signatures =
+                new ArrayList<MethodSignature>();
+
         for (NativeMethodInfo m : methodInfo.getOverloads()) {
-            new MethodCode(m, type, visual).build(builder);
+
+            // forbid method duplicates
+            if (!signatures.contains(new MethodSignature(m))) {
+                new MethodCode(m, type, visual).build(builder);
+                signatures.add(new MethodSignature(m));
+            }
         }
 
         return builder;

@@ -12,7 +12,7 @@ package edu.gcsc.vrl.ug;
 public class MethodGroupSignature {
 
     private NativeMethodGroupInfo method;
-    private String signature;
+    private String signature = "";
 
     /**
      * Constructor.
@@ -55,5 +55,10 @@ public class MethodGroupSignature {
                 && this.signature.equals(other.signature));
 
         return result;
+    }
+    
+    @Override
+    public String toString() {
+        return signature;
     }
 }

@@ -6,7 +6,10 @@ package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.lang.CodeBuilder;
 import eu.mihosoft.vrl.lang.VLangUtils;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents the code of a class.
@@ -32,16 +35,6 @@ class ClassCode implements CodeElement {
         this.classInfo = classInfo;
         this.type = type;
         this.isConst = isConst;
-        
-        if (classInfo.getName().isEmpty()) {
-            System.out.println("EXIT EMPTY");
-            System.exit(1);
-        }
-        
-        if (classInfo.getName().trim().isEmpty()) {
-            System.out.println("EXIT EMPTY2");
-            System.exit(1);
-        }
     }
 
     @Override
@@ -114,7 +107,7 @@ class ClassCode implements CodeElement {
                     addLine("public " + prefix + CodeUtils.className(
                     classInfo.getName())
                     + "() { setClassName(\"" + classInfo.getName()
-                    + "\"); setInstantiable(" + asFullClass +" );}").newLine();
+                    + "\"); setInstantiable(" + asFullClass + " );}").newLine();
         }
 
 
@@ -133,10 +126,10 @@ class ClassCode implements CodeElement {
         boolean[] visual = new boolean[]{false, true};
 
         for (boolean createVisual : visual) {
-            
+
             for (NativeClassInfo cls : classes) {
 
-                if (!isConst && cls.getMethods()!=null) {
+                if (!isConst && cls.getMethods() != null) {
                     for (NativeMethodGroupInfo m : cls.getMethods()) {
                         if (!signatures.contains(new MethodGroupSignature(m))) {
                             new MethodGroupCode(m, type, createVisual).build(
@@ -148,15 +141,37 @@ class ClassCode implements CodeElement {
 
                 for (NativeMethodGroupInfo m : cls.getConstMethods()) {
                     if (!signatures.contains(new MethodGroupSignature(m))) {
+
                         new MethodGroupCode(m, type, createVisual).build(
                                 builder).newLine();
+
+                        if (cls.getName().contains("Grid")
+                                && asFullClass && isConst
+//                                && new MethodGroupSignature(m).toString().contains("quadr")
+                                ) {
+//                            System.out.println(new MethodGroupCode(m, type, createVisual).toString());
+                            
+                            System.out.println(">> " + cls.getName()+ "visual: "  + createVisual  + "  , "+ new MethodGroupSignature(m));
+                            
+                            System.out.println(builder.getCode());
+                        }
+
                         signatures.add(new MethodGroupSignature(m));
                     }
                 }
+
             } // end fore classes
 
             signatures.clear();
+
         }  // end fore visual
+
+        if (isConst && asFullClass && classInfo.getName().equals("MultiGrid")) {
+            String s = builder.getCode();
+            System.out.println(builder.getCode());
+//                System.exit(12);
+            System.out.println("HELLO");
+        }
 
         if (asFullClass) {
 
