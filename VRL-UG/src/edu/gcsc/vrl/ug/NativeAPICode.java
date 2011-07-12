@@ -13,14 +13,14 @@ import java.util.ArrayList;
  */
 public class NativeAPICode {
 
-    private NativeAPIInfo apiInfo;
+    private NativeAPIInfo api;
 
     /**
      * Constructor.
      * @param apiInfo api
      */
     public NativeAPICode(NativeAPIInfo apiInfo) {
-        this.apiInfo = apiInfo;
+        this.api = apiInfo;
     }
 
     /**
@@ -34,33 +34,33 @@ public class NativeAPICode {
         ArrayList<String> codes = new ArrayList<String>();
 
         boolean interfaces = type == CodeType.INTERFACE;
-        
-        for (NativeClassInfo classInfo : apiInfo.getClasses()) {
-            
-            if ((classInfo.isInstantiable() 
+
+        for (NativeClassInfo classInfo : api.getClasses()) {
+
+            if ((classInfo.isInstantiable()
                     && type == CodeType.FULL_CLASS)) {
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, type, false).build(
+                        api, classInfo, type, false).build(
                         new CodeBuilder()).toString());
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, type, true).build(
+                        api, classInfo, type, true).build(
                         new CodeBuilder()).toString());
 
             } else if (interfaces) {
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, type, false).build(
+                        api, classInfo, type, false).build(
                         new CodeBuilder()).toString());
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, type, true).build(
+                        api, classInfo, type, true).build(
                         new CodeBuilder()).toString());
+
             } else if (!classInfo.isInstantiable()
                     && type == CodeType.WRAP_POINTER_CLASS) {
-
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, type, false).build(
+                        api, classInfo, type, false).build(
                         new CodeBuilder()).toString());
                 codes.add(new ClassCode(
-                        apiInfo, classInfo, type, true).build(
+                        api, classInfo, type, true).build(
                         new CodeBuilder()).toString());
             }
         }
@@ -68,6 +68,35 @@ public class NativeAPICode {
 //        if (type != CodeType.WRAP_POINTER_CLASS) {
 //            codes.add(new UGAnyCode(apiInfo, type).toString());
 //        }
+
+        return codes.toArray(new String[codes.size()]);
+    }
+
+    public String[] getClassGroupInterfaceCodes() {
+
+        ArrayList<String> codes = new ArrayList<String>();
+
+        for (NativeClassGroupInfo grp : api.getClassGroups()) {
+
+            // classgroup interfaces
+            NativeClassInfo groupCls =
+                    NativeClassGroupInfo.classToGroupClass(
+                    api, api.getClassByName(grp.getClasses()[0]));
+
+            codes.add(new ClassCode(
+                    api, groupCls, CodeType.FULL_CLASS, false).build(
+                    new CodeBuilder()).toString());
+            codes.add(new ClassCode(
+                    api, groupCls, CodeType.FULL_CLASS, true).build(
+                    new CodeBuilder()).toString());
+            
+            codes.add(new ClassCode(
+                    api, groupCls, CodeType.INTERFACE, false).build(
+                    new CodeBuilder()).toString());
+            codes.add(new ClassCode(
+                    api, groupCls, CodeType.INTERFACE, true).build(
+                    new CodeBuilder()).toString());
+        }
 
         return codes.toArray(new String[codes.size()]);
     }
@@ -103,9 +132,9 @@ public class NativeAPICode {
     private String[] getFunctionCodes() {
         ArrayList<String> codes = new ArrayList<String>();
 
-        for (NativeFunctionGroupInfo group : apiInfo.getFunctions()) {
+        for (NativeFunctionGroupInfo group : api.getFunctions()) {
 
-            codes.add(new FunctionCode(group).build(
+            codes.add(new FunctionCode(api, group).build(
                     new CodeBuilder()).toString());
         }
         return codes.toArray(new String[codes.size()]);
@@ -121,10 +150,12 @@ public class NativeAPICode {
         String[] wrapperCodes = getWrapperCodes();
         String[] classesCodes = getClassCodes();
         String[] functionCodes = getFunctionCodes();
+        String[] classesGroupInterfaceCodes = getClassGroupInterfaceCodes();
 
         int finalLength = classesCodes.length
                 + interfaceCodes.length
-                + functionCodes.length + wrapperCodes.length;
+                + functionCodes.length + wrapperCodes.length
+                + classesGroupInterfaceCodes.length;
 
         String[] result = new String[finalLength];
 
@@ -138,6 +169,11 @@ public class NativeAPICode {
                 classesCodes.length
                 + interfaceCodes.length + functionCodes.length,
                 wrapperCodes.length);
+        System.arraycopy(classesGroupInterfaceCodes, 0, result,
+                classesCodes.length
+                + interfaceCodes.length + functionCodes.length
+                + wrapperCodes.length,
+                classesGroupInterfaceCodes.length);
 
         return result;
     }

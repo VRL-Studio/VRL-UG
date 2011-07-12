@@ -20,6 +20,13 @@ public class NativeMethodGroupInfo {
     public NativeMethodGroupInfo() {
     }
 
+    public NativeMethodGroupInfo(NativeMethodGroupInfo mG) {
+        this.overloads = mG.overloads.clone();
+        this.isConst = mG.isConst;
+    }
+    
+    
+
     /**
      * Returns the overloads of this method group.
      * @return the overloads of this method group

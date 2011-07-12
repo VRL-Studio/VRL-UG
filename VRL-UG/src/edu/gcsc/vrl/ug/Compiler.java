@@ -80,7 +80,7 @@ public class Compiler {
             BufferedWriter writer =
                     new BufferedWriter(new FileWriter(
 //                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
-                    new File("/Users/miho/UG_Classes.groovy")));
+                    new File("/home/miho/UG_Classes.groovy")));
 
             writer.append(code);
             writer.flush();

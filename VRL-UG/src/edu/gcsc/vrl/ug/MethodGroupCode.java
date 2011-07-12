@@ -16,6 +16,8 @@ public class MethodGroupCode implements CodeElement {
     private NativeMethodGroupInfo methodInfo;
     private boolean visual;
     private CodeType type;
+    private ArrayList<MethodSignature> signatures;
+    private NativeAPIInfo api;
 
     /**
      * Constructor.
@@ -23,25 +25,45 @@ public class MethodGroupCode implements CodeElement {
      * @param type code type
      * @param visual defines whether to generate code that shall be visualized
      */
-    public MethodGroupCode(NativeMethodGroupInfo methodInfo,
+    public MethodGroupCode(NativeAPIInfo api,
+            NativeMethodGroupInfo methodInfo, 
+            ArrayList<MethodSignature> signatures,
             CodeType type, boolean visual) {
         this.methodInfo = methodInfo;
         this.visual = visual;
         this.type = type;
+        this.signatures = signatures;
+        this.api = api;
+    }
+    
+    /**
+     * Constructor.
+     * @param methodInfo method info
+     * @param type code type
+     * @param visual defines whether to generate code that shall be visualized
+     */
+    public MethodGroupCode(NativeAPIInfo api,
+            NativeMethodGroupInfo methodInfo,
+            CodeType type, boolean visual) {
+        this.methodInfo = methodInfo;
+        this.visual = visual;
+        this.type = type;
+        this.api = api;
     }
 
     @Override
     public CodeBuilder build(CodeBuilder builder) {
 
-        ArrayList<MethodSignature> signatures =
-                new ArrayList<MethodSignature>();
-
         for (NativeMethodInfo m : methodInfo.getOverloads()) {
-
+            
+            m = NativeClassGroupInfo.convertToClassGroup(api, m);
+            
             // forbid method duplicates
-            if (!signatures.contains(new MethodSignature(m))) {
+            if (signatures==null || !signatures.contains(new MethodSignature(m))) {
                 new MethodCode(m, type, visual).build(builder);
-                signatures.add(new MethodSignature(m));
+                if (signatures!=null) {
+                    signatures.add(new MethodSignature(m));
+                }
             }
         }
 
