@@ -14,14 +14,21 @@ import eu.mihosoft.vrl.lang.VLangUtils;
 public class FunctionCode implements CodeElement{
 
     private NativeFunctionGroupInfo function;
-
+    private NativeAPIInfo api;
     /**
      * Constructor.
      * @param function function
      */
-    public FunctionCode(NativeFunctionGroupInfo function) {
+    public FunctionCode(NativeAPIInfo api, NativeFunctionGroupInfo function) {
         this.function = function;
+        this.api = api;
     }
+
+    public FunctionCode(NativeAPIInfo api) {
+        this.api = api;
+    }
+    
+    
 
     @Override
     public CodeBuilder build(CodeBuilder builder) {
@@ -55,8 +62,8 @@ public class FunctionCode implements CodeElement{
 //        new MethodCode(function, false, true).toString(builder);
 //        new MethodCode(function, false, false).toString(builder);
 
-        new MethodGroupCode(function, CodeType.FULL_CLASS, true).build(builder);
-        new MethodGroupCode(function, CodeType.FULL_CLASS, false).build(builder);
+        new MethodGroupCode(api,function, CodeType.FULL_CLASS, true).build(builder);
+        new MethodGroupCode(api,function, CodeType.FULL_CLASS, false).build(builder);
 
 //        builder.newLine().
 //                append("protected UGObject newInstance(Pointer p) {").

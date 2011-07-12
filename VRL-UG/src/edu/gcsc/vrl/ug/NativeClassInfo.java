@@ -18,6 +18,20 @@ public class NativeClassInfo {
     private NativeMethodGroupInfo[] constMethods;
     private boolean instantiable;
 
+    public NativeClassInfo() {
+    }
+
+    public NativeClassInfo(NativeClassInfo c) {
+        this.name = c.name;
+        this.category = c.category;
+        this.classNames = c.classNames.clone();
+        this.methods = c.methods;
+        this.constMethods = c.constMethods;
+        this.instantiable = c.instantiable;
+    }
+    
+    
+
     /**
      * Returns the class name.
      * @return the class name

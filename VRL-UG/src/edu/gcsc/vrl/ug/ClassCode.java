@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 class ClassCode implements CodeElement {
 
-    private NativeAPIInfo nativeAPI;
+    private NativeAPIInfo api;
     private NativeClassInfo classInfo;
     private CodeType type;
     private boolean isConst;
@@ -31,7 +31,7 @@ class ClassCode implements CodeElement {
      */
     public ClassCode(NativeAPIInfo nativeAPI,
             NativeClassInfo classInfo, CodeType type, boolean isConst) {
-        this.nativeAPI = nativeAPI;
+        this.api = nativeAPI;
         this.classInfo = classInfo;
         this.type = type;
         this.isConst = isConst;
@@ -73,8 +73,23 @@ class ClassCode implements CodeElement {
 
                 classHeaderCode += ", "
                         + CodeUtils.namesToInterfaceNameList(
-                        classInfo.getBaseClassNames(), prefix);
+                        classInfo.getBaseClassNames(),
+                        prefix);
             }
+
+            boolean weAreAGroupClass = api.groupExists(classInfo.getName());
+            boolean weArePartOfAGroup =
+                    api.isInClassGroup(classInfo.getName());
+
+            // add the group interface
+            if (!weAreAGroupClass && weArePartOfAGroup) {
+                classHeaderCode += ", "
+                        + prefix
+                        + CodeUtils.interfaceName(
+                        NativeClassGroupInfo.convertToClassGroup(
+                        api, classInfo.getName()));
+            }
+            
         } else if (asFullClass) {
             classHeaderCode = "public class "
                     + prefix + CodeUtils.className(classInfo.getName())
@@ -110,11 +125,13 @@ class ClassCode implements CodeElement {
                     + "\"); setInstantiable(" + asFullClass + " );}").newLine();
         }
 
+//        ArrayList<MethodGroupSignature> signatures =
+//                new ArrayList<MethodGroupSignature>();
 
-        ArrayList<MethodGroupSignature> signatures =
-                new ArrayList<MethodGroupSignature>();
+        ArrayList<MethodSignature> signatures =
+                new ArrayList<MethodSignature>();
 
-        NativeClassInfo[] baseClasses = nativeAPI.baseClasses(classInfo);
+        NativeClassInfo[] baseClasses = api.baseClasses(classInfo);
         NativeClassInfo[] classes =
                 new NativeClassInfo[baseClasses.length + 1];
 
@@ -131,33 +148,19 @@ class ClassCode implements CodeElement {
 
                 if (!isConst && cls.getMethods() != null) {
                     for (NativeMethodGroupInfo m : cls.getMethods()) {
-                        if (!signatures.contains(new MethodGroupSignature(m))) {
-                            new MethodGroupCode(m, type, createVisual).build(
-                                    builder).newLine();
-                            signatures.add(new MethodGroupSignature(m));
-                        }
+//                        if (!signatures.contains(new MethodGroupSignature(m))) {
+                        new MethodGroupCode(api,
+                                m, signatures, type, createVisual).build(
+                                builder).newLine();
+//                            signatures.add(new MethodSignature(m));
+//                        }
                     }
                 }
 
                 for (NativeMethodGroupInfo m : cls.getConstMethods()) {
-                    if (!signatures.contains(new MethodGroupSignature(m))) {
-
-                        new MethodGroupCode(m, type, createVisual).build(
-                                builder).newLine();
-
-                        if (cls.getName().contains("Grid")
-                                && asFullClass && isConst
-//                                && new MethodGroupSignature(m).toString().contains("quadr")
-                                ) {
-//                            System.out.println(new MethodGroupCode(m, type, createVisual).toString());
-                            
-                            System.out.println(">> " + cls.getName()+ "visual: "  + createVisual  + "  , "+ new MethodGroupSignature(m));
-                            
-                            System.out.println(builder.getCode());
-                        }
-
-                        signatures.add(new MethodGroupSignature(m));
-                    }
+                    new MethodGroupCode(api,
+                            m, signatures, type, createVisual).build(
+                            builder).newLine();
                 }
 
             } // end fore classes
@@ -165,13 +168,6 @@ class ClassCode implements CodeElement {
             signatures.clear();
 
         }  // end fore visual
-
-        if (isConst && asFullClass && classInfo.getName().equals("MultiGrid")) {
-            String s = builder.getCode();
-            System.out.println(builder.getCode());
-//                System.exit(12);
-            System.out.println("HELLO");
-        }
 
         if (asFullClass) {
 

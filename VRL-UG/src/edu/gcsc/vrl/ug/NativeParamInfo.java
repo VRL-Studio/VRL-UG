@@ -19,6 +19,22 @@ public class NativeParamInfo {
     private String tooltip;
     private String[] paramInfo;
 
+    public NativeParamInfo() {
+    }
+
+    public NativeParamInfo(NativeParamInfo p) {
+        this.type = p.type;
+        this.className = p.className;
+
+        if (p.classNames != null) {
+            this.classNames = p.classNames.clone();
+        }
+        this.id = p.id;
+        this.help = p.help;
+        this.tooltip = p.tooltip;
+        this.paramInfo = p.paramInfo;
+    }
+
     /**
      * Returns the native parameter type.
      * @return the native parameter type
@@ -210,5 +226,19 @@ public class NativeParamInfo {
         }
 
         return "/*ERROR!!! INVALID TYPE*/ void";
+    }
+
+    /**
+     * Determines whether the type of this parameter is a registered ug class
+     * (if the type if this parameter is a (const)pointer or 
+     * (const)smart-pointer).
+     * @return <code>true</code> if type of this parameter is a registered
+     *         ug class; <code>false</code> otherwise
+     */
+    public boolean isRegisteredClass() {
+        return getType() == NativeType.CONST_POINTER
+                || getType() == NativeType.POINTER
+                || getType() == NativeType.CONST_SMART_POINTER
+                || getType() == NativeType.SMART_POINTER;
     }
 }

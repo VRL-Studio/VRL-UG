@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package edu.gcsc.vrl.ug;
 
 /**
@@ -11,6 +10,7 @@ package edu.gcsc.vrl.ug;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeMethodInfo {
+
     private String name;
     private String options;
     private NativeParamInfo returnValue;
@@ -18,6 +18,21 @@ public class NativeMethodInfo {
     private String toolTip;
     private String help;
     private boolean isConst;
+
+    public NativeMethodInfo() {
+    }
+
+    public NativeMethodInfo(NativeMethodInfo m) {
+        this.name = m.name;
+        this.options = m.options;
+        this.returnValue = new NativeParamInfo(m.returnValue);
+        if (m.parameters != null) {
+            this.parameters = m.parameters.clone();
+        }
+        this.toolTip = m.toolTip;
+        this.help = m.help;
+        this.isConst = m.isConst;
+    }
 
     /**
      * Returns the method name.
@@ -82,7 +97,6 @@ public class NativeMethodInfo {
     public void setParameters(NativeParamInfo[] params) {
         this.parameters = params;
     }
-    
 
     /**
      * Returns the tooltip string of this method.
@@ -122,7 +136,7 @@ public class NativeMethodInfo {
      *         <code>false</code> otherwise
      */
     public boolean returnsVoid() {
-        return getReturnValue().getType()==NativeType.VOID;
+        return getReturnValue().getType() == NativeType.VOID;
     }
 
     /**
