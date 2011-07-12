@@ -262,7 +262,9 @@ public class UG {
 
     native long newInstance(long objPtr);
 
-    native long getExportedClassPtrByName(String name);
+    native long getExportedClassPtrByName(String name, boolean classGrp);
+    
+    native String getDefaultClassNameFromGroup(String grpName);
 
     native Object invokeFunction(String name,
             boolean readOnly, Object[] params);

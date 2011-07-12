@@ -15,6 +15,7 @@ public class MethodCode implements CodeElement{
     private NativeMethodInfo method;
     private final CodeType type;
     private final boolean visual;
+    private final boolean function;
 
     /**
      * Constructor
@@ -22,11 +23,12 @@ public class MethodCode implements CodeElement{
      * @param type code type
      * @param visual defines whether to generate code that shall be visualized
      */
-    public MethodCode(NativeMethodInfo method,
+    public MethodCode(NativeMethodInfo method, boolean function, 
             CodeType type, boolean visual) {
         this.method = method;
         this.type = type;
         this.visual = visual;
+        this.function = function;
     }
 
     @Override
@@ -49,7 +51,7 @@ public class MethodCode implements CodeElement{
     public CodeBuilder build(CodeBuilder builder,
             String customInvocationCode) {
 
-        boolean isFunction = method instanceof NativeFunctionInfo;
+        boolean isFunction = function;
 
         boolean asInterface = type == CodeType.INTERFACE;
         boolean asWrapper = type == CodeType.WRAP_POINTER_CLASS;

@@ -13,6 +13,16 @@ package edu.gcsc.vrl.ug;
 public class NativeFunctionInfo extends NativeMethodInfo {
     private String category;
 
+    public NativeFunctionInfo() {
+    }
+    
+    
+
+    NativeFunctionInfo(NativeFunctionInfo m) {
+        super(m);
+        this.category = m.category;
+    }
+
     /**
      * Returns the component category.
      * @return the component category

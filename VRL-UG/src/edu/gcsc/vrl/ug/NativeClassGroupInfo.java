@@ -148,8 +148,29 @@ public class NativeClassGroupInfo {
             NativeMethodInfo m) {
         NativeMethodInfo result = new NativeMethodInfo(m);
 
+        result.setParameters(convertToClassGroup(api,m.getParameters()));
+        result.setReturnValue(convertToClassGroup(api, m.getReturnValue()));
+
+        return result;
+    }
+    
+    public static NativeFunctionInfo convertToClassGroup(NativeAPIInfo api,
+            NativeFunctionInfo m) {
+        NativeFunctionInfo result = new NativeFunctionInfo(m);
+
         result.setParameters(m.getParameters());
         result.setReturnValue(convertToClassGroup(api, m.getReturnValue()));
+
+        return result;
+    }
+    
+    public static NativeMethodInfo[] convertToClassGroup(NativeAPIInfo api,
+            NativeFunctionInfo[] methods) {
+        NativeFunctionInfo[] result = new NativeFunctionInfo[methods.length];
+
+        for (int i = 0; i < result.length; i++) {
+            result[i] = convertToClassGroup(api, methods[i]);
+        }
 
         return result;
     }
