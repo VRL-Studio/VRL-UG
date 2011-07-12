@@ -51,6 +51,10 @@ class ClassCode implements CodeElement {
         boolean asWrapper = type == CodeType.WRAP_POINTER_CLASS;
         boolean asFullClass = type == CodeType.FULL_CLASS;
 
+        boolean weAreAGroupClass = api.groupExists(classInfo.getName());
+        boolean weArePartOfAGroup =
+                api.isInClassGroup(classInfo.getName());
+
         String prefix = "";
 
         if (isConst) {
@@ -77,10 +81,6 @@ class ClassCode implements CodeElement {
                         prefix);
             }
 
-            boolean weAreAGroupClass = api.groupExists(classInfo.getName());
-            boolean weArePartOfAGroup =
-                    api.isInClassGroup(classInfo.getName());
-
             // add the group interface
             if (!weAreAGroupClass && weArePartOfAGroup) {
                 classHeaderCode += ", "
@@ -89,7 +89,7 @@ class ClassCode implements CodeElement {
                         NativeClassGroupInfo.convertToClassGroup(
                         api, classInfo.getName()));
             }
-            
+
         } else if (asFullClass) {
             classHeaderCode = "public class "
                     + prefix + CodeUtils.className(classInfo.getName())
@@ -122,7 +122,9 @@ class ClassCode implements CodeElement {
                     addLine("public " + prefix + CodeUtils.className(
                     classInfo.getName())
                     + "() { setClassName(\"" + classInfo.getName()
-                    + "\"); setInstantiable(" + asFullClass + " );}").newLine();
+                    + "\"); setInstantiable(" + asFullClass + " );"
+                    + "setClassGroupObject(" + weAreAGroupClass 
+                    + " );}").newLine();
         }
 
 //        ArrayList<MethodGroupSignature> signatures =

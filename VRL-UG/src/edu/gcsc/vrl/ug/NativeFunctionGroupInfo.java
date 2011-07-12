@@ -17,6 +17,10 @@ public class NativeFunctionGroupInfo extends NativeMethodGroupInfo{
      */
     public NativeFunctionGroupInfo() {
     }
+    
+    public NativeFunctionGroupInfo(NativeFunctionGroupInfo fG) {
+        super(fG);
+    }
 
     @Override
     public NativeFunctionInfo[] getOverloads() {

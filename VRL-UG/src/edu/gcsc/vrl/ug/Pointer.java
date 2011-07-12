@@ -15,6 +15,8 @@ public class Pointer {
     private boolean readOnly;
     private long address;
     private String className;
+    
+    public static final long NULL = 0;
 
     /**
      * Constructor.

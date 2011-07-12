@@ -53,6 +53,12 @@ public class MethodGroupCode implements CodeElement {
 
     @Override
     public CodeBuilder build(CodeBuilder builder) {
+        
+        boolean signaturesWereNull = signatures == null;
+        
+        if (signatures == null) {
+            signatures = new ArrayList<MethodSignature>();
+        }
 
         for (NativeMethodInfo m : methodInfo.getOverloads()) {
             
@@ -60,11 +66,16 @@ public class MethodGroupCode implements CodeElement {
             
             // forbid method duplicates
             if (signatures==null || !signatures.contains(new MethodSignature(m))) {
-                new MethodCode(m, type, visual).build(builder);
+                new MethodCode(m, methodInfo instanceof NativeFunctionGroupInfo,
+                        type, visual).build(builder);
                 if (signatures!=null) {
                     signatures.add(new MethodSignature(m));
                 }
             }
+        }
+        
+        if (signaturesWereNull) {
+            signatures =null;
         }
 
         return builder;
