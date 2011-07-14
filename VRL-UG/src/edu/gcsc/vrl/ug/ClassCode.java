@@ -117,14 +117,21 @@ class ClassCode implements CodeElement {
                 incIndentation();
 
         if (asFullClass || asWrapper) {
+            
+            String classGrpName = "";
+            
+            if (weAreAGroupClass) {
+                classGrpName = classInfo.getName();
+            }
+            
             builder.addLine(
                     "private static final long serialVersionUID=1L").
                     addLine("public " + prefix + CodeUtils.className(
                     classInfo.getName())
                     + "() { setClassName(\"" + classInfo.getName()
                     + "\"); setInstantiable(" + asFullClass + " );"
-                    + "setClassGroupObject(" + weAreAGroupClass 
-                    + " );}").newLine();
+                    + "setClassGroupObject(" + weAreAGroupClass + " );"
+                    + "setClassGroupName(\"" + classGrpName + "\");}").newLine();
         }
 
 //        ArrayList<MethodGroupSignature> signatures =
@@ -176,12 +183,14 @@ class ClassCode implements CodeElement {
             String interfaceName = prefix + CodeUtils.interfaceName(
                     classInfo.getName());
 
-            builder.newLine().append("@MethodInfo(valueName=\"").
-                    append(prefix + classInfo.getName()).append("\")").
+           builder.newLine().append("@MethodInfo(valueName=\"").
+                    append(prefix + classInfo.getName()).append("\""
+                    + ", valueOptions = \"serialization=false\")").
                     newLine().append("public ").
                     append(interfaceName).
                     append(" This(@ParamInfo(nullIsValid=true, name=\"").
-                    append(prefix + classInfo.getName()).append("\") ").
+                    append(prefix + classInfo.getName()).append("\","
+                    + "options=\"serialization=false\") ").
                     append(interfaceName).
                     append(" o ) { if(o!=null){setThis(o)}else{return this} }").
                     newLine();
@@ -195,11 +204,13 @@ class ClassCode implements CodeElement {
                     classInfo.getName());
 
             builder.newLine().append("@MethodInfo(valueName=\"").
-                    append(prefix + classInfo.getName()).append("\")").
+                    append(prefix + classInfo.getName()).append("\""
+                    + ", valueOptions = \"serialization=false\")").
                     newLine().append("public ").
                     append(interfaceName).
                     append(" This(@ParamInfo(nullIsValid=true, name=\"").
-                    append(prefix + classInfo.getName()).append("\") ").
+                    append(prefix + classInfo.getName()).append("\","
+                    + "options=\"serialization=false\") ").
                     append(interfaceName).
                     append(" o ) { if(o!=null){setThis(o)}else{return this} }").
                     newLine();

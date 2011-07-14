@@ -208,13 +208,13 @@ public class NativeParamInfo {
             case VOID:
                 return "void";
             case BOOL:
-                return "Boolean";
+                return "java.lang.Boolean";
             case INTEGER:
-                return "Integer";
+                return "java.lang.Integer";
             case NUMBER:
-                return "Double";
+                return "java.lang.Double";
             case STRING:
-                return "String";
+                return "java.lang.String";
             case POINTER:
                 return CodeUtils.interfaceName(getClassName());
             case CONST_POINTER:
