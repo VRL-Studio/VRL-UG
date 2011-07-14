@@ -9,6 +9,9 @@ import eu.mihosoft.vrl.annotation.ParamInfo;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.types.VisualIDRequest;
 import eu.mihosoft.vrl.visual.MessageType;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -23,6 +26,7 @@ public class UGObject implements Serializable, UGObjectInterface {
     private transient Pointer objPointer;
 //    private transient Pointer exportedClassPointer;
     private String className;
+    private String classGroupName;
     private ArrayList<String> classNames;
     private boolean isInstantiable;
     private boolean isClassGroupObject;
@@ -33,6 +37,8 @@ public class UGObject implements Serializable, UGObjectInterface {
         setPointer(o.getPointer());
         setClassName(o.getClassName());
         setClassNames(o.getClassNames());
+        setClassGroupObject(o.isClassGroupObject());
+        setClassGroupName(o.getClassGroupName());
     }
 
     /**
@@ -42,15 +48,24 @@ public class UGObject implements Serializable, UGObjectInterface {
     protected Pointer getPointer() {
         if (objPointer == null && isInstantiable()) {
 
-            long exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
+            long exportedClsPtr = Pointer.NULL;
+            
+            if (isClassGroupObject()) {
+                exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
+                    getExportedClassPtrByName(getClassGroupName(),
+                    isClassGroupObject());
+            } else {
+                exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
                     getExportedClassPtrByName(getClassName(),
-                    isClassGroupObject);
-            
-            if (isClassGroupObject() && exportedClsPtr != Pointer.NULL) {
-                setClassName(edu.gcsc.vrl.ug.UG.getInstance().
-                        getDefaultClassNameFromGroup(className));
+                    isClassGroupObject());
             }
-            
+
+            if (isClassGroupObject() && exportedClsPtr != Pointer.NULL) {
+//                setClassGroupName(className);
+                setClassName(edu.gcsc.vrl.ug.UG.getInstance().
+                        getDefaultClassNameFromGroup(getClassGroupName()));
+            }
+
             System.out.println("ClassName=" + getClassName());
 
             if (exportedClsPtr == Pointer.NULL) {
@@ -221,10 +236,41 @@ public class UGObject implements Serializable, UGObjectInterface {
         return isClassGroupObject;
     }
 
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        if (isParameterObject()) {
+//            throw new NotSerializableException();
+            System.exit(1234);
+            return;
+        } else {
+//            if (isClassGroupObject()) {
+//                setClassName(getClassGroupName());
+//            }
+            out.defaultWriteObject();
+        }
+    }
+
+    protected boolean isParameterObject() {
+        return getMainCanvas() == null;
+    }
+
     /**
      * @param isClassGroupObject the isClassGroupObject to set
      */
     protected final void setClassGroupObject(boolean isClassGroupObject) {
         this.isClassGroupObject = isClassGroupObject;
+    }
+
+    /**
+     * @return the classGroupName
+     */
+    public final String getClassGroupName() {
+        return classGroupName;
+    }
+
+    /**
+     * @param classGroupName the classGroupName to set
+     */
+    protected final void setClassGroupName(String classGroupName) {
+        this.classGroupName = classGroupName;
     }
 }

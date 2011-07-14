@@ -36,6 +36,8 @@ public class NativeAPICode {
         boolean interfaces = type == CodeType.INTERFACE;
 
         for (NativeClassInfo classInfo : api.getClasses()) {
+            
+            
 
             if ((classInfo.isInstantiable()
                     && type == CodeType.FULL_CLASS)) {

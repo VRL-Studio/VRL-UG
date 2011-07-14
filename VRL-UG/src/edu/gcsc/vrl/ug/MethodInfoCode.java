@@ -56,7 +56,13 @@ public class MethodInfoCode implements CodeElement {
                     + "\", valueStyle=\""
                     + method.getReturnValue().getParamInfo()[1]
                     + "\", valueOptions=\""
-                    + method.getReturnValue().getParamInfo()[2] + "\")");
+                    + method.getReturnValue().getParamInfo()[2]);
+
+            if (method.getReturnValue().isRegisteredClass()) {
+                builder.append(";serialization=false");
+            }
+            
+            builder.append("\")");;
         } else if (!visual) {
             builder.append("@MethodInfo(noGUI=true)");
         }

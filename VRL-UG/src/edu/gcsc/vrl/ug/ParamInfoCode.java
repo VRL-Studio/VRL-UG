@@ -37,8 +37,13 @@ public class ParamInfoCode implements CodeElement {
                 + VLangUtils.addEscapeCharsToCode(
                 param.getParamInfo()[1]) + "\", "
                 + "options=\"" 
-                + VLangUtils.addEscapeCharsToCode(param.getParamInfo()[2])
-                + "\")");
+                + VLangUtils.addEscapeCharsToCode(param.getParamInfo()[2]));
+        
+                if (param.isRegisteredClass()) {
+                    builder.append(";serialization=false");
+                }
+                
+                builder.append("\")");
 
         return builder;
     }
