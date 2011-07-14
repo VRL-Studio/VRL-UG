@@ -37,8 +37,6 @@ public class NativeAPICode {
 
         for (NativeClassInfo classInfo : api.getClasses()) {
             
-            
-
             if ((classInfo.isInstantiable()
                     && type == CodeType.FULL_CLASS)) {
                 codes.add(new ClassCode(

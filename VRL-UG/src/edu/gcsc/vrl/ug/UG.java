@@ -6,6 +6,14 @@ package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.visual.MessageType;
+import groovy.lang.GroovyClassLoader;
+import java.beans.XMLDecoder;
+import java.io.FileInputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
@@ -18,12 +26,12 @@ import javax.swing.SwingUtilities;
  * </p>
  * <p>
  * <b>Note:</b> this singleton must not be loaded by more than one
-   classloader per JVM! Although this is no problem for Java classes it
-   does not work for native libraries. Unfortunately we cannot provide an
-   acceptable workaround. Thus, it is recommended to use this method from
-   a valid VRL plugin only. The VRL plugin system is aware of this problem
-   and handles it correctly.
-   </p>
+classloader per JVM! Although this is no problem for Java classes it
+does not work for native libraries. Unfortunately we cannot provide an
+acceptable workaround. Thus, it is recommended to use this method from
+a valid VRL plugin only. The VRL plugin system is aware of this problem
+and handles it correctly.
+</p>
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class UG {
@@ -64,10 +72,44 @@ public class UG {
         ugInit(args);
 
         try {
-            NativeAPIInfo nativeAPI = convertRegistryInfo();
-            Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
-            compiler.compile(new edu.gcsc.vrl.ug.NativeAPICode(
-                    nativeAPI).getAllCodes());
+
+            try {
+                
+                ClassLoader cl = ClassLoader.getSystemClassLoader();
+                Class<?> cls = cl.loadClass("edu.gcsc.vrl.ug.UGAPI");
+
+                URL url = cls.getResource(
+                        "/edu/gcsc/vrl/ug/UG_INFO.XML");
+
+                XMLDecoder decoder = new XMLDecoder(url.openStream());
+
+                AbstractUGAPIInfo apiInfo =
+                        (AbstractUGAPIInfo) decoder.readObject();
+
+                decoder.close();
+
+                Class<?>[] classes =
+                        new Class<?>[apiInfo.getClassNames().size()];
+
+                for (int i = 0; i < apiInfo.getClassNames().size(); i++) {
+                    classes[i] = cl.
+                            loadClass(
+                            "edu.gcsc.vrl.ug." 
+                            + apiInfo.getClassNames().get(i));
+                }
+
+                setNativeClasses(classes);
+
+            } catch (ClassNotFoundException ex) {
+
+                NativeAPIInfo nativeAPI = convertRegistryInfo();
+                Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
+                
+                setNativeClasses(compiler.compile(
+                        new edu.gcsc.vrl.ug.NativeAPICode(
+                        nativeAPI).getAllCodes()));
+            }
+
         } catch (Exception ex) {
             Logger.getLogger(UG.class.getName()).
                     log(Level.SEVERE, null, ex);
@@ -224,7 +266,7 @@ public class UG {
                     //
                 }
 
-                 if (getMessages().length()>0) {
+                if (getMessages().length() > 0) {
                     SwingUtilities.invokeLater(new Runnable() {
 
                         public void run() {
@@ -249,7 +291,6 @@ public class UG {
         }
     }
 
-
     // ********************************************
     // ************** NATIVE METHODS **************
     // ********************************************
@@ -263,7 +304,7 @@ public class UG {
     native long newInstance(long objPtr);
 
     native long getExportedClassPtrByName(String name, boolean classGrp);
-    
+
     native String getDefaultClassNameFromGroup(String grpName);
 
     native Object invokeFunction(String name,

@@ -4,19 +4,27 @@
  */
 package edu.gcsc.vrl.ug;
 
+import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.io.vrlx.AbstractCode;
+import eu.mihosoft.vrl.lang.CodeBuilder;
+import eu.mihosoft.vrl.system.Constants;
 import groovy.lang.GroovyClassLoader;
+import java.beans.XMLEncoder;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.UUID;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.codehaus.groovy.control.CompilationUnit;
@@ -35,6 +43,16 @@ public class Compiler {
      * @return class objects of the compiled codes
      */
     public Class<?>[] compile(String[] codes) {
+        return compile(codes, null);
+    }
+
+    /**
+     * Compiles classes defined as groovy source code and returns them
+     * as class objects.
+     * @param codes codes to compile
+     * @return class objects of the compiled codes
+     */
+    public Class<?>[] compile(String[] codes, String jarLocation) {
 
         String packageName = "edu.gcsc.vrl.ug";
 
@@ -42,10 +60,13 @@ public class Compiler {
 
         StringBuilder code = new StringBuilder();
 
-                code.append("package ").append(packageName).append("\n").
+        code.append("package ").append(packageName).append("\n").
                 append("import eu.mihosoft.vrl.reflection.*;\n").
                 append("import eu.mihosoft.vrl.types.*;\n").
                 append("import eu.mihosoft.vrl.annotation.*;\n");
+
+        code.append("\n").append(new UGAPIClassCode().build(
+                new CodeBuilder()).toString());
 
         for (String c : codes) {
             code.append(c).append("\n\n");
@@ -54,7 +75,7 @@ public class Compiler {
 
             String className = VLangUtils.classNameFromCode(aCode);
 
-            if (className==null || className.equals("")) {
+            if (className == null || className.equals("")) {
                 className = VLangUtils.interfaceNameFromCode(aCode);
             }
 
@@ -66,6 +87,8 @@ public class Compiler {
         File scriptPath = null;
         try {
             scriptPath = createTempDir();
+            scriptPath.mkdir();
+
             System.out.println("UG4-ClassDir: " + scriptPath.getAbsolutePath());
         } catch (IOException ex) {
             Logger.getLogger(
@@ -76,18 +99,18 @@ public class Compiler {
             scriptPath = scriptPath.getParentFile();
         }
 
-//        try {
-//            BufferedWriter writer =
-//                    new BufferedWriter(new FileWriter(
-////                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
-//                    new File("/home/miho/UG_Classes.groovy")));
-//
-//            writer.append(code);
-//            writer.flush();
-//            writer.close();
-//        } catch (IOException ex) {
-//            Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        try {
+            BufferedWriter writer =
+                    new BufferedWriter(new FileWriter(
+//                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
+                    new File("/home/miho/UG_Classes.groovy")));
+
+            writer.append(code);
+            writer.flush();
+            writer.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
 
         // Configure
@@ -117,7 +140,7 @@ public class Compiler {
 
         for (String className : classNames) {
             try {
-                Class<?> clazz = gcl.loadClass(packageName+"."+className);
+                Class<?> clazz = gcl.loadClass(packageName + "." + className);
                 if (clazz != null) {
                     classes.add(clazz);
 //                    System.out.println("ClassName[after, ok]: " + className);
@@ -132,9 +155,68 @@ public class Compiler {
         Class<?>[] result = new Class<?>[classes.size()];
         classes.toArray(result);
 
+        try {
+
+            // Construct a string version of a manifest
+            StringBuilder sbuf = new StringBuilder();
+            sbuf.append("Manifest-Version: 1.0\n");
+            sbuf.append("Created-By: VRL-" + Constants.VERSION + "\n");
+            // sbuf.append("Java-Bean: False\n");
+
+            // Convert the string to a input stream
+            InputStream is = new ByteArrayInputStream(sbuf.toString().
+                    getBytes("UTF-8"));
+
+            File meta_inf = new File(scriptPath.getAbsolutePath() + "/META-INF");
+            meta_inf.mkdir();
+
+            Manifest manifest = new Manifest(is);
+
+            manifest.write(new FileOutputStream(
+                    new File(meta_inf.getAbsolutePath() + "/MANIFEST.MF")));
+
+
+            // write ug classes
+            
+            File ugInfoPath = new File(scriptPath.getAbsolutePath()
+                    +"/edu/gcsc/vrl/ug/");
+            
+            ugInfoPath.mkdirs();
+
+            XMLEncoder encoder = new XMLEncoder(
+                    new FileOutputStream(
+                    ugInfoPath.getAbsolutePath() + "/UG_INFO.XML"));
+
+            encoder.writeObject(new AbstractUGAPIInfo(classNames));
+
+            encoder.close();
+
+        } catch (IOException ex) {
+            Logger.getLogger(
+                    Compiler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            IOUtil.zipContentOfFolder(scriptPath.getAbsolutePath(),
+                    "/home/miho/tmp/VRL-UG-API.jar");
+        } catch (IOException ex) {
+            Logger.getLogger(Compiler.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        }
+
+        if (jarLocation != null) {
+            try {
+                IOUtil.zipContentOfFolder(scriptPath.getAbsolutePath(),
+                        jarLocation + "/VRL-UG-API.jar");
+            } catch (IOException ex) {
+                Logger.getLogger(Compiler.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            }
+        }
+
         deleteClassFiles(scriptPath);
 
-        UG.setNativeClasses(result);
+//        UG.setNativeClasses(result);
 
         return result;
     }
