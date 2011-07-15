@@ -29,9 +29,11 @@ public class CodeUtils {
     public static String methodName(String name) {
         String result = name;
 
-        if (!result.isEmpty()) {
-            result = Character.toLowerCase(name.charAt(0)) + name.substring(1);
-        }
+        // since 15.07.2011 we want to allow uppercase methodnames
+        // due to possible name clashes
+//        if (!result.isEmpty()) {
+//            result = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+//        }
         return result;
     }
 
@@ -46,10 +48,17 @@ public class CodeUtils {
     public static String constMethodName(String name) {
         String result = "const";
 
+        // since 15.07.2011 we want to allow uppercase and lowercase methodnames
+        // due to possible name clashes
+//        if (!name.isEmpty()) {
+//            result = "const" + Character.toUpperCase(name.charAt(0))
+//                    + name.substring(1);
+//        }
+
         if (!name.isEmpty()) {
-            result = "const" + Character.toUpperCase(name.charAt(0))
-                    + name.substring(1);
+            result = "const" + name;
         }
+
         return result;
     }
 
@@ -64,9 +73,11 @@ public class CodeUtils {
     public static String className(String name) {
         String result = name;
 
-        if (!result.isEmpty()) {
-            result = Character.toUpperCase(name.charAt(0)) + name.substring(1);
-        }
+        // since 15.07.2011 we want to allow lowercase classnames
+        // due to possible name clashes
+//        if (!result.isEmpty()) {
+//            result = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+//        }
 
         return result;
     }
@@ -79,7 +90,7 @@ public class CodeUtils {
      * @return the specified name as interface name
      */
     public static String interfaceName(String name) {
-        return className(name + "Interface");
+        return className("I" + name + "Interface");
     }
 
     /**
@@ -104,8 +115,7 @@ public class CodeUtils {
         return builder.toString();
     }
 
-
-     /**
+    /**
      * Converts an array of names to a string containing interface names 
      * seperated by ", ". Each entry in the specified name array will be 
      * processed with the method {@link CodeUtils#className(java.lang.String) }.
@@ -113,7 +123,7 @@ public class CodeUtils {
      * @param classNames array of names to convert
      * @param prefix prefix to add
      * @return a string containing interfacenames with specified prefix,
-      *        seperated by ", "
+     *        seperated by ", "
      */
     public static String namesToInterfaceNameList(
             String[] classNames, String prefix) {

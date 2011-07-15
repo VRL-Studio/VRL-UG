@@ -58,11 +58,15 @@ public class MethodCode implements CodeElement{
         boolean asFullClass = type == CodeType.FULL_CLASS;
 
         String methodPrefix = "";
+        
+        if (isFunction) {
+            methodPrefix+="f_";
+        }
 
         if (method.isConst() && !isFunction) {
             methodPrefix = "const_";
         }
-
+        
         new MethodInfoCode(method, visual).build(builder).
                 newLine().append("public "
                 + method.getReturnValue().getTypeClassName() + " "
