@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 
 /**
  * A fast Groovy code compiler wrapper.
@@ -42,7 +43,8 @@ public class Compiler {
      * @param codes codes to compile
      * @return class objects of the compiled codes
      */
-    public Class<?>[] compile(String[] codes) {
+    public Class<?>[] compile(String[] codes)  
+            throws MultipleCompilationErrorsException {
         return compile(codes, null);
     }
 
@@ -52,7 +54,8 @@ public class Compiler {
      * @param codes codes to compile
      * @return class objects of the compiled codes
      */
-    public Class<?>[] compile(String[] codes, String jarLocation) {
+    public Class<?>[] compile(String[] codes, String jarLocation) 
+            throws MultipleCompilationErrorsException{
 
         String packageName = "edu.gcsc.vrl.ug";
 

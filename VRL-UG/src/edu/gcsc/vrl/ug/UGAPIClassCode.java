@@ -17,10 +17,27 @@ public class UGAPIClassCode implements CodeElement{
     public UGAPIClassCode() {
     }
     
-    
-
     public CodeBuilder build(CodeBuilder builder) {
-        builder.addLine("class UGAPI {}");
+        builder.addLine("class UGAPI {").
+                incIndentation().
+                
+                // get svn revision
+                addLine("public static java.lang.String getSvnRevision() {").
+                incIndentation().
+                addLine("return \"" + UG.getInstance().getSvnRevision() + "\";").
+                decIndentation().
+                addLine("}").
+                
+                // get compile date
+                addLine("public static java.lang.String getCompileDate() {").
+                incIndentation().
+                addLine("return \"" + UG.getInstance().getCompileDate() + "\";").
+                decIndentation().
+                addLine("}").
+                
+                
+                decIndentation().
+                addLine("}");
         
         return builder;
         

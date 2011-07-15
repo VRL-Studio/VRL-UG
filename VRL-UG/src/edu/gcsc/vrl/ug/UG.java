@@ -9,6 +9,8 @@ import eu.mihosoft.vrl.visual.MessageType;
 import groovy.lang.GroovyClassLoader;
 import java.beans.XMLDecoder;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -44,6 +46,20 @@ public class UG {
      * ug messages
      */
     private static StringBuffer messages = new StringBuffer();
+    /**
+     * ug instance
+     */
+    private static UG ugInstance;
+    /**
+     * VRL canvas used to visualize ug classes
+     */
+    private VisualCanvas mainCanvas;
+    /**
+     * Messaging thread which displays messages generated from native UG
+     * methods.
+     */
+    private MessageThread messagingThread;
+    private boolean initialized = false;
 
     /**
      * Returns all native UG classes that are exported via the UG registry,
@@ -67,68 +83,122 @@ public class UG {
      * instanciation only allowed in this class
      */
     private UG() {
+        // we must set the singleton instance to prevent
+        // calling multiple constructors
+        ugInstance = this;
+
+        // initialize native ug libraries
         String[] args = {""};
         System.loadLibrary("ug4");
         ugInit(args);
 
+        boolean libLoaded = true;
+
+        Class<?>[] classes = new Class<?>[0];
+
+        // load api if compatible; rebuild otherwise
         try {
+            Class<?> cls = findCompatibleAPI(ugInstance);
 
-            try {
-                
-                ClassLoader cl = ClassLoader.getSystemClassLoader();
-                Class<?> cls = cl.loadClass("edu.gcsc.vrl.ug.UGAPI");
-
-                URL url = cls.getResource(
-                        "/edu/gcsc/vrl/ug/UG_INFO.XML");
-
-                XMLDecoder decoder = new XMLDecoder(url.openStream());
-
-                AbstractUGAPIInfo apiInfo =
-                        (AbstractUGAPIInfo) decoder.readObject();
-
-                decoder.close();
-
-                Class<?>[] classes =
-                        new Class<?>[apiInfo.getClassNames().size()];
-
-                for (int i = 0; i < apiInfo.getClassNames().size(); i++) {
-                    classes[i] = cl.
-                            loadClass(
-                            "edu.gcsc.vrl.ug." 
-                            + apiInfo.getClassNames().get(i));
-                }
-
-                setNativeClasses(classes);
-
-            } catch (ClassNotFoundException ex) {
-
+            if (cls != null) {
+                classes = getAPiClasses(cls);
+            } else {
                 NativeAPIInfo nativeAPI = convertRegistryInfo();
                 Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
-                
-                setNativeClasses(compiler.compile(
-                        new edu.gcsc.vrl.ug.NativeAPICode(
-                        nativeAPI).getAllCodes()));
+
+                try {
+
+                    classes = compiler.compile(
+                            new edu.gcsc.vrl.ug.NativeAPICode(
+                            nativeAPI).getAllCodes());
+                } catch (Exception ex) {
+                    libLoaded = false;
+                    Logger.getLogger(UG.class.getName()).
+                            log(Level.SEVERE, null, ex);
+                }
             }
 
         } catch (Exception ex) {
+            libLoaded = false;
             Logger.getLogger(UG.class.getName()).
                     log(Level.SEVERE, null, ex);
         }
 
+        setNativeClasses(classes);
+
+        initialized = libLoaded;
     }
+
     /**
-     * ug instance
+     * Tries to find a compatible api in the class path. Compatibility is
+     * defined as equal svn revision and equal compile date.
+     * @param ug ug instance used to check for compatibility.
+     * @return a compatible api class object or <code>null</code> if no such
+     * api could be found
      */
-    private static UG ugInstance;
+    private static Class<?> findCompatibleAPI(UG ug) {
+        try {
+            ClassLoader cl = ClassLoader.getSystemClassLoader();
+            Class<?> cls = cl.loadClass("edu.gcsc.vrl.ug.UGAPI");
+
+            String apiSvn = (String) cls.getMethod(
+                    "getSvnRevision").
+                    invoke(cls);
+
+            String apiDate = (String) cls.getMethod(
+                    "getCompileDate").
+                    invoke(cls);
+
+            boolean revisionsAreEqual = apiSvn.equals(ug.getSvnRevision());
+            boolean datesAreEqual = apiDate.equals(ug.getCompileDate());
+
+            if (revisionsAreEqual && datesAreEqual) {
+                return cls;
+            }
+        } catch (ClassNotFoundException ex) {
+        } catch (NoSuchMethodException ex) {
+        } catch (IllegalAccessException ex) {
+        } catch (InvocationTargetException ex) {
+        }
+
+        return null;
+    }
+
     /**
-     * VRL canvas used to visualize ug classes
+     * Returns the api classes defined in the jar-file the specified class
+     * object is loaded from.
+     * @param cls api class
+     * @return the api classes
      */
-    private VisualCanvas mainCanvas;
-    /**
-     * Messaging thread which displays messages generated from native UG
-     * methods.
-     */
-    private MessageThread messagingThread;
+    private static Class<?>[] getAPiClasses(Class<?> cls) {
+        try {
+            ClassLoader cl = ClassLoader.getSystemClassLoader();
+            URL url = cls.getResource(
+                    "/edu/gcsc/vrl/ug/UG_INFO.XML");
+
+            XMLDecoder decoder = new XMLDecoder(url.openStream());
+
+            AbstractUGAPIInfo apiInfo =
+                    (AbstractUGAPIInfo) decoder.readObject();
+
+            decoder.close();
+
+            Class<?>[] result =
+                    new Class<?>[apiInfo.getClassNames().size()];
+
+            for (int i = 0; i < apiInfo.getClassNames().size(); i++) {
+                result[i] = cl.loadClass(
+                        "edu.gcsc.vrl.ug."
+                        + apiInfo.getClassNames().get(i));
+            }
+
+            return result;
+        } catch (IOException ex) {
+        } catch (ClassNotFoundException ex) {
+        }
+
+        return new Class<?>[0];
+    }
 
     /**
      * <p>
