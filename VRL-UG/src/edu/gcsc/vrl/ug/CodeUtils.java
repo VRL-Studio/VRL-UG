@@ -20,8 +20,7 @@ public class CodeUtils {
 
     /**
      * Returns a name as method name. The specified string must only contain
-     * valid characters. This method ensures the first character is a
-     * lowercase character.
+     * valid characters.
      * @param name name to process
      * @return a name as method name, i.e., first character is a lowercase
      * character
@@ -39,8 +38,7 @@ public class CodeUtils {
 
     /**
      * Returns a name as const method name. The specified string must only 
-     * contain valid characters. This method ensures the first character of
-     * the method name is a lowercase character. The prefix "const" is added to
+     * contain valid characters. The prefix "const" is added to
      * the specified name.
      * @param name name to process
      * @return a name as const method name, i.e., the prefix "const" is added
@@ -64,14 +62,44 @@ public class CodeUtils {
 
     /**
      * Returns a name as class name. The specified string must only contain
-     * valid characters. This method ensures the first character is a
-     * uppercase character.
+     * valid characters. 
      * @param name name to process
      * @return a name as class name, i.e., first character is a uppercase
      * character
      */
-    public static String className(String name) {
-        String result = name;
+    public static String className(String name, boolean isConst) {
+        String result = "C_";
+
+        if (isConst) {
+            result += "Const";
+        }
+
+        result += name;
+
+        // since 15.07.2011 we want to allow lowercase classnames
+        // due to possible name clashes
+//        if (!result.isEmpty()) {
+//            result = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+//        }
+
+        return result;
+    }
+    
+    /**
+     * Returns a name as class name. The specified string must only contain
+     * valid characters. 
+     * @param name name to process
+     * @return a name as class name, i.e., first character is a uppercase
+     * character
+     */
+    public static String classNameForParamInfo(String name, boolean isConst) {
+        String result = "";
+
+        if (isConst) {
+            result += "Const";
+        }
+
+        result += name;
 
         // since 15.07.2011 we want to allow lowercase classnames
         // due to possible name clashes
@@ -89,8 +117,41 @@ public class CodeUtils {
      * @param name name to process
      * @return the specified name as interface name
      */
-    public static String interfaceName(String name) {
-        return className("I" + name + "Interface");
+    public static String interfaceName(String name, boolean isConst) {
+        String result = "I_";
+
+        if (isConst) {
+            result += "Const";
+        }
+
+        result += name;
+
+        // since 15.07.2011 we want to allow lowercase classnames
+        // due to possible name clashes
+//        if (!result.isEmpty()) {
+//            result = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+//        }
+
+        return result;
+    }
+
+    /**
+     * Returns a name as function name. The specified string must only contain
+     * valid characters.
+     * @param name name to process
+     * @return a name as class name, i.e., first character is a uppercase
+     * character
+     */
+    public static String functionName(String name) {
+        String result = "F_" + name;
+
+        // since 15.07.2011 we want to allow lowercase classnames
+        // due to possible name clashes
+//        if (!result.isEmpty()) {
+//            result = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+//        }
+
+        return result;
     }
 
     /**
@@ -100,7 +161,7 @@ public class CodeUtils {
      * @param names array of names to convert
      * @return a string containing classnames seperated by ", "
      */
-    public static String namesToClassNameList(String[] names) {
+    public static String namesToClassNameList(String[] names, boolean isConst) {
 
         StringBuilder builder = new StringBuilder();
 
@@ -109,7 +170,7 @@ public class CodeUtils {
                 builder.append(", ");
             }
 
-            builder.append(className(names[i]));
+            builder.append(className(names[i], isConst));
         }
 
         return builder.toString();
@@ -126,7 +187,7 @@ public class CodeUtils {
      *        seperated by ", "
      */
     public static String namesToInterfaceNameList(
-            String[] classNames, String prefix) {
+            String[] classNames, boolean isConst) {
 
         StringBuilder builder = new StringBuilder();
 
@@ -135,7 +196,8 @@ public class CodeUtils {
                 builder.append(", ");
             }
 
-            builder.append(prefix).append(interfaceName(classNames[i]));
+            builder.append(interfaceName(classNames[i], isConst));
+//            builder.append(prefix).append(interfaceName(classNames[i]));
         }
 
         return builder.toString();

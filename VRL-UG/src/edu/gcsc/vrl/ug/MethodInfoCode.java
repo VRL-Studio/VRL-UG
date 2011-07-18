@@ -46,9 +46,9 @@ public class MethodInfoCode implements CodeElement {
             String valueName = VLangUtils.addEscapeCharsToCode(
                     method.getReturnValue().getParamInfo()[0]);
 
-            if (valueName.isEmpty()) {
-                valueName = CodeUtils.className(
-                        method.getReturnValue().getClassName());
+            if (valueName.isEmpty() && method.getReturnValue().isRegisteredClass()) {
+                valueName = CodeUtils.classNameForParamInfo(
+                        method.getReturnValue().getClassName(), method.isConst());
             }
 
             builder.append("valueName=\""
