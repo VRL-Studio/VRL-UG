@@ -14,16 +14,18 @@ import eu.mihosoft.vrl.lang.VLangUtils;
 public class ComponentInfoCode implements CodeElement {
 
     private NativeClassInfo classInfo;
-    private String prefix;
+//    private String prefix;
+    private boolean isConst;
 
     /**
      * Constructor.
      * @param classInfo class info
      * @param prefix class name prefix
      */
-    public ComponentInfoCode(NativeClassInfo classInfo, String prefix) {
+    public ComponentInfoCode(NativeClassInfo classInfo, boolean isConst) {
         this.classInfo = classInfo;
-        this.prefix = prefix;
+//        this.prefix = prefix;
+        this.isConst = isConst;
     }
 
     @Override
@@ -33,8 +35,9 @@ public class ComponentInfoCode implements CodeElement {
 
     @Override
     public CodeBuilder build(CodeBuilder builder) {
-        builder.append("@ComponentInfo(name=\"").append(prefix).
-                append(VLangUtils.addEscapeCharsToCode(classInfo.getName())).
+        builder.append("@ComponentInfo(name=\"").
+                append(VLangUtils.addEscapeCharsToCode(
+                CodeUtils.classNameForParamInfo(classInfo.getName(), isConst))).
                 append("\", category=\"").
                 append(VLangUtils.addEscapeCharsToCode(
                 classInfo.getCategory())).

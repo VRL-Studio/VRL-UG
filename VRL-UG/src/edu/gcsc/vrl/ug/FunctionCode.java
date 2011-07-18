@@ -36,7 +36,7 @@ public class FunctionCode implements CodeElement{
         String functionName = function.getOverloads()[0].getName();
         String functionCategory = function.getOverloads()[0].getCategory();
 
-        String className = CodeUtils.className(functionName);
+        String className = CodeUtils.functionName(functionName);
 //        String methodName = CodeUtils.methodName(function.getName());
 
         builder.append("@ComponentInfo(name=\"").append(

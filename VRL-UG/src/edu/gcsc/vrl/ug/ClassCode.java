@@ -54,22 +54,24 @@ class ClassCode implements CodeElement {
         boolean weAreAGroupClass = api.groupExists(classInfo.getName());
         boolean weArePartOfAGroup =
                 api.isInClassGroup(classInfo.getName());
+        
 
         String prefix = "";
 
-        if (isConst) {
-            prefix = "Const";
-        }
+//        if (isConst) {
+//            prefix = "Const";
+//        }
 
         if (asInterface) {
             classHeaderCode =
                     "public interface "
-                    + prefix + CodeUtils.interfaceName(classInfo.getName())
+                    + CodeUtils.interfaceName(classInfo.getName(), isConst)
                     + " extends UGObjectInterface ";
 
             if (!isConst) {
-                classHeaderCode += ", Const"
-                        + CodeUtils.interfaceName(classInfo.getName());
+                // we extend the const interface
+                classHeaderCode += ", "
+                        + CodeUtils.interfaceName(classInfo.getName(), true);
             }
 
             if (classInfo.getClassNames() != null
@@ -78,37 +80,37 @@ class ClassCode implements CodeElement {
                 classHeaderCode += ", "
                         + CodeUtils.namesToInterfaceNameList(
                         classInfo.getBaseClassNames(),
-                        prefix);
+                        isConst);
             }
 
             // add the group interface
             if (!weAreAGroupClass && weArePartOfAGroup) {
                 classHeaderCode += ", "
-                        + prefix
                         + CodeUtils.interfaceName(
                         NativeClassGroupInfo.convertToClassGroup(
-                        api, classInfo.getName()));
+                        api, classInfo.getName()),isConst);
             }
 
         } else if (asFullClass) {
             classHeaderCode = "public class "
-                    + prefix + CodeUtils.className(classInfo.getName())
+                    + CodeUtils.className(classInfo.getName(), isConst)
                     + " extends edu.gcsc.vrl.ug.UGObject implements "
-                    + prefix + CodeUtils.interfaceName(classInfo.getName());
+                    + CodeUtils.interfaceName(classInfo.getName(), isConst);
         } else if (asWrapper) {
             classHeaderCode = "public final class "
-                    + prefix + CodeUtils.className(classInfo.getName())
+                    + CodeUtils.className(classInfo.getName(), isConst)
                     + " extends edu.gcsc.vrl.ug.UGObject implements "
-                    + prefix + CodeUtils.interfaceName(classInfo.getName());
+                    + CodeUtils.interfaceName(classInfo.getName(), isConst);
         }
 
         if ((asFullClass && !isConst) || (asWrapper && !isConst)) {
             builder.addLine(new ComponentInfoCode(
-                    classInfo, prefix).toString()).
+                    classInfo, isConst).toString()).
                     addLine("@ObjectInfo(name=\""
                     + prefix
                     + VLangUtils.addEscapeCharsToCode(
-                    classInfo.getName()) + "\")");
+                    CodeUtils.classNameForParamInfo(
+                    classInfo.getName(), isConst)) + "\")");
         } else {
             builder.addLine("@ComponentInfo(ignore=true)");
         }
@@ -126,8 +128,8 @@ class ClassCode implements CodeElement {
             
             builder.addLine(
                     "private static final long serialVersionUID=1L").
-                    addLine("public " + prefix + CodeUtils.className(
-                    classInfo.getName())
+                    addLine("public " + CodeUtils.className(
+                    classInfo.getName(), isConst)
                     + "() { setClassName(\"" + classInfo.getName()
                     + "\"); setInstantiable(" + asFullClass + " );"
                     + "setClassGroupObject(" + weAreAGroupClass + " );"
@@ -180,8 +182,8 @@ class ClassCode implements CodeElement {
 
         if (asFullClass) {
 
-            String interfaceName = prefix + CodeUtils.interfaceName(
-                    classInfo.getName());
+            String interfaceName = CodeUtils.interfaceName(
+                    classInfo.getName(), isConst);
 
            builder.newLine().append("@MethodInfo(valueName=\"").
                     append(prefix + classInfo.getName()).append("\""
@@ -200,8 +202,8 @@ class ClassCode implements CodeElement {
                     append(interfaceName).
                     append(" This() {return this;}").newLine();
         } else if (asWrapper) {
-            String interfaceName = prefix + CodeUtils.interfaceName(
-                    classInfo.getName());
+            String interfaceName = CodeUtils.interfaceName(
+                    classInfo.getName(), isConst);
 
             builder.newLine().append("@MethodInfo(valueName=\"").
                     append(prefix + classInfo.getName()).append("\""

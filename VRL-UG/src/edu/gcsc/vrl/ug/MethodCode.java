@@ -10,7 +10,7 @@ import eu.mihosoft.vrl.lang.CodeBuilder;
  * Code element that generates method code.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class MethodCode implements CodeElement{
+public class MethodCode implements CodeElement {
 
     private NativeMethodInfo method;
     private final CodeType type;
@@ -23,7 +23,7 @@ public class MethodCode implements CodeElement{
      * @param type code type
      * @param visual defines whether to generate code that shall be visualized
      */
-    public MethodCode(NativeMethodInfo method, boolean function, 
+    public MethodCode(NativeMethodInfo method, boolean function,
             CodeType type, boolean visual) {
         this.method = method;
         this.type = type;
@@ -57,22 +57,22 @@ public class MethodCode implements CodeElement{
         boolean asWrapper = type == CodeType.WRAP_POINTER_CLASS;
         boolean asFullClass = type == CodeType.FULL_CLASS;
 
-        String methodPrefix = "";
-        
-        if (isFunction) {
-            methodPrefix+="f_";
-        }
+        String methodName = "";
 
         if (method.isConst() && !isFunction) {
-            methodPrefix = "const_";
+            methodName = "const_";
         }
-        
+
+        if (isFunction) {
+            methodName += "invoke";
+        } else {
+            methodName += CodeUtils.methodName(method.getName());
+        }
+
         new MethodInfoCode(method, visual).build(builder).
                 newLine().append("public "
                 + method.getReturnValue().getTypeClassName() + " "
-                + methodPrefix
-                + CodeUtils.methodName(
-                method.getName()) + " (");
+                + methodName + " (");
 
         if (method.getParameters().length > 0 || visual) {
             builder.newLine().incIndentation();
@@ -129,7 +129,7 @@ public class MethodCode implements CodeElement{
             if (returnsPointer) {
                 String returnTypeClassName =
                         CodeUtils.className(
-                        method.getReturnValue().getClassName());
+                        method.getReturnValue().getClassName(),method.isConst());
 
                 builder.append("edu.gcsc.vrl.ug.").append(returnTypeClassName).
                         append(" convertedResult = new ").

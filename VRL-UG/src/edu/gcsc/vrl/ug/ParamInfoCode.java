@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.lang.CodeBuilder;
@@ -13,6 +12,7 @@ import eu.mihosoft.vrl.lang.VLangUtils;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class ParamInfoCode implements CodeElement {
+
     private NativeParamInfo param;
 
     /**
@@ -31,19 +31,25 @@ public class ParamInfoCode implements CodeElement {
     @Override
     public CodeBuilder build(CodeBuilder builder) {
 
+        String valueName = param.getParamInfo()[0];
+
+        if (valueName.isEmpty() && param.isRegisteredClass()) {
+            valueName = param.getTypeClassName();
+        }
+
         builder.append("@ParamInfo(name=\""
-                + VLangUtils.addEscapeCharsToCode(param.getParamInfo()[0])
+                + VLangUtils.addEscapeCharsToCode(valueName)
                 + "\", style=\""
                 + VLangUtils.addEscapeCharsToCode(
                 param.getParamInfo()[1]) + "\", "
-                + "options=\"" 
+                + "options=\""
                 + VLangUtils.addEscapeCharsToCode(param.getParamInfo()[2]));
-        
-                if (param.isRegisteredClass()) {
-                    builder.append(";serialization=false");
-                }
-                
-                builder.append("\")");
+
+        if (param.isRegisteredClass()) {
+            builder.append(";serialization=false");
+        }
+
+        builder.append("\")");
 
         return builder;
     }
