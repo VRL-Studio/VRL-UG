@@ -84,7 +84,9 @@ public class UG {
      */
     private UG() {
         // we must set the singleton instance to prevent
-        // calling multiple constructors
+        // calling multiple constructors.
+        // doing this in the corresponding getter methods does not work anymore
+        // as we need the instance for searching a compiled UG-API.
         ugInstance = this;
 
         // initialize native ug libraries
@@ -151,9 +153,16 @@ public class UG {
 
             boolean revisionsAreEqual = apiSvn.equals(ug.getSvnRevision());
             boolean datesAreEqual = apiDate.equals(ug.getCompileDate());
-
+            
             if (revisionsAreEqual && datesAreEqual) {
                 return cls;
+            } else {
+                System.err.println("VRL-UG: API version missmatch");
+                System.err.println(">> svn: present=" 
+                        + apiSvn + ", requested=" + ug.getSvnRevision());
+                System.err.println(">> date: present=" 
+                        + apiDate + ", requested=" + ug.getCompileDate());
+                System.err.println(">> recompiling API...");
             }
         } catch (ClassNotFoundException ex) {
         } catch (NoSuchMethodException ex) {
