@@ -56,6 +56,10 @@ public class UGObject implements Serializable, UGObjectInterface {
             }
             
             System.out.println(">>> class-name: " + getClassName());
+            
+            if (getClassGroupName().equals(getClassName())) {
+                throw new IllegalStateException("class name equals group name");
+            }
         } else {
             System.out.println(">>> no class-group: " + getClassName());
         }
