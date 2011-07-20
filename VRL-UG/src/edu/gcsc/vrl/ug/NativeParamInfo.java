@@ -226,6 +226,16 @@ public class NativeParamInfo {
 
         return "/*ERROR!!! INVALID TYPE*/ void";
     }
+    
+    /**
+     * Indicates whether this parameter is const.
+     * @return  <code>true</code> if this parameter is const;
+     *          <code>false</code> otherwise
+     */
+    public boolean isConst() {
+        return type == NativeType.CONST_POINTER 
+                ||type == NativeType.CONST_SMART_POINTER;
+    }
 
     /**
      * Determines whether the type of this parameter is a registered ug class

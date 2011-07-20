@@ -34,7 +34,9 @@ public class ParamInfoCode implements CodeElement {
         String valueName = param.getParamInfo()[0];
 
         if (valueName.isEmpty() && param.isRegisteredClass()) {
-            valueName = param.getTypeClassName();
+//            valueName = param.getTypeClassName();
+            valueName = CodeUtils.classNameForParamInfo(param.getClassName(),
+                    param.isConst());
         }
 
         builder.append("@ParamInfo(name=\""
