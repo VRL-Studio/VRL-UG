@@ -46,9 +46,11 @@ public class MethodInfoCode implements CodeElement {
             String valueName = VLangUtils.addEscapeCharsToCode(
                     method.getReturnValue().getParamInfo()[0]);
 
-            if (valueName.isEmpty() && method.getReturnValue().isRegisteredClass()) {
+            if (valueName.isEmpty()
+                    && method.getReturnValue().isRegisteredClass()) {
                 valueName = CodeUtils.classNameForParamInfo(
-                        method.getReturnValue().getClassName(), method.isConst());
+                        method.getReturnValue().getClassName(),
+                        method.isConst());
             }
 
             builder.append("valueName=\""
@@ -61,7 +63,7 @@ public class MethodInfoCode implements CodeElement {
             if (method.getReturnValue().isRegisteredClass()) {
                 builder.append(";serialization=false");
             }
-            
+
             builder.append("\")");;
         } else if (!visual) {
             builder.append("@MethodInfo(noGUI=true)");
