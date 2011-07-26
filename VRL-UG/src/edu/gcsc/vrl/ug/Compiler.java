@@ -104,13 +104,13 @@ public class Compiler {
         }
 
         try {
-//            BufferedWriter writer =
-//                    new BufferedWriter(new FileWriter(
-//                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
-            
             BufferedWriter writer =
                     new BufferedWriter(new FileWriter(
-                    new File("/home/miho/UG_Classes.groovy")));
+                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
+            
+//            BufferedWriter writer =
+//                    new BufferedWriter(new FileWriter(
+//                    new File("/home/miho/UG_Classes.groovy")));
 
             writer.append(code);
             writer.flush();
