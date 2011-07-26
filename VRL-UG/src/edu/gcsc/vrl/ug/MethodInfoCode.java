@@ -43,14 +43,18 @@ public class MethodInfoCode implements CodeElement {
                 builder.append("hide=true, ");
             }
 
-            String valueName = VLangUtils.addEscapeCharsToCode(
-                    method.getReturnValue().getParamInfo()[0]);
+            String valueName = "";
 
-            if (valueName.isEmpty()
-                    && method.getReturnValue().isRegisteredClass()) {
-                valueName = CodeUtils.classNameForParamInfo(
-                        method.getReturnValue().getClassName(),
-                        method.isConst());
+            if (method.getReturnValue().isRegisteredClass()) {
+
+                valueName = VLangUtils.addEscapeCharsToCode(
+                        method.getReturnValue().getParamInfo()[0]);
+
+                if (valueName.isEmpty()) {
+                    valueName = CodeUtils.classNameForParamInfo(
+                            method.getReturnValue().getClassName(),
+                            method.isConst());
+                }
             }
 
             builder.append("valueName=\""

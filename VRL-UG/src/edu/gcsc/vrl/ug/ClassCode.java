@@ -55,12 +55,11 @@ class ClassCode implements CodeElement {
         boolean weArePartOfAGroup =
                 api.isInClassGroup(classInfo.getName());
         
+        if (classInfo.isGroupClass()) {
+            builder.addLine("// group");
+        }
 
         String prefix = "";
-
-//        if (isConst) {
-//            prefix = "Const";
-//        }
 
         if (asInterface) {
             classHeaderCode =

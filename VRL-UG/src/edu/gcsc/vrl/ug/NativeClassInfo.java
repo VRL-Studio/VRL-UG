@@ -17,6 +17,7 @@ public class NativeClassInfo {
     private NativeMethodGroupInfo[] methods;
     private NativeMethodGroupInfo[] constMethods;
     private boolean instantiable;
+    private boolean groupClass = false;
 
     public NativeClassInfo() {
     }
@@ -28,9 +29,8 @@ public class NativeClassInfo {
         this.methods = c.methods;
         this.constMethods = c.constMethods;
         this.instantiable = c.instantiable;
+        this.groupClass = c.groupClass;
     }
-    
-    
 
     /**
      * Returns the class name.
@@ -64,11 +64,11 @@ public class NativeClassInfo {
         if (category == null || category.equals("")) {
             category = "UG4";
         } else {
-            
+
             if (category.startsWith("/")) {
                 category = category.substring(1);
             }
-            
+
             if (category.toUpperCase().startsWith("UG4")) {
                 category = category.substring(3);
                 category = "UG4" + category;
@@ -162,5 +162,19 @@ public class NativeClassInfo {
         for (NativeMethodGroupInfo m : constMethods) {
             m.setConst(true);
         }
+    }
+
+    /**
+     * @return the groupClass
+     */
+    public boolean isGroupClass() {
+        return groupClass;
+    }
+
+    /**
+     * @param groupClass the groupClass to set
+     */
+    void setGroupClass(boolean groupClass) {
+        this.groupClass = groupClass;
     }
 }

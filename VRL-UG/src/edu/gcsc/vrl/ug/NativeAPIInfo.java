@@ -76,15 +76,32 @@ public class NativeAPIInfo {
         return getClassByName(name) != null;
     }
 
+    /**
+     * Returns the base class info objects of the specified base class string.
+     * @param classInfo
+     * @return the base class info objects of the specified base class string
+     */
     public NativeClassInfo[] baseClasses(NativeClassInfo classInfo) {
 
         String[] baseClassNames = classInfo.getBaseClassNames();
 
+        // find groups
+        int numberOfGroups = 0;
+        
+        for (String name : baseClassNames) {
+            if (isClassGroup(name)) {
+                numberOfGroups++;
+            }
+        }
+        
         NativeClassInfo[] result =
-                new NativeClassInfo[baseClassNames.length];
+                new NativeClassInfo[baseClassNames.length-numberOfGroups];
 
         for (int i = 0; i < baseClassNames.length; i++) {
-            result[i] = getClassByName(baseClassNames[i]);
+
+            if (!isClassGroup(baseClassNames[i])) {
+                result[i] = getClassByName(baseClassNames[i]);
+            }
         }
 
         return result;
@@ -120,7 +137,8 @@ public class NativeAPIInfo {
 
         // initialize map if necessary
         if (classGroupsByClassName == null) {
-            classGroupsByClassName = new HashMap<String, NativeClassGroupInfo>();
+            classGroupsByClassName = 
+                    new HashMap<String, NativeClassGroupInfo>();
 
             for (NativeClassGroupInfo grp : classGroups) {
                 for (String n : grp.getClasses()) {
@@ -164,5 +182,15 @@ public class NativeAPIInfo {
 
     public boolean groupExists(String grpName) {
         return getGroupByName(grpName) != null;
+    }
+
+    /**
+     * Determines whether a class group with the specified name exists.
+     * @param name
+     * @return <code>true</code> if a class group with the specified name
+     *         exists; <code>false</code> otherwise
+     */
+    public boolean isClassGroup(String name) {
+        return getGroupByName(name) != null;
     }
 }
