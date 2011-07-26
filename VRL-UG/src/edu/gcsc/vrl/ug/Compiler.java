@@ -116,7 +116,8 @@ public class Compiler {
             writer.flush();
             writer.close();
         } catch (IOException ex) {
-            Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Compiler.class.getName()).
+                    log(Level.SEVERE, null, ex);
         }
 
 
