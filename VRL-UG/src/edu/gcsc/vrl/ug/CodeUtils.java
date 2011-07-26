@@ -44,7 +44,7 @@ public class CodeUtils {
      * @return a name as const method name, i.e., the prefix "const" is added
      */
     public static String constMethodName(String name) {
-        String result = "const";
+        String result = "const$";
 
         // since 15.07.2011 we want to allow uppercase and lowercase methodnames
         // due to possible name clashes
@@ -54,7 +54,7 @@ public class CodeUtils {
 //        }
 
         if (!name.isEmpty()) {
-            result = "const" + name;
+            result = "const$" + name;
         }
 
         return result;
@@ -71,7 +71,7 @@ public class CodeUtils {
         String result = "C_";
 
         if (isConst) {
-            result += "Const";
+            result += "Const$";
         }
 
         result += name;
@@ -121,7 +121,7 @@ public class CodeUtils {
         String result = "I_";
 
         if (isConst) {
-            result += "Const";
+            result += "Const$";
         }
 
         result += name;

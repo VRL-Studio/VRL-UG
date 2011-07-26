@@ -36,7 +36,7 @@ public class NativeAPICode {
         boolean interfaces = type == CodeType.INTERFACE;
 
         for (NativeClassInfo classInfo : api.getClasses()) {
-            
+
             if ((classInfo.isInstantiable()
                     && type == CodeType.FULL_CLASS)) {
                 codes.add(new ClassCode(
@@ -83,13 +83,17 @@ public class NativeAPICode {
                     NativeClassGroupInfo.classToGroupClass(
                     api, api.getClassByName(grp.getClasses()[0]));
 
+
+            System.out.println("group-cls:" + groupCls.getName());
+
+
             codes.add(new ClassCode(
                     api, groupCls, CodeType.FULL_CLASS, false).build(
                     new CodeBuilder()).toString());
             codes.add(new ClassCode(
                     api, groupCls, CodeType.FULL_CLASS, true).build(
                     new CodeBuilder()).toString());
-            
+
             codes.add(new ClassCode(
                     api, groupCls, CodeType.INTERFACE, false).build(
                     new CodeBuilder()).toString());
