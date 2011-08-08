@@ -85,22 +85,21 @@ public class NativeAPIInfo {
 
         String[] baseClassNames = classInfo.getBaseClassNames();
 
-        // find groups
-        int numberOfGroups = 0;
-        
-        for (String name : baseClassNames) {
-            if (isClassGroup(name)) {
-                numberOfGroups++;
-            }
-        }
-        
         NativeClassInfo[] result =
-                new NativeClassInfo[baseClassNames.length-numberOfGroups];
+                new NativeClassInfo[baseClassNames.length];
 
         for (int i = 0; i < baseClassNames.length; i++) {
 
-            if (!isClassGroup(baseClassNames[i])) {
-                result[i] = getClassByName(baseClassNames[i]);
+            String baseClsName = baseClassNames[i];
+
+            if (!isClassGroup(baseClsName)) {
+                // class not in group, retrieve class directly
+                result[i] = getClassByName(baseClsName);
+            } else {
+                // name specifies group. thus, retrieve first class in group
+                // which will later be substituted with group info
+                result[i] = getClassByName(getGroupByName(baseClsName).
+                        getClasses()[0]);
             }
         }
 
@@ -137,7 +136,7 @@ public class NativeAPIInfo {
 
         // initialize map if necessary
         if (classGroupsByClassName == null) {
-            classGroupsByClassName = 
+            classGroupsByClassName =
                     new HashMap<String, NativeClassGroupInfo>();
 
             for (NativeClassGroupInfo grp : classGroups) {

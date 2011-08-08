@@ -29,12 +29,12 @@ import javax.swing.SwingUtilities;
  * </p>
  * <p>
  * <b>Note:</b> this singleton must not be loaded by more than one
-classloader per JVM! Although this is no problem for Java classes it
-does not work for native libraries. Unfortunately we cannot provide an
-acceptable workaround. Thus, it is recommended to use this method from
-a valid VRL plugin only. The VRL plugin system is aware of this problem
-and handles it correctly.
-</p>
+ * classloader per JVM! Although this is no problem for Java classes it
+ * does not work for native libraries. Unfortunately we cannot provide an
+ * acceptable workaround. Thus, it is recommended to use this method from
+ * a valid VRL plugin only. The VRL plugin system is aware of this problem
+ * and handles it correctly.
+ * </p>
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class UG {
