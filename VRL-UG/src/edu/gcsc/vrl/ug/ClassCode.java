@@ -54,7 +54,7 @@ class ClassCode implements CodeElement {
         boolean weAreAGroupClass = api.groupExists(classInfo.getName());
         boolean weArePartOfAGroup =
                 api.isInClassGroup(classInfo.getName());
-        
+
         if (classInfo.isGroupClass()) {
             builder.addLine("// group");
         }
@@ -87,7 +87,7 @@ class ClassCode implements CodeElement {
                 classHeaderCode += ", "
                         + CodeUtils.interfaceName(
                         NativeClassGroupInfo.convertToClassGroup(
-                        api, classInfo.getName()),isConst);
+                        api, classInfo.getName()), isConst);
             }
 
         } else if (asFullClass) {
@@ -118,13 +118,13 @@ class ClassCode implements CodeElement {
                 incIndentation();
 
         if (asFullClass || asWrapper) {
-            
+
             String classGrpName = "";
-            
+
             if (weAreAGroupClass) {
                 classGrpName = classInfo.getName();
             }
-            
+
             builder.addLine(
                     "private static final long serialVersionUID=1L").
                     addLine("public " + CodeUtils.className(
@@ -132,7 +132,8 @@ class ClassCode implements CodeElement {
                     + "() { setClassName(\"" + classInfo.getName()
                     + "\"); setInstantiable(" + asFullClass + " );"
                     + "setClassGroupObject(" + weAreAGroupClass + " );"
-                    + "setClassGroupName(\"" + classGrpName + "\");}").newLine();
+                    + "setClassGroupName(\"" + classGrpName + "\");}").
+                    newLine();
         }
 
 //        ArrayList<MethodGroupSignature> signatures =
@@ -184,7 +185,7 @@ class ClassCode implements CodeElement {
             String interfaceName = CodeUtils.interfaceName(
                     classInfo.getName(), isConst);
 
-           builder.newLine().append("@MethodInfo(valueName=\"").
+            builder.newLine().append("@MethodInfo(valueName=\"").
                     append(prefix + classInfo.getName()).append("\""
                     + ", valueOptions = \"serialization=false\")").
                     newLine().append("public ").
