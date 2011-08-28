@@ -25,6 +25,7 @@ public class Configurator implements PluginConfigurator {
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
 
             vCanvas.addClass(UGUtil.class);
+            vCanvas.addClass(AlgebraTest.class);
         }
     }
 
