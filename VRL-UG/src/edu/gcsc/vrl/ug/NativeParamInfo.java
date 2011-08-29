@@ -202,7 +202,6 @@ public class NativeParamInfo {
      * @return the Java class name of this parameter type
      */
     public String getTypeClassName() {
-        String prefix = "Const";
 
         switch (getType()) {
             case VOID:
@@ -216,16 +215,26 @@ public class NativeParamInfo {
             case STRING:
                 return "java.lang.String";
             case POINTER:
-                return CodeUtils.interfaceName(getClassName());
+                return CodeUtils.interfaceName(getClassName(), false);
             case CONST_POINTER:
-                return prefix + CodeUtils.interfaceName(getClassName());
+                return CodeUtils.interfaceName(getClassName(), true);
             case SMART_POINTER:
-                return CodeUtils.interfaceName(getClassName());
+                return CodeUtils.interfaceName(getClassName(), false);
             case CONST_SMART_POINTER:
-                return prefix + CodeUtils.interfaceName(getClassName());
+                return CodeUtils.interfaceName(getClassName(), true);
         }
 
         return "/*ERROR!!! INVALID TYPE*/ void";
+    }
+    
+    /**
+     * Indicates whether this parameter is const.
+     * @return  <code>true</code> if this parameter is const;
+     *          <code>false</code> otherwise
+     */
+    public boolean isConst() {
+        return type == NativeType.CONST_POINTER 
+                ||type == NativeType.CONST_SMART_POINTER;
     }
 
     /**

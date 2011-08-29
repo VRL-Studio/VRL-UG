@@ -34,12 +34,13 @@ public class UserDataCompiler {
             paramString += "double " + paramNames.get(i) + " = p[" + i + "];";
         }
 
-        String text = "package " + PACKAGE_NAME+";" 
-                +" class " + UserDataCompiler.CLASS_NAME
-                + " extends UserData { ";
-        text += returnType + " run" + dim+ " (double[] p) { ";
+        String text = "package " + PACKAGE_NAME+";\n" 
+                +"class " + UserDataCompiler.CLASS_NAME
+                + " extends UserData {\n";
+        text += returnType + " run" + dim+ " (double[] p) {\n";
+
         text += paramString;
-        text += s + " } }";
+        text += s + "\n}\n}\n";
 
         return text;
     }
