@@ -267,13 +267,8 @@ public class UGObject implements Serializable, UGObjectInterface {
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         if (isParameterObject()) {
-//            throw new NotSerializableException();
-            System.exit(1234);
             return;
         } else {
-//            if (isClassGroupObject()) {
-//                setClassName(getClassGroupName());
-//            }
             out.defaultWriteObject();
         }
     }
