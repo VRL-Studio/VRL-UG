@@ -15,6 +15,7 @@ import edu.gcsc.vrl.ug.I_GridFunction;
 import edu.gcsc.vrl.ug.I_ILU;
 import edu.gcsc.vrl.ug.I_MatrixOperator;
 import edu.gcsc.vrl.ug.I_StandardConvergenceCheck;
+import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import java.io.Serializable;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
+@ComponentInfo(name = "UG Utility", category = "/UG4/util")
 public class AlgebraTest implements Serializable{
     private static final long serialVersionUID = 1L;
     @MethodInfo(valueName="Solution")

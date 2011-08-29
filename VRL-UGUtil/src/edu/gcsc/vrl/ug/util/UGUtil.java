@@ -19,6 +19,7 @@ import edu.gcsc.vrl.ug.I_SubsetHandler;
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
+import eu.mihosoft.vrl.reflection.VisualCanvas;
 import java.io.Serializable;
 
 /**
@@ -29,10 +30,17 @@ import java.io.Serializable;
 public class UGUtil implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
+    private transient VisualCanvas mainCanvas;
+
+    @MethodInfo(noGUI = true, callOptions = "assign-canvas")
+    public void setMainCanvas(VisualCanvas mainCanvas) {
+        this.mainCanvas = mainCanvas;
+    }
 
     @MethodInfo(valueName = "Domain")
     public static I_Domain CreateAndDistributeDomain(
-            @ParamInfo(name = "Grid-Name:", style="load-dialog") String gridName,
+            @ParamInfo(name = "Grid-Name:", style = "load-dialog") String gridName,
             @ParamInfo(name = "numRefs:", options = "min=0") int numRefs,
             @ParamInfo(name = "numPreRefs:", options = "min=0") int numPreRefs,
             @ParamInfo(name = "Subsets:", style = "array") String[] neededSubsets) {
@@ -48,7 +56,8 @@ public class UGUtil implements Serializable {
         // -- create Refiner
         if (numPreRefs > numRefs) {
             print("numPreRefs must be smaller than numRefs. Aborting.");
-            exit();
+//            exit();
+            return null;
         }
 
         // -- Create a refiner instance. This is a factory method
@@ -64,7 +73,8 @@ public class UGUtil implements Serializable {
         //-- Distribute the domain to all involved processes
         if (new F_DistributeDomain().invoke(dom) == false) {
             print("Error while Distributing Grid. Aborting.");
-            exit();
+//            exit();
+            return null;
         }
 
         // -- Perform post-refine
@@ -114,8 +124,10 @@ public class UGUtil implements Serializable {
         System.err.println(s);
     }
 
-    @MethodInfo(noGUI = true)
-    public static void exit() {
-        System.exit(1);
-    }
+//    @MethodInfo(noGUI = true)
+//    public static void exit() {
+//        
+//        System.exit(1);
+//        
+//    }
 }
