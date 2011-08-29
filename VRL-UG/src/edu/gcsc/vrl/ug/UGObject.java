@@ -41,23 +41,47 @@ public class UGObject implements Serializable, UGObjectInterface {
         setClassGroupName(o.getClassGroupName());
     }
 
+    private void updateClassNameIfClassGroupObject() {
+        if (isClassGroupObject()) {
+            System.out.println(">>> class-group-name: " + getClassGroupName());
+            long exportedClsPtr = Pointer.NULL;
+            exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
+                    getExportedClassPtrByName(getClassGroupName(),
+                    isClassGroupObject());
+
+
+            if (exportedClsPtr != Pointer.NULL) {
+                setClassName(edu.gcsc.vrl.ug.UG.getInstance().
+                        getDefaultClassNameFromGroup(getClassGroupName()));
+            }
+            
+            System.out.println(">>> class-name: " + getClassName());
+            
+            if (getClassGroupName().equals(getClassName())) {
+                throw new IllegalStateException("class name equals group name");
+            }
+        } else {
+            System.out.println(">>> no class-group: " + getClassName());
+        }
+    }
+
     /**
      * Returns a pointer to this object.
      * @return a pointer to this object
      */
     protected Pointer getPointer() {
-        if (objPointer == null && isInstantiable()) {
+        if (objPointer == null) {
 
             long exportedClsPtr = Pointer.NULL;
-            
+
             if (isClassGroupObject()) {
                 exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
-                    getExportedClassPtrByName(getClassGroupName(),
-                    isClassGroupObject());
+                        getExportedClassPtrByName(getClassGroupName(),
+                        isClassGroupObject());
             } else {
                 exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
-                    getExportedClassPtrByName(getClassName(),
-                    isClassGroupObject());
+                        getExportedClassPtrByName(getClassName(),
+                        isClassGroupObject());
             }
 
             if (isClassGroupObject() && exportedClsPtr != Pointer.NULL) {
@@ -68,25 +92,27 @@ public class UGObject implements Serializable, UGObjectInterface {
 
             System.out.println("ClassName=" + getClassName());
 
-            if (exportedClsPtr == Pointer.NULL) {
-                System.err.println(
-                        "Class \"" + getClassName()
-                        + "\" is not instantiable!");
-                getMainCanvas().getMessageBox().addMessage(
-                        "Cannot instantiate class:",
-                        "Class \"" + getClassName()
-                        + "\" is not instantiable!",
-                        MessageType.ERROR);
-            } else {
-                long address = (long) edu.gcsc.vrl.ug.UG.getInstance().
-                        newInstance(exportedClsPtr);
-                setPointer(new edu.gcsc.vrl.ug.Pointer(
-                        getClassName(), address, false));
-                System.out.println(getClassName() + " >> New Instance: "
-                        + getClassName() + " [" + address + "]");
+            if (isInstantiable()) {
+                if (exportedClsPtr == Pointer.NULL) {
+                    System.err.println(
+                            "Class \"" + getClassName()
+                            + "\" is not instantiable!");
+                    getMainCanvas().getMessageBox().addMessage(
+                            "Cannot instantiate class:",
+                            "Class \"" + getClassName()
+                            + "\" is not instantiable!",
+                            MessageType.ERROR);
+                } else {
+                    long address = (long) edu.gcsc.vrl.ug.UG.getInstance().
+                            newInstance(exportedClsPtr);
+                    setPointer(new edu.gcsc.vrl.ug.Pointer(
+                            getClassName(), address, false));
+                    System.out.println(getClassName() + " >> New Instance: "
+                            + getClassName() + " [" + address + "]");
+                }
             }
-
-        } else if (objPointer == null && !isInstantiable()) {
+        }
+        if (objPointer == null && !isInstantiable()) {
             System.err.println(
                     "Class \"" + getClassName()
                     + "\" is not instantiable via default constructor!");
@@ -117,6 +143,9 @@ public class UGObject implements Serializable, UGObjectInterface {
     protected void setPointer(@ParamInfo(nullIsValid = true) Pointer pointer) {
         if (pointer != null) {
             this.objPointer = pointer;
+            
+            updateClassNameIfClassGroupObject();
+            
             this.objPointer.setClassName(className);
             System.out.println(getClassName() + " >> SetPointer: "
                     + pointer.getClassName()

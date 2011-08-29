@@ -57,21 +57,21 @@ public class NativeClassGroupInfo {
         this.defaultClass = defaultClass;
     }
 
-    /**
-     * Returns this class group as class info which can be used for code
-     * generation.
-     * @return this class group as class info
-     */
-    public NativeClassInfo asClassInfo(NativeAPIInfo api) {
-        NativeClassInfo result = new NativeClassInfo();
-
-        NativeClassInfo template = api.getClassByName(classes[0]);
-
-        result.setName(name);
-
-
-        return result;
-    }
+//    /**
+//     * Returns this class group as class info which can be used for code
+//     * generation.
+//     * @return this class group as class info
+//     */
+//    public NativeClassInfo asClassInfo(NativeAPIInfo api) {
+//        NativeClassInfo result = new NativeClassInfo();
+//
+////        NativeClassInfo template = api.getClassByName(classes[0]);
+//
+//        result.setName(name);
+//
+//
+//        return result;
+//    }
 
     /**
      * Replaces a class name with the name of its group.
@@ -79,11 +79,11 @@ public class NativeClassGroupInfo {
      * @param name
      * @return  name of the group the specified class belongs to if the class 
      *          is part of a group; the unchanged class name if the class does
-     *          not belong to a group; <code>null</code> if the name does not
+     *          not belong to a group; the specified name if the name does not
      *          specify a registered class.
      */
     public static String convertToClassGroup(NativeAPIInfo api, String name) {
-        String result = null;
+        String result = name;
         
         if (api.isInClassGroup(name)) {
             result = api.getGroupByClassName(name).getName();
@@ -215,9 +215,8 @@ public class NativeClassGroupInfo {
         result.setMethods(convertToClassGroup(api, cls.getMethods()));
         result.setConstMethods(cls.getConstMethods());
         
-        if (result.getName().equals("Domain")) {
-            System.out.println("");
-        }
+        result.setGroupClass(true);
+        
         
         return result;
     }

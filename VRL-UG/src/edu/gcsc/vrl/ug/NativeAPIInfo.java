@@ -76,6 +76,11 @@ public class NativeAPIInfo {
         return getClassByName(name) != null;
     }
 
+    /**
+     * Returns the base class info objects of the specified base class string.
+     * @param classInfo
+     * @return the base class info objects of the specified base class string
+     */
     public NativeClassInfo[] baseClasses(NativeClassInfo classInfo) {
 
         String[] baseClassNames = classInfo.getBaseClassNames();
@@ -84,7 +89,18 @@ public class NativeAPIInfo {
                 new NativeClassInfo[baseClassNames.length];
 
         for (int i = 0; i < baseClassNames.length; i++) {
-            result[i] = getClassByName(baseClassNames[i]);
+
+            String baseClsName = baseClassNames[i];
+
+            if (!isClassGroup(baseClsName)) {
+                // class not in group, retrieve class directly
+                result[i] = getClassByName(baseClsName);
+            } else {
+                // name specifies group. thus, retrieve first class in group
+                // which will later be substituted with group info
+                result[i] = getClassByName(getGroupByName(baseClsName).
+                        getClasses()[0]);
+            }
         }
 
         return result;
@@ -120,7 +136,8 @@ public class NativeAPIInfo {
 
         // initialize map if necessary
         if (classGroupsByClassName == null) {
-            classGroupsByClassName = new HashMap<String, NativeClassGroupInfo>();
+            classGroupsByClassName =
+                    new HashMap<String, NativeClassGroupInfo>();
 
             for (NativeClassGroupInfo grp : classGroups) {
                 for (String n : grp.getClasses()) {
@@ -164,5 +181,15 @@ public class NativeAPIInfo {
 
     public boolean groupExists(String grpName) {
         return getGroupByName(grpName) != null;
+    }
+
+    /**
+     * Determines whether a class group with the specified name exists.
+     * @param name
+     * @return <code>true</code> if a class group with the specified name
+     *         exists; <code>false</code> otherwise
+     */
+    public boolean isClassGroup(String name) {
+        return getGroupByName(name) != null;
     }
 }

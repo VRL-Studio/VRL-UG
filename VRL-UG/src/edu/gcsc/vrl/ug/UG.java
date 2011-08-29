@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.visual.MessageType;
 import groovy.lang.GroovyClassLoader;
@@ -28,12 +29,12 @@ import javax.swing.SwingUtilities;
  * </p>
  * <p>
  * <b>Note:</b> this singleton must not be loaded by more than one
-classloader per JVM! Although this is no problem for Java classes it
-does not work for native libraries. Unfortunately we cannot provide an
-acceptable workaround. Thus, it is recommended to use this method from
-a valid VRL plugin only. The VRL plugin system is aware of this problem
-and handles it correctly.
-</p>
+ * classloader per JVM! Although this is no problem for Java classes, it
+ * does not work for native libraries. Unfortunately, we cannot provide an
+ * acceptable workaround. Thus, it is recommended to use this class from
+ * a valid VRL plugin only. The VRL plugin system is aware of this problem
+ * and handles it correctly.
+ * </p>
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class UG {
@@ -84,7 +85,9 @@ public class UG {
      */
     private UG() {
         // we must set the singleton instance to prevent
-        // calling multiple constructors
+        // calling multiple constructors.
+        // doing this in the corresponding getter methods does not work anymore
+        // as we need the instance for searching a compiled UG-API.
         ugInstance = this;
 
         // initialize native ug libraries
@@ -110,7 +113,11 @@ public class UG {
 
                     classes = compiler.compile(
                             new edu.gcsc.vrl.ug.NativeAPICode(
-                            nativeAPI).getAllCodes());
+                            nativeAPI).getAllCodes(),
+                            VJarUtil.getClassJarLocation(UG.class).
+                            getParentFile().
+                            getAbsolutePath());
+
                 } catch (Exception ex) {
                     libLoaded = false;
                     Logger.getLogger(UG.class.getName()).
@@ -153,7 +160,18 @@ public class UG {
             boolean datesAreEqual = apiDate.equals(ug.getCompileDate());
 
             if (revisionsAreEqual && datesAreEqual) {
+                System.out.println("VRL-UG: API found");
+                System.out.println(">> svn: present="+ apiSvn);
+                System.out.println(">> date: present="+ apiDate);
+
                 return cls;
+            } else {
+                System.err.println("VRL-UG: API version missmatch");
+                System.err.println(">> svn: present="
+                        + apiSvn + ", requested=" + ug.getSvnRevision());
+                System.err.println(">> date: present="
+                        + apiDate + ", requested=" + ug.getCompileDate());
+                System.err.println(">> recompiling API...");
             }
         } catch (ClassNotFoundException ex) {
         } catch (NoSuchMethodException ex) {

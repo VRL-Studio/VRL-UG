@@ -5,6 +5,7 @@
 package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.io.IOUtil;
+import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.io.vrlx.AbstractCode;
 import eu.mihosoft.vrl.lang.CodeBuilder;
@@ -105,14 +106,18 @@ public class Compiler {
         try {
             BufferedWriter writer =
                     new BufferedWriter(new FileWriter(
-//                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
-                    new File("/home/miho/UG_Classes.groovy")));
+                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
+            
+//            BufferedWriter writer =
+//                    new BufferedWriter(new FileWriter(
+//                    new File("/home/miho/UG_Classes.groovy")));
 
             writer.append(code);
             writer.flush();
             writer.close();
         } catch (IOException ex) {
-            Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Compiler.class.getName()).
+                    log(Level.SEVERE, null, ex);
         }
 
 
@@ -199,13 +204,13 @@ public class Compiler {
                     Compiler.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        try {
-            IOUtil.zipContentOfFolder(scriptPath.getAbsolutePath(),
-                    "/home/miho/tmp/VRL-UG-API.jar");
-        } catch (IOException ex) {
-            Logger.getLogger(Compiler.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            IOUtil.zipContentOfFolder(scriptPath.getAbsolutePath(),
+//                    "/home/miho/tmp/VRL-UG-API.jar");
+//        } catch (IOException ex) {
+//            Logger.getLogger(Compiler.class.getName()).
+//                    log(Level.SEVERE, null, ex);
+//        }
 
         if (jarLocation != null) {
             try {
