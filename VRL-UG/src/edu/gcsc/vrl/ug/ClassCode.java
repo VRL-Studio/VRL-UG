@@ -194,7 +194,7 @@ class ClassCode implements CodeElement {
                     append(prefix + classInfo.getName()).append("\","
                     + "options=\"serialization=false\") ").
                     append(interfaceName).
-                    append(" o ) { if(o!=null){setThis(o)}else{return this} }").
+                    append(" o ) { if(o!=null){setThis(o)}; return this }").
                     newLine();
 
             builder.newLine().append("@MethodInfo(noGUI=true)").
@@ -214,7 +214,7 @@ class ClassCode implements CodeElement {
                     append(prefix + classInfo.getName()).append("\","
                     + "options=\"serialization=false\") ").
                     append(interfaceName).
-                    append(" o ) { if(o!=null){setThis(o)}else{return this} }").
+                    append(" o ) { if(o!=null){setThis(o)};return this }").
                     newLine();
 
             builder.newLine().append("@MethodInfo(noGUI=true)").
