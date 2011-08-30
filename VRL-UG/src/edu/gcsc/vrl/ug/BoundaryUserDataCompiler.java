@@ -43,10 +43,6 @@ public class BoundaryUserDataCompiler {
         text += paramString;
         text += s + "\n}\n}\n";
         
-        System.err.println(text);
-
-        System.out.println(text);
-        
         return text;
     }
 }
