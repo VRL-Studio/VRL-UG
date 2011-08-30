@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import eu.mihosoft.vrl.io.ClassPathUpdater;
 import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.visual.MessageType;
@@ -119,6 +120,9 @@ public class UG {
                             VJarUtil.getClassJarLocation(UG.class).
                             getParentFile().
                             getAbsolutePath());
+                    
+                    // add the generated api library to the system classloader
+                    ClassPathUpdater.add("./custom-lib/VRL-UG-API.jar");
 
                 } catch (Exception ex) {
                     libLoaded = false;
