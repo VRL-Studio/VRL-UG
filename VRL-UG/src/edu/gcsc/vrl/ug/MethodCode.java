@@ -60,7 +60,7 @@ public class MethodCode implements CodeElement {
         String methodName = "";
 
         if (method.isConst() && !isFunction) {
-            methodName = "const_";
+            methodName = "const__";
         }
 
         if (isFunction) {

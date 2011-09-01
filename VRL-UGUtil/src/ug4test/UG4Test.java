@@ -32,9 +32,9 @@ public class UG4Test {
         new F_LoadDomain().invoke(d,
                 "/home/miho/installs/ug4/trunk/data/grids/unit_square/unit_square_quads_4x4.ugx");
 
-        System.out.println("Domain.get_dim(): " + d.const_get_dim());
+        System.out.println("Domain.get_dim(): " + d.const__get_dim());
         System.out.println("Domain.const_num_edges(): " 
-                + d.get_grid().const_num_edges());
+                + d.get_grid().const__num_edges());
         
         
     }

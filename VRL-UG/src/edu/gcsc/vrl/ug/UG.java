@@ -94,9 +94,13 @@ public class UG {
         // initialize native ug libraries
         String[] args = {""};
         System.loadLibrary("ug4");
-        int result = ugInit(args);
         
-        System.out.println("INIT Result: " + result);
+        
+        try {
+            ugInit(args);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+        }
 
         boolean libLoaded = true;
 
