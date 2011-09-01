@@ -83,7 +83,7 @@ public class NativeAPICode {
                     NativeClassGroupInfo.classToGroupClass(
                     api, api.getClassByName(grp.getClasses()[0]));
 
-            System.out.println(">> creating group-cls:" + groupCls.getName());
+//            System.out.println(">> creating group-cls:" + groupCls.getName());
 
             codes.add(new ClassCode(
                     api, groupCls, CodeType.FULL_CLASS, false).build(

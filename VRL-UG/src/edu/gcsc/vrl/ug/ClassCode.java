@@ -102,7 +102,7 @@ class ClassCode implements CodeElement {
                     + CodeUtils.interfaceName(classInfo.getName(), isConst);
         }
 
-        if ((asFullClass && !isConst) || (asWrapper && !isConst)) {
+        if ((asFullClass) || (asWrapper)) {
             builder.addLine(new ComponentInfoCode(
                     classInfo, isConst).toString()).
                     addLine("@ObjectInfo(name=\""
