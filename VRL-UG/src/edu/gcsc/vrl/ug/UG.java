@@ -119,9 +119,9 @@ public class UG {
 
                 try {
 
-                    System.err.println(">> "
-                            + VTerminalUtil.red(
-                            "VRL-UG-API missing.\n"
+                    System.err.println(
+                            VTerminalUtil.red(
+                            " --> VRL-UG-API missing.\n"
                             + " --> Recompiling API..."));
 
                     classes = compiler.compile(
@@ -176,15 +176,17 @@ public class UG {
             boolean datesAreEqual = apiDate.equals(ug.getCompileDate());
 
             if (revisionsAreEqual && datesAreEqual) {
-                System.out.println(">> VRL-UG: "
-                        + VTerminalUtil.green("API found\n"
+                System.out.println(
+                        VTerminalUtil.green(" --> VRL-UG: "
+                        + "API found\n"
                         + " --> svn: present=" + apiSvn + "\n"
                         + " --> date: present=" + apiDate));
 
                 return cls;
             } else {
-                System.err.println(">> VRL-UG:"
-                        + VTerminalUtil.red("API version missmatch\n"
+                System.err.println(
+                        VTerminalUtil.red(" --> VRL-UG:"
+                        + "API version missmatch\n"
                         + " --> svn: present="
                         + apiSvn + ", requested=" + ug.getSvnRevision() + "\n"
                         + " --> date: present="
