@@ -93,7 +93,7 @@ public class Compiler {
             scriptPath = createTempDir();
             scriptPath.mkdir();
 
-            System.out.println("UG4-ClassDir: " + scriptPath.getAbsolutePath());
+            System.out.println(">> UG-Build-Location: " + scriptPath.getAbsolutePath());
         } catch (IOException ex) {
             Logger.getLogger(
                     Compiler.class.getName()).log(Level.SEVERE, null, ex);
