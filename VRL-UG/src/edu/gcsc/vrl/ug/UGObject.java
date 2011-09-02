@@ -32,8 +32,8 @@ public class UGObject implements Serializable, UGObjectInterface {
     private boolean isClassGroupObject;
 
     protected void setThis(UGObject o) {
-        System.out.println(className + ">> Set This: "
-                + o.getClassName() + ", " + o.getPointer());
+//        System.out.println(className + ">> Set This: "
+//                + o.getClassName() + ", " + o.getPointer());
         setPointer(o.getPointer());
         setClassName(o.getClassName());
         setClassNames(o.getClassNames());
@@ -43,7 +43,7 @@ public class UGObject implements Serializable, UGObjectInterface {
 
     private void updateClassNameIfClassGroupObject() {
         if (isClassGroupObject()) {
-            System.out.println(">>> class-group-name: " + getClassGroupName());
+//            System.out.println(">>> class-group-name: " + getClassGroupName());
             long exportedClsPtr = Pointer.NULL;
             exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
                     getExportedClassPtrByName(getClassGroupName(),
@@ -55,13 +55,13 @@ public class UGObject implements Serializable, UGObjectInterface {
                         getDefaultClassNameFromGroup(getClassGroupName()));
             }
             
-            System.out.println(">>> class-name: " + getClassName());
+//            System.out.println(">>> class-name: " + getClassName());
             
             if (getClassGroupName().equals(getClassName())) {
                 throw new IllegalStateException("class name equals group name");
             }
         } else {
-            System.out.println(">>> no class-group: " + getClassName());
+//            System.out.println(">>> no class-group: " + getClassName());
         }
     }
 
@@ -90,7 +90,7 @@ public class UGObject implements Serializable, UGObjectInterface {
                         getDefaultClassNameFromGroup(getClassGroupName()));
             }
 
-            System.out.println("ClassName=" + getClassName());
+//            System.out.println("ClassName=" + getClassName());
 
             if (isInstantiable()) {
                 if (exportedClsPtr == Pointer.NULL) {
@@ -107,8 +107,8 @@ public class UGObject implements Serializable, UGObjectInterface {
                             newInstance(exportedClsPtr);
                     setPointer(new edu.gcsc.vrl.ug.Pointer(
                             getClassName(), address, false));
-                    System.out.println(getClassName() + " >> New Instance: "
-                            + getClassName() + " [" + address + "]");
+//                    System.out.println(getClassName() + " >> New Instance: "
+//                            + getClassName() + " [" + address + "]");
                 }
             }
         }
@@ -147,11 +147,11 @@ public class UGObject implements Serializable, UGObjectInterface {
             updateClassNameIfClassGroupObject();
             
             this.objPointer.setClassName(className);
-            System.out.println(getClassName() + " >> SetPointer: "
-                    + pointer.getClassName()
-                    + " [" + pointer.getAddress() + "]");
+//            System.out.println(getClassName() + " >> SetPointer: "
+//                    + pointer.getClassName()
+//                    + " [" + pointer.getAddress() + "]");
         } else {
-            System.out.println(getClassName() + " >> SetPointer: [null]");
+//            System.out.println(getClassName() + " >> SetPointer: [null]");
         }
     }
 
