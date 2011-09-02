@@ -4,13 +4,13 @@
  */
 package edu.gcsc.vrl.ug.util;
 
-
 import eu.mihosoft.vrl.io.VersionInfo;
 import eu.mihosoft.vrl.system.PluginAPI;
 import eu.mihosoft.vrl.system.PluginConfigurator;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.PluginDependency;
 import eu.mihosoft.vrl.system.PluginIdentifier;
+import eu.mihosoft.vrl.system.VPluginAPI;
 import java.awt.image.BufferedImage;
 
 /**
@@ -21,11 +21,15 @@ public class Configurator implements PluginConfigurator {
 
     @Override
     public void register(PluginAPI api) {
-        if (api.getCanvas() instanceof VisualCanvas) {
-            VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
+        if (api instanceof VPluginAPI) {
+            VPluginAPI vapi = (VPluginAPI) api;
 
-            vCanvas.addClass(UGUtil.class);
-            vCanvas.addClass(AlgebraTest.class);
+            vapi.addComponent(UGUtil.class);
+            vapi.addComponent(AlgebraTest.class);
+            vapi.addComponent(NumberArrayToJFreeChart.class);
+            vapi.addComponent(ConvergencePlotter.class);
+            
+            vapi.addTypeRepresentation(new NumberArrayArrayType());
         }
     }
 
