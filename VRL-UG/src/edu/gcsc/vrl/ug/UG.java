@@ -7,6 +7,7 @@ package edu.gcsc.vrl.ug;
 import eu.mihosoft.vrl.io.ClassPathUpdater;
 import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
+import eu.mihosoft.vrl.system.VTerminalUtil;
 import eu.mihosoft.vrl.visual.MessageType;
 import groovy.lang.GroovyClassLoader;
 import java.beans.XMLDecoder;
@@ -94,8 +95,8 @@ public class UG {
         // initialize native ug libraries
         String[] args = {""};
         System.loadLibrary("ug4");
-        
-        
+
+
         try {
             ugInit(args);
         } catch (Exception ex) {
@@ -118,13 +119,18 @@ public class UG {
 
                 try {
 
+                    System.err.println(">> "
+                            + VTerminalUtil.red(
+                            "VRL-UG-API missing.\n"
+                            + " --> Recompiling API..."));
+
                     classes = compiler.compile(
                             new edu.gcsc.vrl.ug.NativeAPICode(
                             nativeAPI).getAllCodes(),
                             VJarUtil.getClassJarLocation(UG.class).
                             getParentFile().
                             getAbsolutePath());
-                    
+
                     // add the generated api library to the system classloader
                     ClassPathUpdater.add("./custom-lib/VRL-UG-API.jar");
 
@@ -170,18 +176,19 @@ public class UG {
             boolean datesAreEqual = apiDate.equals(ug.getCompileDate());
 
             if (revisionsAreEqual && datesAreEqual) {
-                System.out.println("VRL-UG: API found");
-                System.out.println(">> svn: present="+ apiSvn);
-                System.out.println(">> date: present="+ apiDate);
+                System.out.println(">> VRL-UG: "
+                        + VTerminalUtil.green("API found\n"
+                        + " --> svn: present=" + apiSvn + "\n"
+                        + " --> date: present=" + apiDate));
 
                 return cls;
             } else {
-                System.err.println("VRL-UG: API version missmatch");
-                System.err.println(">> svn: present="
-                        + apiSvn + ", requested=" + ug.getSvnRevision());
-                System.err.println(">> date: present="
-                        + apiDate + ", requested=" + ug.getCompileDate());
-                System.err.println(">> recompiling API...");
+                System.err.println(">> VRL-UG:"
+                        + VTerminalUtil.red("API version missmatch\n"
+                        + " --> svn: present="
+                        + apiSvn + ", requested=" + ug.getSvnRevision() + "\n"
+                        + " --> date: present="
+                        + apiDate + ", requested=" + ug.getCompileDate()));
             }
         } catch (ClassNotFoundException ex) {
         } catch (NoSuchMethodException ex) {

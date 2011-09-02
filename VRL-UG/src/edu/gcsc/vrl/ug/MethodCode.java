@@ -136,7 +136,7 @@ public class MethodCode implements CodeElement {
                         append("edu.gcsc.vrl.ug.").
                         append(returnTypeClassName).append("();").newLine();
 
-                builder.addLine("println result;");
+//                builder.addLine("println result;");
 
                 builder.append("convertedResult.setPointer((Pointer)result);").
                         newLine().
