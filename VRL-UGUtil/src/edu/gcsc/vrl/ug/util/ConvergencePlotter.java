@@ -11,6 +11,7 @@ import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.ObjectInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
 import org.jfree.data.xy.XYSeries;
@@ -32,12 +33,18 @@ public class ConvergencePlotter implements Serializable {
         ArrayList<GraphParameterSet> graphs =
                 new ArrayList<GraphParameterSet>();
 
+        Color[] colors = new Color[] {Color.BLUE, Color.RED, Color.GREEN, Color.PINK, Color.CYAN, Color.YELLOW};
         
-        Integer i = 0;
+        int i = 0;
         for (I_NumberArray g : numArray) {
             GraphParameterSet graph = new GraphParameterSet(
-                    convert(g, i.toString()));
+                    convert(g, "Set " + i));
+            
+            graph.setColor(colors[i%colors.length]);
+            graph.setShapeVisible(false);
+            graph.setAnnotationText("Set " + i);
             graphs.add(graph);
+            
             i++;
         }
 
@@ -48,7 +55,7 @@ public class ConvergencePlotter implements Serializable {
         result.setAutoRangeY(true);
         result.setLegendVisible(true);
         result.setXAxisLabel("# Steps");
-        result.setYAxisLabel("defect");
+        result.setYAxisLabel("Defect");
 //        result.setNumberFormat_x("#");
         
         result.setLogscaleY(true);
@@ -67,9 +74,6 @@ public class ConvergencePlotter implements Serializable {
 	for (int i = 0; i < numArray.const__size();i++) {
             
             result.add(x,numArray.const__get(i));
-            
-            System.out.println("Defect: " + numArray.const__get(i));
-            
             
             x += stepsize_x;
 	}
