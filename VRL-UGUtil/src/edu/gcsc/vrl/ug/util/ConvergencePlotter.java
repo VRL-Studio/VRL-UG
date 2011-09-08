@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import org.jfree.data.xy.XYSeries;
 
 /**
- *
+ * This component class provides a line plotter used to visualize convergence
+ * rates/defects on logarithmic class.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 @ComponentInfo(name = "ConvergencePlotter", category = "UG4/Util")
@@ -33,7 +34,14 @@ public class ConvergencePlotter implements Serializable {
         ArrayList<GraphParameterSet> graphs =
                 new ArrayList<GraphParameterSet>();
 
-        Color[] colors = new Color[] {Color.BLUE, Color.RED, Color.GREEN, Color.PINK, Color.CYAN, Color.YELLOW};
+        Color[] colors = new Color[] {
+            Color.BLUE, 
+            Color.RED,
+            Color.GREEN,
+            Color.PINK,
+            Color.CYAN,
+            Color.YELLOW
+        };
         
         int i = 0;
         for (I_NumberArray g : numArray) {
@@ -77,8 +85,6 @@ public class ConvergencePlotter implements Serializable {
             
             x += stepsize_x;
 	}
-        
-        
 
         return result;
     }
