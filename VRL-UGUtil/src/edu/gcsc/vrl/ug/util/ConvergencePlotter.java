@@ -83,7 +83,7 @@ public class ConvergencePlotter implements Serializable {
 	for (int i = 0; i < numArray.const__size();i++) {
             
             result.add(x,numArray.const__get(i));
-            
+  
             x += stepsize_x;
 	}
 
