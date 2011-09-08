@@ -35,12 +35,13 @@ public class ConvergencePlotter implements Serializable {
                 new ArrayList<GraphParameterSet>();
 
         Color[] colors = new Color[] {
-            Color.BLUE, 
+            Color.BLUE,
             Color.RED,
             Color.GREEN,
             Color.PINK,
             Color.CYAN,
-            Color.YELLOW
+            Color.YELLOW,
+            Color.GRAY
         };
         
         int i = 0;
