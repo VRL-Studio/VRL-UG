@@ -8,6 +8,7 @@ import edu.gcsc.vrl.ug.C_CPUAlgebraSelector;
 import edu.gcsc.vrl.ug.C_Domain;
 import edu.gcsc.vrl.ug.F_InitUG;
 import edu.gcsc.vrl.ug.F_LoadDomain;
+import edu.gcsc.vrl.ug.I_Domain;
 import eu.mihosoft.vrl.system.VRL;
 
 /**
@@ -27,7 +28,7 @@ public class UG4Test {
         F_InitUG initUG = new F_InitUG();
         initUG.invoke(2, new C_CPUAlgebraSelector(), "P1");
 
-        C_Domain d = new C_Domain();
+        I_Domain d = new C_Domain();
 
         new F_LoadDomain().invoke(d,
                 "/home/miho/installs/ug4/trunk/data/grids/unit_square/unit_square_quads_4x4.ugx");
