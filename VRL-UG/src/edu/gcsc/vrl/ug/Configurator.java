@@ -10,6 +10,7 @@ import eu.mihosoft.vrl.system.PluginConfigurator;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.PluginDependency;
 import eu.mihosoft.vrl.system.PluginIdentifier;
+import eu.mihosoft.vrl.system.VPluginAPI;
 import java.awt.image.BufferedImage;
 
 /**
@@ -19,13 +20,19 @@ import java.awt.image.BufferedImage;
 public class Configurator implements PluginConfigurator {
 
     public void register(PluginAPI api) {
-        if (api.getCanvas() instanceof VisualCanvas) {
+        if (api instanceof VPluginAPI) {
+            VPluginAPI vApi = (VPluginAPI) api;
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
             UG.getInstance().setMainCanvas(vCanvas);
-            vCanvas.addClasses(UG.getNativeClasses());
 
-            vCanvas.getTypeFactory().addType(new UserDataType());
-            vCanvas.getTypeFactory().addType(new BoundaryUserDataType());
+            for (Class<?> cls : UG.getNativeClasses()) {
+                vApi.addComponent(cls);
+            }
+            
+            vApi.addComponent(ReleaseInstances.class);
+
+            vApi.addTypeRepresentation(new UserDataType());
+            vApi.addTypeRepresentation(new BoundaryUserDataType());
         }
     }
 
@@ -34,11 +41,11 @@ public class Configurator implements PluginConfigurator {
     }
 
     public String getDescription() {
-        return UG.getInstance().getDescription() 
+        return UG.getInstance().getDescription()
                 + "<br><br><b>Authors:</b><br><br>"
                 + UG.getInstance().getAuthors().replace("\n", "<br>");
     }
-    
+
     public BufferedImage getIcon() {
         return null;
     }
