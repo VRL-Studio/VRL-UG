@@ -54,9 +54,9 @@ public class UGObject implements Serializable, UGObjectInterface {
                 setClassName(edu.gcsc.vrl.ug.UG.getInstance().
                         getDefaultClassNameFromGroup(getClassGroupName()));
             }
-            
+
 //            System.out.println(">>> class-name: " + getClassName());
-            
+
             if (getClassGroupName().equals(getClassName())) {
                 throw new IllegalStateException("class name equals group name");
             }
@@ -94,14 +94,19 @@ public class UGObject implements Serializable, UGObjectInterface {
 
             if (isInstantiable()) {
                 if (exportedClsPtr == Pointer.NULL) {
-                    System.err.println(
+//                    System.err.println(
+//                            "Class \"" + getClassName()
+//                            + "\" is not instantiable!");
+
+//                    getMainCanvas().getMessageBox().addMessage(
+//                            "Cannot instantiate class:",
+//                            "Class \"" + getClassName()
+//                            + "\" is not instantiable!",
+//                            MessageType.ERROR);
+
+                    throw new IllegalStateException(
                             "Class \"" + getClassName()
                             + "\" is not instantiable!");
-                    getMainCanvas().getMessageBox().addMessage(
-                            "Cannot instantiate class:",
-                            "Class \"" + getClassName()
-                            + "\" is not instantiable!",
-                            MessageType.ERROR);
                 } else {
                     long address = (long) edu.gcsc.vrl.ug.UG.getInstance().
                             newInstance(exportedClsPtr);
@@ -113,14 +118,18 @@ public class UGObject implements Serializable, UGObjectInterface {
             }
         }
         if (objPointer == null && !isInstantiable()) {
-            System.err.println(
-                    "Class \"" + getClassName()
+//            System.err.println(
+//                    "Class \"" + getClassName()
+//                    + "\" is not instantiable via default constructor!");
+//            
+//            getMainCanvas().getMessageBox().addMessage(
+//                    "Cannot instantiate class:",
+//                    "Class \"" + getClassName()
+//                    + "\" is not instantiable via default constructor!",
+//                    MessageType.ERROR);
+
+            throw new IllegalStateException("Class \"" + getClassName()
                     + "\" is not instantiable via default constructor!");
-            getMainCanvas().getMessageBox().addMessage(
-                    "Cannot instantiate class:",
-                    "Class \"" + getClassName()
-                    + "\" is not instantiable via default constructor!",
-                    MessageType.ERROR);
         }
         return objPointer;
     }
@@ -143,9 +152,9 @@ public class UGObject implements Serializable, UGObjectInterface {
     protected void setPointer(@ParamInfo(nullIsValid = true) Pointer pointer) {
         if (pointer != null) {
             this.objPointer = pointer;
-            
+
             updateClassNameIfClassGroupObject();
-            
+
             this.objPointer.setClassName(className);
 //            System.out.println(getClassName() + " >> SetPointer: "
 //                    + pointer.getClassName()

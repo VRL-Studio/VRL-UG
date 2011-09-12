@@ -420,6 +420,10 @@ public class UG {
     final native int ugInit(String[] args);
 
     native String getSvnRevision();
+    
+    native String getDescription();
+    
+    native String getAuthors();
 
     native String getCompileDate();
 //    native void attachCanvas(VisualCanvas canvas);
