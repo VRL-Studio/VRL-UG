@@ -40,8 +40,8 @@ public class Configurator implements PluginConfigurator {
 
     @Override
     public String getDescription() {
-        return "UG4-Util Plugin which provides"
-                + "the functionality of ug_util.lua.";
+        return "UG4-Util Plugin which replaces "
+                + " <b>ug_util.lua</b> on the Java Platform.";
     }
 
     @Override

@@ -25,6 +25,7 @@ import edu.gcsc.vrl.ug.I_SubsetHandler;
 import edu.gcsc.vrl.ug.UGException;
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.MethodInfo;
+import eu.mihosoft.vrl.annotation.ObjectInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import java.io.Serializable;
@@ -34,6 +35,7 @@ import java.io.Serializable;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 @ComponentInfo(name = "UG Utility", category = "/UG4/Util")
+@ObjectInfo(name= "UG Utility")
 public class UGUtil implements Serializable {
 
     private static final long serialVersionUID = 1L;
