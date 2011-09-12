@@ -34,9 +34,11 @@ public class Configurator implements PluginConfigurator {
     }
 
     public String getDescription() {
-        return "UG4-Plugin";
+        return UG.getInstance().getDescription() 
+                + "<br><br><b>Authors:</b><br><br>"
+                + UG.getInstance().getAuthors().replace("\n", "<br>");
     }
-
+    
     public BufferedImage getIcon() {
         return null;
     }
