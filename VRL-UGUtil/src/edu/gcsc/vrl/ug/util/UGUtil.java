@@ -130,10 +130,6 @@ public class UGUtil implements Serializable {
 
     @MethodInfo(noGUI = true)
     public static void exit(String msg) throws UGException {
-        
-        I_NumberArray array = new C_NumberArray();
-        
-        
         throw new UGException(msg);
     }
 }
