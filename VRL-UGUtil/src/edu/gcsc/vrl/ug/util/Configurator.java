@@ -25,7 +25,6 @@ public class Configurator implements PluginConfigurator {
             VPluginAPI vapi = (VPluginAPI) api;
 
             vapi.addComponent(UGUtil.class);
-            vapi.addComponent(AlgebraTest.class);
             vapi.addComponent(NumberArrayToJFreeChart.class);
             vapi.addComponent(ConvergencePlotter.class);
             
@@ -40,7 +39,7 @@ public class Configurator implements PluginConfigurator {
 
     @Override
     public String getDescription() {
-        return "UG4-Util Plugin which replaces "
+        return "This plugin replaces "
                 + " <b>ug_util.lua</b> on the Java Platform.";
     }
 

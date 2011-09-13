@@ -21,7 +21,7 @@ import org.jfree.data.xy.XYSeries;
  * rates/defects on logarithmic class.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-@ComponentInfo(name = "ConvergencePlotter", category = "UG4/Util")
+@ComponentInfo(name = "ConvergencePlotter", category = "UG4/util")
 @ObjectInfo(name = "ConvergencePlotter")
 public class ConvergencePlotter implements Serializable {
 
