@@ -34,7 +34,7 @@ import java.io.Serializable;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-@ComponentInfo(name = "UG Utility", category = "/UG4/Util")
+@ComponentInfo(name = "UG Utility", category = "/UG4/util")
 @ObjectInfo(name= "UG Utility")
 public class UGUtil implements Serializable {
 
