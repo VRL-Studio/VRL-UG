@@ -94,7 +94,7 @@ public class UG {
 
         // initialize native ug libraries
         String[] args = {""};
-        System.loadLibrary("ug4");
+//        System.loadLibrary("ug4");
 
 
         try {
@@ -224,9 +224,12 @@ public class UG {
                     new Class<?>[apiInfo.getClassNames().size()];
 
             for (int i = 0; i < apiInfo.getClassNames().size(); i++) {
+
+                String clsName = apiInfo.getClassNames().get(i);
+
                 result[i] = cl.loadClass(
                         "edu.gcsc.vrl.ug."
-                        + apiInfo.getClassNames().get(i));
+                        + clsName);
             }
 
             return result;
@@ -420,9 +423,9 @@ public class UG {
     final native int ugInit(String[] args);
 
     native String getSvnRevision();
-    
+
     native String getDescription();
-    
+
     native String getAuthors();
 
     native String getCompileDate();

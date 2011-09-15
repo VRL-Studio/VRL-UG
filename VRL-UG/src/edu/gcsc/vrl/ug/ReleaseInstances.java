@@ -14,7 +14,7 @@ import eu.mihosoft.vrl.types.CanvasRequest;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-@ComponentInfo(name = "Release Instances", category = "UG4/Util")
+@ComponentInfo(name = "Release Instances", category = "UG4/util")
 @ObjectInfo(name="Release Instances")
 public class ReleaseInstances {
 

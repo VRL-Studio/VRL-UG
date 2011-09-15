@@ -44,7 +44,7 @@ public class Compiler {
      * @param codes codes to compile
      * @return class objects of the compiled codes
      */
-    public Class<?>[] compile(String[] codes)  
+    public Class<?>[] compile(String[] codes)
             throws MultipleCompilationErrorsException {
         return compile(codes, null);
     }
@@ -55,8 +55,8 @@ public class Compiler {
      * @param codes codes to compile
      * @return class objects of the compiled codes
      */
-    public Class<?>[] compile(String[] codes, String jarLocation) 
-            throws MultipleCompilationErrorsException{
+    public Class<?>[] compile(String[] codes, String jarLocation)
+            throws MultipleCompilationErrorsException {
 
         String packageName = "edu.gcsc.vrl.ug";
 
@@ -83,7 +83,9 @@ public class Compiler {
                 className = VLangUtils.interfaceNameFromCode(aCode);
             }
 
-            classNames.add(className);
+            if (!isUGPrimitive(className)) {
+                classNames.add(className);
+            }
         }
 
         Collections.sort(classNames);
@@ -107,7 +109,7 @@ public class Compiler {
             BufferedWriter writer =
                     new BufferedWriter(new FileWriter(
                     new File(scriptPath.getPath() + "/UG_Classes.groovy")));
-            
+
 //            BufferedWriter writer =
 //                    new BufferedWriter(new FileWriter(
 //                    new File("/home/miho/UG_Classes.groovy")));
@@ -185,10 +187,10 @@ public class Compiler {
 
 
             // write ug classes
-            
+
             File ugInfoPath = new File(scriptPath.getAbsolutePath()
-                    +"/edu/gcsc/vrl/ug/");
-            
+                    + "/edu/gcsc/vrl/ug/");
+
             ugInfoPath.mkdirs();
 
             XMLEncoder encoder = new XMLEncoder(
@@ -203,7 +205,7 @@ public class Compiler {
             Logger.getLogger(
                     Compiler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
 //        try {
 //            IOUtil.zipContentOfFolder(scriptPath.getAbsolutePath(),
 //                    "/home/miho/tmp/VRL-UG-API.jar");
@@ -227,6 +229,27 @@ public class Compiler {
 //        UG.setNativeClasses(result);
 
         return result;
+    }
+
+    private static boolean isUGPrimitive(String name) {
+        boolean result = _isUGPrimitive(
+                name.replace("I_", "").
+                replace("C_", "").
+                replace("Const__", ""));
+        
+        System.err.println("OUT: " + name + ": " + result);
+        
+        return result;
+    }
+
+    private static boolean _isUGPrimitive(String name) {
+        return "c_bool".equals(name)
+                || "c_char".equals(name)
+                || "c_double".equals(name)
+                || "c_float".equals(name)
+                || "c_int".equals(name)
+                || "c_size_t".equals(name)
+                || "c_string".equals(name);
     }
 
     /**
