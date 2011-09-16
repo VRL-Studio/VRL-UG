@@ -11,6 +11,7 @@ import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.PluginDependency;
 import eu.mihosoft.vrl.system.PluginIdentifier;
 import eu.mihosoft.vrl.system.VPluginAPI;
+import eu.mihosoft.vrl.visual.VDialog;
 import java.awt.image.BufferedImage;
 
 /**
@@ -28,11 +29,24 @@ public class Configurator implements PluginConfigurator {
             for (Class<?> cls : UG.getNativeClasses()) {
                 vApi.addComponent(cls);
             }
-            
+
             vApi.addComponent(ReleaseInstances.class);
 
             vApi.addTypeRepresentation(new UserDataType());
             vApi.addTypeRepresentation(new BoundaryUserDataType());
+
+            // request restart
+            if (UG.getInstance().isRecompiled()) {
+                
+                System.err.println("Recompiled");
+                
+                VDialog.showMessageDialog(vCanvas, "Restart neccessary:",
+                        " UG-API had to be recompiled."
+                        + " VRL-Studio will be closed now."
+                        + " Restart it to use the new API.");
+                
+                System.exit(0);
+            }
         }
     }
 
@@ -51,6 +65,8 @@ public class Configurator implements PluginConfigurator {
     }
 
     public void init() {
+
+        // initialize ug instance
         UG.getInstance();
     }
 
