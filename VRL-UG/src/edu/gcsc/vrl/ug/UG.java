@@ -9,6 +9,7 @@ import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.VTerminalUtil;
 import eu.mihosoft.vrl.visual.MessageType;
+import eu.mihosoft.vrl.visual.SplashScreenGenerator;
 import groovy.lang.GroovyClassLoader;
 import java.beans.XMLDecoder;
 import java.io.FileInputStream;
@@ -62,7 +63,16 @@ public class UG {
      * methods.
      */
     private MessageThread messagingThread;
+    
+    /**
+     * Indicates whether ug instance is initialized.
+     */
     private boolean initialized = false;
+    
+    /**
+     * Indicates whether API has been recompiled.
+     */
+    private boolean recompiled = false;
 
     /**
      * Returns all native UG classes that are exported via the UG registry,
@@ -118,11 +128,15 @@ public class UG {
                 Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
 
                 try {
+                    
+                    recompiled = true;
 
                     System.err.println(
                             VTerminalUtil.red(
                             " --> VRL-UG-API missing.\n"
                             + " --> Recompiling API..."));
+                    
+                    SplashScreenGenerator.setBootMessages(">> UG: recompiling API (this may take a while) ...");
 
                     classes = compiler.compile(
                             new edu.gcsc.vrl.ug.NativeAPICode(
@@ -132,7 +146,9 @@ public class UG {
                             getAbsolutePath());
 
                     // add the generated api library to the system classloader
-                    ClassPathUpdater.add("./custom-lib/VRL-UG-API.jar");
+                    ClassPathUpdater.add(VJarUtil.getClassJarLocation(UG.class).
+                            getParentFile().
+                            getAbsolutePath() + "/VRL-UG-API.jar");
 
                 } catch (Exception ex) {
                     libLoaded = false;
@@ -181,6 +197,8 @@ public class UG {
                         + "API found\n"
                         + " --> svn: present=" + apiSvn + "\n"
                         + " --> date: present=" + apiDate));
+                
+                 SplashScreenGenerator.setBootMessages(">> UG: API found");
 
                 return cls;
             } else {
@@ -199,6 +217,10 @@ public class UG {
         }
 
         return null;
+    }
+    
+    public boolean isRecompiled() {
+        return recompiled;
     }
 
     /**
