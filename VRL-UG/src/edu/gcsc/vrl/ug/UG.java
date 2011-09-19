@@ -136,7 +136,8 @@ public class UG {
                             " --> VRL-UG-API missing.\n"
                             + " --> Recompiling API..."));
                     
-                    SplashScreenGenerator.setBootMessages(">> UG: recompiling API (this may take a while) ...");
+                    SplashScreenGenerator.printBootMessage(
+                            ">> UG: recompiling API (this may take a while) ...");
 
                     classes = compiler.compile(
                             new edu.gcsc.vrl.ug.NativeAPICode(
@@ -198,7 +199,7 @@ public class UG {
                         + " --> svn: present=" + apiSvn + "\n"
                         + " --> date: present=" + apiDate));
                 
-                 SplashScreenGenerator.setBootMessages(">> UG: API found");
+                 SplashScreenGenerator.printBootMessage(">> UG: API found");
 
                 return cls;
             } else {
