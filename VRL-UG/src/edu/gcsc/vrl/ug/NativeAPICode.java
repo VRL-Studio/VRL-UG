@@ -102,6 +102,10 @@ public class NativeAPICode {
 
         return codes.toArray(new String[codes.size()]);
     }
+    
+    public String getPluginConfiguratorCode() {
+        return new PluginConfiguratorCode().build(new CodeBuilder()).toString();
+    }
 
     /**
      * Returns the API interfaces code.
@@ -157,7 +161,9 @@ public class NativeAPICode {
         int finalLength = classesCodes.length
                 + interfaceCodes.length
                 + functionCodes.length + wrapperCodes.length
-                + classesGroupInterfaceCodes.length;
+                + classesGroupInterfaceCodes.length
+                // this +1 comes from the PluginApiConfigurator
+                +1;
 
         String[] result = new String[finalLength];
 
@@ -176,6 +182,8 @@ public class NativeAPICode {
                 + interfaceCodes.length + functionCodes.length
                 + wrapperCodes.length,
                 classesGroupInterfaceCodes.length);
+        
+        result[finalLength-1] = getPluginConfiguratorCode();
 
         return result;
     }

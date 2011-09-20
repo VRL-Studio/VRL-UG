@@ -37,6 +37,8 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class Compiler {
+    
+    public static final String API_JAR_NAME = "VRL-UG-API.jar";
 
     /**
      * Compiles classes defined as groovy source code and returns them
@@ -128,14 +130,14 @@ public class Compiler {
         conf.setTargetDirectory(scriptPath.getPath());
 
         // Compile…
-        GroovyClassLoader gcl = new GroovyClassLoader();
+        GroovyClassLoader gcl = new GroovyClassLoader(Compiler.class.getClassLoader());
         CompilationUnit cu = new CompilationUnit(gcl);
         cu.configure(conf);
         cu.addSource("UG_Classes", code.toString());
         cu.compile();
 
         // Load classes via URL classloader
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        ClassLoader cl = Compiler.class.getClassLoader(); //Thread.currentThread().getContextClassLoader();
         URL[] urls = null;
         try {
             urls = new URL[]{scriptPath.toURI().toURL()};
@@ -192,6 +194,8 @@ public class Compiler {
                     + "/edu/gcsc/vrl/ug/");
 
             ugInfoPath.mkdirs();
+            
+            Thread.currentThread().setContextClassLoader(cl);
 
             XMLEncoder encoder = new XMLEncoder(
                     new FileOutputStream(
@@ -217,7 +221,7 @@ public class Compiler {
         if (jarLocation != null) {
             try {
                 IOUtil.zipContentOfFolder(scriptPath.getAbsolutePath(),
-                        jarLocation + "/VRL-UG-API.jar");
+                        jarLocation + "/" + API_JAR_NAME);
             } catch (IOException ex) {
                 Logger.getLogger(Compiler.class.getName()).
                         log(Level.SEVERE, null, ex);

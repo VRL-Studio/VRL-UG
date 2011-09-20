@@ -22,23 +22,23 @@ public class Configurator implements PluginConfigurator {
 
     public void register(PluginAPI api) {
         if (api instanceof VPluginAPI) {
-            VPluginAPI vApi = (VPluginAPI) api;
+//            VPluginAPI vApi = (VPluginAPI) api;
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
             UG.getInstance().setMainCanvas(vCanvas);
-
-            for (Class<?> cls : UG.getNativeClasses()) {
-                vApi.addComponent(cls);
-            }
-
-            vApi.addComponent(ReleaseInstances.class);
-
-            vApi.addTypeRepresentation(new UserDataType());
-            vApi.addTypeRepresentation(new BoundaryUserDataType());
-
+//
+//            for (Class<?> cls : UG.getNativeClasses()) {
+//                vApi.addComponent(cls);
+//            }
+//
+//            vApi.addComponent(ReleaseInstances.class);
+//
+//            vApi.addTypeRepresentation(new UserDataType());
+//            vApi.addTypeRepresentation(new BoundaryUserDataType());
+//
             // request restart
             if (UG.getInstance().isRecompiled()) {
                 
-                System.err.println("Recompiled");
+//                System.err.println("Recompiled");
                 
                 VDialog.showMessageDialog(vCanvas, "Restart neccessary:",
                         " UG-API had to be recompiled."
@@ -71,7 +71,7 @@ public class Configurator implements PluginConfigurator {
     }
 
     public PluginIdentifier getIdentifier() {
-        return new PluginIdentifier("UG4", new VersionInfo("0.1"));
+        return Constants.PLUGIN_IDENTIFIER;
     }
 
     public PluginDependency[] getDependencies() {
