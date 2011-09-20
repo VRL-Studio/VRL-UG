@@ -4,22 +4,19 @@
  */
 package edu.gcsc.vrl.ug;
 
-import eu.mihosoft.vrl.io.ClassPathUpdater;
-import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
+import eu.mihosoft.vrl.system.Constants;
+import eu.mihosoft.vrl.system.VRL;
 import eu.mihosoft.vrl.system.VTerminalUtil;
 import eu.mihosoft.vrl.visual.MessageType;
 import eu.mihosoft.vrl.visual.SplashScreenGenerator;
-import groovy.lang.GroovyClassLoader;
 import java.beans.XMLDecoder;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
@@ -63,35 +60,50 @@ public class UG {
      * methods.
      */
     private MessageThread messagingThread;
-    
     /**
      * Indicates whether ug instance is initialized.
      */
     private boolean initialized = false;
-    
     /**
      * Indicates whether API has been recompiled.
      */
     private boolean recompiled = false;
 
-    /**
-     * Returns all native UG classes that are exported via the UG registry,
-     * i.e., the equivalent Java wrapper classes.
-     * @return the nativeClasses
-     */
-    public static Class<?>[] getNativeClasses() {
-        return nativeClasses;
-    }
-
+//    /**
+//     * Returns all native UG classes that are exported via the UG registry,
+//     * i.e., the equivalent Java wrapper classes.
+//     * @return the nativeClasses
+//     */
+//    public static Class<?>[] getNativeClasses() {
+//        
+//        return nativeClasses;
+//    }
     /**
      * Defines all native UG classes that are exported via the UG registry,
      * i.e., the equivalent Java wrapper classes.
      * @param aNativeClasses the nativeClasses to set
      */
-    static void setNativeClasses(Class<?>[] nativeClasses) {
-        UG.nativeClasses = nativeClasses;
-    }
+//    static void setNativeClasses(Class<?>[] nativeClasses) {
+//        UG.nativeClasses = nativeClasses;
+//    }
+    
+    
+    public static void connectToNativeUG() {
+        // initialize native ug libraries
+        String[] args = {""};
+        
+        System.err.println("-- connect to native ug --");
+        
+        System.loadLibrary("ug4");
 
+        try {
+            ugInit(args);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+        }
+    }
+    
+    
     /**
      * instanciation only allowed in this class
      */
@@ -102,18 +114,7 @@ public class UG {
         // as we need the instance for searching a compiled UG-API.
         ugInstance = this;
 
-        // initialize native ug libraries
-        String[] args = {""};
-//        System.loadLibrary("ug4");
-
-
-        try {
-            ugInit(args);
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
-        }
-
-        boolean libLoaded = true;
+        boolean libLoaded = false;
 
         Class<?>[] classes = new Class<?>[0];
 
@@ -122,34 +123,46 @@ public class UG {
             Class<?> cls = findCompatibleAPI(ugInstance);
 
             if (cls != null) {
-                classes = getAPiClasses(cls);
+//                classes = getAPiClasses(cls);
             } else {
+                
+                connectToNativeUG();
+                libLoaded = true;
+                
                 NativeAPIInfo nativeAPI = convertRegistryInfo();
                 Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
 
                 try {
-                    
+
                     recompiled = true;
 
                     System.err.println(
                             VTerminalUtil.red(
                             " --> VRL-UG-API missing.\n"
                             + " --> Recompiling API..."));
-                    
+
                     SplashScreenGenerator.printBootMessage(
                             ">> UG: recompiling API (this may take a while) ...");
 
+                    // generates jar file in plugin path
+//                    classes = compiler.compile(
+//                            new edu.gcsc.vrl.ug.NativeAPICode(
+//                            nativeAPI).getAllCodes(),
+//                            VJarUtil.getClassJarLocation(UG.class).
+//                            getParentFile().
+//                            getAbsolutePath());
+
+//                     // add the generated api library to the system classloader
+//                    ClassPathUpdater.add(VJarUtil.getClassJarLocation(UG.class).
+//                            getParentFile().
+//                            getAbsolutePath() + "/VRL-UG-API.jar");
+
                     classes = compiler.compile(
                             new edu.gcsc.vrl.ug.NativeAPICode(
-                            nativeAPI).getAllCodes(),
-                            VJarUtil.getClassJarLocation(UG.class).
-                            getParentFile().
-                            getAbsolutePath());
+                            nativeAPI).getAllCodes(), Constants.PLUGIN_DIR);
 
                     // add the generated api library to the system classloader
-                    ClassPathUpdater.add(VJarUtil.getClassJarLocation(UG.class).
-                            getParentFile().
-                            getAbsolutePath() + "/VRL-UG-API.jar");
+//                    ClassPathUpdater.add(Constants.PLUGIN_DIR + "/VRL-UG-API.jar");
 
                 } catch (Exception ex) {
                     libLoaded = false;
@@ -164,7 +177,7 @@ public class UG {
                     log(Level.SEVERE, null, ex);
         }
 
-        setNativeClasses(classes);
+//        setNativeClasses(classes);
 
         initialized = libLoaded;
     }
@@ -178,7 +191,24 @@ public class UG {
      */
     private static Class<?> findCompatibleAPI(UG ug) {
         try {
-            ClassLoader cl = ClassLoader.getSystemClassLoader();
+            ClassLoader cl = null;
+            try {
+                cl = new URLClassLoader(
+                        new URL[]{new File(Constants.PLUGIN_DIR
+                            + "/" + Compiler.API_JAR_NAME).toURI().toURL()});
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(VRL.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            }
+
+            if (cl == null) {
+                System.err.println("Shit happens :(");
+                System.err.println("FAILED");
+                System.exit(18);
+
+                return null;
+            }
+
             Class<?> cls = cl.loadClass("edu.gcsc.vrl.ug.UGAPI");
 
             String apiSvn = (String) cls.getMethod(
@@ -189,37 +219,41 @@ public class UG {
                     "getCompileDate").
                     invoke(cls);
 
-            boolean revisionsAreEqual = apiSvn.equals(ug.getSvnRevision());
-            boolean datesAreEqual = apiDate.equals(ug.getCompileDate());
+//            boolean revisionsAreEqual = apiSvn.equals(ug.getSvnRevision());
+//            boolean datesAreEqual = apiDate.equals(ug.getCompileDate());
 
-            if (revisionsAreEqual && datesAreEqual) {
+//            if (revisionsAreEqual && datesAreEqual) {
                 System.out.println(
                         VTerminalUtil.green(" --> VRL-UG: "
                         + "API found\n"
                         + " --> svn: present=" + apiSvn + "\n"
                         + " --> date: present=" + apiDate));
-                
-                 SplashScreenGenerator.printBootMessage(">> UG: API found");
+
+                SplashScreenGenerator.printBootMessage(">> UG: API found");
 
                 return cls;
-            } else {
-                System.err.println(
-                        VTerminalUtil.red(" --> VRL-UG:"
-                        + "API version missmatch\n"
-                        + " --> svn: present="
-                        + apiSvn + ", requested=" + ug.getSvnRevision() + "\n"
-                        + " --> date: present="
-                        + apiDate + ", requested=" + ug.getCompileDate()));
-            }
+//            } else {
+//                System.err.println(
+//                        VTerminalUtil.red(" --> VRL-UG:"
+//                        + "API version missmatch\n"
+//                        + " --> svn: present="
+//                        + apiSvn + ", requested=" + ug.getSvnRevision() + "\n"
+//                        + " --> date: present="
+//                        + apiDate + ", requested=" + ug.getCompileDate()));
+//            }
         } catch (ClassNotFoundException ex) {
         } catch (NoSuchMethodException ex) {
         } catch (IllegalAccessException ex) {
         } catch (InvocationTargetException ex) {
         }
 
+//        System.err.println("FAILED");
+//
+//        System.exit(18);
+
         return null;
     }
-    
+
     public boolean isRecompiled() {
         return recompiled;
     }
@@ -230,11 +264,14 @@ public class UG {
      * @param cls api class
      * @return the api classes
      */
-    private static Class<?>[] getAPiClasses(Class<?> cls) {
+    public static Class<?>[] getAPiClasses(Class<?> cls) {
         try {
-            ClassLoader cl = ClassLoader.getSystemClassLoader();
+            ClassLoader cl = cls.getClassLoader();
+
             URL url = cls.getResource(
                     "/edu/gcsc/vrl/ug/UG_INFO.XML");
+
+            Thread.currentThread().setContextClassLoader(cl);
 
             XMLDecoder decoder = new XMLDecoder(url.openStream());
 
@@ -443,7 +480,7 @@ public class UG {
     native Object invokeFunction(String name,
             boolean readOnly, Object[] params);
 
-    final native int ugInit(String[] args);
+    static native int ugInit(String[] args);
 
     native String getSvnRevision();
 
