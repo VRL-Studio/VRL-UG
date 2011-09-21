@@ -51,6 +51,13 @@ public class UG {
      * ug instance
      */
     private static UG ugInstance;
+
+    /**
+     * @return the libloaded
+     */
+    public static boolean isLibloaded() {
+        return libLoaded;
+    }
     /**
      * VRL canvas used to visualize ug classes
      */
@@ -68,6 +75,10 @@ public class UG {
      * Indicates whether API has been recompiled.
      */
     private boolean recompiled = false;
+    /**
+     * Indicates whether native ug lib loaded
+     */
+    private static boolean libLoaded = false;
 
 //    /**
 //     * Returns all native UG classes that are exported via the UG registry,
@@ -86,15 +97,16 @@ public class UG {
 //    static void setNativeClasses(Class<?>[] nativeClasses) {
 //        UG.nativeClasses = nativeClasses;
 //    }
-    
-    
-    public static void connectToNativeUG() {
+    public static void connectToNativeUG(boolean loadNativeLib) {
         // initialize native ug libraries
         String[] args = {""};
-        
+
         System.err.println("-- connect to native ug --");
-        
-        System.loadLibrary("ug4");
+
+        if (loadNativeLib) {
+            System.loadLibrary("ug4");
+            libLoaded = true;
+        }
 
         try {
             ugInit(args);
@@ -102,8 +114,7 @@ public class UG {
             ex.printStackTrace(System.err);
         }
     }
-    
-    
+
     /**
      * instanciation only allowed in this class
      */
@@ -114,21 +125,17 @@ public class UG {
         // as we need the instance for searching a compiled UG-API.
         ugInstance = this;
 
-        boolean libLoaded = false;
-
         Class<?>[] classes = new Class<?>[0];
 
         // load api if compatible; rebuild otherwise
         try {
             Class<?> cls = findCompatibleAPI(ugInstance);
 
-            if (cls != null) {
-//                classes = getAPiClasses(cls);
-            } else {
-                
-                connectToNativeUG();
-                libLoaded = true;
-                
+            if (cls == null) {
+
+                // load native library and connect to ug lib to generate api
+                connectToNativeUG(true);
+
                 NativeAPIInfo nativeAPI = convertRegistryInfo();
                 Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
 
@@ -165,14 +172,12 @@ public class UG {
 //                    ClassPathUpdater.add(Constants.PLUGIN_DIR + "/VRL-UG-API.jar");
 
                 } catch (Exception ex) {
-                    libLoaded = false;
                     Logger.getLogger(UG.class.getName()).
                             log(Level.SEVERE, null, ex);
                 }
             }
 
         } catch (Exception ex) {
-            libLoaded = false;
             Logger.getLogger(UG.class.getName()).
                     log(Level.SEVERE, null, ex);
         }
@@ -223,15 +228,15 @@ public class UG {
 //            boolean datesAreEqual = apiDate.equals(ug.getCompileDate());
 
 //            if (revisionsAreEqual && datesAreEqual) {
-                System.out.println(
-                        VTerminalUtil.green(" --> VRL-UG: "
-                        + "API found\n"
-                        + " --> svn: present=" + apiSvn + "\n"
-                        + " --> date: present=" + apiDate));
+            System.out.println(
+                    VTerminalUtil.green(" --> VRL-UG: "
+                    + "API found\n"
+                    + " --> svn: present=" + apiSvn + "\n"
+                    + " --> date: present=" + apiDate));
 
-                SplashScreenGenerator.printBootMessage(">> UG: API found");
+            SplashScreenGenerator.printBootMessage(">> UG: API found");
 
-                return cls;
+            return cls;
 //            } else {
 //                System.err.println(
 //                        VTerminalUtil.red(" --> VRL-UG:"
