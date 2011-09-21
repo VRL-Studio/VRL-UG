@@ -10,6 +10,7 @@ import eu.mihosoft.vrl.system.PluginConfigurator;
 import eu.mihosoft.vrl.system.PluginDependency;
 import eu.mihosoft.vrl.system.PluginIdentifier;
 import eu.mihosoft.vrl.system.VPluginAPI;
+import eu.mihosoft.vrl.system.VPluginConfigurator;
 import eu.mihosoft.vrl.visual.VDialog;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
@@ -19,7 +20,21 @@ import java.util.logging.Logger;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public abstract class APIPluginConfiguratorImpl implements PluginConfigurator {
+public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
+
+    public APIPluginConfiguratorImpl() {
+        
+        setIdentifier(Constants.API_PLUGIN_IDENTIFIER);
+        
+        addDependency(new PluginDependency(
+                Constants.PLUGIN_IDENTIFIER.getName(),
+                Constants.PLUGIN_IDENTIFIER.getVersion(),
+                Constants.PLUGIN_IDENTIFIER.getVersion()));
+        
+        setDescription("UG-API");
+    }
+    
+    
 
     public void register(PluginAPI api) {
         if (api instanceof VPluginAPI) {
@@ -72,28 +87,9 @@ public abstract class APIPluginConfiguratorImpl implements PluginConfigurator {
 
     public void unregister(PluginAPI api) {
         //
-    }
-
-    public String getDescription() {
-        return "UG-API";
-    }
-
-    public BufferedImage getIcon() {
-        return null;
-    }
-
-    public PluginIdentifier getIdentifier() {
-        return Constants.API_PLUGIN_IDENTIFIER;
-    }
+    }  
 
     public void init() {
-        UG.connectToNativeUG();
-    }
-
-    public PluginDependency[] getDependencies() {
-        return new PluginDependency[]{new PluginDependency(
-                Constants.PLUGIN_IDENTIFIER.getName(),
-                Constants.PLUGIN_IDENTIFIER.getVersion(),
-                Constants.PLUGIN_IDENTIFIER.getVersion())};
+        UG.connectToNativeUG(isLoadNativeLibraries());
     }
 }
