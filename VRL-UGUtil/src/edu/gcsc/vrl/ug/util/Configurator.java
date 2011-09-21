@@ -21,18 +21,18 @@ import java.awt.image.BufferedImage;
 public class Configurator extends VPluginConfigurator {
 
     public Configurator() {
-        
+
         setIdentifier(new PluginIdentifier("UG4-Util", new VersionInfo("0.1")));
-        
+
         addDependency(new PluginDependency("UG4", "0.1", "0.1"));
         addDependency(new PluginDependency("UG4-API", "0.1", "0.1"));
-        
+
+        addDependency(new PluginDependency("VRL-JFreeChart", "0.1", "0.1"));
+
         setDescription("This plugin replaces "
                 + " <b>ug_util.lua</b> on the Java Platform.");
-        
+
     }
-    
-    
 
     @Override
     public void register(PluginAPI api) {
@@ -42,7 +42,7 @@ public class Configurator extends VPluginConfigurator {
             vapi.addComponent(UGUtil.class);
             vapi.addComponent(NumberArrayToJFreeChart.class);
             vapi.addComponent(ConvergencePlotter.class);
-            
+
             vapi.addTypeRepresentation(new NumberArrayArrayType());
         }
     }
