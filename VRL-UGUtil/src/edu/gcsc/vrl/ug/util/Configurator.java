@@ -11,13 +11,28 @@ import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.PluginDependency;
 import eu.mihosoft.vrl.system.PluginIdentifier;
 import eu.mihosoft.vrl.system.VPluginAPI;
+import eu.mihosoft.vrl.system.VPluginConfigurator;
 import java.awt.image.BufferedImage;
 
 /**
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class Configurator implements PluginConfigurator {
+public class Configurator extends VPluginConfigurator {
+
+    public Configurator() {
+        
+        setIdentifier(new PluginIdentifier("UG4-Util", new VersionInfo("0.1")));
+        
+        addDependency(new PluginDependency("UG4", "0.1", "0.1"));
+        addDependency(new PluginDependency("UG4-API", "0.1", "0.1"));
+        
+        setDescription("This plugin replaces "
+                + " <b>ug_util.lua</b> on the Java Platform.");
+        
+    }
+    
+    
 
     @Override
     public void register(PluginAPI api) {
@@ -34,33 +49,11 @@ public class Configurator implements PluginConfigurator {
 
     @Override
     public void unregister(PluginAPI api) {
-//        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public String getDescription() {
-        return "This plugin replaces "
-                + " <b>ug_util.lua</b> on the Java Platform.";
-    }
-
-    @Override
-    public BufferedImage getIcon() {
-        return null;
+        //
     }
 
     @Override
     public void init() {
         //
-    }
-
-    @Override
-    public PluginIdentifier getIdentifier() {
-        return new PluginIdentifier("UG4-Util", new VersionInfo("0.1"));
-    }
-
-    @Override
-    public PluginDependency[] getDependencies() {
-        PluginDependency[] result = {new PluginDependency("UG4", "0.1", "0.1")};
-        return result;
     }
 }
