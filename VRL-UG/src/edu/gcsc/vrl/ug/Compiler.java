@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.lang.VLangUtils;
@@ -240,8 +241,6 @@ public class Compiler {
                 name.replace("I_", "").
                 replace("C_", "").
                 replace("Const__", ""));
-        
-        System.err.println("OUT: " + name + ": " + result);
         
         return result;
     }

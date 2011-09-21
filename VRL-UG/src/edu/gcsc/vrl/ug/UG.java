@@ -101,7 +101,7 @@ public class UG {
         // initialize native ug libraries
         String[] args = {""};
 
-        System.err.println("-- connect to native ug --");
+        System.out.println(">> UG: connecting to native ug.");
 
         if (loadNativeLib) {
             System.loadLibrary("ug4");
@@ -124,8 +124,6 @@ public class UG {
         // doing this in the corresponding getter methods does not work anymore
         // as we need the instance for searching a compiled UG-API.
         ugInstance = this;
-
-        Class<?>[] classes = new Class<?>[0];
 
         // load api if compatible; rebuild otherwise
         try {
@@ -152,24 +150,9 @@ public class UG {
                             ">> UG: recompiling API (this may take a while) ...");
 
                     // generates jar file in plugin path
-//                    classes = compiler.compile(
-//                            new edu.gcsc.vrl.ug.NativeAPICode(
-//                            nativeAPI).getAllCodes(),
-//                            VJarUtil.getClassJarLocation(UG.class).
-//                            getParentFile().
-//                            getAbsolutePath());
-
-//                     // add the generated api library to the system classloader
-//                    ClassPathUpdater.add(VJarUtil.getClassJarLocation(UG.class).
-//                            getParentFile().
-//                            getAbsolutePath() + "/VRL-UG-API.jar");
-
-                    classes = compiler.compile(
+                    compiler.compile(
                             new edu.gcsc.vrl.ug.NativeAPICode(
                             nativeAPI).getAllCodes(), Constants.PLUGIN_DIR);
-
-                    // add the generated api library to the system classloader
-//                    ClassPathUpdater.add(Constants.PLUGIN_DIR + "/VRL-UG-API.jar");
 
                 } catch (Exception ex) {
                     Logger.getLogger(UG.class.getName()).
@@ -181,8 +164,6 @@ public class UG {
             Logger.getLogger(UG.class.getName()).
                     log(Level.SEVERE, null, ex);
         }
-
-//        setNativeClasses(classes);
 
         initialized = libLoaded;
     }
@@ -207,9 +188,9 @@ public class UG {
             }
 
             if (cl == null) {
-                System.err.println("Shit happens :(");
-                System.err.println("FAILED");
-                System.exit(18);
+                System.err.println("Classloader not found: This should never"
+                        + " happen. Please " 
+                        + Constants.WRITE_VRL_BUG_REPORT_PLAIN);
 
                 return null;
             }
@@ -349,8 +330,9 @@ public class UG {
      * </p>
      * <p>
      * <b>Note:</b> this singleton must not be loaded by more than one
-     * classloader per JVM! Although this is no problem for Java classes it
-     * does not work for native libraries. Unfortunately we cannot provide an
+     * classloader per JVM if native libs have been loaded! Although this is
+     * no problem for Java classes, it
+     * does not work for native libraries. Unfortunately, we cannot provide an
      * acceptable workaround. Thus, it is recommended to use this method from
      * a valid VRL plugin only. The VRL plugin system is aware of this problem
      * and handles it correctly.
@@ -381,7 +363,6 @@ public class UG {
         this.mainCanvas = mainCanvas;
         stopLogging();
         startLogging();
-//        attachCanvas(mainCanvas);
     }
 
     /**
@@ -494,5 +475,4 @@ public class UG {
     native String getAuthors();
 
     native String getCompileDate();
-//    native void attachCanvas(VisualCanvas canvas);
 }

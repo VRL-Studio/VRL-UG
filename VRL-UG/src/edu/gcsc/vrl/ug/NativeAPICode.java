@@ -65,10 +65,6 @@ public class NativeAPICode {
             }
         }
 
-//        if (type != CodeType.WRAP_POINTER_CLASS) {
-//            codes.add(new UGAnyCode(apiInfo, type).toString());
-//        }
-
         return codes.toArray(new String[codes.size()]);
     }
 
@@ -82,8 +78,6 @@ public class NativeAPICode {
             NativeClassInfo groupCls =
                     NativeClassGroupInfo.classToGroupClass(
                     api, api.getClassByName(grp.getClasses()[0]));
-
-//            System.out.println(">> creating group-cls:" + groupCls.getName());
 
             codes.add(new ClassCode(
                     api, groupCls, CodeType.FULL_CLASS, false).build(

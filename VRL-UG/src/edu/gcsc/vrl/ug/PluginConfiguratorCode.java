@@ -14,7 +14,9 @@ public class PluginConfiguratorCode implements CodeElement{
 
     public CodeBuilder build(CodeBuilder builder) {
         return builder.addLine(
-                "public class APIPluginConfigurator extends APIPluginConfiguratorImpl implements eu.mihosoft.vrl.system.PluginConfigurator { static {println \"----- rUNNING ------\"}}");
+                "@ComponentInfo(ignore=true)\n"
+                + "public class APIPluginConfigurator extends APIPluginConfiguratorImpl"
+                + " implements eu.mihosoft.vrl.system.PluginConfigurator {}");
     }
     
 }
