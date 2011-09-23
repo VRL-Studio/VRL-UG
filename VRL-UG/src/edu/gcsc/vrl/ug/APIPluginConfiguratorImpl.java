@@ -32,15 +32,17 @@ public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
                 Constants.PLUGIN_IDENTIFIER.getVersion()));
         
         setDescription("UG-API");
+        
+        // api classes must be fully available for all plugins that depend
+        // on this api
+        disableAccessControl(true);
     }
-    
-    
 
     public void register(PluginAPI api) {
         if (api instanceof VPluginAPI) {
             VPluginAPI vApi = (VPluginAPI) api;
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
-//            UG.getInstance().setMainCanvas(vCanvas);
+            UG.getInstance().setMainCanvas(vCanvas);
             
             Class<?> apiCls = null;
             
@@ -57,7 +59,6 @@ public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
                 System.err.println("UG-API class not found!");
                 return;
             }
-            
             
 
             for (Class<?> cls : UG.getAPiClasses(apiCls)) {
