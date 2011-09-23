@@ -80,6 +80,11 @@ public class UG {
      * Indicates whether native ug lib loaded
      */
     private static boolean libLoaded = false;
+    /**
+     * temp folder conaining native libs 
+     * (must be set from ug plugin, not from api)
+     */
+    private static File nativeLibFolder;
 
 //    /**
 //     * Returns all native UG classes that are exported via the UG registry,
@@ -100,8 +105,8 @@ public class UG {
 //    }
     public static void connectToNativeUG(boolean loadNativeLib) {
         // initialize native ug libraries
-        String pluginPath = "eu/mihosoft/vrl/natives/" 
-                + VSysUtil.getPlatformSpecificPath()+ "/plugins".
+        String pluginPath = getNativeLibFolder() + "/eu/mihosoft/vrl/natives/" 
+                + VSysUtil.getPlatformSpecificPath()+ "plugins".
                 replace("/", File.separator);
         
         String[] args = {pluginPath};
@@ -113,7 +118,9 @@ public class UG {
             libLoaded = true;
         }
 
-        try {
+        try {            
+            System.out.println("Path (J): " + pluginPath + ", exists: "
+                    + new File(pluginPath).exists());
             ugInit(args);
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
@@ -407,6 +414,20 @@ public class UG {
         if (messages.length() > 0) {
             messages.delete(0, messages.length());
         }
+    }
+
+    /**
+     * @return the nativeLibFolder
+     */
+    static File getNativeLibFolder() {
+        return nativeLibFolder;
+    }
+
+    /**
+     * @param nativeLibFolder the nativeLibFolder to set
+     */
+    static void setNativeLibFolder(File nativeLibFolder) {
+        UG.nativeLibFolder = nativeLibFolder;
     }
 
     class MessageThread extends Thread {
