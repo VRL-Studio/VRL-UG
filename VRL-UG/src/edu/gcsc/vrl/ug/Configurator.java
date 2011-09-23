@@ -28,13 +28,14 @@ public class Configurator extends VPluginConfigurator {
         // ug is only allowed to load the native ug lib if api plugin could
         // not be found. in this case this plugin will generate it.
         setLoadNativeLibraries(false);
-
+        
+        exportPackage("edu.gcsc.vrl.ug");
     }
 
     public void register(PluginAPI api) {
         if (api instanceof VPluginAPI) {
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
-            UG.getInstance().setMainCanvas(vCanvas);
+//            UG.getInstance().setMainCanvas(vCanvas);
 //
             // request restart
             if (UG.getInstance().isRecompiled()) {

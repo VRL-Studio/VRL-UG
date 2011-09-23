@@ -7,6 +7,7 @@ package edu.gcsc.vrl.ug;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.Constants;
 import eu.mihosoft.vrl.system.VRL;
+import eu.mihosoft.vrl.system.VSysUtil;
 import eu.mihosoft.vrl.system.VTerminalUtil;
 import eu.mihosoft.vrl.visual.MessageType;
 import eu.mihosoft.vrl.visual.SplashScreenGenerator;
@@ -99,7 +100,11 @@ public class UG {
 //    }
     public static void connectToNativeUG(boolean loadNativeLib) {
         // initialize native ug libraries
-        String[] args = {""};
+        String pluginPath = "eu/mihosoft/vrl/natives/" 
+                + VSysUtil.getPlatformSpecificPath()+ "/plugins".
+                replace("/", File.separator);
+        
+        String[] args = {pluginPath};
 
         System.out.println(">> UG: connecting to native ug.");
 
