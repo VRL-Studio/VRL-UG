@@ -71,4 +71,29 @@
     nbproject/build-impl.xml file. 
 
     -->
+    
+    <property file="build.properties"/>
+    
+    <target name="-pre-compile">
+        <echo message="Copying ${ug.dir}/lib/libug4.${native.soname} to ${src.dir}/eu/mihosoft/vrl/natives/${native.os}"/>
+        <copy 
+        file="${ug.dir}/lib/libug4.${native.soname}" 
+        todir="${src.dir}/eu/mihosoft/vrl/natives/${native.os}"/>
+        
+        <echo message="Copying ${ug.dir}/bin/*.${native.soname} to ${src.dir}/eu/mihosoft/vrl/natives/${native.os}/plugins"/>
+        <copy todir="${src.dir}/eu/mihosoft/vrl/natives/${native.os}/plugins">
+            <fileset dir="${ug.dir}/bin/plugins/">
+                <include name="**/*.${native.soname}"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <target name="-post-jar">
+        <echo message="Copying ${dist.jar} to ${studio.dir}/plugins"/>
+        <copy 
+        file="${dist.jar}" 
+        todir="${studio.dir}/plugins"/>
+        
+    </target>
+    
 </project>
