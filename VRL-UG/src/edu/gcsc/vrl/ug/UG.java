@@ -95,6 +95,7 @@ public class UG {
 //        
 //        return nativeClasses;
 //    }
+//
     /**
      * Defines all native UG classes that are exported via the UG registry,
      * i.e., the equivalent Java wrapper classes.
@@ -105,10 +106,9 @@ public class UG {
 //    }
     public static void connectToNativeUG(boolean loadNativeLib) {
         // initialize native ug libraries
-        String pluginPath = getNativeLibFolder() + "/eu/mihosoft/vrl/natives/" 
-                + VSysUtil.getPlatformSpecificPath()+ "plugins".
-                replace("/", File.separator);
-        
+        String pluginPath = getNativeLibFolder() + "/eu/mihosoft/vrl/natives/"
+                + VSysUtil.getPlatformSpecificPath() + "plugins".replace("/", File.separator);
+
         String[] args = {pluginPath};
 
         System.out.println(">> UG: connecting to native ug.");
@@ -118,9 +118,8 @@ public class UG {
             libLoaded = true;
         }
 
-        try {            
-            System.out.println("Path (J): " + pluginPath + ", exists: "
-                    + new File(pluginPath).exists());
+        try {
+
             ugInit(args);
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
@@ -201,7 +200,7 @@ public class UG {
 
             if (cl == null) {
                 System.err.println("Classloader not found: This should never"
-                        + " happen. Please " 
+                        + " happen. Please "
                         + Constants.WRITE_VRL_BUG_REPORT_PLAIN);
 
                 return null;

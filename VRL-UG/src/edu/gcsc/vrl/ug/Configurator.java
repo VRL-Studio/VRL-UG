@@ -58,8 +58,11 @@ public class Configurator extends VPluginConfigurator {
 
     public void init() {
 
+        // define native lib location
+        UG.setNativeLibFolder(getNativeLibFolder());
+        
         // initialize ug instance
-        UG.getInstance().setNativeLibFolder(getNativeLibFolder());
+        UG.getInstance();
 
         if (UG.isLibloaded()) {
             setDescription(UG.getInstance().getDescription()
