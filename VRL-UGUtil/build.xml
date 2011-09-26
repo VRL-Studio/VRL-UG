@@ -71,4 +71,15 @@
     nbproject/build-impl.xml file. 
 
     -->
+    
+    <property file="build.properties"/>
+    
+    <target name="-post-jar">
+        <echo message="Copying ${dist.jar} to ${studio.dir}/plugins"/>
+        <copy 
+        file="${dist.jar}" 
+        todir="${studio.dir}/plugins"/>
+    </target>
+    
+    
 </project>
