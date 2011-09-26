@@ -31,7 +31,7 @@ public class Configurator extends VPluginConfigurator {
 
         setDescription("This plugin replaces "
                 + " <b>ug_util.lua</b> on the Java Platform.");
-
+        exportPackage("edu.gcsc.vrl.ug.util");
     }
 
     @Override
