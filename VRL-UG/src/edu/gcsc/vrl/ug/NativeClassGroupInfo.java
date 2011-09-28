@@ -185,6 +185,28 @@ public class NativeClassGroupInfo {
 
         return result;
     }
+    
+    public static NativeConstructorInfo convertToClassGroup(NativeAPIInfo api,
+            NativeConstructorInfo c) {
+        NativeConstructorInfo result = new NativeConstructorInfo(c);
+
+        result.setParameters(convertToClassGroup(api,c.getParameters()));
+
+        return result;
+    }
+    
+     public static NativeConstructorInfo[] convertToClassGroup(
+             NativeAPIInfo api,
+            NativeConstructorInfo[] constructors) {
+        NativeConstructorInfo[] result = 
+                new NativeConstructorInfo[constructors.length];
+
+        for (int i = 0; i < result.length; i++) {
+            result[i] = convertToClassGroup(api, constructors[i]);
+        }
+
+        return result;
+    }
 
     public static NativeMethodGroupInfo convertToClassGroup(NativeAPIInfo api,
             NativeMethodGroupInfo mG) {
@@ -212,6 +234,7 @@ public class NativeClassGroupInfo {
 
         result.setName(convertToClassGroup(api, cls.getName()));
         result.setClassNames(convertToClassGroup(api, cls.getClassNames()));
+        result.setConstructors(convertToClassGroup(api, cls.getConstructors()));
         result.setMethods(convertToClassGroup(api, cls.getMethods()));
         result.setConstMethods(cls.getConstMethods());
         
