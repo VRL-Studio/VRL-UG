@@ -158,6 +158,16 @@ class ClassCode implements CodeElement {
             for (NativeClassInfo cls : classes) {
 
                 if (!isConst && cls.getMethods() != null) {
+
+                    // add constructor code
+                    new MethodGroupCode(api,
+                            NativeConstructorInfo.toNativeMethodGroupInfo(
+                            cls.getConstructors()),
+                            signatures, type, createVisual).build(builder).
+                            newLine();
+
+
+                    // add method code
                     for (NativeMethodGroupInfo m : cls.getMethods()) {
 //                        if (!signatures.contains(new MethodGroupSignature(m))) {
                         new MethodGroupCode(api,

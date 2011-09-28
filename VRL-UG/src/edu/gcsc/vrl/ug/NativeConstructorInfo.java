@@ -91,4 +91,48 @@ public class NativeConstructorInfo {
     public void setHelp(String help) {
         this.help = help;
     }
+    
+    /**
+     * Converts this native constructor info to an equivalent method info.
+     * @return this native constructor info as equivalent method info
+     */
+    public NativeMethodInfo toNativeMethodInfo() {
+        NativeMethodInfo result = new NativeMethodInfo();
+        
+        NativeParamInfo returnType = new NativeParamInfo();
+        returnType.setType(NativeType.VOID);
+        
+        result.setName("constructor");
+        result.setConstructor(true);
+        result.setConst(false);
+        result.setHelp(help);
+        result.setToolTip(toolTip);
+        result.setOptions("initializer=true");
+        result.setParameters(parameters);
+        result.setReturnValue(returnType);
+        
+        return result;
+    }
+   
+    /**
+     * Converts this native constructor info to an equivalent method info.
+     * @return this native constructor info as equivalent method info
+     */
+    public static NativeMethodGroupInfo toNativeMethodGroupInfo(
+            NativeConstructorInfo[] constructors) {
+        
+        NativeMethodInfo[] methods = new NativeMethodInfo[constructors.length];
+        
+        for (int i = 0; i < constructors.length;i++) {
+            methods[i] = constructors[i].toNativeMethodInfo();
+        }
+        
+        NativeMethodGroupInfo result = new NativeMethodGroupInfo();
+        
+        result.setConst(false);
+        
+        result.setOverloads(methods);
+        
+        return result;
+    }
 }

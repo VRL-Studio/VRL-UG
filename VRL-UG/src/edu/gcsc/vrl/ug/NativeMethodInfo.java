@@ -18,6 +18,7 @@ public class NativeMethodInfo {
     private String toolTip;
     private String help;
     private boolean isConst;
+    private boolean constructor;
 
     public NativeMethodInfo() {
     }
@@ -32,6 +33,7 @@ public class NativeMethodInfo {
         this.toolTip = m.toolTip;
         this.help = m.help;
         this.isConst = m.isConst;
+        this.constructor = m.constructor;
     }
 
     /**
@@ -154,5 +156,19 @@ public class NativeMethodInfo {
      */
     public void setConst(boolean isConst) {
         this.isConst = isConst;
+    }
+
+    /**
+     * @return the constructor
+     */
+    public boolean isConstructor() {
+        return constructor;
+    }
+
+    /**
+     * @param constructor the constructor to set
+     */
+    public void setConstructor(boolean constructor) {
+        this.constructor = constructor;
     }
 }

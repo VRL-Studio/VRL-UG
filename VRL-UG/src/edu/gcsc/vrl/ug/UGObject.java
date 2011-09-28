@@ -30,6 +30,7 @@ public class UGObject implements Serializable, UGObjectInterface {
     private ArrayList<String> classNames;
     private boolean isInstantiable;
     private boolean isClassGroupObject;
+    private Object[] constructorParameters;
 
     protected void setThis(UGObject o) {
 //        System.out.println(className + ">> Set This: "
@@ -108,8 +109,13 @@ public class UGObject implements Serializable, UGObjectInterface {
                             "Class \"" + getClassName()
                             + "\" is not instantiable!");
                 } else {
+                    
+                    if (constructorParameters == null) {
+                        constructorParameters = new Object[0];
+                    }
+                    
                     long address = (long) edu.gcsc.vrl.ug.UG.getInstance().
-                            newInstance(exportedClsPtr);
+                            newInstance(exportedClsPtr, constructorParameters);
                     setPointer(new edu.gcsc.vrl.ug.Pointer(
                             getClassName(), address, false));
 //                    System.out.println(getClassName() + " >> New Instance: "
@@ -129,7 +135,7 @@ public class UGObject implements Serializable, UGObjectInterface {
 //                    MessageType.ERROR);
 
             throw new IllegalStateException("Class \"" + getClassName()
-                    + "\" is not instantiable via default constructor!");
+                    + "\" is not instantiable via selected constructor!");
         }
         return objPointer;
     }
@@ -231,6 +237,34 @@ public class UGObject implements Serializable, UGObjectInterface {
         }
 
         return result;
+    }
+    
+    /**
+     * Invokes a native constructor.
+     * @param isFunction defines whether to invoke a function
+     * @param isConst defines whether to call a const method
+     * @param methodName method name
+     * @param params method parameters
+     * @return return value
+     */
+    protected void invokeConstructor(Object[] params) {
+
+        Object[] convertedParams = new Object[params.length];
+
+        for (int i = 0; i < convertedParams.length; i++) {
+            Object p = params[i];
+            if (p instanceof UGObject) {
+                UGObject o = (UGObject) p;
+                convertedParams[i] = o.getPointer();
+            } else {
+                convertedParams[i] = p;
+            }
+        }
+
+        // request new constructor call
+        constructorParameters = convertedParams;
+        releaseThis();
+
     }
 
     /**

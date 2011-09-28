@@ -119,6 +119,8 @@ public class MethodCode implements CodeElement {
 
             if (customInvocationCode != null) {
                 builder.append(customInvocationCode).newLine();
+            } else if (method.isConstructor()) {
+                builder.append("invokeConstructor(params);").newLine();
             } else {
                 builder.append("invokeMethod("
                         + isFunction + ", "
@@ -129,7 +131,7 @@ public class MethodCode implements CodeElement {
             if (returnsPointer) {
                 String returnTypeClassName =
                         CodeUtils.className(
-                        method.getReturnValue().getClassName(),method.isConst());
+                        method.getReturnValue().getClassName(), method.isConst());
 
                 builder.append("edu.gcsc.vrl.ug.").append(returnTypeClassName).
                         append(" convertedResult = new ").

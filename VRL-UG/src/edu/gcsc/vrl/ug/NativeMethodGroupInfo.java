@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package edu.gcsc.vrl.ug;
 
 /**
@@ -11,6 +10,7 @@ package edu.gcsc.vrl.ug;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeMethodGroupInfo {
+
     private NativeMethodInfo[] overloads;
     private boolean isConst;
 
@@ -24,8 +24,6 @@ public class NativeMethodGroupInfo {
         this.overloads = mG.overloads.clone();
         this.isConst = mG.isConst;
     }
-    
-    
 
     /**
      * Returns the overloads of this method group.
@@ -59,8 +57,10 @@ public class NativeMethodGroupInfo {
     public void setConst(boolean isConst) {
         this.isConst = isConst;
 
-        for (NativeMethodInfo nativeMethodInfo : overloads) {
-            nativeMethodInfo.setConst(isConst);
+        if (overloads != null) {
+            for (NativeMethodInfo nativeMethodInfo : overloads) {
+                nativeMethodInfo.setConst(isConst);
+            }
         }
     }
 }
