@@ -14,6 +14,7 @@ public class NativeClassInfo {
     private String name;
     private String category;
     private String[] classNames;
+    private NativeConstructorInfo[] constructors;
     private NativeMethodGroupInfo[] methods;
     private NativeMethodGroupInfo[] constMethods;
     private boolean instantiable;
@@ -26,6 +27,7 @@ public class NativeClassInfo {
         this.name = c.name;
         this.category = c.category;
         this.classNames = c.classNames.clone();
+        this.constructors = c.constructors;
         this.methods = c.methods;
         this.constMethods = c.constMethods;
         this.instantiable = c.instantiable;
@@ -176,5 +178,19 @@ public class NativeClassInfo {
      */
     void setGroupClass(boolean groupClass) {
         this.groupClass = groupClass;
+    }
+
+    /**
+     * @return the constructors
+     */
+    public NativeConstructorInfo[] getConstructors() {
+        return constructors;
+    }
+
+    /**
+     * @param constructors the constructors to set
+     */
+    public void setConstructors(NativeConstructorInfo[] constructors) {
+        this.constructors = constructors;
     }
 }
