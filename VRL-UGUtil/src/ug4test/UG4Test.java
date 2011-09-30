@@ -25,12 +25,11 @@ public class UG4Test {
 
         VRL.initAll(args);
 
-        F_InitUG initUG = new F_InitUG();
-        initUG.invoke(2, new C_CPUAlgebraSelector(), "P1");
+        F_InitUG.invoke(2, new C_CPUAlgebraSelector(), "P1");
 
         I_Domain d = new C_Domain();
 
-        new F_LoadDomain().invoke(d,
+        F_LoadDomain.invoke(d,
                 "/home/miho/installs/ug4/trunk/data/grids/unit_square/unit_square_quads_4x4.ugx");
 
         System.out.println("Domain.get_dim(): " + d.const__get_dim());
