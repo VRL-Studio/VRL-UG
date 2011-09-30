@@ -18,8 +18,8 @@ import org.jfree.data.xy.XYSeries;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-@ComponentInfo(name="NumberArrayToJFreeChart", category="JFreeChart")
-@ObjectInfo(name="NumberArrayToJFreeChart")
+@ComponentInfo(name = "NumberArrayToJFreeChart", category = "JFreeChart")
+@ObjectInfo(name = "NumberArrayToJFreeChart")
 public class NumberArrayToJFreeChart implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -32,17 +32,15 @@ public class NumberArrayToJFreeChart implements Serializable {
             @ParamInfo(name = "Conv.Rates") I_NumberArray numArray,
             @ParamInfo(name = "Id") String id) {
         XYSeries result = new XYSeries(id);
-        
+
         double x = 0.0;
         double stepsize_x = 1.0;
 
-	for (int i = 0; i < numArray.const__size();i++) {
-            
-            result.add(x,Math.log10(numArray.const__get(i)));
+        for (int i = 0; i < numArray.const__size(); i++) {
+
+            result.add(x, numArray.const__get(i));
             x += stepsize_x;
-	}
-        
-        
+        }
 
         return result;
     }

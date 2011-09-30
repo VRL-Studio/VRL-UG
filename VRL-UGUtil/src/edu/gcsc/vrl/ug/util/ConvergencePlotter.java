@@ -34,7 +34,7 @@ public class ConvergencePlotter implements Serializable {
         ArrayList<GraphParameterSet> graphs =
                 new ArrayList<GraphParameterSet>();
 
-        Color[] colors = new Color[] {
+        Color[] colors = new Color[]{
             Color.BLUE,
             Color.RED,
             Color.GREEN,
@@ -43,22 +43,22 @@ public class ConvergencePlotter implements Serializable {
             Color.YELLOW,
             Color.GRAY
         };
-        
+
         int i = 0;
         for (I_NumberArray g : numArray) {
             GraphParameterSet graph = new GraphParameterSet(
                     convert(g, "Set " + i));
-            
-            graph.setColor(colors[i%colors.length]);
+
+            graph.setColor(colors[i % colors.length]);
             graph.setShapeVisible(false);
             graph.setAnnotationText("Set " + i);
             graphs.add(graph);
-            
+
             i++;
         }
 
         JFXYChartParameters result = new JFXYChartParameters(graphs);
-        
+
         result.setTitle("Convergence");
         result.setAutoRangeX(true);
         result.setAutoRangeY(true);
@@ -66,9 +66,9 @@ public class ConvergencePlotter implements Serializable {
         result.setXAxisLabel("# Steps");
         result.setYAxisLabel("Defect");
 //        result.setNumberFormat_x("#");
-        
+
         result.setLogscaleY(true);
-        
+
         return result;
     }
 
@@ -76,16 +76,16 @@ public class ConvergencePlotter implements Serializable {
             @ParamInfo(name = "Conv.Rates") I_NumberArray numArray,
             @ParamInfo(name = "Id") String id) {
         XYSeries result = new XYSeries(id);
-        
+
         double x = 0.0;
         double stepsize_x = 1.0;
 
-	for (int i = 0; i < numArray.const__size();i++) {
-            
-            result.add(x,numArray.const__get(i));
-  
+        for (int i = 0; i < numArray.const__size(); i++) {
+
+            result.add(x, numArray.const__get(i));
+
             x += stepsize_x;
-	}
+        }
 
         return result;
     }
