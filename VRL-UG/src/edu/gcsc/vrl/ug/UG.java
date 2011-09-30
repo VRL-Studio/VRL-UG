@@ -481,8 +481,6 @@ public class UG {
             String exportedClassName,
             long objPtr, boolean readOnly,
             String methodName, Object[] params);
-
-    native long newInstance(long exportedClassPtr);
     
     native long newInstance(long exportedClassPtr, Object[] parameters);
 
