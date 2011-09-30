@@ -109,11 +109,11 @@ public class UGObject implements Serializable, UGObjectInterface {
                             "Class \"" + getClassName()
                             + "\" is not instantiable!");
                 } else {
-                    
+
                     if (constructorParameters == null) {
                         constructorParameters = new Object[0];
                     }
-                    
+
                     long address = (long) edu.gcsc.vrl.ug.UG.getInstance().
                             newInstance(exportedClsPtr, constructorParameters);
                     setPointer(new edu.gcsc.vrl.ug.Pointer(
@@ -193,16 +193,29 @@ public class UGObject implements Serializable, UGObjectInterface {
     }
 
     /**
-     * Invokes a native method.
+     * Invokes a native function.
      * @param isFunction defines whether to invoke a function
      * @param isConst defines whether to call a const method
-     * @param methodName method name
+     * @param function function name
      * @param params method parameters
      * @return return value
      */
-    protected Object invokeMethod(boolean isFunction, boolean isConst,
-            String methodName, Object[] params) {
+    protected static Object invokeFunction(
+            String function, Object[] params) {
 
+        Object[] convertedParams = convertParams(params);
+
+        return edu.gcsc.vrl.ug.UG.getInstance().invokeFunction(
+                function, false, convertedParams);
+    }
+
+    /**
+     * Converts the specified parameters, i.e., if UGObjects are specified, 
+     * they will be converted to their internal pointer object.
+     * @param params parameters to convert
+     * @return converted parameters
+     */
+    private static Object[] convertParams(Object[] params) {
         Object[] convertedParams = new Object[params.length];
 
         for (int i = 0; i < convertedParams.length; i++) {
@@ -215,12 +228,24 @@ public class UGObject implements Serializable, UGObjectInterface {
             }
         }
 
+        return convertedParams;
+    }
+
+    /**
+     * Invokes a native method.
+     * @param isConst defines whether to call a const method
+     * @param methodName method name
+     * @param params method parameters
+     * @return return value
+     */
+    protected Object invokeMethod(boolean isConst,
+            String methodName, Object[] params) {
+
+        Object[] convertedParams = convertParams(params);
+
         Object result = null;
 
-        if (isFunction) {
-            result = edu.gcsc.vrl.ug.UG.getInstance().invokeFunction(
-                    methodName, false, convertedParams);
-        } else if (getPointer() != null) {
+       if (getPointer() != null) {
 
 //            System.out.println("**CLS:" + getClassName());
 //            System.out.println("**PTR:" + getPointer().getAddress());
@@ -238,7 +263,7 @@ public class UGObject implements Serializable, UGObjectInterface {
 
         return result;
     }
-    
+
     /**
      * Invokes a native constructor.
      * @param isFunction defines whether to invoke a function
