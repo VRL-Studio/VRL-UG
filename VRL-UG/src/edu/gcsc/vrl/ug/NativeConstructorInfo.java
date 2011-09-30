@@ -107,7 +107,10 @@ public class NativeConstructorInfo {
         result.setConst(false);
         result.setHelp(help);
         result.setToolTip(toolTip);
-        result.setOptions("initializer=true");
+        
+        // currently ignored, see MethodInfoCode for details
+        result.setOptions("initializer=true"); 
+        
         result.setParameters(parameters);
         result.setReturnValue(returnType);
         

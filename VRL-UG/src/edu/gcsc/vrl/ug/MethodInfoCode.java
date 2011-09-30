@@ -34,6 +34,16 @@ public class MethodInfoCode implements CodeElement {
     @Override
     public CodeBuilder build(CodeBuilder builder) {
 
+        // constructor
+        if (method.isConstructor() && visual) {
+            builder.append("@MethodInfo(initializer=true)");
+            return builder;
+        } else if (method.isConstructor() && !visual) {
+            builder.append("@MethodInfo(initializer=true, noGUI=true)");
+            return builder;
+        }
+
+        // regular method
         if (!method.returnsVoid() && visual) {
             builder.append("@MethodInfo(");
 
