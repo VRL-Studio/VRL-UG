@@ -63,14 +63,17 @@ public class MethodCode implements CodeElement {
             methodName = "const__";
         }
 
+        String modifier = "public";
+
         if (isFunction) {
+            modifier += " static";
             methodName += "invoke";
         } else {
             methodName += CodeUtils.methodName(method.getName());
         }
 
         new MethodInfoCode(method, visual).build(builder).
-                newLine().append("public "
+                newLine().append(modifier + " "
                 + method.getReturnValue().getTypeClassName() + " "
                 + methodName + " (");
 
@@ -121,9 +124,11 @@ public class MethodCode implements CodeElement {
                 builder.append(customInvocationCode).newLine();
             } else if (method.isConstructor()) {
                 builder.append("invokeConstructor(params);").newLine();
+            } else if (isFunction){
+                builder.append("invokeFunction(\""
+                        + method.getName() + "\", params);").newLine();
             } else {
                 builder.append("invokeMethod("
-                        + isFunction + ", "
                         + method.isConst()
                         + ", \"" + method.getName() + "\", params);").newLine();
             }

@@ -111,7 +111,7 @@ public class UG {
 
         String[] args = {pluginPath};
 
-        System.out.println(">> UG: connecting to native ug.");
+        System.out.println(" --> UG: connecting to native ug.");
 
         if (loadNativeLib) {
             System.loadLibrary("ug4");
