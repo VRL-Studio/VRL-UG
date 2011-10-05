@@ -51,7 +51,7 @@ class ClassCode implements CodeElement {
         boolean asWrapper = type == CodeType.WRAP_POINTER_CLASS;
         boolean asFullClass = type == CodeType.FULL_CLASS;
 
-        boolean weAreAGroupClass = api.groupExists(classInfo.getName());
+        boolean weAreAGroupClass = api.isClassGroup(classInfo.getName());
         boolean weArePartOfAGroup =
                 api.isInClassGroup(classInfo.getName());
 

@@ -38,6 +38,7 @@ public class FunctionCode implements CodeElement {
         String className = CodeUtils.functionName(functionName);
 //        String methodName = CodeUtils.methodName(function.getName());
 
+
         builder.append("@ComponentInfo(name=\"").append(
                 VLangUtils.addEscapeCharsToCode(
                 functionName)).append("\", category=\"").
