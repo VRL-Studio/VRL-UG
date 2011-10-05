@@ -26,10 +26,10 @@ JNIEXPORT jobject JNICALL Java_edu_gcsc_vrl_ug_UG_invokeMethod
 /*
  * Class:     edu_gcsc_vrl_ug_UG
  * Method:    newInstance
- * Signature: (J)J
+ * Signature: (J[Ljava/lang/Object;)J
  */
 JNIEXPORT jlong JNICALL Java_edu_gcsc_vrl_ug_UG_newInstance
-  (JNIEnv *, jobject, jlong);
+  (JNIEnv *, jobject, jlong, jobjectArray);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
@@ -61,7 +61,7 @@ JNIEXPORT jobject JNICALL Java_edu_gcsc_vrl_ug_UG_invokeFunction
  * Signature: ([Ljava/lang/String;)I
  */
 JNIEXPORT jint JNICALL Java_edu_gcsc_vrl_ug_UG_ugInit
-  (JNIEnv *, jobject, jobjectArray);
+  (JNIEnv *, jclass, jobjectArray);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
@@ -69,6 +69,22 @@ JNIEXPORT jint JNICALL Java_edu_gcsc_vrl_ug_UG_ugInit
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG_getSvnRevision
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     edu_gcsc_vrl_ug_UG
+ * Method:    getDescription
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG_getDescription
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     edu_gcsc_vrl_ug_UG
+ * Method:    getAuthors
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG_getAuthors
   (JNIEnv *, jobject);
 
 /*
