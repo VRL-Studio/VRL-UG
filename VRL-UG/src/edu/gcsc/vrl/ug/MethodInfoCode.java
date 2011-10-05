@@ -53,6 +53,12 @@ public class MethodInfoCode implements CodeElement {
                 builder.append("hide=true, ");
             }
 
+            // use interactive=false as default (no invoke-button)
+            if (!method.isConstructor() &&
+                    !method.getOptions().matches(".*interactive\\s*=.*")) {
+                builder.append("interactive=false, ");
+            }
+
             String valueName = "";
 
             if (method.getReturnValue().isRegisteredClass()) {

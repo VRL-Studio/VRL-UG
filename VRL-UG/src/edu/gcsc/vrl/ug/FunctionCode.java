@@ -11,10 +11,11 @@ import eu.mihosoft.vrl.lang.VLangUtils;
  * Code element that gererates code for UG functions.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class FunctionCode implements CodeElement{
+public class FunctionCode implements CodeElement {
 
     private NativeFunctionGroupInfo function;
     private NativeAPIInfo api;
+
     /**
      * Constructor.
      * @param function function
@@ -27,8 +28,6 @@ public class FunctionCode implements CodeElement{
     public FunctionCode(NativeAPIInfo api) {
         this.api = api;
     }
-    
-    
 
     @Override
     public CodeBuilder build(CodeBuilder builder) {
@@ -46,7 +45,8 @@ public class FunctionCode implements CodeElement{
                 append("\", allowRemoval=false)").newLine().
                 append("@ObjectInfo(name=\"").
                 append(VLangUtils.addEscapeCharsToCode(functionName)).
-                append("\")").newLine();
+                append("\", referenceIn=false, referenceOut=false)").
+                newLine();
 
         builder.append("public class ").append(className).append(
                 " extends edu.gcsc.vrl.ug.UGObject {").newLine().
@@ -62,8 +62,10 @@ public class FunctionCode implements CodeElement{
 //        new MethodCode(function, false, true).toString(builder);
 //        new MethodCode(function, false, false).toString(builder);
 
-        new MethodGroupCode(api,function, CodeType.FULL_CLASS, true).build(builder);
-        new MethodGroupCode(api,function, CodeType.FULL_CLASS, false).build(builder);
+        new MethodGroupCode(api, function,
+                CodeType.FULL_CLASS, true).build(builder);
+        new MethodGroupCode(api, function,
+                CodeType.FULL_CLASS, false).build(builder);
 
 //        builder.newLine().
 //                append("protected UGObject newInstance(Pointer p) {").
