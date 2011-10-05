@@ -11,6 +11,8 @@ package edu.gcsc.vrl.ug;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeFunctionGroupInfo extends NativeMethodGroupInfo{
+    
+    private String name;
 
     /**
      * Constructor.
@@ -33,5 +35,19 @@ public class NativeFunctionGroupInfo extends NativeMethodGroupInfo{
      */
     public void setOverloads(NativeFunctionInfo[] overloads) {
         super.setOverloads(overloads);
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 }

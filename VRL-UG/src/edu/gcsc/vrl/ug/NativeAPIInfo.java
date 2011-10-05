@@ -18,6 +18,7 @@ public class NativeAPIInfo {
     private NativeFunctionGroupInfo[] functions;
     private Map<String, NativeClassGroupInfo> classGroupsByClassName;
     private Map<String, NativeClassGroupInfo> classGroupsbyName;
+    private Map<String, NativeFunctionGroupInfo> functionGroupsbyName;
 
     /**
      * @return the classes
@@ -175,10 +176,22 @@ public class NativeAPIInfo {
         return classGroupsbyName.get(className);
     }
 
+    /**
+     * Indicates whether the specified class is child of a class group.
+     * @param className class name
+     * @return <code>true</code> if the specified class is child of
+     *         a class group; <code>false</code> otherwise
+     */
     public boolean isInClassGroup(String className) {
         return getGroupByClassName(className) != null;
     }
 
+    /**
+     * Indicates whether the specified class group exists.
+     * @param grpName class group name
+     * @return <code>true</code> if a group with the specified name exists;
+     *         <code>false</code> otherwise
+     */
     public boolean groupExists(String grpName) {
         return getGroupByName(grpName) != null;
     }
@@ -192,4 +205,30 @@ public class NativeAPIInfo {
     public boolean isClassGroup(String name) {
         return getGroupByName(name) != null;
     }
+
+//    /**
+//     * Returns the function group by name or <code>null</code> if the
+//     * specified function group does not exist or is not part of a function group.
+//     * @param functionName function name
+//     * @return the function group by name or <code>null</code> if the
+//     * specified function group does not exist or is not part of a function group
+//     */
+//    public NativeClassGroupInfo getFunctionGroupByName(String functionName) {
+//
+//        // we cannot do anything as no information about grous is available
+//        if (functions == null) {
+//            return null;
+//        }
+//
+//        // initialize map if necessary
+//        if (functionGroupsbyName == null) {
+//            functionGroupsbyName = new HashMap<String, NativeFunctionGroupInfo>();
+//
+//            for (NativeFunctionGroupInfo grp : functions) {
+//                functionGroupsbyName.put(grp.getName(), grp);
+//            }
+//        }
+//
+//        return functionGroupsbyName.get(functionName);
+//    }
 }
