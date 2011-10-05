@@ -61,6 +61,8 @@ public class FunctionCode implements CodeElement {
 
 //        new MethodCode(function, false, true).toString(builder);
 //        new MethodCode(function, false, false).toString(builder);
+        
+        
 
         new MethodGroupCode(api, function,
                 CodeType.FULL_CLASS, true).build(builder);
