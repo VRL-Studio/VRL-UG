@@ -103,6 +103,12 @@ class ClassCode implements CodeElement {
         }
 
         if ((asFullClass) || (asWrapper)) {
+            builder.addLine("@UGObjectInfo(instantiable="
+                    + classInfo.isInstantiable()
+                    + ", groupRoot=" + classInfo.isGroupClass()
+                    + ", groupChild=" + api.isInClassGroup(classInfo.getName())
+                    + ", constClass=" + isConst + ")");
+
             builder.addLine(new ComponentInfoCode(
                     classInfo, isConst).toString()).
                     addLine("@ObjectInfo(name=\""
@@ -166,7 +172,6 @@ class ClassCode implements CodeElement {
                             signatures, type, createVisual).build(builder).
                             newLine();
 
-
                     // add method code
                     for (NativeMethodGroupInfo m : cls.getMethods()) {
 //                        if (!signatures.contains(new MethodGroupSignature(m))) {
@@ -190,8 +195,8 @@ class ClassCode implements CodeElement {
 
         }  // end fore visual
 
-        if (asFullClass) {
-
+//        if (asFullClass) {
+//
 //            String interfaceName = CodeUtils.interfaceName(
 //                    classInfo.getName(), isConst);
 //
@@ -211,7 +216,7 @@ class ClassCode implements CodeElement {
 //                    newLine().append("public ").
 //                    append(interfaceName).
 //                    append(" This() {return this;}").newLine();
-        } else if (asWrapper) {
+//        } else if (asWrapper) {
 //            String interfaceName = CodeUtils.interfaceName(
 //                    classInfo.getName(), isConst);
 //
@@ -231,7 +236,7 @@ class ClassCode implements CodeElement {
 //                    newLine().append("public ").
 //                    append(interfaceName).
 //                    append(" This() {return this;}").newLine();
-        }
+//        }
 
         builder.decIndentation();
 

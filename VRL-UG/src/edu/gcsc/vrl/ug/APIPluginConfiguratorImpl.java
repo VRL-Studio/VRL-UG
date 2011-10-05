@@ -12,9 +12,11 @@ import eu.mihosoft.vrl.system.PluginIdentifier;
 import eu.mihosoft.vrl.system.VPluginAPI;
 import eu.mihosoft.vrl.system.VPluginConfigurator;
 import eu.mihosoft.vrl.visual.VDialog;
+import eu.mihosoft.vrl.visual.VFilter;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
@@ -23,16 +25,16 @@ import java.util.logging.Logger;
 public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
 
     public APIPluginConfiguratorImpl() {
-        
+
         setIdentifier(Constants.API_PLUGIN_IDENTIFIER);
-        
+
         addDependency(new PluginDependency(
                 Constants.PLUGIN_IDENTIFIER.getName(),
                 Constants.PLUGIN_IDENTIFIER.getVersion(),
                 Constants.PLUGIN_IDENTIFIER.getVersion()));
-        
+
         setDescription("UG-API");
-        
+
         // api classes must be fully available for all plugins that depend
         // on this api
         disableAccessControl(true);
@@ -43,23 +45,21 @@ public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
             VPluginAPI vApi = (VPluginAPI) api;
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
             UG.getInstance().setMainCanvas(vCanvas);
-            
+
             Class<?> apiCls = null;
-            
+
             try {
-                apiCls = this.getClass().getClassLoader()
-               .loadClass("edu.gcsc.vrl.ug.UGAPI");
+                apiCls = this.getClass().getClassLoader().loadClass("edu.gcsc.vrl.ug.UGAPI");
 
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(APIPluginConfiguratorImpl.
-                        class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(APIPluginConfiguratorImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             if (apiCls == null) {
                 System.err.println("UG-API class not found!");
                 return;
             }
-            
+
 
             for (Class<?> cls : UG.getAPiClasses(apiCls)) {
                 vApi.addComponent(cls);
@@ -69,7 +69,8 @@ public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
 
             vApi.addTypeRepresentation(new UserDataType());
             vApi.addTypeRepresentation(new BoundaryUserDataType());
-            
+
+            vApi.addComponentSearchFilter(new HideComponentFilter());
 //
 //            // request restart
 //            if (UG.getInstance().isRecompiled()) {
@@ -88,9 +89,45 @@ public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
 
     public void unregister(PluginAPI api) {
         //
-    }  
+    }
 
     public void init() {
         UG.connectToNativeUG(isLoadNativeLibraries());
+    }
+}
+
+class HideComponentFilter implements VFilter {
+
+    public boolean matches(Object o) {
+
+        if (!(o instanceof DefaultMutableTreeNode)) {
+            return false;
+        }
+        
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) o;
+        
+        if (node.getUserObject()==null 
+                || !(node.getUserObject() instanceof Class<?>)) {
+            return false;
+        }
+        
+        Class<?> cls = (Class<?>) node.getUserObject();
+        
+
+//        boolean ugClass = UGObjectUtil.isUGAPIClass(cls);
+        boolean wrapperClass = UGObjectUtil.isWrapperClass(cls);
+        boolean constClass = UGObjectUtil.isConstClass(cls);
+//        boolean groupRoot = UGObjectUtil.isGroupRoot(cls);
+        boolean groupChild = UGObjectUtil.isGroupChild(cls);
+
+        return constClass || wrapperClass || groupChild;
+    }
+
+    public String getName() {
+        return "UG Const Filter";
+    }
+
+    public boolean hideWhenMatching() {
+        return true;
     }
 }

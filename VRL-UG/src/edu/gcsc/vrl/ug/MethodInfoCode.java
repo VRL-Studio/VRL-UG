@@ -36,7 +36,7 @@ public class MethodInfoCode implements CodeElement {
 
         // constructor
         if (method.isConstructor() && visual) {
-            builder.append("@MethodInfo(initializer=true)");
+            builder.append("@MethodInfo(initializer=true, interactive=false)");
             return builder;
         } else if (method.isConstructor() && !visual) {
             builder.append("@MethodInfo(initializer=true, noGUI=true)");
@@ -44,47 +44,70 @@ public class MethodInfoCode implements CodeElement {
         }
 
         // regular method
-        if (!method.returnsVoid() && visual) {
+        if (visual) {
+
+            boolean needsComma = false;
+
             builder.append("@MethodInfo(");
 
             if (method.getOptions() != null && !method.getOptions().isEmpty()) {
-                builder.append(method.getOptions()).append(", ");
+                builder.append(method.getOptions());
+                needsComma = true;
             } else {
-                builder.append("hide=true, ");
+                builder.append("hide=true");
+                needsComma = true;
             }
+
+
 
             // use interactive=false as default (no invoke-button)
-            if (!method.isConstructor() &&
-                    !method.getOptions().matches(".*interactive\\s*=.*")) {
-                builder.append("interactive=false, ");
-            }
+            if (!method.isConstructor()
+                    && !method.getOptions().matches(".*interactive\\s*=.*")) {
 
-            String valueName = "";
-
-            if (method.getReturnValue().isRegisteredClass()) {
-
-                valueName = VLangUtils.addEscapeCharsToCode(
-                        method.getReturnValue().getParamInfo()[0]);
-
-                if (valueName.isEmpty()) {
-                    valueName = CodeUtils.classNameForParamInfo(
-                            method.getReturnValue().getClassName(),
-                            method.isConst());
+                if (needsComma) {
+                    builder.append(", ");
                 }
+
+                builder.append("interactive=false");
             }
 
-            builder.append("valueName=\""
-                    + valueName
-                    + "\", valueStyle=\""
-                    + method.getReturnValue().getParamInfo()[1]
-                    + "\", valueOptions=\""
-                    + method.getReturnValue().getParamInfo()[2]);
+            if (!method.returnsVoid()) {
 
-            if (method.getReturnValue().isRegisteredClass()) {
-                builder.append(";serialization=false");
+                String valueName = "";
+
+                if (method.getReturnValue().isRegisteredClass()) {
+
+                    valueName = VLangUtils.addEscapeCharsToCode(
+                            method.getReturnValue().getParamInfo()[0]);
+
+                    if (valueName.isEmpty()) {
+                        valueName = CodeUtils.classNameForParamInfo(
+                                method.getReturnValue().getClassName(),
+                                method.isConst());
+                    }
+                }
+                
+                if (needsComma) {
+                    builder.append(", ");
+                }
+
+                builder.append("valueName=\""
+                        + valueName
+                        + "\", valueStyle=\""
+                        + method.getReturnValue().getParamInfo()[1]
+                        + "\", valueOptions=\""
+                        + method.getReturnValue().getParamInfo()[2]);
+
+                if (method.getReturnValue().isRegisteredClass()) {
+                    builder.append(";serialization=false");
+                }
+
+                builder.append("\")");;
+            } else {
+                builder.append(")");;
             }
 
-            builder.append("\")");;
+
         } else if (!visual) {
             builder.append("@MethodInfo(noGUI=true)");
         }

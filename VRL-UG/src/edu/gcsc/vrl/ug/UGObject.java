@@ -298,6 +298,7 @@ public class UGObject implements Serializable, UGObjectInterface {
     @MethodInfo(noGUI = true)
     public void releaseThis() {
         objPointer = null;
+        constructorParameters = null;
     }
 
     /**
