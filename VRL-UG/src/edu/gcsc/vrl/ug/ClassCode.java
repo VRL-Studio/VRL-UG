@@ -192,45 +192,45 @@ class ClassCode implements CodeElement {
 
         if (asFullClass) {
 
-            String interfaceName = CodeUtils.interfaceName(
-                    classInfo.getName(), isConst);
-
-            builder.newLine().append("@MethodInfo(valueName=\"").
-                    append(prefix + classInfo.getName()).append("\""
-                    + ", valueOptions = \"serialization=false\")").
-                    newLine().append("public ").
-                    append(interfaceName).
-                    append(" This(@ParamInfo(nullIsValid=true, name=\"").
-                    append(prefix + classInfo.getName()).append("\","
-                    + "options=\"serialization=false\") ").
-                    append(interfaceName).
-                    append(" o ) { if(o!=null){setThis(o)}; return this }").
-                    newLine();
-
-            builder.newLine().append("@MethodInfo(noGUI=true)").
-                    newLine().append("public ").
-                    append(interfaceName).
-                    append(" This() {return this;}").newLine();
+//            String interfaceName = CodeUtils.interfaceName(
+//                    classInfo.getName(), isConst);
+//
+//            builder.newLine().append("@MethodInfo(valueName=\"").
+//                    append(prefix + classInfo.getName()).append("\""
+//                    + ", valueOptions = \"serialization=false\")").
+//                    newLine().append("public ").
+//                    append(interfaceName).
+//                    append(" This(@ParamInfo(nullIsValid=true, name=\"").
+//                    append(prefix + classInfo.getName()).append("\","
+//                    + "options=\"serialization=false\") ").
+//                    append(interfaceName).
+//                    append(" o ) { if(o!=null){setThis(o)}; return this }").
+//                    newLine();
+//
+//            builder.newLine().append("@MethodInfo(noGUI=true)").
+//                    newLine().append("public ").
+//                    append(interfaceName).
+//                    append(" This() {return this;}").newLine();
         } else if (asWrapper) {
-            String interfaceName = CodeUtils.interfaceName(
-                    classInfo.getName(), isConst);
-
-            builder.newLine().append("@MethodInfo(valueName=\"").
-                    append(prefix + classInfo.getName()).append("\""
-                    + ", valueOptions = \"serialization=false\")").
-                    newLine().append("public ").
-                    append(interfaceName).
-                    append(" This(@ParamInfo(nullIsValid=true, name=\"").
-                    append(prefix + classInfo.getName()).append("\","
-                    + "options=\"serialization=false\") ").
-                    append(interfaceName).
-                    append(" o ) { if(o!=null){setThis(o)};return this }").
-                    newLine();
-
-            builder.newLine().append("@MethodInfo(noGUI=true)").
-                    newLine().append("public ").
-                    append(interfaceName).
-                    append(" This() {return this;}").newLine();
+//            String interfaceName = CodeUtils.interfaceName(
+//                    classInfo.getName(), isConst);
+//
+//            builder.newLine().append("@MethodInfo(valueName=\"").
+//                    append(prefix + classInfo.getName()).append("\""
+//                    + ", valueOptions = \"serialization=false\")").
+//                    newLine().append("public ").
+//                    append(interfaceName).
+//                    append(" This(@ParamInfo(nullIsValid=true, name=\"").
+//                    append(prefix + classInfo.getName()).append("\","
+//                    + "options=\"serialization=false\") ").
+//                    append(interfaceName).
+//                    append(" o ) { if(o!=null){setThis(o)};return this }").
+//                    newLine();
+//
+//            builder.newLine().append("@MethodInfo(noGUI=true)").
+//                    newLine().append("public ").
+//                    append(interfaceName).
+//                    append(" This() {return this;}").newLine();
         }
 
         builder.decIndentation();
