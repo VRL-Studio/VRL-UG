@@ -18,7 +18,8 @@ public class NativeAPIInfo {
     private NativeFunctionGroupInfo[] functions;
     private Map<String, NativeClassGroupInfo> classGroupsByClassName;
     private Map<String, NativeClassGroupInfo> classGroupsbyName;
-    private Map<String, NativeFunctionGroupInfo> functionGroupsbyName;
+//    private Map<String, NativeFunctionGroupInfo> functionGroupsbyName;
+//    private Map<String, NativeFunctionGroupInfo> functionGroupsbyFunctionName;
 
     /**
      * @return the classes
@@ -187,16 +188,6 @@ public class NativeAPIInfo {
     }
 
     /**
-     * Indicates whether the specified class group exists.
-     * @param grpName class group name
-     * @return <code>true</code> if a group with the specified name exists;
-     *         <code>false</code> otherwise
-     */
-    public boolean groupExists(String grpName) {
-        return getGroupByName(grpName) != null;
-    }
-
-    /**
      * Determines whether a class group with the specified name exists.
      * @param name
      * @return <code>true</code> if a class group with the specified name
@@ -209,11 +200,11 @@ public class NativeAPIInfo {
 //    /**
 //     * Returns the function group by name or <code>null</code> if the
 //     * specified function group does not exist or is not part of a function group.
-//     * @param functionName function name
+//     * @param functionName function group name
 //     * @return the function group by name or <code>null</code> if the
 //     * specified function group does not exist or is not part of a function group
 //     */
-//    public NativeClassGroupInfo getFunctionGroupByName(String functionName) {
+//    public NativeFunctionGroupInfo getFunctionGroupByName(String functionName) {
 //
 //        // we cannot do anything as no information about grous is available
 //        if (functions == null) {
@@ -230,5 +221,55 @@ public class NativeAPIInfo {
 //        }
 //
 //        return functionGroupsbyName.get(functionName);
+//    }
+//
+//    /**
+//     * Returns the function group by functionname or <code>null</code> if the
+//     * specified function group does not exist or is not part of a function group.
+//     * @param functionName function name
+//     * @return the function group by functionname or <code>null</code> if the
+//     * specified function group does not exist or is not part of a function group
+//     */
+//    public NativeFunctionGroupInfo getFunctionGroupByFunctionName(String functionName) {
+//
+//        // we cannot do anything as no information about grous is available
+//        if (functions == null) {
+//            return null;
+//        }
+//
+//        // initialize map if necessary
+//        if (functionGroupsbyFunctionName == null) {
+//            functionGroupsbyFunctionName =
+//                    new HashMap<String, NativeFunctionGroupInfo>();
+//
+//            for (NativeFunctionGroupInfo grp : functions) {
+//
+//                for (NativeFunctionInfo fInfo : grp.getOverloads()) {
+//                    functionGroupsbyFunctionName.put(fInfo.getName(), grp);
+//                }
+//            }
+//        }
+//
+//        return functionGroupsbyFunctionName.get(functionName);
+//    }
+//
+//    /**
+//     * Indicates whether the specified function is child of a function group.
+//     * @param functionName function name
+//     * @return <code>true</code> if the specified function is child of
+//     *         a function group; <code>false</code> otherwise
+//     */
+//    public boolean isInFunctionGroup(String functionName) {
+//        return getFunctionGroupByFunctionName(functionName) != null;
+//    }
+//
+//    /**
+//     * Determines whether a function group with the specified name exists.
+//     * @param name
+//     * @return <code>true</code> if a function group with the specified name
+//     *         exists; <code>false</code> otherwise
+//     */
+//    public boolean isFunctionGroup(String name) {
+//        return getFunctionGroupByName(name) != null;
 //    }
 }
