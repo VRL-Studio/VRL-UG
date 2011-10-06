@@ -30,7 +30,7 @@ public class UGObject implements Serializable, UGObjectInterface {
     private ArrayList<String> classNames;
     private boolean isInstantiable;
     private boolean isClassGroupObject;
-    private Object[] constructorParameters;
+    private transient Object[] constructorParameters;
 
     protected void setThis(UGObject o) {
 //        System.out.println(className + ">> Set This: "
