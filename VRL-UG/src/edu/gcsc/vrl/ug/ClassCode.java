@@ -219,7 +219,7 @@ class ClassCode implements CodeElement {
             builder.newLine().append("@ReferenceMethodInfo()").
                     newLine().append("public ").
                     append(interfaceName).
-                    append(" vrl__reference__method(").
+                    append(" vrl__reference__method(@ParamInfo(nullIsValid=true)").
                     append(interfaceName).
                     append(" o ) { if(o!=null){setThis(o)};return this }").
                     newLine();
@@ -231,7 +231,7 @@ class ClassCode implements CodeElement {
             builder.newLine().append("@ReferenceMethodInfo()").
                     newLine().append("public ").
                     append(interfaceName).
-                    append(" vrl__reference__method(").
+                    append(" vrl__reference__method(@ParamInfo(nullIsValid=true)").
                     append(interfaceName).
                     append(" o ) { if(o!=null){setThis(o)};return this }").
                     newLine();
