@@ -220,6 +220,11 @@ public class UGObject implements Serializable, UGObjectInterface {
 
         for (int i = 0; i < convertedParams.length; i++) {
             Object p = params[i];
+
+            if (p == null) {
+                throw new IllegalArgumentException("Param " + i + " == NULL");
+            }
+
             if (p instanceof UGObject) {
                 UGObject o = (UGObject) p;
                 convertedParams[i] = o.getPointer();
@@ -245,7 +250,7 @@ public class UGObject implements Serializable, UGObjectInterface {
 
         Object result = null;
 
-       if (getPointer() != null) {
+        if (getPointer() != null) {
 
 //            System.out.println("**CLS:" + getClassName());
 //            System.out.println("**PTR:" + getPointer().getAddress());
