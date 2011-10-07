@@ -91,15 +91,31 @@ class ClassCode implements CodeElement {
             }
 
         } else if (asFullClass) {
-            classHeaderCode = "public class "
-                    + CodeUtils.className(classInfo.getName(), isConst)
-                    + " extends edu.gcsc.vrl.ug.UGObject implements "
-                    + CodeUtils.interfaceName(classInfo.getName(), isConst);
+
+            if (isConst) {
+                classHeaderCode = "public class "
+                        + CodeUtils.className(classInfo.getName(), isConst)
+                        + " extends edu.gcsc.vrl.ug.UGObject implements "
+                        + CodeUtils.interfaceName(classInfo.getName(), isConst);
+            } else {
+                classHeaderCode = "public class "
+                        + CodeUtils.className(classInfo.getName(), isConst)
+                        + " extends " + CodeUtils.className(classInfo.getName(), true) + " implements "
+                        + CodeUtils.interfaceName(classInfo.getName(), isConst);
+
+            }
         } else if (asWrapper) {
-            classHeaderCode = "public final class "
-                    + CodeUtils.className(classInfo.getName(), isConst)
-                    + " extends edu.gcsc.vrl.ug.UGObject implements "
-                    + CodeUtils.interfaceName(classInfo.getName(), isConst);
+            if (isConst) {
+                classHeaderCode = "public class "
+                        + CodeUtils.className(classInfo.getName(), isConst)
+                        + " extends edu.gcsc.vrl.ug.UGObject implements "
+                        + CodeUtils.interfaceName(classInfo.getName(), isConst);
+            } else {
+                classHeaderCode = "public class "
+                        + CodeUtils.className(classInfo.getName(), isConst)
+                        + " extends " + CodeUtils.className(classInfo.getName(), true) + " implements "
+                        + CodeUtils.interfaceName(classInfo.getName(), isConst);
+            }
         }
 
         if ((asFullClass) || (asWrapper)) {
