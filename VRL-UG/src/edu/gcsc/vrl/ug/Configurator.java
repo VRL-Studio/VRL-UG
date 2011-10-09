@@ -13,6 +13,7 @@ import eu.mihosoft.vrl.system.PluginIdentifier;
 import eu.mihosoft.vrl.system.VPluginAPI;
 import eu.mihosoft.vrl.system.VPluginConfigurator;
 import eu.mihosoft.vrl.visual.VDialog;
+import eu.mihosoft.vrl.visual.VSwingUtil;
 import java.awt.image.BufferedImage;
 
 /**
@@ -41,7 +42,6 @@ public class Configurator extends VPluginConfigurator {
             if (UG.getInstance().isRecompiled()) {
 
 //                System.err.println("Recompiled");
-
                 VDialog.showMessageDialog(vCanvas, "Restart neccessary:",
                         " UG-API had to be recompiled."
                         + " VRL-Studio will be closed now."
