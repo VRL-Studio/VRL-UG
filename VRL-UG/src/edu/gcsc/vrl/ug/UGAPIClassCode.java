@@ -11,12 +11,11 @@ import java.util.ArrayList;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class UGAPIClassCode implements CodeElement{
-    
+public class UGAPIClassCode implements CodeElement {
 
     public UGAPIClassCode() {
     }
-    
+
     public CodeBuilder build(CodeBuilder builder) {
         builder.addLine("class UGAPI {").
                 incIndentation().
@@ -35,12 +34,22 @@ public class UGAPIClassCode implements CodeElement{
                 decIndentation().
                 addLine("}").
                 
+                // get description
+                addLine("public static java.lang.String getDescription() {").
+                incIndentation().
+                addLine("return \"" + UG.getInstance().getDescription()
+                + "<br><br><b>Authors:</b><br><br>"
+                + UG.getInstance().getAuthors().replace("\n", "<br>") + "\";").
+                decIndentation().
+                addLine("}").
+                
                 
                 decIndentation().
                 addLine("}");
-        
+
+
+
         return builder;
-        
+
     }
-    
 }

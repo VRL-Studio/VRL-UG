@@ -70,4 +70,10 @@ public class Configurator extends VPluginConfigurator {
                     + UG.getInstance().getAuthors().replace("\n", "<br>"));
         }
     }
+    
+  
+    @Override
+    public String getDescription() {
+        return UG.getInstance().getDescriptionFromApi();
+    }
 }

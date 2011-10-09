@@ -85,6 +85,41 @@ public class UG {
      * (must be set from ug plugin, not from api)
      */
     private static File nativeLibFolder;
+    /**
+     * api class
+     */
+    private Class<?> api;
+
+    /**
+     * Returns the api description
+     * @return api description
+     */
+    public String getDescriptionFromApi() {
+
+
+        String result = "no description available";
+
+        if (api != null) {
+            try {
+
+                result = (String) api.getMethod(
+                        "getDescription").
+                        invoke(api);
+
+            } catch (NoSuchMethodException ex) {
+                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SecurityException ex) {
+                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvocationTargetException ex) {
+                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return result;
+    }
 
 //    /**
 //     * Returns all native UG classes that are exported via the UG registry,
@@ -139,6 +174,8 @@ public class UG {
         // load api if compatible; rebuild otherwise
         try {
             Class<?> cls = findCompatibleAPI(ugInstance);
+
+            api = cls;
 
             if (cls == null) {
 
@@ -481,7 +518,7 @@ public class UG {
             String exportedClassName,
             long objPtr, boolean readOnly,
             String methodName, Object[] params);
-    
+
     native long newInstance(long exportedClassPtr, Object[] parameters);
 
     native long getExportedClassPtrByName(String name, boolean classGrp);
