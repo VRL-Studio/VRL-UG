@@ -92,30 +92,30 @@ class ClassCode implements CodeElement {
 
         } else if (asFullClass) {
 
-            if (isConst) {
+//            if (isConst) {
                 classHeaderCode = "public class "
                         + CodeUtils.className(classInfo.getName(), isConst)
                         + " extends edu.gcsc.vrl.ug.UGObject implements "
                         + CodeUtils.interfaceName(classInfo.getName(), isConst);
-            } else {
-                classHeaderCode = "public class "
-                        + CodeUtils.className(classInfo.getName(), isConst)
-                        + " extends " + CodeUtils.className(classInfo.getName(), true) + " implements "
-                        + CodeUtils.interfaceName(classInfo.getName(), isConst);
-
-            }
+//            } else {
+//                classHeaderCode = "public class "
+//                        + CodeUtils.className(classInfo.getName(), isConst)
+//                        + " extends " + CodeUtils.className(classInfo.getName(), true) + " implements "
+//                        + CodeUtils.interfaceName(classInfo.getName(), isConst);
+//
+//            }
         } else if (asWrapper) {
-            if (isConst) {
+//            if (isConst) {
                 classHeaderCode = "public class "
                         + CodeUtils.className(classInfo.getName(), isConst)
                         + " extends edu.gcsc.vrl.ug.UGObject implements "
                         + CodeUtils.interfaceName(classInfo.getName(), isConst);
-            } else {
-                classHeaderCode = "public class "
-                        + CodeUtils.className(classInfo.getName(), isConst)
-                        + " extends " + CodeUtils.className(classInfo.getName(), true) + " implements "
-                        + CodeUtils.interfaceName(classInfo.getName(), isConst);
-            }
+//            } else {
+//                classHeaderCode = "public class "
+//                        + CodeUtils.className(classInfo.getName(), isConst)
+//                        + " extends " + CodeUtils.className(classInfo.getName(), true) + " implements "
+//                        + CodeUtils.interfaceName(classInfo.getName(), isConst);
+//            }
         }
 
         if ((asFullClass) || (asWrapper)) {
@@ -217,6 +217,9 @@ class ClassCode implements CodeElement {
                     classInfo.getName(), isConst);
 
             builder.newLine().append("@ReferenceMethodInfo()").
+                    newLine().append("@MethodInfo(valueName=\""
+                    + CodeUtils.classNameForParamInfo(
+                    classInfo.getName(), isConst)).append("\")").
                     newLine().append("public ").
                     append(interfaceName).
                     append(" vrl__reference__method(@ParamInfo(nullIsValid=true)").
@@ -229,6 +232,9 @@ class ClassCode implements CodeElement {
                     classInfo.getName(), isConst);
 
             builder.newLine().append("@ReferenceMethodInfo()").
+                    newLine().append("@MethodInfo(valueName=\""
+                    + CodeUtils.classNameForParamInfo(
+                    classInfo.getName(), isConst)).append("\")").
                     newLine().append("public ").
                     append(interfaceName).
                     append(" vrl__reference__method(@ParamInfo(nullIsValid=true)").
