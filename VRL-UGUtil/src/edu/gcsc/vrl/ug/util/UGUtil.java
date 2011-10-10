@@ -5,23 +5,14 @@
 package edu.gcsc.vrl.ug.util;
 
 import edu.gcsc.vrl.ug.C_ConstUserMatrix;
-import edu.gcsc.vrl.ug.C_Const__NumberArray;
 import edu.gcsc.vrl.ug.C_Domain;
-import edu.gcsc.vrl.ug.C_GlobalMultiGridRefiner;
-import edu.gcsc.vrl.ug.C_NumberArray;
-import edu.gcsc.vrl.ug.C_StandardConvergenceCheck;
 import edu.gcsc.vrl.ug.F_DistributeDomain;
 import edu.gcsc.vrl.ug.F_GlobalDomainRefiner;
 import edu.gcsc.vrl.ug.F_LoadDomain;
 import edu.gcsc.vrl.ug.I_ConstUserMatrix;
-import edu.gcsc.vrl.ug.I_Const__NumberArray;
 import edu.gcsc.vrl.ug.I_Domain;
-import edu.gcsc.vrl.ug.I_GlobalMultiGridRefiner;
 import edu.gcsc.vrl.ug.I_IRefiner;
 import edu.gcsc.vrl.ug.I_MGSubsetHandler;
-import edu.gcsc.vrl.ug.I_NumberArray;
-import edu.gcsc.vrl.ug.I_StandardConvergenceCheck;
-import edu.gcsc.vrl.ug.I_SubsetHandler;
 import edu.gcsc.vrl.ug.UGException;
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.MethodInfo;
@@ -117,7 +108,7 @@ public class UGUtil implements Serializable {
             @ParamInfo(name = "diag. val") Double diagVal,
             @ParamInfo(name = "dim:", options = "min=1") int dim) {
 
-        I_ConstUserMatrix mat = new C_ConstUserMatrix().This();
+        I_ConstUserMatrix mat = new C_ConstUserMatrix();
         mat.set_diag_tensor(diagVal);
 
         return mat;
