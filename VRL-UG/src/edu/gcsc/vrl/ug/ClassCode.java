@@ -93,10 +93,10 @@ class ClassCode implements CodeElement {
         } else if (asFullClass) {
 
 //            if (isConst) {
-                classHeaderCode = "public class "
-                        + CodeUtils.className(classInfo.getName(), isConst)
-                        + " extends edu.gcsc.vrl.ug.UGObject implements "
-                        + CodeUtils.interfaceName(classInfo.getName(), isConst);
+            classHeaderCode = "public class "
+                    + CodeUtils.className(classInfo.getName(), isConst)
+                    + " extends edu.gcsc.vrl.ug.UGObject implements "
+                    + CodeUtils.interfaceName(classInfo.getName(), isConst);
 //            } else {
 //                classHeaderCode = "public class "
 //                        + CodeUtils.className(classInfo.getName(), isConst)
@@ -106,10 +106,10 @@ class ClassCode implements CodeElement {
 //            }
         } else if (asWrapper) {
 //            if (isConst) {
-                classHeaderCode = "public class "
-                        + CodeUtils.className(classInfo.getName(), isConst)
-                        + " extends edu.gcsc.vrl.ug.UGObject implements "
-                        + CodeUtils.interfaceName(classInfo.getName(), isConst);
+            classHeaderCode = "public class "
+                    + CodeUtils.className(classInfo.getName(), isConst)
+                    + " extends edu.gcsc.vrl.ug.UGObject implements "
+                    + CodeUtils.interfaceName(classInfo.getName(), isConst);
 //            } else {
 //                classHeaderCode = "public class "
 //                        + CodeUtils.className(classInfo.getName(), isConst)
@@ -222,7 +222,9 @@ class ClassCode implements CodeElement {
                     classInfo.getName(), isConst)).append("\")").
                     newLine().append("public ").
                     append(interfaceName).
-                    append(" vrl__reference__method(@ParamInfo(nullIsValid=true)").
+                    append(" vrl__reference__method(@ParamInfo(nullIsValid=true,"
+                    + " name=\"" + CodeUtils.classNameForParamInfo(
+                    classInfo.getName(), isConst) + "\")").
                     append(interfaceName).
                     append(" o ) { if(o!=null){setThis(o)};return this }").
                     newLine();
@@ -237,7 +239,9 @@ class ClassCode implements CodeElement {
                     classInfo.getName(), isConst)).append("\")").
                     newLine().append("public ").
                     append(interfaceName).
-                    append(" vrl__reference__method(@ParamInfo(nullIsValid=true)").
+                    append(" vrl__reference__method(@ParamInfo(nullIsValid=true,"
+                    + " name=\"" + CodeUtils.classNameForParamInfo(
+                    classInfo.getName(), isConst) + "\")").
                     append(interfaceName).
                     append(" o ) { if(o!=null){setThis(o)};return this }").
                     newLine();
