@@ -128,7 +128,7 @@ public class MethodCode implements CodeElement {
                 builder.append("invokeFunction(\""
                         + method.getName() + "\", params);").newLine();
             } else {
-                builder.append("invokeMethod(this, "
+                builder.append("invokeMethod("
                         + method.isConst()
                         + ", \"" + method.getName() + "\", params);").newLine();
             }
