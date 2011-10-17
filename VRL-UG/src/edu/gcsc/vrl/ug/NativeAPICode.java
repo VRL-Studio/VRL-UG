@@ -4,8 +4,12 @@
  */
 package edu.gcsc.vrl.ug;
 
+import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.lang.CodeBuilder;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class provides methods to generate the code of the native API.
