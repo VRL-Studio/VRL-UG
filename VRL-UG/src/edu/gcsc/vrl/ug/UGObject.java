@@ -200,10 +200,10 @@ public class UGObject implements Serializable, UGObjectInterface {
      * @param params method parameters
      * @return return value
      */
-    protected static Object invokeFunction(UGObject obj,
+    protected static Object invokeFunction(
             String function, Object[] params) {
 
-        Object[] convertedParams = convertParams(obj, params, function);
+        Object[] convertedParams = convertParams(null, params, function);
 
         return edu.gcsc.vrl.ug.UG.getInstance().invokeFunction(
                 function, false, convertedParams);
@@ -223,9 +223,17 @@ public class UGObject implements Serializable, UGObjectInterface {
             Object p = params[i];
 
             if (p == null) {
+                
+                String methodPrefix = "";
+                
+                if (obj!=null) {
+                    methodPrefix = obj.getClassName()
+                        + ".";
+                }
+                
                 throw new IllegalArgumentException(
-                        "Method: \"" + obj.getClassName()
-                        + "." + methodName + "(): parameter " + i + " == NULL");
+                        "Method: \"" + methodPrefix + methodName
+                        + "(): parameter " + i + " == NULL");
             }
 
             if (p instanceof UGObject) {
