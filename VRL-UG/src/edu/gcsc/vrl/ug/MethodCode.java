@@ -125,7 +125,7 @@ public class MethodCode implements CodeElement {
             } else if (method.isConstructor()) {
                 builder.append("invokeConstructor(params);").newLine();
             } else if (isFunction){
-                builder.append("invokeFunction(this, \""
+                builder.append("invokeFunction(\""
                         + method.getName() + "\", params);").newLine();
             } else {
                 builder.append("invokeMethod(this, "
