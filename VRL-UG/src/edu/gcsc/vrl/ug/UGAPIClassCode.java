@@ -19,7 +19,7 @@ public class UGAPIClassCode implements CodeElement {
     public CodeBuilder build(CodeBuilder builder) {
         builder.addLine("class UGAPI {").
                 incIndentation().
-                
+
                 // get svn revision
                 addLine("public static java.lang.String getSvnRevision() {").
                 incIndentation().
@@ -42,7 +42,6 @@ public class UGAPIClassCode implements CodeElement {
                 + UG.getInstance().getAuthors().replace("\n", "<br>") + "\";").
                 decIndentation().
                 addLine("}").
-                
                 
                 decIndentation().
                 addLine("}");
