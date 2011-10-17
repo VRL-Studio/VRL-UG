@@ -14,6 +14,7 @@ import eu.mihosoft.vrl.system.VPluginConfigurator;
 import eu.mihosoft.vrl.visual.VDialog;
 import eu.mihosoft.vrl.visual.VFilter;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -47,17 +48,65 @@ public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
             UG.getInstance().setMainCanvas(vCanvas);
 
             Class<?> apiCls = null;
+            
+            boolean matchingAPI = false;
 
             try {
-                apiCls = this.getClass().getClassLoader().loadClass("edu.gcsc.vrl.ug.UGAPI");
+                apiCls = this.getClass().getClassLoader().
+                        loadClass("edu.gcsc.vrl.ug.UGAPI");
 
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(APIPluginConfiguratorImpl.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(APIPluginConfiguratorImpl.class.getName()).
+                        log(Level.SEVERE, null, ex);
             }
 
             if (apiCls == null) {
-                System.err.println("UG-API class not found!");
-                return;
+                System.err.println(">> VRL-UG: UG-API class not found!");
+            }
+
+            try {
+
+                String apiSvn = (String) apiCls.getMethod(
+                        "getSvnRevision").
+                        invoke(apiCls);
+
+                String apiDate = (String) apiCls.getMethod(
+                        "getCompileDate").
+                        invoke(apiCls);
+
+                boolean revisionsAreEqual = 
+                        apiSvn.equals(UG.getInstance().getSvnRevision());
+                boolean datesAreEqual = 
+                        apiDate.equals(UG.getInstance().getCompileDate());
+                
+                matchingAPI = revisionsAreEqual && datesAreEqual;
+
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(APIPluginConfiguratorImpl.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(APIPluginConfiguratorImpl.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            } catch (InvocationTargetException ex) {
+                Logger.getLogger(APIPluginConfiguratorImpl.class.getName()).
+                        log(Level.SEVERE, null, ex);
+
+            } catch (NoSuchMethodException ex) {
+                Logger.getLogger(APIPluginConfiguratorImpl.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            } catch (SecurityException ex) {
+                Logger.getLogger(APIPluginConfiguratorImpl.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            }
+
+            if (!matchingAPI) {
+                VDialog.showMessageDialog(vCanvas,
+                        "UG-API not compatible to current UG version:",
+                        " UG-API has to be recompiled."
+                        + " To do so, delete the file VRL-UG-API.jar in the"
+                        + " Plugin directory and restart VRL-Studio.");
+
+                System.exit(0);
             }
 
 
@@ -71,19 +120,6 @@ public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
             vApi.addTypeRepresentation(new BoundaryUserDataType());
 
             vApi.addComponentSearchFilter(new HideComponentFilter());
-//
-//            // request restart
-//            if (UG.getInstance().isRecompiled()) {
-//
-////                System.err.println("Recompiled");
-//
-//                VDialog.showMessageDialog(vCanvas, "Restart neccessary:",
-//                        " UG-API had to be recompiled."
-//                        + " VRL-Studio will be closed now."
-//                        + " Restart it to use the new API.");
-//
-//                System.exit(0);
-//            }
         }
     }
 
@@ -103,16 +139,16 @@ class HideComponentFilter implements VFilter {
         if (!(o instanceof DefaultMutableTreeNode)) {
             return false;
         }
-        
+
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) o;
-        
-        if (node.getUserObject()==null 
+
+        if (node.getUserObject() == null
                 || !(node.getUserObject() instanceof Class<?>)) {
             return false;
         }
-        
+
         Class<?> cls = (Class<?>) node.getUserObject();
-        
+
 
 //        boolean ugClass = UGObjectUtil.isUGAPIClass(cls);
         boolean wrapperClass = UGObjectUtil.isWrapperClass(cls);
