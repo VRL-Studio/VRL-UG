@@ -200,10 +200,10 @@ public class UGObject implements Serializable, UGObjectInterface {
      * @param params method parameters
      * @return return value
      */
-    protected static Object invokeFunction(
+    protected static Object invokeFunction(UGObject obj,
             String function, Object[] params) {
 
-        Object[] convertedParams = convertParams(params);
+        Object[] convertedParams = convertParams(obj, params, function);
 
         return edu.gcsc.vrl.ug.UG.getInstance().invokeFunction(
                 function, false, convertedParams);
@@ -215,14 +215,17 @@ public class UGObject implements Serializable, UGObjectInterface {
      * @param params parameters to convert
      * @return converted parameters
      */
-    private static Object[] convertParams(Object[] params) {
+    private static Object[] convertParams(UGObject obj,
+            Object[] params, String methodName) {
         Object[] convertedParams = new Object[params.length];
 
         for (int i = 0; i < convertedParams.length; i++) {
             Object p = params[i];
 
             if (p == null) {
-                throw new IllegalArgumentException("Param " + i + " == NULL");
+                throw new IllegalArgumentException(
+                        "Method: \"" + obj.getClassName()
+                        + "." + methodName + "(): parameter " + i + " == NULL");
             }
 
             if (p instanceof UGObject) {
@@ -246,7 +249,7 @@ public class UGObject implements Serializable, UGObjectInterface {
     protected Object invokeMethod(boolean isConst,
             String methodName, Object[] params) {
 
-        Object[] convertedParams = convertParams(params);
+        Object[] convertedParams = convertParams(this, params, methodName);
 
         Object result = null;
 
