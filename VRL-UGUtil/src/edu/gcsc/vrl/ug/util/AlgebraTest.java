@@ -5,6 +5,7 @@
 package edu.gcsc.vrl.ug.util;
 
 import edu.gcsc.vrl.ug.C_CG;
+import edu.gcsc.vrl.ug.C_GridFunction;
 import edu.gcsc.vrl.ug.C_ILU;
 import edu.gcsc.vrl.ug.C_MatrixOperator;
 import edu.gcsc.vrl.ug.C_StandardConvergenceCheck;
@@ -33,8 +34,11 @@ public class AlgebraTest implements Serializable{
             I_ApproximationSpace approxSpace,
             @ParamInfo(name="DomainDisc")
             I_DomainDiscretization domainDisc) {
-        I_GridFunction u = approxSpace.create_surface_function();
-        I_GridFunction b = approxSpace.create_surface_function();
+        
+        I_GridFunction u = new C_GridFunction();
+        u.constructor(approxSpace);
+        I_GridFunction b = new C_GridFunction();
+        b.constructor(approxSpace);
         
         I_StandardConvergenceCheck convCheck = new C_StandardConvergenceCheck();
         convCheck.set_maximum_steps(100);
