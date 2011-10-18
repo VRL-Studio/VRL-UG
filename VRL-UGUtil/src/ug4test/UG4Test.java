@@ -5,11 +5,15 @@
 package ug4test;
 
 import edu.gcsc.vrl.ug.C_AlgebraType;
+import edu.gcsc.vrl.ug.C_ApproximationSpace;
 import edu.gcsc.vrl.ug.C_Domain;
+import edu.gcsc.vrl.ug.C_GridFunction;
 import edu.gcsc.vrl.ug.F_InitUG;
 import edu.gcsc.vrl.ug.F_LoadDomain;
 import edu.gcsc.vrl.ug.I_AlgebraType;
+import edu.gcsc.vrl.ug.I_ApproximationSpace;
 import edu.gcsc.vrl.ug.I_Domain;
+import edu.gcsc.vrl.ug.I_GridFunction;
 import eu.mihosoft.vrl.system.VRL;
 
 /**
@@ -25,9 +29,9 @@ public class UG4Test {
         // TODO code application logic here
 
         VRL.initAll(args);
-        
+
         I_AlgebraType aType = new C_AlgebraType();
-        aType.constructor("CPU");
+        aType.constructor("CPU", 1);
 
         F_InitUG.invoke(2, aType, "P1");
 
@@ -37,9 +41,16 @@ public class UG4Test {
                 "/home/miho/installs/ug4/trunk/data/grids/unit_square/unit_square_quads_4x4.ugx");
 
         System.out.println("Domain.get_dim(): " + d.const__get_dim());
-        System.out.println("Domain.const_num_edges(): " 
+        System.out.println("Domain.const_num_edges(): "
                 + d.get_grid().const__num_edges());
-        
-        
+
+
+        I_GridFunction gFunc = new C_GridFunction();
+
+        I_ApproximationSpace approximationSpace = new C_ApproximationSpace();
+        approximationSpace.constructor(d);
+        approximationSpace.print_statistic();
+
+        gFunc.constructor(approximationSpace);
     }
 }
