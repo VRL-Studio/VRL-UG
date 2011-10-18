@@ -27,8 +27,8 @@ public class MethodSignature {
             prefix = "const";
         }
 
-        signature = method.getReturnValue().getTypeClassName() + ";"
-                + prefix + method.getName()+"(";
+        signature =
+                prefix + method.getName()+"(";
         for(NativeParamInfo p : method.getParameters()) {
             signature+=p.getTypeClassName()+";)";
         }
