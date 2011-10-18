@@ -16,19 +16,23 @@ public class MethodCode implements CodeElement {
     private final CodeType type;
     private final boolean visual;
     private final boolean function;
+    private final boolean inherited;
 
     /**
      * Constructor
      * @param method method
      * @param type code type
      * @param visual defines whether to generate code that shall be visualized
+     * @param inherited indicates whether this method is inherited
+     *                  from base class
      */
     public MethodCode(NativeMethodInfo method, boolean function,
-            CodeType type, boolean visual) {
+            CodeType type, boolean visual, boolean inherited) {
         this.method = method;
         this.type = type;
         this.visual = visual;
         this.function = function;
+        this.inherited = inherited;
     }
 
     @Override
@@ -72,7 +76,7 @@ public class MethodCode implements CodeElement {
             methodName += CodeUtils.methodName(method.getName());
         }
 
-        new MethodInfoCode(method, visual).build(builder).
+        new MethodInfoCode(method, visual, inherited).build(builder).
                 newLine().append(modifier + " "
                 + method.getReturnValue().getTypeClassName() + " "
                 + methodName + " (");
@@ -123,8 +127,15 @@ public class MethodCode implements CodeElement {
             if (customInvocationCode != null) {
                 builder.append(customInvocationCode).newLine();
             } else if (method.isConstructor()) {
-                builder.append("invokeConstructor(params);").newLine();
-            } else if (isFunction){
+                if (inherited) {
+                    builder.append("throw new UnsupportedOperationException(\""
+                            + "This constructor is inherited from base class. "
+                            + "Inherited constructor methods must "
+                            + "not be called!\");").newLine();
+                } else {
+                    builder.append("invokeConstructor(params);").newLine();
+                }
+            } else if (isFunction) {
                 builder.append("invokeFunction(\""
                         + method.getName() + "\", params);").newLine();
             } else {

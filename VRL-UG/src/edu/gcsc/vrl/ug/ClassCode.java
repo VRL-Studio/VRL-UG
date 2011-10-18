@@ -176,34 +176,42 @@ class ClassCode implements CodeElement {
         boolean[] visual = new boolean[]{false, true};
 
         for (boolean createVisual : visual) {
+            
+            boolean inherited = false;
 
             for (NativeClassInfo cls : classes) {
 
-                if (!isConst && cls.getMethods() != null) {
-
+                if (!isConst && !asWrapper && cls.getConstructors() != null) {
                     // add constructor code
                     new MethodGroupCode(api,
                             NativeConstructorInfo.toNativeMethodGroupInfo(
                             cls.getConstructors()),
-                            signatures, type, createVisual).build(builder).
+                            signatures, type, createVisual,
+                            inherited).build(builder).
                             newLine();
+                }
+
+                if (!isConst && cls.getMethods() != null) {
 
                     // add method code
                     for (NativeMethodGroupInfo m : cls.getMethods()) {
-//                        if (!signatures.contains(new MethodGroupSignature(m))) {
+
                         new MethodGroupCode(api,
-                                m, signatures, type, createVisual).build(
+                                m, signatures, type, createVisual,
+                                inherited).build(
                                 builder).newLine();
-//                            signatures.add(new MethodSignature(m));
-//                        }
                     }
                 }
 
                 for (NativeMethodGroupInfo m : cls.getConstMethods()) {
                     new MethodGroupCode(api,
-                            m, signatures, type, createVisual).build(
+                            m, signatures, type, createVisual,
+                            inherited).build(
                             builder).newLine();
                 }
+                
+                // from now on we generate inherited methods
+                inherited = true;
 
             } // end fore classes
 
