@@ -66,9 +66,9 @@ public class FunctionCode implements CodeElement {
         
 
         new MethodGroupCode(api, function,
-                CodeType.FULL_CLASS, true).build(builder);
+                CodeType.FULL_CLASS, true,false).build(builder);
         new MethodGroupCode(api, function,
-                CodeType.FULL_CLASS, false).build(builder);
+                CodeType.FULL_CLASS, false,false).build(builder);
 
 //        builder.newLine().
 //                append("protected UGObject newInstance(Pointer p) {").

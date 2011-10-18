@@ -15,15 +15,18 @@ public class MethodInfoCode implements CodeElement {
 
     private NativeMethodInfo method;
     private boolean visual;
+    private boolean inherited;
 
     /**
      * Constructor
      * @param method method
      * @param visual defines whether to visualize this method
      */
-    public MethodInfoCode(NativeMethodInfo method, boolean visual) {
+    public MethodInfoCode(NativeMethodInfo method, boolean visual,
+            boolean inherited) {
         this.method = method;
         this.visual = visual;
+        this.inherited = inherited;
     }
 
     @Override
@@ -36,10 +39,21 @@ public class MethodInfoCode implements CodeElement {
 
         // constructor
         if (method.isConstructor() && visual) {
-            builder.append("@MethodInfo(initializer=true, interactive=false)");
+            if (inherited) {
+                builder.addLine("@Deprecated");
+                builder.append("@MethodInfo(/*inherited*/initializer=true, noGUI=true)");
+            } else {
+                builder.append(
+                        "@MethodInfo(/*impl*/initializer=true, interactive=false)");
+            }
             return builder;
         } else if (method.isConstructor() && !visual) {
-            builder.append("@MethodInfo(initializer=true, noGUI=true)");
+            if (inherited) {
+                builder.addLine("@Deprecated");
+                builder.append("@MethodInfo(/*inherited*/initializer=true, noGUI=true)");
+            } else {
+                builder.append("@MethodInfo(/*impl*/initializer=true, noGUI=true)");
+            }
             return builder;
         }
 
@@ -48,7 +62,11 @@ public class MethodInfoCode implements CodeElement {
 
             boolean needsComma = false;
 
-            builder.append("@MethodInfo(");
+            if (inherited) {
+                builder.append("@MethodInfo(/*inherited*/");
+            } else {
+                builder.append("@MethodInfo(/*impl*/");
+            }
 
             if (method.getOptions() != null && !method.getOptions().isEmpty()) {
                 builder.append(method.getOptions());
@@ -57,8 +75,6 @@ public class MethodInfoCode implements CodeElement {
                 builder.append("hide=true");
                 needsComma = true;
             }
-
-
 
             // use interactive=false as default (no invoke-button)
             if (!method.isConstructor()
@@ -86,7 +102,7 @@ public class MethodInfoCode implements CodeElement {
                                 method.isConst());
                     }
                 }
-                
+
                 if (needsComma) {
                     builder.append(", ");
                 }
@@ -102,14 +118,18 @@ public class MethodInfoCode implements CodeElement {
                     builder.append(";serialization=false");
                 }
 
-                builder.append("\")");;
+                builder.append("\")");
             } else {
-                builder.append(")");;
+                builder.append(")");
             }
 
 
         } else if (!visual) {
-            builder.append("@MethodInfo(noGUI=true)");
+            if (inherited) {
+                builder.append("@MethodInfo(/*inherited*/noGUI=true)");
+            } else {
+                builder.append("@MethodInfo(/*impl*/noGUI=true)");
+            }
         }
 
         return builder;
