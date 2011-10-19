@@ -5,11 +5,8 @@
 
 package edu.gcsc.vrl.ug;
 
-import groovy.lang.GroovyObject;
 import groovy.lang.GroovyObjectSupport;
-import groovy.lang.MetaClass;
 import java.util.ArrayList;
-import org.codehaus.groovy.runtime.wrappers.GroovyObjectWrapper;
 
 /**
  *
