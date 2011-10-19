@@ -38,12 +38,19 @@ public class ParamInfoCode implements CodeElement {
             valueName = CodeUtils.classNameForParamInfo(param.getClassName(),
                     param.isConst());
         }
+        
+        String typePrefix = "";
+        
+        if (param.isConst()) {
+            typePrefix = "const ";
+        }
 
         builder.append("@ParamInfo(name=\""
                 + VLangUtils.addEscapeCharsToCode(valueName)
                 + "\", style=\""
                 + VLangUtils.addEscapeCharsToCode(
                 param.getParamInfo()[1]) + "\", "
+                + " typeName = \"" + typePrefix + param.getClassName() + "\", "
                 + "options=\""
                 + VLangUtils.addEscapeCharsToCode(param.getParamInfo()[2]));
 

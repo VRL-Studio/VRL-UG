@@ -107,10 +107,18 @@ public class MethodInfoCode implements CodeElement {
                     builder.append(", ");
                 }
 
+                String typePrefix = "";
+
+                if (method.getReturnValue().isConst()) {
+                    typePrefix = "const ";
+                }
+
                 builder.append("valueName=\""
                         + valueName
                         + "\", valueStyle=\""
-                        + method.getReturnValue().getParamInfo()[1]
+                        + method.getReturnValue().getParamInfo()[1] + "\", "
+                        + "valueTypeName = \""
+                        + typePrefix + method.getReturnValue().getClassName()
                         + "\", valueOptions=\""
                         + method.getReturnValue().getParamInfo()[2]);
 
