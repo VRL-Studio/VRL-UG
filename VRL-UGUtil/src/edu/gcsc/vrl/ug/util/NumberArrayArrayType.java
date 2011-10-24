@@ -46,6 +46,11 @@ public class NumberArrayArrayType extends ArrayBaseType {
             public Class<? extends Annotation> annotationType() {
                 return null;
             }
+
+            @Override
+            public String typeName() {
+                return "";
+            }
         };
         
         setElementInputInfo(info);
