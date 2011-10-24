@@ -89,10 +89,10 @@
     </target>
     
     <target name="-post-jar">
-        <echo message="Copying ${dist.jar} to ${studio.dir}/plugins"/>
+        <echo message="Copying ${dist.jar} to ${vrl.dir}/plugins"/>
         <copy 
         file="${dist.jar}" 
-        todir="${studio.dir}/plugins"/>
+        todir="${vrl.dir}/plugins"/>
         
     </target>
     
