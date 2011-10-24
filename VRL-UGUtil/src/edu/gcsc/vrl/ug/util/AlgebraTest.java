@@ -55,7 +55,7 @@ public class AlgebraTest implements Serializable{
         domainDisc.assemble_linear(A, b, u);
         
         u.set(0.0);
-        domainDisc.assemble_solution(u);
+        domainDisc.adjust_solution(u);
         
         cgSolver.init(A);
         
