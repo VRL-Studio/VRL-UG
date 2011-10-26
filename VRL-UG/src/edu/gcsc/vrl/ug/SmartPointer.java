@@ -47,7 +47,7 @@ class SmartPointer extends Pointer {
     protected void finalize() throws Throwable {
         try {
 //            System.out.println("~[SMART Java]: " + getAddress() + ", cont=" + isConst());
-            MemoryManager.invalidate(this);
+            UG.invalidate(this);
         } catch (Throwable ex) {
             //
         } finally {

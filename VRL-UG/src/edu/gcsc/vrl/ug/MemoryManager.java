@@ -39,18 +39,4 @@ public class MemoryManager {
         }
     }
 
-    /**
-     * Deallocates specified memory. The destructor of the specified class
-     * will be called.
-     * @param objPtr object pointer
-     * @param exportedClassPtr pointer of the exported class
-     */
-    @Deprecated
-    native static void delete(long objPtr, long exportedClassPtr);
-
-    /**
-     * Invalidates the specified smart pointer.
-     * @param p smart-pointer to invalidate
-     */
-    native static void invalidate(SmartPointer p);
 }
