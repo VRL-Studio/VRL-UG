@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.Constants;
 import eu.mihosoft.vrl.system.VRL;
@@ -261,7 +262,8 @@ public class UG {
                     VTerminalUtil.green(" --> VRL-UG: "
                     + "API found\n"
                     + " --> svn: present=" + apiSvn + "\n"
-                    + " --> date: present=" + apiDate));
+                    + " --> date: present=" + apiDate + "\n"
+                    + " --> location: " + VJarUtil.getClassLocation(cls)) );
 
             SplashScreenGenerator.printBootMessage(">> UG: API found");
 
