@@ -17,7 +17,6 @@ public class MethodCode implements CodeElement {
     private final boolean visual;
     private final boolean function;
     private final boolean inherited;
-    private final boolean showMethod;
 
     /**
      * Constructor
@@ -26,18 +25,14 @@ public class MethodCode implements CodeElement {
      * @param visual defines whether to generate code that shall be visualized
      * @param inherited indicates whether this method is inherited
      *                  from base class
-     * @param showMethod defines whether to show this method (hide=false), is
-     *                   ignored if the method provides custom options
      */
     public MethodCode(NativeMethodInfo method, boolean function,
-            CodeType type, boolean visual, boolean inherited,
-            boolean showMethod) {
+            CodeType type, boolean visual, boolean inherited) {
         this.method = method;
         this.type = type;
         this.visual = visual;
         this.function = function;
         this.inherited = inherited;
-        this.showMethod = showMethod;
     }
 
     @Override
@@ -81,7 +76,7 @@ public class MethodCode implements CodeElement {
             methodName += CodeUtils.methodName(method.getName());
         }
 
-        new MethodInfoCode(method, visual, inherited, showMethod).build(builder).
+        new MethodInfoCode(method, visual, inherited).build(builder).
                 newLine().append(modifier + " "
                 + method.getReturnValue().getTypeClassName() + " "
                 + methodName + " (");

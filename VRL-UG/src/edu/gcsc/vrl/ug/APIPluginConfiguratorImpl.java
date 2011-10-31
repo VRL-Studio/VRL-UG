@@ -4,7 +4,6 @@
  */
 package edu.gcsc.vrl.ug;
 
-import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.PluginAPI;
 import eu.mihosoft.vrl.system.PluginConfigurator;
@@ -107,7 +106,6 @@ public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
                         + " To do so, delete the file VRL-UG-API.jar in the"
                         + " Plugin directory and restart VRL-Studio.");
 
-                VPropertyFolderManager.unlockFolder();
                 System.exit(0);
             }
 

@@ -66,37 +66,14 @@ public class MethodGroupCode implements CodeElement {
             signatures = new ArrayList<MethodSignature>();
         }
 
-        // check number of overloads
-        int numMethods = 0;
-        ArrayList<MethodSignature> tmpSignatures =
-                new ArrayList<MethodSignature>();
         for (NativeMethodInfo m : methodInfo.getOverloads()) {
 
             m = NativeClassGroupInfo.convertToClassGroup(api, m);
 
             // forbid method duplicates
-            if (tmpSignatures == null
-                    || !tmpSignatures.contains(new MethodSignature(m))) {
-                numMethods++;
-                if (tmpSignatures != null) {
-                    tmpSignatures.add(new MethodSignature(m));
-                }
-            }
-        }
-
-        // if only one function available show it if not requested otherwise
-        // by ug registry
-        boolean showMethod = numMethods == 1;
-
-        for (NativeMethodInfo m : methodInfo.getOverloads()) {
-
-            m = NativeClassGroupInfo.convertToClassGroup(api, m);
-
-            // forbid method duplicates
-            if (signatures == null
-                    || !signatures.contains(new MethodSignature(m))) {
+            if (signatures == null || !signatures.contains(new MethodSignature(m))) {
                 new MethodCode(m, methodInfo instanceof NativeFunctionGroupInfo,
-                        type, visual, inherited, showMethod).build(builder);
+                        type, visual, inherited).build(builder);
                 if (signatures != null) {
                     signatures.add(new MethodSignature(m));
                 }
