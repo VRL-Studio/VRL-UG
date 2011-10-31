@@ -75,10 +75,15 @@ public class MethodInfoCode implements CodeElement {
             }
 
             if (method.getOptions() != null && !method.getOptions().isEmpty()) {
-                builder.append(method.getOptions());
+
+                if (!method.getOptions().matches(".*hide\\s*=.*")) {
+                    builder.append(method.getOptions() + ", hide=" + !showMethod);
+                } else {
+                    builder.append(method.getOptions());
+                }
                 needsComma = true;
             } else {
-                builder.append("hide=" + showMethod);
+                builder.append("hide=" + !showMethod);
                 needsComma = true;
             }
 
