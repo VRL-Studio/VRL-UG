@@ -7,6 +7,7 @@ package edu.gcsc.vrl.ug;
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.io.VJarUtil;
+import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.io.vrlx.AbstractCode;
 import eu.mihosoft.vrl.lang.CodeBuilder;
@@ -264,7 +265,8 @@ public class Compiler {
      * @throws IOException if there is an error creating the temporary directory
      */
     private static File createTempDir() throws IOException {
-        final File sysTempDir = new File(System.getProperty("java.io.tmpdir"));
+        final File sysTempDir = VPropertyFolderManager.getTmpFolder();
+        
         File newTempDir;
         final int maxAttempts = 9;
         int attemptCount = 0;
