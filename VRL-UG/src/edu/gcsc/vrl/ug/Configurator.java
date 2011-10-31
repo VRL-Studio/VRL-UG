@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.io.VersionInfo;
 import eu.mihosoft.vrl.system.PluginAPI;
 import eu.mihosoft.vrl.system.PluginConfigurator;
@@ -46,7 +47,8 @@ public class Configurator extends VPluginConfigurator {
                         " UG-API had to be recompiled."
                         + " VRL-Studio will be closed now."
                         + " Restart it to use the new API.");
-
+                
+                VPropertyFolderManager.unlockFolder();
                 System.exit(0);
             }
         }
