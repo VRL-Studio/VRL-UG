@@ -12,6 +12,7 @@ import eu.mihosoft.vrl.system.PluginDependency;
 import eu.mihosoft.vrl.system.PluginIdentifier;
 import eu.mihosoft.vrl.system.VPluginAPI;
 import eu.mihosoft.vrl.system.VPluginConfigurator;
+import eu.mihosoft.vrl.system.VRL;
 import eu.mihosoft.vrl.visual.VDialog;
 import eu.mihosoft.vrl.visual.VFilter;
 import java.awt.image.BufferedImage;
@@ -49,7 +50,7 @@ public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
             UG.getInstance().setMainCanvas(vCanvas);
 
             Class<?> apiCls = null;
-            
+
             boolean matchingAPI = false;
 
             try {
@@ -75,11 +76,11 @@ public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
                         "getCompileDate").
                         invoke(apiCls);
 
-                boolean revisionsAreEqual = 
+                boolean revisionsAreEqual =
                         apiSvn.equals(UG.getInstance().getSvnRevision());
-                boolean datesAreEqual = 
+                boolean datesAreEqual =
                         apiDate.equals(UG.getInstance().getCompileDate());
-                
+
                 matchingAPI = revisionsAreEqual && datesAreEqual;
 
             } catch (IllegalAccessException ex) {
@@ -107,8 +108,7 @@ public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
                         + " To do so, delete the file VRL-UG-API.jar in the"
                         + " Plugin directory and restart VRL-Studio.");
 
-                VPropertyFolderManager.unlockFolder();
-                System.exit(0);
+                VRL.exit(0);
             }
 
 
