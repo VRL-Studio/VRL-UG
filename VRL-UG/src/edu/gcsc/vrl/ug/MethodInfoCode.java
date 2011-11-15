@@ -16,17 +16,23 @@ public class MethodInfoCode implements CodeElement {
     private NativeMethodInfo method;
     private boolean visual;
     private boolean inherited;
+    private boolean showMethod;
 
     /**
      * Constructor
      * @param method method
      * @param visual defines whether to visualize this method
+     * @param inherited indicates whether this method is inherited
+     *                  from base class
+     * @param showMethod defines whether to show this method (hide=false), is
+     *                   ignored if the method provides custom options
      */
     public MethodInfoCode(NativeMethodInfo method, boolean visual,
-            boolean inherited) {
+            boolean inherited, boolean showMethod) {
         this.method = method;
         this.visual = visual;
         this.inherited = inherited;
+        this.showMethod = showMethod;
     }
 
     @Override
@@ -69,10 +75,15 @@ public class MethodInfoCode implements CodeElement {
             }
 
             if (method.getOptions() != null && !method.getOptions().isEmpty()) {
-                builder.append(method.getOptions());
+
+                if (!method.getOptions().matches(".*hide\\s*=.*")) {
+                    builder.append(method.getOptions() + ", hide=" + !showMethod);
+                } else {
+                    builder.append(method.getOptions());
+                }
                 needsComma = true;
             } else {
-                builder.append("hide=true");
+                builder.append("hide=" + !showMethod);
                 needsComma = true;
             }
 

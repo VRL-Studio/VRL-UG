@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.io.VersionInfo;
 import eu.mihosoft.vrl.system.PluginAPI;
 import eu.mihosoft.vrl.system.PluginConfigurator;
@@ -12,6 +13,7 @@ import eu.mihosoft.vrl.system.PluginDependency;
 import eu.mihosoft.vrl.system.PluginIdentifier;
 import eu.mihosoft.vrl.system.VPluginAPI;
 import eu.mihosoft.vrl.system.VPluginConfigurator;
+import eu.mihosoft.vrl.system.VRL;
 import eu.mihosoft.vrl.visual.VDialog;
 import eu.mihosoft.vrl.visual.VSwingUtil;
 import java.awt.image.BufferedImage;
@@ -46,8 +48,8 @@ public class Configurator extends VPluginConfigurator {
                         " UG-API had to be recompiled."
                         + " VRL-Studio will be closed now."
                         + " Restart it to use the new API.");
-
-                System.exit(0);
+                
+                VRL.exit(0);
             }
         }
     }
