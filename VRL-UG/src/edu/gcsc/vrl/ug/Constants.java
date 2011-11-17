@@ -13,6 +13,4 @@ import eu.mihosoft.vrl.system.PluginIdentifier;
 public class Constants {
     public static final PluginIdentifier PLUGIN_IDENTIFIER =
             new PluginIdentifier("UG4", "0.1");
-     public static final PluginIdentifier API_PLUGIN_IDENTIFIER =
-            new PluginIdentifier("UG4-API", "0.1");
 }
