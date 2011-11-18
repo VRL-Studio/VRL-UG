@@ -60,6 +60,44 @@ public class UG {
     public static boolean isLibloaded() {
         return libLoaded;
     }
+    
+    private static RemoteType remoteType = null;
+    
+    /**
+     * 
+     * @param remoteType 
+     */
+    private static void setRemoteType(RemoteType remoteType){
+        UG.remoteType = remoteType;
+    }
+    
+    /**
+     *
+     * @return 
+     */
+    private static RemoteType getRemoteType(){
+        
+        return UG.remoteType;
+    }
+    /**
+     * Declares if UG should be called via network or startet on localhost.
+     */
+    private static boolean remote = false;
+
+    /**
+     * @return the remote
+     */
+    public static boolean isRemote() {
+        return remote;
+    }
+
+    /**
+     * @param remote the boolean to set UG.remote
+     */
+    public static void setRemote(boolean remote) {
+        UG.remote = remote;
+    }
+    
     /**
      * VRL canvas used to visualize ug classes
      */
@@ -149,14 +187,20 @@ public class UG {
 
         System.out.println(" --> UG: connecting to native ug.");
 
-        if (loadNativeLib) {
+//        if (loadNativeLib) { // check if remote, e.g. loadNative && !remote
+        if (loadNativeLib && !remote) { 
             System.loadLibrary("ug4");
+            libLoaded = true;
+        }
+        
+        else if(loadNativeLib && remote){
+            
             libLoaded = true;
         }
 
         try {
 
-            ugInit(args);
+            ugInit(args);//native
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
@@ -215,6 +259,22 @@ public class UG {
         }
 
         initialized = libLoaded;
+    }
+    
+    private UG(RemoteType remoteType, boolean remote){
+        
+        if (remoteType.equals(RemoteType.CLIENT)) {
+            
+            //execute(java -jar params)
+            createClient("localhost");
+            
+        }
+        else if (remoteType.equals(RemoteType.SERVER)) {
+            
+            createServer();
+            
+        }
+        
     }
 
     /**
@@ -510,48 +570,79 @@ public class UG {
             this.logging = false;
         }
     }
-
-    // ********************************************
-    // ************** NATIVE METHODS **************
-    // ********************************************
-    final native NativeAPIInfo convertRegistryInfo();
-
-    native Object invokeMethod(
-            String exportedClassName,
-            long objPtr, boolean readOnly,
-            String methodName, Object[] params);
-
-    native long newInstance(long exportedClassPtr, Object[] parameters);
-
-    native long getExportedClassPtrByName(String name, boolean classGrp);
-
-    native String getDefaultClassNameFromGroup(String grpName);
-
-    native Object invokeFunction(String name,
-            boolean readOnly, Object[] params);
-
-    static native int ugInit(String[] args);
-
-    native String getSvnRevision();
-
-    native String getDescription();
-
-    native String getAuthors();
-
-    native String getCompileDate();
     
     /**
-     * Deallocates specified memory. The destructor of the specified class
-     * will be called.
-     * @param objPtr object pointer
-     * @param exportedClassPtr pointer of the exported class
+     * takes control over the connection logic.
+     * 
+     * @return true if server could be created
      */
-    @Deprecated
-    native static void delete(long objPtr, long exportedClassPtr);
-
+    private static boolean createServer( ){
+        boolean result = false;
+        
+        
+        return result;
+    }
+    
     /**
-     * Invalidates the specified smart pointer.
-     * @param p smart-pointer to invalidate
+     * We look at the situation were the user of the vrl wants to connect to
+     * several UG instances to make simultan calculations.
+     * Therefore UG is treated as a client.
+     * 
+     * @param serverIP 
+     * 
+     * @return true if client could be created
      */
-    native static void invalidate(SmartPointer p);
+    private static boolean createClient(String serverIP){
+        boolean result = false;
+        
+        
+        return result;
+    }
+    
+
+//    // ********************************************
+//    // ************** NATIVE METHODS **************
+//    // ********************************************
+//    final native NativeAPIInfo convertRegistryInfo();
+//
+//    native Object invokeMethod(
+//            String exportedClassName,
+//            long objPtr, boolean readOnly,
+//            String methodName, Object[] params);
+//
+//    native long newInstance(long exportedClassPtr, Object[] parameters);
+//
+//    native long getExportedClassPtrByName(String name, boolean classGrp);
+//
+//    native String getDefaultClassNameFromGroup(String grpName);
+//
+//    native Object invokeFunction(String name,
+//            boolean readOnly, Object[] params);
+//
+//    native String getSvnRevision();
+//
+//    native String getDescription();
+//
+//    native String getAuthors();
+//
+//    native String getCompileDate();
+//    
+//    
+//    static native int ugInit(String[] args);
+//    
+//    /**
+//     * Deallocates specified memory. The destructor of the specified class
+//     * will be called.
+//     * @param objPtr object pointer
+//     * @param exportedClassPtr pointer of the exported class
+//     */
+//    @Deprecated
+//    native static void delete(long objPtr, long exportedClassPtr);
+//
+//    /**
+//     * Invalidates the specified smart pointer.
+//     * @param p smart-pointer to invalidate
+//     */
+//    native static void invalidate(SmartPointer p);
+    
 }
