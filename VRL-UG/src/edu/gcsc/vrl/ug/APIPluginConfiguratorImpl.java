@@ -77,9 +77,9 @@ public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
                         invoke(apiCls);
 
                 boolean revisionsAreEqual =
-                        apiSvn.equals(UG.getInstance().getSvnRevision());
+                        apiSvn.equals(UG.getInstance()._getSvnRevision());
                 boolean datesAreEqual =
-                        apiDate.equals(UG.getInstance().getCompileDate());
+                        apiDate.equals(UG.getInstance()._getCompileDate());
 
                 matchingAPI = revisionsAreEqual && datesAreEqual;
 

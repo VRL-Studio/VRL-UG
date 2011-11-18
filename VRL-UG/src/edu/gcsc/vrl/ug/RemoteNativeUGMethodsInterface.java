@@ -4,14 +4,12 @@
  */
 package edu.gcsc.vrl.ug;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
 
 /**
  *
  * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
  */
- interface RemoteNativeUGMethodsInterface extends Remote {
+ interface RemoteNativeUGMethodsInterface {
 
     // ********************************************
     // ************** NATIVE METHODS **************
@@ -21,32 +19,29 @@ import java.rmi.RemoteException;
     Object invokeMethod(
             String exportedClassName,
             long objPtr, boolean readOnly,
-            String methodName, Object[] params) throws RemoteException;
+            String methodName, Object[] params);
 
-    long newInstance(long exportedClassPtr, Object[] parameters)
-            throws RemoteException;
+    long newInstance(long exportedClassPtr, Object[] parameters);
 
-    long getExportedClassPtrByName(String name, boolean classGrp)
-            throws RemoteException;
+    long getExportedClassPtrByName(String name, boolean classGrp);
 
-    String getDefaultClassNameFromGroup(String grpName)
-            throws RemoteException;
+    String getDefaultClassNameFromGroup(String grpName);
 
     Object invokeFunction(String name,
-            boolean readOnly, Object[] params) throws RemoteException;
+            boolean readOnly, Object[] params);
 
-    String getSvnRevision() throws RemoteException;
+    String getSvnRevision();
 
-    String getDescription() throws RemoteException;
+    String getDescription();
 
-    String getAuthors() throws RemoteException;
+    String getAuthors();
 
-    String getCompileDate() throws RemoteException;
+    String getCompileDate();
 
     //
     // static native methods from here
     //
-    int ugInit(String[] args) throws RemoteException;
+    int ugInit(String[] args);
 
     /**
      * Deallocates specified memory. The destructor of the specified class
@@ -55,11 +50,11 @@ import java.rmi.RemoteException;
      * @param exportedClassPtr pointer of the exported class
      */
     @Deprecated
-    void delete(long objPtr, long exportedClassPtr) throws RemoteException;
+    void delete(long objPtr, long exportedClassPtr);
 
     /**
      * Invalidates the specified smart pointer.
      * @param p smart-pointer to invalidate
      */
-    void invalidate(SmartPointer p) throws RemoteException;
+    void invalidate(SmartPointer p);
 }

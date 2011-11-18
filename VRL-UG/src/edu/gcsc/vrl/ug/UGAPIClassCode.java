@@ -23,23 +23,23 @@ public class UGAPIClassCode implements CodeElement {
                 // get svn revision
                 addLine("public static java.lang.String getSvnRevision() {").
                 incIndentation().
-                addLine("return \"" + UG.getInstance().getSvnRevision() + "\";").
+                addLine("return \"" + UG.getInstance()._getSvnRevision() + "\";").
                 decIndentation().
                 addLine("}").
                 
                 // get compile date
                 addLine("public static java.lang.String getCompileDate() {").
                 incIndentation().
-                addLine("return \"" + UG.getInstance().getCompileDate() + "\";").
+                addLine("return \"" + UG.getInstance()._getCompileDate() + "\";").
                 decIndentation().
                 addLine("}").
                 
                 // get description
                 addLine("public static java.lang.String getDescription() {").
                 incIndentation().
-                addLine("return \"" + UG.getInstance().getDescription()
+                addLine("return \"" + UG.getInstance()._getDescription()
                 + "<br><br><b>Authors:</b><br><br>"
-                + UG.getInstance().getAuthors().replace("\n", "<br>") + "\";").
+                + UG.getInstance()._getAuthors().replace("\n", "<br>") + "\";").
                 decIndentation().
                 addLine("}").
                 

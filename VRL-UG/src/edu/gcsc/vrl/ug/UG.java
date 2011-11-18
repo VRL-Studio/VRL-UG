@@ -19,9 +19,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
+import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.apache.xmlrpc.server.PropertyHandlerMapping;
+import org.apache.xmlrpc.server.XmlRpcServer;
+import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
+import org.apache.xmlrpc.webserver.WebServer;
 
 /**
  * <p>
@@ -60,23 +68,22 @@ public class UG {
     public static boolean isLibloaded() {
         return libLoaded;
     }
-    
     private static RemoteType remoteType = null;
-    
+
     /**
      * 
      * @param remoteType 
      */
-    private static void setRemoteType(RemoteType remoteType){
+    private static void setRemoteType(RemoteType remoteType) {
         UG.remoteType = remoteType;
     }
-    
+
     /**
      *
      * @return 
      */
-    private static RemoteType getRemoteType(){
-        
+    private static RemoteType getRemoteType() {
+
         return UG.remoteType;
     }
     /**
@@ -97,7 +104,11 @@ public class UG {
     public static void setRemote(boolean remote) {
         UG.remote = remote;
     }
-    
+    private static int defaultPort = 1099;
+    private static String defaultHost = "localhost";
+    private static XmlRpcClient xmlRpcClient;
+    private static XmlRpcServer xmlRpcServer;
+    private static WebServer webServer;
     /**
      * VRL canvas used to visualize ug classes
      */
@@ -188,19 +199,17 @@ public class UG {
         System.out.println(" --> UG: connecting to native ug.");
 
 //        if (loadNativeLib) { // check if remote, e.g. loadNative && !remote
-        if (loadNativeLib && !remote) { 
+        if (loadNativeLib && !remote) {
             System.loadLibrary("ug4");
             libLoaded = true;
-        }
-        
-        else if(loadNativeLib && remote){
-            
+        } else if (loadNativeLib && remote) {
+
             libLoaded = true;
         }
 
         try {
 
-            ugInit(args);//native
+            _ugInit(args);//native
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
@@ -227,7 +236,7 @@ public class UG {
                 // load native library and connect to ug lib to generate api
                 connectToNativeUG(true);
 
-                NativeAPIInfo nativeAPI = convertRegistryInfo();
+                NativeAPIInfo nativeAPI = _convertRegistryInfo();
                 Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
 
                 try {
@@ -260,21 +269,19 @@ public class UG {
 
         initialized = libLoaded;
     }
-    
-    private UG(RemoteType remoteType, boolean remote){
-        
+
+    private UG(RemoteType remoteType, boolean remote) {
+
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             //execute(java -jar params)
-            createClient("localhost");
-            
+            createXmlRpcClient(defaultHost, defaultPort);
+
+        } else if (remoteType.equals(RemoteType.SERVER)) {
+
+            createXmlRpcServer(defaultPort);
         }
-        else if (remoteType.equals(RemoteType.SERVER)) {
-            
-            createServer();
-            
-        }
-        
+
     }
 
     /**
@@ -323,7 +330,7 @@ public class UG {
                     + "API found\n"
                     + " --> svn: present=" + apiSvn + "\n"
                     + " --> date: present=" + apiDate + "\n"
-                    + " --> location: " + VJarUtil.getClassLocation(cls)) );
+                    + " --> location: " + VJarUtil.getClassLocation(cls)));
 
             SplashScreenGenerator.printBootMessage(">> UG: API found");
 
@@ -570,36 +577,78 @@ public class UG {
             this.logging = false;
         }
     }
-    
+
     /**
-     * takes control over the connection logic.
      * 
-     * @return true if server could be created
+     * @return true if xmlRpcServer could be created and webServer started
      */
-    private static boolean createServer( ){
+    private static boolean createXmlRpcServer(int port) {
         boolean result = false;
-        
-        
+
+
+        PropertyHandlerMapping mapping = new PropertyHandlerMapping();
+
+        try {
+            mapping.addHandler("NativeRpcHandler", NativeRpcHandler.class);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        webServer = new WebServer(port);
+
+//        //allow only connection with listed clients
+//        webserver.setParanoid(true);
+//        webserver.acceptClient("141.2.38.37");
+//        webserver.acceptClient("141.2.38.91");
+//        //end allow list
+
+        XmlRpcServerConfigImpl config = new XmlRpcServerConfigImpl();
+
+        config.setEnabledForExtensions(true);
+
+        xmlRpcServer = webServer.getXmlRpcServer();
+
+
+        xmlRpcServer.setConfig(config);
+        xmlRpcServer.setHandlerMapping(mapping);
+
+        try {
+            webServer.start();
+
+        } catch (IOException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         return result;
     }
-    
+
     /**
-     * We look at the situation were the user of the vrl wants to connect to
-     * several UG instances to make simultan calculations.
-     * Therefore UG is treated as a client.
      * 
-     * @param serverIP 
+     * @param host localhost or ip like e.g. 141.2.22.123
+     * @param port
      * 
      * @return true if client could be created
      */
-    private static boolean createClient(String serverIP){
+    private static boolean createXmlRpcClient(String host, int port) {
         boolean result = false;
-        
-        
+
+
+        XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+
+        try {
+            config.setServerURL(new URL("http://" + host + ":" + port));
+
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        config.setEnabledForExtensions(true);
+
+        xmlRpcClient = new XmlRpcClient();
+        xmlRpcClient.setConfig(config);
+
         return result;
     }
-    
-
 //    // ********************************************
 //    // ************** NATIVE METHODS **************
 //    // ********************************************
@@ -644,5 +693,277 @@ public class UG {
 //     * @param p smart-pointer to invalidate
 //     */
 //    native static void invalidate(SmartPointer p);
-    
+    //
+    //
+    /**
+     * NOTICE: 
+     * 
+     * ALL METHODS need to RETURN one of the following types:
+     * 
+     * XML-RPC type      Simplest Java type     More complex Java type
+     * 
+     * i4                int                    java.lang.Integer
+     * int               int                    java.lang.Integer
+     * boolean           boolean                java.lang.Boolean
+     * string            java.lang.String       java.lang.String
+     * double            double                 java.lang.Double
+     * 
+     * dateTime.iso8601  java.util.Date         java.util.Date
+     * struct            java.util.Hashtable    java.util.Hashtable
+     * array             java.util.Vector       java.util.Vector
+     * base64            byte[]                 byte[]
+     * 
+     * nil (extension)   null                   null
+     *
+     * ATTENTION: void is NOT valid !!!
+     * 
+     */
+    // ********************************************
+    // ************** NATIVE METHODS **************
+    // ********************************************
+    //
+    //
+    //needed for void parammeters
+    private static Vector nullVector = new Vector();
+
+    //
+    // Remenber all _functions() are native !!!
+    //
+    final NativeAPIInfo _convertRegistryInfo() {
+
+        Object o = null;
+
+        try {
+            o = xmlRpcClient.execute("NativeRpcHandler.convertRegistryInfo", nullVector);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //@TODO String base64 remote transfer 
+        //      and decode here to NativeAPIInfo !!!!!
+
+        return (NativeAPIInfo) o;
+    }
+
+    Object _invokeMethod(String exportedClassName, long objPtr, boolean readOnly,
+            String methodName, Object[] params) {
+
+        Object o = null;
+
+        Vector xmlRpcParams = new Vector();
+        xmlRpcParams.addElement(exportedClassName);
+        xmlRpcParams.addElement(String.valueOf(objPtr));
+        xmlRpcParams.addElement(String.valueOf(objPtr));
+        xmlRpcParams.addElement(String.valueOf(readOnly));
+        xmlRpcParams.addElement(methodName);
+
+        for (Object op : params) {
+            xmlRpcParams.addElement(op);
+        }
+
+
+        try {
+            o = xmlRpcClient.execute("NativeRpcHandler.invokeMethod", xmlRpcParams);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return o;
+    }
+
+    long _newInstance(long exportedClassPtr, Object[] parameters) {
+
+        Object o = null;
+
+        Vector xmlRpcParams = new Vector();
+        xmlRpcParams.addElement(String.valueOf(exportedClassPtr));
+
+        for (Object op : parameters) {
+            xmlRpcParams.addElement(op);
+        }
+
+        try {
+            o = xmlRpcClient.execute("NativeRpcHandler.newInstance", xmlRpcParams);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //@TODO String base64 remote transfer 
+        //      and decode here to long !!!!!
+
+        return (Long) o;
+    }
+
+    long _getExportedClassPtrByName(String name, boolean classGrp) {
+
+        Object o = null;
+
+
+        Vector xmlRpcParams = new Vector();
+        xmlRpcParams.addElement(name);
+        xmlRpcParams.addElement(String.valueOf(classGrp));
+
+
+        try {
+            o = xmlRpcClient.execute("NativeRpcHandler.getExportedClassPtrByName", xmlRpcParams);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //@TODO String base64 remote transfer 
+        //      and decode here to long !!!!!
+
+        return (Long) o;
+    }
+
+    String _getDefaultClassNameFromGroup(String grpName) {
+
+        Object o = null;
+
+
+        Vector xmlRpcParams = new Vector();
+        xmlRpcParams.addElement(grpName);
+
+        try {
+            o = xmlRpcClient.execute("NativeRpcHandler.getDefaultClassNameFromGroup", xmlRpcParams);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return (String) o;
+    }
+
+    Object _invokeFunction(String name, boolean readOnly, Object[] params) {
+
+        Object o = null;
+
+
+        Vector xmlRpcParams = new Vector();
+        xmlRpcParams.addElement(name);
+        xmlRpcParams.addElement(String.valueOf(readOnly));
+
+        for (Object op : params) {
+            xmlRpcParams.addElement(op);
+        }
+
+        try {
+            o = xmlRpcClient.execute("NativeRpcHandler.invokeFunction", xmlRpcParams);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return o;
+    }
+
+    String _getSvnRevision() {
+
+        Object o = null;
+
+        try {
+            o = xmlRpcClient.execute("NativeRpcHandler.getSvnRevision", nullVector);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return (String) o;
+    }
+
+    String _getDescription() {
+
+        Object o = null;
+
+        try {
+            o = xmlRpcClient.execute("NativeRpcHandler.getDescription", nullVector);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return (String) o;
+    }
+
+    String _getAuthors(){
+
+        Object o = null;
+
+        try {
+            o = xmlRpcClient.execute("NativeRpcHandler.getAuthors", nullVector);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return (String) o;
+    }
+
+    String _getCompileDate(){
+
+        Object o = null;
+
+        try {
+            o = xmlRpcClient.execute("NativeRpcHandler.getCompileDate", nullVector);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return (String) o;
+    }
+
+    static int _ugInit(String[] args){
+
+        Object o = null;
+        
+        Vector xmlRpcParams = new Vector();
+
+        for (Object op : args) {
+            xmlRpcParams.addElement(op);
+        }
+
+        try {
+            o = xmlRpcClient.execute("NativeRpcHandler.ugInit", xmlRpcParams);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        //@TODO String base64 remote transfer 
+        //      and decode here to int !!!!!
+
+
+        return (Integer) o;
+    }
+    /**
+     * Deallocates specified memory. The destructor of the specified class
+     * will be called.
+     * @param objPtr object pointer
+     * @param exportedClassPtr pointer of the exported class
+     */
+    @Deprecated
+    static void _delete(long objPtr, long exportedClassPtr){
+
+        Vector xmlRpcParams = new Vector();
+        xmlRpcParams.addElement(String.valueOf(objPtr));
+        xmlRpcParams.addElement(String.valueOf(exportedClassPtr));
+
+        try {
+            xmlRpcClient.execute("NativeRpcHandler.delete", xmlRpcParams);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+
+    /**
+     * Invalidates the specified smart pointer.
+     * @param p smart-pointer to invalidate
+     */
+    static void _invalidate(SmartPointer p){
+
+        Vector xmlRpcParams = new Vector();
+        xmlRpcParams.addElement(p);
+
+        try {
+            xmlRpcClient.execute("NativeRpcHandler.invalidate", xmlRpcParams);
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
 }

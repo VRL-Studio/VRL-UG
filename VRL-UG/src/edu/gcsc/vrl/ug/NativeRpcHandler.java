@@ -10,7 +10,7 @@ import edu.gcsc.vrl.ug.NativeAPIInfo;
  *
  * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
  */
-public abstract class NativeRpcHandler {
+abstract class NativeRpcHandler {
     
     // ********************************************
     // ************** NATIVE METHODS **************
