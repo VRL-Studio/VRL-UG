@@ -92,7 +92,7 @@
         <echo message="Copying ${dist.jar} to ${vrl.dir}/plugin-updates"/>
         <copy 
         file="${dist.jar}" 
-        todir="${vrl.dir}/plugins"/>
+        todir="${vrl.dir}/plugin-updates"/>
         
     </target>
     
