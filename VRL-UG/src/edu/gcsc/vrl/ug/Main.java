@@ -10,7 +10,7 @@ package edu.gcsc.vrl.ug;
  */
 public class Main {
 
-    private static Integer port = 1099; // default port
+    private static Integer defaultPort = 1099; // default port
 
     public static void main(String[] args) {
 
@@ -21,7 +21,7 @@ public class Main {
 
                 // check port range between min and max
                 if (0 <= tmp && tmp <= 65535) {
-                    port = tmp;
+                    defaultPort = tmp;
                 }
             }
         }
