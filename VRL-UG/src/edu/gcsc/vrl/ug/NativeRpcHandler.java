@@ -4,43 +4,41 @@
  */
 package edu.gcsc.vrl.ug;
 
-import edu.gcsc.vrl.ug.NativeAPIInfo;
-
 /**
  *
  * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
  */
-abstract class NativeRpcHandler {
+ class NativeRpcHandler {
     
     // ********************************************
     // ************** NATIVE METHODS **************
     // ********************************************
-    abstract   NativeAPIInfo convertRegistryInfo();
+    final native NativeAPIInfo convertRegistryInfo();
 
-    abstract Object invokeMethod(
+    native Object invokeMethod(
             String exportedClassName,
             long objPtr, boolean readOnly,
             String methodName, Object[] params);
 
-    abstract long newInstance(long exportedClassPtr, Object[] parameters);
+    native long newInstance(long exportedClassPtr, Object[] parameters);
 
-    abstract long getExportedClassPtrByName(String name, boolean classGrp);
+    native long getExportedClassPtrByName(String name, boolean classGrp);
 
-    abstract String getDefaultClassNameFromGroup(String grpName);
+    native String getDefaultClassNameFromGroup(String grpName);
 
-    abstract Object invokeFunction(String name,
+    native Object invokeFunction(String name,
             boolean readOnly, Object[] params);
 
-    abstract String getSvnRevision();
+    native String getSvnRevision();
 
-    abstract String getDescription();
+    native String getDescription();
 
-    abstract String getAuthors();
+    native String getAuthors();
 
-    abstract String getCompileDate();
+    native String getCompileDate();
     
     
-    abstract int ugInit(String[] args);
+    static native int ugInit(String[] args);
     
     /**
      * Deallocates specified memory. The destructor of the specified class
@@ -49,12 +47,11 @@ abstract class NativeRpcHandler {
      * @param exportedClassPtr pointer of the exported class
      */
     @Deprecated
-    abstract void delete(long objPtr, long exportedClassPtr);
+    native static void delete(long objPtr, long exportedClassPtr);
 
     /**
      * Invalidates the specified smart pointer.
      * @param p smart-pointer to invalidate
      */
-    abstract void invalidate(SmartPointer p);
-    
+    native static void invalidate(SmartPointer p);
 }
