@@ -19,9 +19,22 @@ public class Main {
             if (args[0] != null) {
                 Integer tmp = Integer.parseInt(args[0]);
 
-                // check port range between min and max
-                if (0 <= tmp && tmp <= 65535) {
-                    defaultPort = tmp;
+//                // check port range between min and max
+//                if (0 <= tmp && tmp <= 65535) {
+//                    defaultPort = tmp;
+//                }
+
+                if (tmp == 1) {
+                    
+                    UG.setRemoteType(RemoteType.SERVER);
+                    
+                } else if (tmp == 2) {
+                    
+                    UG.setRemoteType(RemoteType.CLIENT);
+                    
+                } else {
+                    
+                    UG.setRemoteType(RemoteType.NONE);
                 }
             }
         }
