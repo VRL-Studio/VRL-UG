@@ -134,11 +134,12 @@ minus the .jar extension. It should not have spaces.
         <delete dir="dist-single"/>
         <delete dir="dist/lib"/>
         
-        
-        <echo message="Copying ${dist.jar} to ${vrl.dir}/plugins"/>
+
+        <echo message="Copying ${dist.jar} to ${vrl.dir}/plugin-updates"/>
+
         <copy 
         file="${dist.jar}" 
-        todir="${vrl.dir}/plugins"/>
+        todir="${vrl.dir}/plugin-updates"/>
         
         
     </target>
