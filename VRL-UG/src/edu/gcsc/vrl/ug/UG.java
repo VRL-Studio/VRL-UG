@@ -74,7 +74,7 @@ public class UG {
      * 
      * @param remoteType 
      */
-    private static void setRemoteType(RemoteType remoteType) {
+     static void setRemoteType(RemoteType remoteType) {
         UG.remoteType = remoteType;
     }
 
@@ -82,7 +82,7 @@ public class UG {
      *
      * @return 
      */
-    private static RemoteType getRemoteType() {
+     static RemoteType getRemoteType() {
 
         return UG.remoteType;
     }
@@ -292,16 +292,8 @@ public class UG {
       
         
         if (remoteType.equals(RemoteType.CLIENT)) {
-
-            //execute(java -jar params)
-          createXmlRpcClient(defaultHost, defaultPort);
-
-        } else if (remoteType.equals(RemoteType.SERVER)) {
-
-           createXmlRpcServer(defaultPort);
-        }
-        
-          
+            
+                      
 //         // we must set the singleton instance to prevent
 //        // calling multiple constructors.
 //        // doing this in the corresponding getter methods does not work anymore
@@ -352,6 +344,16 @@ public class UG {
         }
 
         initialized = libLoaded;
+
+            //execute(java -jar params)
+          createXmlRpcClient(defaultHost, defaultPort);
+
+        } else if (remoteType.equals(RemoteType.SERVER)) {
+
+           createXmlRpcServer(defaultPort);
+        }
+        
+
 
     }
 
@@ -687,6 +689,8 @@ public class UG {
 
     /**
      * 
+     * @param port the port which should be used
+     * 
      * @return true if xmlRpcServer could be created and webServer started
      */
     private static boolean createXmlRpcServer(int port) {
@@ -696,7 +700,7 @@ public class UG {
         PropertyHandlerMapping mapping = new PropertyHandlerMapping();
 
         try {
-            mapping.addHandler("NativeRpcHandler", NativeRpcHandler.class);
+            mapping.addHandler("UG", UG.class);
         } catch (XmlRpcException ex) {
             Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -732,7 +736,7 @@ public class UG {
     /**
      * 
      * @param host localhost or ip like e.g. 141.2.22.123
-     * @param port
+     * @param port the port which should be used
      * 
      * @return true if client could be created
      */
@@ -838,7 +842,7 @@ public class UG {
     //
     final NativeAPIInfo _convertRegistryInfo() {
 
-        if (remoteType.equals(RemoteType.NONE)) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             
             Object o = null;
 
@@ -862,7 +866,7 @@ public class UG {
     Object _invokeMethod(String exportedClassName, long objPtr, boolean readOnly,
             String methodName, Object[] params) {
 
-        if (remoteType.equals(RemoteType.NONE)) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             
             Object o = null;
 
@@ -894,7 +898,7 @@ public class UG {
 
     long _newInstance(long exportedClassPtr, Object[] parameters) {
 
-        if (remoteType.equals(RemoteType.NONE)) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             
             Object o = null;
 
@@ -924,7 +928,7 @@ public class UG {
 
     long _getExportedClassPtrByName(String name, boolean classGrp) {
 
-        if (remoteType.equals(RemoteType.NONE)) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             
             Object o = null;
 
@@ -951,7 +955,7 @@ public class UG {
 
     String _getDefaultClassNameFromGroup(String grpName) {
 
-        if (remoteType.equals(RemoteType.NONE)) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             
             Object o = null;
 
@@ -974,7 +978,7 @@ public class UG {
 
     Object _invokeFunction(String name, boolean readOnly, Object[] params) {
 
-        if (remoteType.equals(RemoteType.NONE)) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             
             Object o = null;
 
@@ -1002,7 +1006,7 @@ public class UG {
 
     String _getSvnRevision() {
 
-        if (remoteType.equals(RemoteType.NONE)) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             
             Object o = null;
 
@@ -1022,7 +1026,7 @@ public class UG {
 
     String _getDescription() {
 
-        if (remoteType.equals(RemoteType.NONE)) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             
             Object o = null;
 
@@ -1042,7 +1046,7 @@ public class UG {
 
     String _getAuthors() {
 
-        if (remoteType.equals(RemoteType.NONE)) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             
             Object o = null;
 
@@ -1062,7 +1066,7 @@ public class UG {
 
     String _getCompileDate() {
 
-        if (remoteType.equals(RemoteType.NONE)) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             
             Object o = null;
 
@@ -1082,7 +1086,7 @@ public class UG {
 
     static int _ugInit(String[] args) {
 
-        if (remoteType.equals(RemoteType.NONE)) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             
             Object o = null;
 
@@ -1119,7 +1123,7 @@ public class UG {
     @Deprecated
     static void _delete(long objPtr, long exportedClassPtr) {
 
-        if (remoteType.equals(RemoteType.NONE)) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             
             Vector xmlRpcParams = new Vector();
             xmlRpcParams.addElement(String.valueOf(objPtr));
@@ -1144,7 +1148,7 @@ public class UG {
      */
     static void _invalidate(SmartPointer p) {
 
-        if (remoteType.equals(RemoteType.NONE)) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             
             Vector xmlRpcParams = new Vector();
             xmlRpcParams.addElement(p);
