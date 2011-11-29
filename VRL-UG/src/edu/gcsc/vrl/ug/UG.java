@@ -5,6 +5,7 @@
 package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.io.VJarUtil;
+import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.Constants;
 import eu.mihosoft.vrl.system.VRL;
@@ -201,7 +202,9 @@ public class UG {
                     // generates jar file in plugin path
                     compiler.compile(
                             new edu.gcsc.vrl.ug.NativeAPICode(
-                            nativeAPI).getAllCodes(), Constants.PLUGIN_DIR);
+                            nativeAPI).getAllCodes(),
+                            VPropertyFolderManager.getPluginUpdatesFolder().
+                            getAbsolutePath());
 
                 } catch (Exception ex) {
                     Logger.getLogger(UG.class.getName()).
