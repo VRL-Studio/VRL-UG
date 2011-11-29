@@ -114,12 +114,21 @@ public class UGObject implements Serializable, UGObjectInterface {
                         constructorParameters = new Object[0];
                     }
 
-                    long address = (long) edu.gcsc.vrl.ug.UG.getInstance().
-                            newInstance(exportedClsPtr, constructorParameters);
-                    setPointer(new edu.gcsc.vrl.ug.Pointer(
-                            getClassName(), address, false));
+//                    long address = (long) edu.gcsc.vrl.ug.UG.getInstance().
+//                            newInstance(exportedClsPtr, constructorParameters);
+//                    
+//                    setPointer(new edu.gcsc.vrl.ug.Pointer(
+//                            getClassName(), address, false));
+
 //                    System.out.println(getClassName() + " >> New Instance: "
 //                            + getClassName() + " [" + address + "]");
+
+                    Pointer p = edu.gcsc.vrl.ug.UG.getInstance().
+                            newInstance(exportedClsPtr, constructorParameters);
+
+                    p.setClassName(getClassName());
+
+                    setPointer(p);
                 }
             }
         }
@@ -223,14 +232,14 @@ public class UGObject implements Serializable, UGObjectInterface {
             Object p = params[i];
 
             if (p == null) {
-                
+
                 String methodPrefix = "";
-                
-                if (obj!=null) {
+
+                if (obj != null) {
                     methodPrefix = obj.getClassName()
-                        + ".";
+                            + ".";
                 }
-                
+
                 throw new IllegalArgumentException(
                         "Method: \"" + methodPrefix + methodName
                         + "(): parameter " + i + " == NULL");
@@ -305,7 +314,6 @@ public class UGObject implements Serializable, UGObjectInterface {
         // request new constructor call
         constructorParameters = convertedParams;
         releaseThis();
-
     }
 
     /**
