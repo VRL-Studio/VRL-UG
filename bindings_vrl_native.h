@@ -57,14 +57,6 @@ JNIEXPORT jobject JNICALL Java_edu_gcsc_vrl_ug_UG_invokeFunction
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    ugInit
- * Signature: ([Ljava/lang/String;)I
- */
-JNIEXPORT jint JNICALL Java_edu_gcsc_vrl_ug_UG_ugInit
-  (JNIEnv *, jclass, jobjectArray);
-
-/*
- * Class:     edu_gcsc_vrl_ug_UG
  * Method:    getSvnRevision
  * Signature: ()Ljava/lang/String;
  */
@@ -95,6 +87,30 @@ JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG_getAuthors
 JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG_getCompileDate
   (JNIEnv *, jobject);
 
+/*
+ * Class:     edu_gcsc_vrl_ug_UG
+ * Method:    ugInit
+ * Signature: ([Ljava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_edu_gcsc_vrl_ug_UG_ugInit
+  (JNIEnv *, jclass, jobjectArray);
+
+/*
+ * Class:     edu_gcsc_vrl_ug_UG
+ * Method:    delete
+ * Signature: (JJ)V
+ */
+JNIEXPORT void JNICALL Java_edu_gcsc_vrl_ug_UG_delete
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     edu_gcsc_vrl_ug_UG
+ * Method:    invalidate
+ * Signature: (Ledu/gcsc/vrl/ug/SmartPointer;)V
+ */
+JNIEXPORT void JNICALL Java_edu_gcsc_vrl_ug_UG_invalidate
+  (JNIEnv *, jclass, jobject);
+
 #ifdef __cplusplus
 }
 #endif
@@ -112,33 +128,6 @@ extern "C" {
 #define edu_gcsc_vrl_ug_UG_MessageThread_NORM_PRIORITY 5L
 #undef edu_gcsc_vrl_ug_UG_MessageThread_MAX_PRIORITY
 #define edu_gcsc_vrl_ug_UG_MessageThread_MAX_PRIORITY 10L
-#ifdef __cplusplus
-}
-#endif
-#endif
-/* Header for class edu_gcsc_vrl_ug_MemoryManager */
-
-#ifndef _Included_edu_gcsc_vrl_ug_MemoryManager
-#define _Included_edu_gcsc_vrl_ug_MemoryManager
-#ifdef __cplusplus
-extern "C" {
-#endif
-/*
- * Class:     edu_gcsc_vrl_ug_MemoryManager
- * Method:    delete
- * Signature: (JJ)V
- */
-JNIEXPORT void JNICALL Java_edu_gcsc_vrl_ug_MemoryManager_delete
-  (JNIEnv *, jclass, jlong, jlong);
-
-/*
- * Class:     edu_gcsc_vrl_ug_MemoryManager
- * Method:    invalidate
- * Signature: (Ledu/gcsc/vrl/ug/SmartPointer;)V
- */
-JNIEXPORT void JNICALL Java_edu_gcsc_vrl_ug_MemoryManager_invalidate
-  (JNIEnv *, jclass, jobject);
-
 #ifdef __cplusplus
 }
 #endif
