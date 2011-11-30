@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import eu.mihosoft.vrl.io.VArgUtil;
 import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.io.VersionInfo;
 import eu.mihosoft.vrl.system.PluginAPI;
@@ -63,8 +64,13 @@ public class Configurator extends VPluginConfigurator {
         // define native lib location
         UG.setNativeLibFolder(getNativeLibFolder());
         
+        String option = VArgUtil.getArg(VRL.getCommandLineOptions(),"-rpc");
+        
+        System.out.println("**** OPTION: " + option);
+        
+        
         // initialize ug instance
-        UG.getInstance();
+        UG.getInstance(option);
 
         if (UG.isLibloaded()) {
             setDescription(UG.getInstance()._getDescription()
