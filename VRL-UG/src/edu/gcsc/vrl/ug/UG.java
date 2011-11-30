@@ -75,19 +75,20 @@ public class UG {
      * 
      * @param remoteType 
      */
-     static void setRemoteType(RemoteType remoteType) {
+    static void setRemoteType(RemoteType remoteType) {
         UG.remoteType = remoteType;
+        
+        System.out.println("***************** RPC-ROLE: "+remoteType);
     }
 
     /**
      *
      * @return 
      */
-     static RemoteType getRemoteType() {
+    static RemoteType getRemoteType() {
 
         return UG.remoteType;
     }
-    
     private static int defaultPort = 1099;
     private static String defaultHost = "localhost";
     private static XmlRpcClient xmlRpcClient;
@@ -186,7 +187,7 @@ public class UG {
 //        if (loadNativeLib && !remote) {
             System.loadLibrary("ug4");
             libLoaded = true;
-        } 
+        }
 //        // new experimental Code
 //        else if (loadNativeLib && remote) {
 //
@@ -198,11 +199,11 @@ public class UG {
         try {
 
             _ugInit(args);  //native
-            
+
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
-        
+
 ////        // check if remote, e.g. loadNative && !remote
 ////        if (loadNativeLib && !remote &&
 ////                ( remoteType.equals(RemoteType.SERVER) || 
@@ -230,10 +231,9 @@ public class UG {
 ////        } catch (Exception ex) {
 ////            ex.printStackTrace(System.err);
 ////        }
-            
+
     }
 
-    
     /**
      * instanciation only allowed in this class
      */
@@ -290,73 +290,74 @@ public class UG {
     }
 
     private UG(RemoteType remoteType) {
-      
-        
-        if (remoteType.equals(RemoteType.CLIENT)) {
-            
-                      
+
+        setRemoteType(remoteType);
+
 //         // we must set the singleton instance to prevent
 //        // calling multiple constructors.
 //        // doing this in the corresponding getter methods does not work anymore
 //        // as we need the instance for searching a compiled UG-API.
         ugInstance = this;
-        
 
-        // load api if compatible; rebuild otherwise
-        try {
-            Class<?> cls = findCompatibleAPI(ugInstance);
+        if (!remoteType.equals(RemoteType.SERVER)) {
 
-            api = cls;
 
-            if (cls == null) {
+            // load api if compatible; rebuild otherwise
+            try {
+                Class<?> cls = findCompatibleAPI(ugInstance);
 
-                // load native library and connect to ug lib to generate api
-                connectToNativeUG(true);
+                api = cls;
 
-                NativeAPIInfo nativeAPI = _convertRegistryInfo();
-                Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
+                if (cls == null) {
 
-                try {
+                    // load native library and connect to ug lib to generate api
+                    connectToNativeUG(true);
 
-                    recompiled = true;
+                    NativeAPIInfo nativeAPI = _convertRegistryInfo();
+                    Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
 
-                    System.err.println(
-                            VTerminalUtil.red(
-                            " --> VRL-UG-API missing.\n"
-                            + " --> Recompiling API..."));
+                    try {
 
-                    SplashScreenGenerator.printBootMessage(
-                            ">> UG: recompiling API (this may take a while) ...");
+                        recompiled = true;
 
-                    // generates jar file in plugin path
-                    compiler.compile(
-                            new edu.gcsc.vrl.ug.NativeAPICode(
-                            nativeAPI).getAllCodes(),
-                            VPropertyFolderManager.getPluginUpdatesFolder().
-                            getAbsolutePath());
+                        System.err.println(
+                                VTerminalUtil.red(
+                                " --> VRL-UG-API missing.\n"
+                                + " --> Recompiling API..."));
 
-                } catch (Exception ex) {
-                    Logger.getLogger(UG.class.getName()).
-                            log(Level.SEVERE, null, ex);
+                        SplashScreenGenerator.printBootMessage(
+                                ">> UG: recompiling API (this may take a while) ...");
+
+                        // generates jar file in plugin path
+                        compiler.compile(
+                                new edu.gcsc.vrl.ug.NativeAPICode(
+                                nativeAPI).getAllCodes(),
+                                VPropertyFolderManager.getPluginUpdatesFolder().
+                                getAbsolutePath());
+
+                    } catch (Exception ex) {
+                        Logger.getLogger(UG.class.getName()).
+                                log(Level.SEVERE, null, ex);
+                    }
                 }
+
+            } catch (Exception ex) {
+                Logger.getLogger(UG.class.getName()).
+                        log(Level.SEVERE, null, ex);
             }
 
-        } catch (Exception ex) {
-            Logger.getLogger(UG.class.getName()).
-                    log(Level.SEVERE, null, ex);
+            initialized = libLoaded;
+
+
+
         }
 
-        initialized = libLoaded;
-
+        if (remoteType == RemoteType.CLIENT) {
             //execute(java -jar params)
-          createXmlRpcClient(defaultHost, defaultPort);
-
+            createXmlRpcClient(defaultHost, defaultPort);
         } else if (remoteType.equals(RemoteType.SERVER)) {
-
-           createXmlRpcServer(defaultPort);
+            createXmlRpcServer(defaultPort);
         }
-        
-
 
     }
 
@@ -497,9 +498,9 @@ public class UG {
      *        how UG should act as Server or Client
      * @return the instance of this singleton
      */
-    public static synchronized UG getInstance(VisualCanvas canvas, 
+    public static synchronized UG getInstance(VisualCanvas canvas,
             RemoteType remoteType) {
-        
+
         if (ugInstance == null) {
 
             ugInstance = new UG(remoteType);
@@ -514,7 +515,25 @@ public class UG {
 
         return ugInstance;
     }
-    
+
+    public static synchronized UG getInstance(String option) {
+
+        if (option != null) {
+            
+            if (option.toLowerCase().equals("server")) {
+                return getInstance(null, RemoteType.SERVER);
+
+            } else if (option.toLowerCase().equals("client")) {
+                return getInstance(null, RemoteType.CLIENT);
+
+            } else if (option.toLowerCase().equals("none")) {
+                return getInstance(null, RemoteType.NONE);
+            }
+        }
+
+        return getInstance();
+    }
+
 //    /**
 //     * <p>
 //     * Returns the instance of this singleton. If it does not exist it will be
@@ -546,7 +565,6 @@ public class UG {
 //
 //        return ugInstance;
 //    }
-
     /**
      * <p>
      * Returns the instance of this singleton.
@@ -568,7 +586,7 @@ public class UG {
      * </p>
      */
     public static UG getInstance() {
-        return getInstance(null,RemoteType.NONE);
+        return getInstance(null, RemoteType.NONE);
     }
 
     /**
@@ -703,7 +721,7 @@ public class UG {
         PropertyHandlerMapping mapping = new PropertyHandlerMapping();
 
         try {
-            mapping.addHandler("UG", UG.class);
+            mapping.addHandler("RpcHandler", RpcHandler.class);
         } catch (XmlRpcException ex) {
             Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -763,6 +781,12 @@ public class UG {
 
         return result;
     }
+    
+    public static int hello() {
+        System.out.println(" ---- HELLO ----");
+        
+        return 1;
+    }
 
     // ********************************************
     // ************** NATIVE METHODS **************
@@ -791,7 +815,7 @@ public class UG {
 
     native String getCompileDate();
 
-    static native int ugInit(String[] args);
+    public static native int ugInit(String[] args);
 
     /**
      * Deallocates specified memory. The destructor of the specified class
@@ -846,7 +870,7 @@ public class UG {
     final NativeAPIInfo _convertRegistryInfo() {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Object o = null;
 
             try {
@@ -870,7 +894,7 @@ public class UG {
             String methodName, Object[] params) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Object o = null;
 
             Vector xmlRpcParams = new Vector();
@@ -902,7 +926,7 @@ public class UG {
     long _newInstance(long exportedClassPtr, Object[] parameters) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Object o = null;
 
             Vector xmlRpcParams = new Vector();
@@ -932,7 +956,7 @@ public class UG {
     long _getExportedClassPtrByName(String name, boolean classGrp) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Object o = null;
 
             Vector xmlRpcParams = new Vector();
@@ -959,7 +983,7 @@ public class UG {
     String _getDefaultClassNameFromGroup(String grpName) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Object o = null;
 
             Vector xmlRpcParams = new Vector();
@@ -982,7 +1006,7 @@ public class UG {
     Object _invokeFunction(String name, boolean readOnly, Object[] params) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Object o = null;
 
             Vector xmlRpcParams = new Vector();
@@ -1010,7 +1034,7 @@ public class UG {
     String _getSvnRevision() {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Object o = null;
 
             try {
@@ -1030,7 +1054,7 @@ public class UG {
     String _getDescription() {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Object o = null;
 
             try {
@@ -1050,7 +1074,7 @@ public class UG {
     String _getAuthors() {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Object o = null;
 
             try {
@@ -1070,7 +1094,7 @@ public class UG {
     String _getCompileDate() {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Object o = null;
 
             try {
@@ -1090,17 +1114,20 @@ public class UG {
     static int _ugInit(String[] args) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Object o = null;
 
             Vector xmlRpcParams = new Vector();
+            
+            xmlRpcParams.add(args);
 
-            for (Object op : args) {
-                xmlRpcParams.addElement(op);
-            }
+//            for (Object op : args) {
+//                xmlRpcParams.addElement(op);
+//            }
 
             try {
-                o = xmlRpcClient.execute("UG.ugInit", xmlRpcParams);
+//                o = xmlRpcClient.execute("UG.ugInit", xmlRpcParams);
+                o = xmlRpcClient.execute("RpcHandler.showMessage", new Vector());
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1127,7 +1154,7 @@ public class UG {
     static void _delete(long objPtr, long exportedClassPtr) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Vector xmlRpcParams = new Vector();
             xmlRpcParams.addElement(String.valueOf(objPtr));
             xmlRpcParams.addElement(String.valueOf(exportedClassPtr));
@@ -1152,7 +1179,7 @@ public class UG {
     static void _invalidate(SmartPointer p) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Vector xmlRpcParams = new Vector();
             xmlRpcParams.addElement(p);
 
