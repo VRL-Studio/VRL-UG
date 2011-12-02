@@ -77,8 +77,8 @@ public class UG {
      */
     static void setRemoteType(RemoteType remoteType) {
         UG.remoteType = remoteType;
-        
-        System.out.println("***************** RPC-ROLE: "+remoteType);
+
+        System.out.println("***************** RPC-ROLE: " + remoteType);
     }
 
     /**
@@ -519,7 +519,7 @@ public class UG {
     public static synchronized UG getInstance(String option) {
 
         if (option != null) {
-            
+
             if (option.toLowerCase().equals("server")) {
                 return getInstance(null, RemoteType.SERVER);
 
@@ -722,6 +722,7 @@ public class UG {
 
         try {
             mapping.addHandler("RpcHandler", RpcHandler.class);
+
         } catch (XmlRpcException ex) {
             Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -781,10 +782,10 @@ public class UG {
 
         return result;
     }
-    
+
     public static int hello() {
         System.out.println(" ---- HELLO ----");
-        
+
         return 1;
     }
 
@@ -1118,19 +1119,20 @@ public class UG {
             Object o = null;
 
             Vector xmlRpcParams = new Vector();
-            
-            xmlRpcParams.add(args);
+
+//            xmlRpcParams.add(args);
 
 //            for (Object op : args) {
 //                xmlRpcParams.addElement(op);
 //            }
 
-//            xmlRpcParams.add("_ugInit");
-            
+            xmlRpcParams.add("_ugInit");
+
             try {
-                o = xmlRpcClient.execute("RpcHandler.ugInit", xmlRpcParams);
-//                o = xmlRpcClient.execute("RpcHandler.changeMessage", xmlRpcParams);
-//                o = xmlRpcClient.execute("RpcHandler.show", xmlRpcParams);
+//                o = xmlRpcClient.execute("RpcHandler.ugInit", xmlRpcParams);
+                o = xmlRpcClient.execute("RpcHandler.showMessage", new Vector()); // works with non static method!?
+                o = xmlRpcClient.execute("RpcHandler.show", xmlRpcParams);
+                o = xmlRpcClient.execute("RpcHandler.changeMessage", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
