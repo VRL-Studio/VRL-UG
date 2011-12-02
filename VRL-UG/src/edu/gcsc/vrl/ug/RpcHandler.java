@@ -42,23 +42,23 @@ import java.util.Vector;
 public class RpcHandler {
 
     static String message = "first call";
-    private static UG server = null;
+//    private static UG server = null;
 
-    static {
-        server = UG.getInstance(null, RemoteType.SERVER);
-    }
+//    static {
+//        server = UG.getInstance(null, RemoteType.SERVER);
+//    }
 
-    public static int show(String message) {
+    public int show(String message) {
         System.out.println("SERVER: " + message);
         return 1;
     }
 
-    public static int showMessage() {
+    public int showMessage() {
         System.out.println(message);
         return 1;
     }
 
-    public static int changeMessage(String message) {
+    public int changeMessage(String message) {
         System.out.println("old: " + RpcHandler.message);
 
         RpcHandler.message = message;
@@ -92,102 +92,102 @@ public class RpcHandler {
 //        return results;
 //    }
 
-    // ********************************************
-    // ************** NATIVE METHODS **************
-    // ********************************************
-    public static final NativeAPIInfo convertRegistryInfo() {
-        show("convertRegistryInfo");
-        
-        return server.convertRegistryInfo();
-    }
-
-    public static Object invokeMethod(
-            String exportedClassName, long objPtr, boolean readOnly,
-            String methodName, Object[] params) {
-        show("invokeMethod");
-
-        return server.invokeMethod(
-                exportedClassName, objPtr, readOnly, methodName, params);
-    }
-
-    public static long newInstance(long exportedClassPtr, Object[] parameters) {
-        show("newInstance");
-
-        return server.newInstance(exportedClassPtr, parameters);
-    }
-
-    public static long getExportedClassPtrByName(String name, boolean classGrp) {
-        show("getExportedClassPtrByName");
-
-        return server.getExportedClassPtrByName(name, classGrp);
-    }
-
-    public static String getDefaultClassNameFromGroup(String grpName) {
-        show("getDefaultClassNameFromGroup");
-
-        return server.getDefaultClassNameFromGroup(grpName);
-    }
-
-    public static Object invokeFunction(String name, boolean readOnly, Object[] params) {
-        show("invokeFunction");
-
-        return server.invokeFunction(name, readOnly, params);
-    }
-
-    public static String getSvnRevision() {
-        show("getSvnRevision");
-
-        return server.getSvnRevision();
-    }
-
-    public static String getDescription() {
-        show("getDescription");
-
-        return server.getDescription();
-    }
-
-    public static String getAuthors() {
-        show("getAuthors");
-
-        return server.getAuthors();
-    }
-
-    public static String getCompileDate() {
-        show("getCompileDate");
-
-        return server.getCompileDate();
-    }
-
-    public static int ugInit(String[] args) {
-        show("ugInit");
-
-        return server.ugInit(args);
-    }
-
-    /**
-     * Deallocates specified memory. The destructor of the specified class
-     * will be called.
-     * @param objPtr object pointer
-     * @param exportedClassPtr pointer of the exported class
-     */
-    @Deprecated
-    public static boolean delete(long objPtr, long exportedClassPtr) {
-        show("delete");
-
-        server.delete(objPtr, exportedClassPtr);
-
-        return true;
-    }
-
-    /**
-     * Invalidates the specified smart pointer.
-     * @param p smart-pointer to invalidate
-     */
-    public static boolean invalidate(SmartPointer p) {
-        show("invalidate");
-
-        server.invalidate(p);
-
-        return true;
-    }
+//    // ********************************************
+//    // ************** NATIVE METHODS **************
+//    // ********************************************
+//    public static final NativeAPIInfo convertRegistryInfo() {
+//        show("convertRegistryInfo");
+//        
+//        return server.convertRegistryInfo();
+//    }
+//
+//    public static Object invokeMethod(
+//            String exportedClassName, long objPtr, boolean readOnly,
+//            String methodName, Object[] params) {
+//        show("invokeMethod");
+//
+//        return server.invokeMethod(
+//                exportedClassName, objPtr, readOnly, methodName, params);
+//    }
+//
+//    public static long newInstance(long exportedClassPtr, Object[] parameters) {
+//        show("newInstance");
+//
+//        return server.newInstance(exportedClassPtr, parameters);
+//    }
+//
+//    public static long getExportedClassPtrByName(String name, boolean classGrp) {
+//        show("getExportedClassPtrByName");
+//
+//        return server.getExportedClassPtrByName(name, classGrp);
+//    }
+//
+//    public static String getDefaultClassNameFromGroup(String grpName) {
+//        show("getDefaultClassNameFromGroup");
+//
+//        return server.getDefaultClassNameFromGroup(grpName);
+//    }
+//
+//    public static Object invokeFunction(String name, boolean readOnly, Object[] params) {
+//        show("invokeFunction");
+//
+//        return server.invokeFunction(name, readOnly, params);
+//    }
+//
+//    public static String getSvnRevision() {
+//        show("getSvnRevision");
+//
+//        return server.getSvnRevision();
+//    }
+//
+//    public static String getDescription() {
+//        show("getDescription");
+//
+//        return server.getDescription();
+//    }
+//
+//    public static String getAuthors() {
+//        show("getAuthors");
+//
+//        return server.getAuthors();
+//    }
+//
+//    public static String getCompileDate() {
+//        show("getCompileDate");
+//
+//        return server.getCompileDate();
+//    }
+//
+//    public static int ugInit(String[] args) {
+//        show("ugInit");
+//
+//        return server.ugInit(args);
+//    }
+//
+//    /**
+//     * Deallocates specified memory. The destructor of the specified class
+//     * will be called.
+//     * @param objPtr object pointer
+//     * @param exportedClassPtr pointer of the exported class
+//     */
+//    @Deprecated
+//    public static boolean delete(long objPtr, long exportedClassPtr) {
+//        show("delete");
+//
+//        server.delete(objPtr, exportedClassPtr);
+//
+//        return true;
+//    }
+//
+//    /**
+//     * Invalidates the specified smart pointer.
+//     * @param p smart-pointer to invalidate
+//     */
+//    public static boolean invalidate(SmartPointer p) {
+//        show("invalidate");
+//
+//        server.invalidate(p);
+//
+//        return true;
+//    }
 }
