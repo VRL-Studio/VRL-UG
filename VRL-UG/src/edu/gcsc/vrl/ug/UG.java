@@ -874,7 +874,7 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("UG.convertRegistryInfo", nullVector);
+                o = xmlRpcClient.execute("RpcHandler.convertRegistryInfo", nullVector);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -910,7 +910,7 @@ public class UG {
 
 
             try {
-                o = xmlRpcClient.execute("UG.invokeMethod", xmlRpcParams);
+                o = xmlRpcClient.execute("RpcHandler.invokeMethod", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -937,7 +937,7 @@ public class UG {
             }
 
             try {
-                o = xmlRpcClient.execute("UG.newInstance", xmlRpcParams);
+                o = xmlRpcClient.execute("RpcHandler.newInstance", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -965,7 +965,7 @@ public class UG {
 
 
             try {
-                o = xmlRpcClient.execute("UG.getExportedClassPtrByName", xmlRpcParams);
+                o = xmlRpcClient.execute("RpcHandler.getExportedClassPtrByName", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -990,7 +990,7 @@ public class UG {
             xmlRpcParams.addElement(grpName);
 
             try {
-                o = xmlRpcClient.execute("UG.getDefaultClassNameFromGroup", xmlRpcParams);
+                o = xmlRpcClient.execute("RpcHandler.getDefaultClassNameFromGroup", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1018,7 +1018,7 @@ public class UG {
             }
 
             try {
-                o = xmlRpcClient.execute("UG.invokeFunction", xmlRpcParams);
+                o = xmlRpcClient.execute("RpcHandler.invokeFunction", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1038,7 +1038,7 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("UG.getSvnRevision", nullVector);
+                o = xmlRpcClient.execute("RpcHandler.getSvnRevision", nullVector);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1058,7 +1058,7 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("UG.getDescription", nullVector);
+                o = xmlRpcClient.execute("RpcHandler.getDescription", nullVector);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1078,7 +1078,7 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("UG.getAuthors", nullVector);
+                o = xmlRpcClient.execute("RpcHandler.getAuthors", nullVector);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1098,7 +1098,7 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("UG.getCompileDate", nullVector);
+                o = xmlRpcClient.execute("RpcHandler.getCompileDate", nullVector);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1125,9 +1125,12 @@ public class UG {
 //                xmlRpcParams.addElement(op);
 //            }
 
+//            xmlRpcParams.add("_ugInit");
+            
             try {
-//                o = xmlRpcClient.execute("UG.ugInit", xmlRpcParams);
-                o = xmlRpcClient.execute("RpcHandler.showMessage", new Vector());
+                o = xmlRpcClient.execute("RpcHandler.ugInit", xmlRpcParams);
+//                o = xmlRpcClient.execute("RpcHandler.changeMessage", xmlRpcParams);
+//                o = xmlRpcClient.execute("RpcHandler.show", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1160,7 +1163,7 @@ public class UG {
             xmlRpcParams.addElement(String.valueOf(exportedClassPtr));
 
             try {
-                xmlRpcClient.execute("UG.delete", xmlRpcParams);
+                xmlRpcClient.execute("RpcHandler.delete", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1184,7 +1187,7 @@ public class UG {
             xmlRpcParams.addElement(p);
 
             try {
-                xmlRpcClient.execute("UG.invalidate", xmlRpcParams);
+                xmlRpcClient.execute("RpcHandler.invalidate", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
