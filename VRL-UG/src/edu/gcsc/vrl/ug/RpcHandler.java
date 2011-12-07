@@ -4,8 +4,12 @@ package edu.gcsc.vrl.ug;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+import eu.mihosoft.vrl.io.Base64;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import sun.misc.BASE64Encoder;
 
 /**
  * NOTICE: 
@@ -44,25 +48,20 @@ public class RpcHandler {
 
     static String message = "first call";
 //    private static UG server = null;
-    private static final UG server  = UG.getInstance(null, RemoteType.SERVER);
-        
+    private static final UG server = UG.getInstance(null, RemoteType.SERVER);
 
-    static {
-//        server = UG.getInstance(null, RemoteType.SERVER);
-////        
-//        System.out.println("##################### STATIC{} server._getAuthors() ");
-//        System.out.println( server._getAuthors());
-    }
-
+//    //TEST FUNCTION
     public int show(String message) {
         System.out.println("RpcHandler.show: " + message);
         return 1;
     }
 
+//    //TEST FUNCTION
     public int showMessage() {
         System.out.println("RpcHandler.showMessage: " + message);
         return 1;
     }
+//    //TEST FUNCTION
 
     public int changeMessage(String message) {
         System.out.println("RpcHandler.changeMessage: " + "old: " + RpcHandler.message);
@@ -73,38 +72,19 @@ public class RpcHandler {
 
         return 2;
     }
-//
-////    public Vector doOnServerAndSendResults(Vector param){//dont work because signature of method is not clear 
-//    public Vector doOnServerAndSendResults(String s1, String s2, Integer int1) {
-//
-//        System.out.println("START doOnServerAndSendResults SERVER");
-//
-//        Vector results = new Vector(3 * 2);
-//
-//        results.add(s1);
-//        results.add(s2);
-//        results.add(int1);
-//
-//        results.add(s1 + "server");
-//        results.add(s2 + "int -234563");
-//        results.add(int1 - 234563);
-//
-//        for (Object o : results) {
-//            System.out.println("on server ->" + o);
-//        }
-//
-//        System.out.println("END doOnServerAndSendResults SERVER");
-//
-//        return results;
-//    }
 
     // ********************************************
     // ************** NATIVE METHODS **************
     // ********************************************
-    public final NativeAPIInfo convertRegistryInfo() {
+//    public final NativeAPIInfo convertRegistryInfo() {
+    public final Object convertRegistryInfo() {
         show("convertRegistryInfo");
 
-        return server._convertRegistryInfo();
+        NativeAPIInfo napiInfo=server._convertRegistryInfo();
+        
+//        Base64.encodeObject(napiInfo);
+        
+        return napiInfo;
     }
 
     public Object invokeMethod(
@@ -165,20 +145,21 @@ public class RpcHandler {
     }
 
     public Integer ugInit(List<String> args) {
-        show("#### "+this.getClass().getName() +" ugInit( String[] args )");
+        show("#### " + this.getClass().getName() + " ugInit( String[] args )");
 
         String[] argsArray = new String[args.size()];
-        
+
         argsArray = args.toArray(argsArray);
-        
+
 //        return Integer.valueOf(456);
         return server._ugInit(argsArray);
     }
-    public Integer ugInit() {
-        show("**** "+this.getClass().getName() +" ugInit( void )");
-
-        return Integer.valueOf(123);
-    }
+//    //TEST DUMMY FUNCTION
+//    public Integer ugInit() {
+//        show("**** "+this.getClass().getName() +" ugInit( void )");
+//
+//        return Integer.valueOf(123);
+//    }
 
     /**
      * Deallocates specified memory. The destructor of the specified class
@@ -195,15 +176,21 @@ public class RpcHandler {
         return true;
     }
 
-//    /**
-//     * Invalidates the specified smart pointer.
-//     * @param p smart-pointer to invalidate
-//     */
-//    public boolean invalidate(SmartPointer p) {
-//        show("invalidate");
-//
-//        server._invalidate(p);
-//
-//        return true;
-//    }
+    /**
+     * Invalidates the specified smart pointer.
+     * @param o smart-pointer as Object to invalidate
+     */
+    public boolean invalidate(Object o) {
+        show("invalidate");
+
+        if (o instanceof SmartPointer) {
+            SmartPointer p = (SmartPointer) o;
+
+            server._invalidate(p);
+
+            return true;
+        }
+
+        return false;
+    }
 }

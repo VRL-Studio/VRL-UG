@@ -29,6 +29,17 @@ class SmartPointer extends Pointer {
 //        System.out.println("[SMART Java]: " + getAddress() + ", cont=" + isConst());
     }
 
+//    /**
+//     *  !!! DO NOT USE !!! 
+//     * NEEDED TO FULFIL JAVABEAN SECIFICATIONS AND
+//     * BE ABLE TO BE SEND WITH XMLRPC ! ! !
+//     * 
+//     * @param smartPointer the smartPointer to set
+//     */
+//    public void setSmartPointer(byte[] smartPointer) {
+//        this.smartPointer = smartPointer;
+//    }
+    
     /**
      * Returns the memory that contains the native smart pointer.
      * @return the smartPointer
@@ -54,4 +65,6 @@ class SmartPointer extends Pointer {
             super.finalize();
         }
     }
+
+    
 }
