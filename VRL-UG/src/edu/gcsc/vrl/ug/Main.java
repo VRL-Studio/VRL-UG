@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
 
         String[] params = {"-property-folder-suffix", "numerics-server",
-            "-plugin-checksum-test", "no", "-rpc", "server"};
+            "-plugin-checksum-test", "yes", "-rpc", "server"};
         
         VRL.initAll(params);
 

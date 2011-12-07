@@ -47,13 +47,13 @@ public class UGObject implements Serializable, UGObjectInterface {
 //            System.out.println(">>> class-group-name: " + getClassGroupName());
             long exportedClsPtr = Pointer.NULL;
             exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
-                    _getExportedClassPtrByName(getClassGroupName(),
+                    getExportedClassPtrByName(getClassGroupName(),
                     isClassGroupObject());
 
 
             if (exportedClsPtr != Pointer.NULL) {
                 setClassName(edu.gcsc.vrl.ug.UG.getInstance().
-                        _getDefaultClassNameFromGroup(getClassGroupName()));
+                        getDefaultClassNameFromGroup(getClassGroupName()));
             }
 
 //            System.out.println(">>> class-name: " + getClassName());
@@ -77,18 +77,18 @@ public class UGObject implements Serializable, UGObjectInterface {
 
             if (isClassGroupObject()) {
                 exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
-                        _getExportedClassPtrByName(getClassGroupName(),
+                        getExportedClassPtrByName(getClassGroupName(),
                         isClassGroupObject());
             } else {
                 exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
-                        _getExportedClassPtrByName(getClassName(),
+                        getExportedClassPtrByName(getClassName(),
                         isClassGroupObject());
             }
 
             if (isClassGroupObject() && exportedClsPtr != Pointer.NULL) {
 //                setClassGroupName(className);
                 setClassName(edu.gcsc.vrl.ug.UG.getInstance().
-                        _getDefaultClassNameFromGroup(getClassGroupName()));
+                        getDefaultClassNameFromGroup(getClassGroupName()));
             }
 
 //            System.out.println("ClassName=" + getClassName());
@@ -115,7 +115,7 @@ public class UGObject implements Serializable, UGObjectInterface {
                     }
 
                     long address = (long) edu.gcsc.vrl.ug.UG.getInstance().
-                            _newInstance(exportedClsPtr, constructorParameters);
+                            newInstance(exportedClsPtr, constructorParameters);
                     setPointer(new edu.gcsc.vrl.ug.Pointer(
                             getClassName(), address, false));
 //                    System.out.println(getClassName() + " >> New Instance: "
@@ -205,7 +205,7 @@ public class UGObject implements Serializable, UGObjectInterface {
 
         Object[] convertedParams = convertParams(null, params, function);
 
-        return edu.gcsc.vrl.ug.UG.getInstance()._invokeFunction(
+        return edu.gcsc.vrl.ug.UG.getInstance().invokeFunction(
                 function, false, convertedParams);
     }
 
@@ -269,7 +269,7 @@ public class UGObject implements Serializable, UGObjectInterface {
 //            System.out.println("**M:" + methodName);
 //            System.out.println("**P:" + convertedParams);
 
-            result = edu.gcsc.vrl.ug.UG.getInstance()._invokeMethod(
+            result = edu.gcsc.vrl.ug.UG.getInstance().invokeMethod(
                     getClassName(),
                     getPointer().getAddress(), isConst,
                     methodName, convertedParams);

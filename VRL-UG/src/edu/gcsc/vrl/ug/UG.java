@@ -20,6 +20,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -175,6 +177,13 @@ public class UG {
 //        UG.nativeClasses = nativeClasses;
 //    }
     public static void connectToNativeUG(boolean loadNativeLib) {
+
+        if (remoteType == RemoteType.CLIENT) {
+            System.err.println("Cannot connect to native UG in client mode!");
+            ugInit(new String[]{});  //non native
+            return;
+        }
+
         // initialize native ug libraries
         String pluginPath = getNativeLibFolder() + "/eu/mihosoft/vrl/natives/"
                 + VSysUtil.getPlatformSpecificPath() + "plugins".replace("/", File.separator);
@@ -198,7 +207,7 @@ public class UG {
 
         try {
 
-            _ugInit(args);  //native
+            ugInit(args);  //non native
 
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
@@ -243,6 +252,8 @@ public class UG {
         // doing this in the corresponding getter methods does not work anymore
         // as we need the instance for searching a compiled UG-API.
         ugInstance = this;
+        
+        System.out.println("---- test ----");
 
         // load api if compatible; rebuild otherwise
         try {
@@ -255,7 +266,7 @@ public class UG {
                 // load native library and connect to ug lib to generate api
                 connectToNativeUG(true);
 
-                NativeAPIInfo nativeAPI = _convertRegistryInfo();
+                NativeAPIInfo nativeAPI = convertRegistryInfo();
                 Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
 
                 try {
@@ -299,6 +310,8 @@ public class UG {
 //        // as we need the instance for searching a compiled UG-API.
         ugInstance = this;
 
+
+
         if (!remoteType.equals(RemoteType.SERVER)) {
 
 
@@ -310,10 +323,12 @@ public class UG {
 
                 if (cls == null) {
 
-                    // load native library and connect to ug lib to generate api
-                    connectToNativeUG(true);
+                    if (remoteType == RemoteType.NONE) {
+                        // load native library and connect to ug lib to generate api
+                        connectToNativeUG(true);
+                    }
 
-                    NativeAPIInfo nativeAPI = _convertRegistryInfo();
+                    NativeAPIInfo nativeAPI = convertRegistryInfo();
                     Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
 
                     try {
@@ -348,14 +363,15 @@ public class UG {
 
             initialized = libLoaded;
 
-
-
         }
 
         if (remoteType == RemoteType.CLIENT) {
             //execute(java -jar params)
             createXmlRpcClient(defaultHost, defaultPort);
+
         } else if (remoteType.equals(RemoteType.SERVER)) {
+            // load native library and connect to ug lib to generate api
+            connectToNativeUG(true);
             createXmlRpcServer(defaultPort);
         }
 
@@ -737,6 +753,7 @@ public class UG {
 
         XmlRpcServerConfigImpl config = new XmlRpcServerConfigImpl();
 
+        //aktiviere erweiterungen
         config.setEnabledForExtensions(true);
 
         xmlRpcServer = webServer.getXmlRpcServer();
@@ -775,6 +792,7 @@ public class UG {
             Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        //aktiviere erweiterungen
         config.setEnabledForExtensions(true);
 
         xmlRpcClient = new XmlRpcClient();
@@ -783,40 +801,35 @@ public class UG {
         return result;
     }
 
-    public static int hello() {
-        System.out.println(" ---- HELLO ----");
-
-        return 1;
-    }
 
     // ********************************************
     // ************** NATIVE METHODS **************
     // ********************************************
-    final native NativeAPIInfo convertRegistryInfo();
+    final native NativeAPIInfo _convertRegistryInfo();
 
-    native Object invokeMethod(
+    native Object _invokeMethod(
             String exportedClassName,
             long objPtr, boolean readOnly,
             String methodName, Object[] params);
 
-    native long newInstance(long exportedClassPtr, Object[] parameters);
+    native long _newInstance(long exportedClassPtr, Object[] parameters);
 
-    native long getExportedClassPtrByName(String name, boolean classGrp);
+    native long _getExportedClassPtrByName(String name, boolean classGrp);
 
-    native String getDefaultClassNameFromGroup(String grpName);
+    native String _getDefaultClassNameFromGroup(String grpName);
 
-    native Object invokeFunction(String name,
+    native Object _invokeFunction(String name,
             boolean readOnly, Object[] params);
 
-    native String getSvnRevision();
+    native String _getSvnRevision();
 
-    native String getDescription();
+    native String _getDescription();
 
-    native String getAuthors();
+    native String _getAuthors();
 
-    native String getCompileDate();
+    native String _getCompileDate();
 
-    public static native int ugInit(String[] args);
+    public static native int _ugInit(String[] args);
 
     /**
      * Deallocates specified memory. The destructor of the specified class
@@ -825,13 +838,13 @@ public class UG {
      * @param exportedClassPtr pointer of the exported class
      */
     @Deprecated
-    native static void delete(long objPtr, long exportedClassPtr);
+    native static void _delete(long objPtr, long exportedClassPtr);
 
     /**
      * Invalidates the specified smart pointer.
      * @param p smart-pointer to invalidate
      */
-    native static void invalidate(SmartPointer p);
+    native static void _invalidate(SmartPointer p);
     //
     //
     /**
@@ -868,7 +881,7 @@ public class UG {
     //
     // Remenber all _functions() are native !!!
     //
-    final NativeAPIInfo _convertRegistryInfo() {
+    final NativeAPIInfo convertRegistryInfo() {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
@@ -887,11 +900,11 @@ public class UG {
 
         } else {
 
-            return convertRegistryInfo();
+            return _convertRegistryInfo();
         }
     }
 
-    Object _invokeMethod(String exportedClassName, long objPtr, boolean readOnly,
+    Object invokeMethod(String exportedClassName, long objPtr, boolean readOnly,
             String methodName, Object[] params) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
@@ -920,11 +933,11 @@ public class UG {
 
         } else {
 
-            return invokeMethod(exportedClassName, objPtr, readOnly, methodName, params);
+            return _invokeMethod(exportedClassName, objPtr, readOnly, methodName, params);
         }
     }
 
-    long _newInstance(long exportedClassPtr, Object[] parameters) {
+    long newInstance(long exportedClassPtr, Object[] parameters) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
@@ -950,11 +963,11 @@ public class UG {
 
         } else {
 
-            return newInstance(exportedClassPtr, parameters);
+            return _newInstance(exportedClassPtr, parameters);
         }
     }
 
-    long _getExportedClassPtrByName(String name, boolean classGrp) {
+    long getExportedClassPtrByName(String name, boolean classGrp) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
@@ -977,11 +990,11 @@ public class UG {
             return (Long) o;
         } else {
 
-            return getExportedClassPtrByName(name, classGrp);
+            return _getExportedClassPtrByName(name, classGrp);
         }
     }
 
-    String _getDefaultClassNameFromGroup(String grpName) {
+    String getDefaultClassNameFromGroup(String grpName) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
@@ -1000,11 +1013,11 @@ public class UG {
 
         } else {
 
-            return getDefaultClassNameFromGroup(grpName);
+            return _getDefaultClassNameFromGroup(grpName);
         }
     }
 
-    Object _invokeFunction(String name, boolean readOnly, Object[] params) {
+    Object invokeFunction(String name, boolean readOnly, Object[] params) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
@@ -1028,11 +1041,11 @@ public class UG {
 
         } else {
 
-            return invokeFunction(name, readOnly, params);
+            return _invokeFunction(name, readOnly, params);
         }
     }
 
-    String _getSvnRevision() {
+    String getSvnRevision() {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
@@ -1048,11 +1061,11 @@ public class UG {
 
         } else {
 
-            return getSvnRevision();
+            return _getSvnRevision();
         }
     }
 
-    String _getDescription() {
+    String getDescription() {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
@@ -1068,11 +1081,11 @@ public class UG {
 
         } else {
 
-            return getDescription();
+            return _getDescription();
         }
     }
 
-    String _getAuthors() {
+    String getAuthors() {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
@@ -1088,11 +1101,11 @@ public class UG {
 
         } else {
 
-            return getAuthors();
+            return _getAuthors();
         }
     }
 
-    String _getCompileDate() {
+    String getCompileDate() {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
@@ -1108,44 +1121,62 @@ public class UG {
 
         } else {
 
-            return getCompileDate();
+            return _getCompileDate();
         }
     }
 
-    static int _ugInit(String[] args) {
+    static int ugInit(String[] args) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
             Object o = null;
 
-            Vector xmlRpcParams = new Vector();
+            ArrayList<Object> xmlRpcParams = new ArrayList<Object>();
 
-//            xmlRpcParams.add(args);
+            /*ENTWEDER*/
+//            xmlRpcParams.add(Arrays.asList(args)); //SCHWERWIEGEND: No method matching arguments: [Ljava.lang.Object;
 
+//            /*ODER*/
 //            for (Object op : args) {
-//                xmlRpcParams.addElement(op);
+//                xmlRpcParams.addElement(op); // SCHWERWIEGEND: No method matching arguments: java.lang.String
 //            }
 
-            xmlRpcParams.add("_ugInit");
+
+            ArrayList<Object> xmlRpcParams2 = new ArrayList<Object>();
+            xmlRpcParams2.add("Client._ugInit");
 
             try {
+
+                // start following method-calls work with non static method versions ! ! !
+                o = xmlRpcClient.execute("RpcHandler.showMessage", new ArrayList<Object>());
+                o = xmlRpcClient.execute("RpcHandler.show", xmlRpcParams2);
+                o = xmlRpcClient.execute("RpcHandler.changeMessage", xmlRpcParams2);
+                // end 
+
+                o = xmlRpcClient.execute("RpcHandler.ugInit", new ArrayList<Object>()); //works with uginit(void)
+
 //                o = xmlRpcClient.execute("RpcHandler.ugInit", xmlRpcParams);
-                o = xmlRpcClient.execute("RpcHandler.showMessage", new Vector()); // works with non static method!?
-                o = xmlRpcClient.execute("RpcHandler.show", xmlRpcParams);
-                o = xmlRpcClient.execute("RpcHandler.changeMessage", xmlRpcParams);
+
+                String s = (String) xmlRpcClient.execute("RpcHandler.getAuthors", new ArrayList<Object>());
+
+                System.out.println("Authors: " + s);
+
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+            // ?????????
             //@TODO String base64 remote transfer 
             //      and decode here to int !!!!!
 
+            Integer tmp = (Integer) o;
+            System.out.println("*-*-*-*-*-*-*-*-*-*-*-*-* RETURN RpcHandler.ugInit = " + tmp);
 
-            return (Integer) o;
+            return tmp;
 
         } else {
 
-            return ugInit(args);
+            return _ugInit(args);
         }
     }
 
@@ -1156,7 +1187,7 @@ public class UG {
      * @param exportedClassPtr pointer of the exported class
      */
     @Deprecated
-    static void _delete(long objPtr, long exportedClassPtr) {
+    static void delete(long objPtr, long exportedClassPtr) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
@@ -1172,7 +1203,7 @@ public class UG {
 
         } else {
 
-            delete(objPtr, exportedClassPtr);
+            _delete(objPtr, exportedClassPtr);
         }
 
     }
@@ -1181,7 +1212,7 @@ public class UG {
      * Invalidates the specified smart pointer.
      * @param p smart-pointer to invalidate
      */
-    static void _invalidate(SmartPointer p) {
+    static void invalidate(SmartPointer p) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
@@ -1196,7 +1227,7 @@ public class UG {
 
         } else {
 
-            invalidate(p);
+            _invalidate(p);
         }
 
     }
