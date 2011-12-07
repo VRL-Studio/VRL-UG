@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import java.util.Map;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class NativeAPIInfo {
+public class NativeAPIInfo implements Serializable{
 
     private NativeClassGroupInfo[] classGroups;
     private NativeClassInfo[] classes;

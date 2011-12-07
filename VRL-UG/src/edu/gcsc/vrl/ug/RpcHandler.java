@@ -77,14 +77,21 @@ public class RpcHandler {
     // ************** NATIVE METHODS **************
     // ********************************************
 //    public final NativeAPIInfo convertRegistryInfo() {
-    public final Object convertRegistryInfo() {
+    public final String convertRegistryInfo() {
+       
         show("convertRegistryInfo");
 
         NativeAPIInfo napiInfo=server._convertRegistryInfo();
         
-//        Base64.encodeObject(napiInfo);
+        if(napiInfo==null){
+            System.err.println("NativeAPIInfo IS NULL");
+        }
         
-        return napiInfo;
+        String base64 = Base64.encodeObject(napiInfo);
+        
+        System.out.println("RESULT: " + base64);
+        
+        return base64;
     }
 
     public Object invokeMethod(

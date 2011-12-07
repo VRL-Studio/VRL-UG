@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import eu.mihosoft.vrl.io.Base64;
 import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
@@ -278,6 +279,8 @@ public class UG {
 
 
         if (!remoteType.equals(RemoteType.SERVER)) {
+            
+            System.out.println("------ RemoteType NOT SERVER in constructor UG(RemoteType)");
 
 
             // load api if compatible; rebuild otherwise
@@ -329,8 +332,14 @@ public class UG {
             initialized = libLoaded;
 
         }
+        
+        System.out.println("------ AFTER if RemoteType NOT SERVER in constructor UG(RemoteType)");
+
 
         if (remoteType == RemoteType.CLIENT) {
+            
+            System.out.println("------ RemoteType CLIENT in constructor UG(RemoteType)");
+
             //execute(java -jar params)
             createXmlRpcClient(defaultHost, defaultPort);
 
@@ -747,6 +756,8 @@ public class UG {
     private static boolean createXmlRpcClient(String host, int port) {
         boolean result = false;
 
+        System.out.println("------ in  createXmlRpcClient() START");
+
 
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 
@@ -762,6 +773,9 @@ public class UG {
 
         xmlRpcClient = new XmlRpcClient();
         xmlRpcClient.setConfig(config);
+        
+        System.out.println("------ in  createXmlRpcClient() END");
+        System.out.println("------ xmlRpcClient" +xmlRpcClient);
 
         return result;
     }
@@ -852,24 +866,31 @@ public class UG {
             Object o = null;
 
             try {
+                
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
+                
                 o = xmlRpcClient.execute("RpcHandler.convertRegistryInfo", voidElement);
-                
-                
+
+
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             //@TODO String base64 remote transfer 
             //      and decode here to NativeAPIInfo !!!!!
+            String base64 = (String) o;
+
+            o = Base64.decodeToObject(base64, null);
+
             if (o instanceof NativeAPIInfo) {
                 NativeAPIInfo napiInfo = (NativeAPIInfo) o;
-            
 
-            return napiInfo;
-            
-            } else{
-                throw new IllegalArgumentException(this.getClass() +
-                        ".convertRegistryInfo() got over XMLRPC an object"
+
+                return napiInfo;
+
+            } else {
+                throw new IllegalArgumentException(this.getClass()
+                        + ".convertRegistryInfo() got over XMLRPC an object"
                         + "which is not instance of NativeAPIInfo.");
 //                return null;
             }

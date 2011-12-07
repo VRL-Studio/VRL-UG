@@ -4,13 +4,15 @@
  */
 package edu.gcsc.vrl.ug;
 
+import java.io.Serializable;
+
 /**
  * This class wrapps native UG smart pointers with additional type info
  * (class name) that can be used by UGs registry to call native
  * functions or methods.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-class SmartPointer extends Pointer {
+class SmartPointer extends Pointer implements Serializable{
 
     /**
      * Memory the native smart pointer object is stored
