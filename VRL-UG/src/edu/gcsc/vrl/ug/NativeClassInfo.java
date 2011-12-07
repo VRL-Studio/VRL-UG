@@ -4,12 +4,14 @@
  */
 package edu.gcsc.vrl.ug;
 
+import java.io.Serializable;
+
 /**
  * This class contains all properties of a native class that are necessary to
  * generate code for wrapper classes.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class NativeClassInfo {
+public class NativeClassInfo implements Serializable {
 
     private String name;
     private String category;
