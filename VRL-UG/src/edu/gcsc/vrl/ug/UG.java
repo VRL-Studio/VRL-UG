@@ -197,13 +197,6 @@ public class UG {
             System.loadLibrary("ug4");
             libLoaded = true;
         }
-//        // new experimental Code
-//        else if (loadNativeLib && remote) {
-//
-////            System.load("PATH TO REMOTE UG ?!?!");
-//            System.loadLibrary("ug4");//??
-//            libLoaded = true;
-//        }
 
         try {
 
@@ -212,34 +205,6 @@ public class UG {
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
-
-////        // check if remote, e.g. loadNative && !remote
-////        if (loadNativeLib && !remote &&
-////                ( remoteType.equals(RemoteType.SERVER) || 
-////                remoteType.equals(RemoteType.NONE) )) { 
-////            
-////            System.loadLibrary("ug4");
-////            libLoaded = true;
-////        } 
-////        // new experimental Code
-////        else if (loadNativeLib && remote &&
-////                remoteType.equals(RemoteType.CLIENT)) {
-////
-//////            System.load("PATH TO REMOTE UG ?!?!");
-////            System.loadLibrary("ug4");//??
-////            
-//////            xmlRpcClient..... 
-////            
-////            libLoaded = true;
-////        }
-////
-////        try {
-////
-////            _ugInit(args);  //native
-////            
-////        } catch (Exception ex) {
-////            ex.printStackTrace(System.err);
-////        }
 
     }
 
@@ -252,7 +217,7 @@ public class UG {
         // doing this in the corresponding getter methods does not work anymore
         // as we need the instance for searching a compiled UG-API.
         ugInstance = this;
-        
+
         System.out.println("---- test ----");
 
         // load api if compatible; rebuild otherwise
@@ -801,7 +766,6 @@ public class UG {
         return result;
     }
 
-
     // ********************************************
     // ************** NATIVE METHODS **************
     // ********************************************
@@ -876,7 +840,7 @@ public class UG {
     //
     //
     //needed for void parammeters
-    private static Vector nullVector = new Vector();
+    private static Vector voidElement = new Vector();
 
     //
     // Remenber all _functions() are native !!!
@@ -888,15 +852,27 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.convertRegistryInfo", nullVector);
+                o = xmlRpcClient.execute("RpcHandler.convertRegistryInfo", voidElement);
+                
+                
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             //@TODO String base64 remote transfer 
             //      and decode here to NativeAPIInfo !!!!!
+            if (o instanceof NativeAPIInfo) {
+                NativeAPIInfo napiInfo = (NativeAPIInfo) o;
+            
 
-            return (NativeAPIInfo) o;
+            return napiInfo;
+            
+            } else{
+                throw new IllegalArgumentException(this.getClass() +
+                        ".convertRegistryInfo() got over XMLRPC an object"
+                        + "which is not instance of NativeAPIInfo.");
+//                return null;
+            }
 
         } else {
 
@@ -1052,7 +1028,7 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.getSvnRevision", nullVector);
+                o = xmlRpcClient.execute("RpcHandler.getSvnRevision", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1072,7 +1048,7 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.getDescription", nullVector);
+                o = xmlRpcClient.execute("RpcHandler.getDescription", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1092,7 +1068,7 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.getAuthors", nullVector);
+                o = xmlRpcClient.execute("RpcHandler.getAuthors", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1112,7 +1088,7 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.getCompileDate", nullVector);
+                o = xmlRpcClient.execute("RpcHandler.getCompileDate", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1133,8 +1109,8 @@ public class UG {
 
             ArrayList<Object> xmlRpcParams = new ArrayList<Object>();
 
-            /*ENTWEDER*/
-//            xmlRpcParams.add(Arrays.asList(args)); //SCHWERWIEGEND: No method matching arguments: [Ljava.lang.Object;
+            /*ENTWEDER*/ //eher die version
+            xmlRpcParams.add(Arrays.asList(args)); //SCHWERWIEGEND: No method matching arguments: [Ljava.lang.Object;
 
 //            /*ODER*/
 //            for (Object op : args) {
@@ -1147,19 +1123,19 @@ public class UG {
 
             try {
 
-                // start following method-calls work with non static method versions ! ! !
-                o = xmlRpcClient.execute("RpcHandler.showMessage", new ArrayList<Object>());
-                o = xmlRpcClient.execute("RpcHandler.show", xmlRpcParams2);
-                o = xmlRpcClient.execute("RpcHandler.changeMessage", xmlRpcParams2);
-                // end 
+//                // start following method-calls work with non static method versions ! ! !
+//                o = xmlRpcClient.execute("RpcHandler.showMessage", new ArrayList<Object>());
+//                o = xmlRpcClient.execute("RpcHandler.show", xmlRpcParams2);
+//                o = xmlRpcClient.execute("RpcHandler.changeMessage", xmlRpcParams2);
+//                // end 
+//
+//                o = xmlRpcClient.execute("RpcHandler.ugInit", new ArrayList<Object>()); //works with uginit(void)
 
-                o = xmlRpcClient.execute("RpcHandler.ugInit", new ArrayList<Object>()); //works with uginit(void)
+                o = xmlRpcClient.execute("RpcHandler.ugInit", xmlRpcParams);
 
-//                o = xmlRpcClient.execute("RpcHandler.ugInit", xmlRpcParams);
-
-                String s = (String) xmlRpcClient.execute("RpcHandler.getAuthors", new ArrayList<Object>());
-
-                System.out.println("Authors: " + s);
+//                String s = (String) xmlRpcClient.execute("RpcHandler.getAuthors", new ArrayList<Object>());
+//
+//                System.out.println("Authors: " + s);
 
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
