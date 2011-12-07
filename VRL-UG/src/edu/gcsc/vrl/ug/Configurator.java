@@ -73,9 +73,9 @@ public class Configurator extends VPluginConfigurator {
         UG.getInstance(option);
 
         if (UG.isLibloaded()) {
-            setDescription(UG.getInstance()._getDescription()
+            setDescription(UG.getInstance().getDescription()
                     + "<br><br><b>Authors:</b><br><br>"
-                    + UG.getInstance()._getAuthors().replace("\n", "<br>"));
+                    + UG.getInstance().getAuthors().replace("\n", "<br>"));
         }
     }
     

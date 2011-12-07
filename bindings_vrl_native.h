@@ -9,106 +9,106 @@ extern "C" {
 #endif
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    convertRegistryInfo
+ * Method:    _convertRegistryInfo
  * Signature: ()Ledu/gcsc/vrl/ug/NativeAPIInfo;
  */
-JNIEXPORT jobject JNICALL Java_edu_gcsc_vrl_ug_UG_convertRegistryInfo
+JNIEXPORT jobject JNICALL Java_edu_gcsc_vrl_ug_UG__1convertRegistryInfo
   (JNIEnv *, jobject);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    invokeMethod
+ * Method:    _invokeMethod
  * Signature: (Ljava/lang/String;JZLjava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;
  */
-JNIEXPORT jobject JNICALL Java_edu_gcsc_vrl_ug_UG_invokeMethod
+JNIEXPORT jobject JNICALL Java_edu_gcsc_vrl_ug_UG__1invokeMethod
   (JNIEnv *, jobject, jstring, jlong, jboolean, jstring, jobjectArray);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    newInstance
+ * Method:    _newInstance
  * Signature: (J[Ljava/lang/Object;)J
  */
-JNIEXPORT jlong JNICALL Java_edu_gcsc_vrl_ug_UG_newInstance
+JNIEXPORT jlong JNICALL Java_edu_gcsc_vrl_ug_UG__1newInstance
   (JNIEnv *, jobject, jlong, jobjectArray);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    getExportedClassPtrByName
+ * Method:    _getExportedClassPtrByName
  * Signature: (Ljava/lang/String;Z)J
  */
-JNIEXPORT jlong JNICALL Java_edu_gcsc_vrl_ug_UG_getExportedClassPtrByName
+JNIEXPORT jlong JNICALL Java_edu_gcsc_vrl_ug_UG__1getExportedClassPtrByName
   (JNIEnv *, jobject, jstring, jboolean);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    getDefaultClassNameFromGroup
+ * Method:    _getDefaultClassNameFromGroup
  * Signature: (Ljava/lang/String;)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG_getDefaultClassNameFromGroup
+JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG__1getDefaultClassNameFromGroup
   (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    invokeFunction
+ * Method:    _invokeFunction
  * Signature: (Ljava/lang/String;Z[Ljava/lang/Object;)Ljava/lang/Object;
  */
-JNIEXPORT jobject JNICALL Java_edu_gcsc_vrl_ug_UG_invokeFunction
+JNIEXPORT jobject JNICALL Java_edu_gcsc_vrl_ug_UG__1invokeFunction
   (JNIEnv *, jobject, jstring, jboolean, jobjectArray);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    getSvnRevision
+ * Method:    _getSvnRevision
  * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG_getSvnRevision
+JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG__1getSvnRevision
   (JNIEnv *, jobject);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    getDescription
+ * Method:    _getDescription
  * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG_getDescription
+JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG__1getDescription
   (JNIEnv *, jobject);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    getAuthors
+ * Method:    _getAuthors
  * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG_getAuthors
+JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG__1getAuthors
   (JNIEnv *, jobject);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    getCompileDate
+ * Method:    _getCompileDate
  * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG_getCompileDate
+JNIEXPORT jstring JNICALL Java_edu_gcsc_vrl_ug_UG__1getCompileDate
   (JNIEnv *, jobject);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    ugInit
+ * Method:    _ugInit
  * Signature: ([Ljava/lang/String;)I
  */
-JNIEXPORT jint JNICALL Java_edu_gcsc_vrl_ug_UG_ugInit
+JNIEXPORT jint JNICALL Java_edu_gcsc_vrl_ug_UG__1ugInit
   (JNIEnv *, jclass, jobjectArray);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    delete
+ * Method:    _delete
  * Signature: (JJ)V
  */
-JNIEXPORT void JNICALL Java_edu_gcsc_vrl_ug_UG_delete
+JNIEXPORT void JNICALL Java_edu_gcsc_vrl_ug_UG__1delete
   (JNIEnv *, jclass, jlong, jlong);
 
 /*
  * Class:     edu_gcsc_vrl_ug_UG
- * Method:    invalidate
+ * Method:    _invalidate
  * Signature: (Ledu/gcsc/vrl/ug/SmartPointer;)V
  */
-JNIEXPORT void JNICALL Java_edu_gcsc_vrl_ug_UG_invalidate
+JNIEXPORT void JNICALL Java_edu_gcsc_vrl_ug_UG__1invalidate
   (JNIEnv *, jclass, jobject);
 
 #ifdef __cplusplus
