@@ -4,11 +4,13 @@
  */
 package edu.gcsc.vrl.ug;
 
+import java.io.Serializable;
+
 /**
  * Enum that represents native parameter types.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public enum NativeType {
+public enum NativeType implements Serializable{
 
     BOOL,
     INTEGER,

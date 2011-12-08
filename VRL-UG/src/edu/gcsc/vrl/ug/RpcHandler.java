@@ -5,6 +5,7 @@ package edu.gcsc.vrl.ug;
  * and open the template in the editor.
  */
 import eu.mihosoft.vrl.io.Base64;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,77 +79,135 @@ public class RpcHandler {
     // ********************************************
 //    public final NativeAPIInfo convertRegistryInfo() {
     public final String convertRegistryInfo() {
-       
+
         show("convertRegistryInfo");
 
-        NativeAPIInfo napiInfo=server._convertRegistryInfo();
-        
-        if(napiInfo==null){
+        NativeAPIInfo napiInfo = server._convertRegistryInfo();
+
+        if (napiInfo == null) {
             System.err.println("NativeAPIInfo IS NULL");
         }
-        
+
         String base64 = Base64.encodeObject(napiInfo);
-        
-        System.out.println("RESULT: " + base64);
-        
+
+//        System.out.println("RESULT: " + base64);
+
         return base64;
     }
 
-    public Object invokeMethod(
-            String exportedClassName, long objPtr, boolean readOnly,
-            String methodName, Object[] params) {
+//    public Object invokeMethod(
+//            String exportedClassName, String objPtr, boolean readOnly,
+//            String methodName, Object[] params) {
+    public String invokeMethod(
+            String exportedClassName, String objPtr, boolean readOnly,
+            String methodName, String params) {
         show("invokeMethod");
+        
+        Object o = Base64.decodeToObject(
+                params, server.getClass().getClassLoader());
+        Object[] objArray =(Object[]) o;
+        
+         o = server._invokeMethod(
+                exportedClassName, new Long(objPtr), readOnly, methodName, objArray);
+        
+         //alles ist serialisierbar
+        String base64 = Base64.encodeObject((Serializable)o);
 
-        return server._invokeMethod(
-                exportedClassName, objPtr, readOnly, methodName, params);
+        return base64;
     }
 
-    public long newInstance(long exportedClassPtr, Object[] parameters) {
+//    public long newInstance(String exportedClassPtr, Object[] parameters) {
+    public String newInstance(String exportedClassPtr, String parameters) {
         show("newInstance");
+        
+        Object o = Base64.decodeToObject(
+                parameters, server.getClass().getClassLoader());
+        Object[] objArray =(Object[]) o;
+        
+        long result = server._newInstance(new Long(exportedClassPtr), objArray);
 
-        return server._newInstance(exportedClassPtr, parameters);
+        System.out.println("result =" + result);
+
+        return String.valueOf(result);
+        
+        
     }
 
-    public long getExportedClassPtrByName(String name, boolean classGrp) {
+    public String getExportedClassPtrByName(String name, boolean classGrp) {
         show("getExportedClassPtrByName");
+ 
+        long result = server._getExportedClassPtrByName(name, classGrp);
 
-        return server._getExportedClassPtrByName(name, classGrp);
+        System.out.println("result =" + result);
+
+        return  String.valueOf(result);
     }
 
     public String getDefaultClassNameFromGroup(String grpName) {
         show("getDefaultClassNameFromGroup");
 
-        return server._getDefaultClassNameFromGroup(grpName);
+        String result = server._getDefaultClassNameFromGroup(grpName);
+
+        System.out.println("result =" + result);
+
+        return result;
     }
 
-    public Object invokeFunction(String name, boolean readOnly, Object[] params) {
+//    public Object invokeFunction(String name, boolean readOnly, Object[] params) {
+    public String invokeFunction(String name, boolean readOnly, Object[] params) {
         show("invokeFunction");
+        
+        Object o = server._invokeFunction(name, readOnly, params);
+        
+        //annahme alle enthalten objekte sind serializierbar
+        String base64 = Base64.encodeObject((Serializable)o);
 
-        return server._invokeFunction(name, readOnly, params);
+//        System.out.println("RESULT: " + base64);
+
+        return base64;
+
+        
     }
 
     public String getSvnRevision() {
         show("getSvnRevision");
 
-        return server._getSvnRevision();
+        String result = server._getSvnRevision();
+
+        System.out.println("result =" + result);
+
+        return result;
     }
 
     public String getDescription() {
         show("getDescription");
+ 
+        String result =  server._getDescription();
 
-        return server._getDescription();
+        System.out.println("result =" + result);
+
+        return result;
     }
 
     public String getAuthors() {
         show("getAuthors");
+     
+        String result =  server._getAuthors();
 
-        return server._getAuthors();
+        System.out.println("result =" + result);
+
+        return result;
+
     }
 
     public String getCompileDate() {
         show("getCompileDate");
+        
+        String result = server._getCompileDate();
 
-        return server._getCompileDate();
+        System.out.println("result =" + result);
+
+        return result;        
     }
 
     public Integer ugInit(List<String> args) {
@@ -175,10 +234,10 @@ public class RpcHandler {
      * @param exportedClassPtr pointer of the exported class
      */
     @Deprecated
-    public boolean delete(long objPtr, long exportedClassPtr) {
+    public boolean delete(String objPtr, String exportedClassPtr) {
         show("delete");
 
-        server._delete(objPtr, exportedClassPtr);
+        server._delete(new Long(objPtr), new Long(exportedClassPtr) );
 
         return true;
     }

@@ -4,12 +4,14 @@
  */
 package edu.gcsc.vrl.ug;
 
+import java.io.Serializable;
+
 /**
  * This class contains all properties of a native method group that are 
  * necessary to generate code for wrapper methods.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class NativeMethodGroupInfo {
+public class NativeMethodGroupInfo implements Serializable{
 
     private NativeMethodInfo[] overloads;
     private boolean isConst;

@@ -4,12 +4,14 @@
  */
 package edu.gcsc.vrl.ug;
 
+import java.io.Serializable;
+
 /**
  * This class contains all properties of a native method that are
  * necessary to generate code for wrapper methods.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class NativeConstructorInfo {
+public class NativeConstructorInfo implements Serializable{
 
     private String options;
     private NativeParamInfo[] parameters;
