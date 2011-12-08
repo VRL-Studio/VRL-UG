@@ -49,7 +49,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
         if (api instanceof VPluginAPI) {
             VPluginAPI vApi = (VPluginAPI) api;
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
-            UG.getInstance().setMainCanvas(vCanvas);
+            UG.getInstance("CLIENT").setMainCanvas(vCanvas);
 
             Class<?> apiCls = null;
 
@@ -79,9 +79,9 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
                         invoke(apiCls);
 
                 boolean revisionsAreEqual =
-                        apiSvn.equals(UG.getInstance().getSvnRevision());
+                        apiSvn.equals(UG.getInstance("CLIENT").getSvnRevision());
                 boolean datesAreEqual =
-                        apiDate.equals(UG.getInstance().getCompileDate());
+                        apiDate.equals(UG.getInstance("CLIENT").getCompileDate());
 
                 matchingAPI = revisionsAreEqual && datesAreEqual;
 
@@ -132,7 +132,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
     }
 
     public void init() {
-        UG.connectToNativeUG(isLoadNativeLibraries());
+        //UG.connectToNativeUG(isLoadNativeLibraries());
     }
 }
 

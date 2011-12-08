@@ -97,6 +97,25 @@ public class UG {
     private static XmlRpcClient xmlRpcClient;
     private static XmlRpcServer xmlRpcServer;
     private static WebServer webServer;
+
+    /**
+     * @return the xmlRpcClient
+     */
+    public static XmlRpcClient getXmlRpcClient() {
+        
+        if(xmlRpcClient==null){
+            createXmlRpcClient(defaultHost, defaultPort);
+        }
+        
+        return xmlRpcClient;
+    }
+
+    /**
+     * @return the xmlRpcServer
+     */
+    public static XmlRpcServer getXmlRpcServer() {
+        return xmlRpcServer;
+    }
     /**
      * VRL canvas used to visualize ug classes
      */
@@ -219,7 +238,7 @@ public class UG {
         // as we need the instance for searching a compiled UG-API.
         ugInstance = this;
 
-        System.out.println("---- test ----");
+        System.out.println("-------- UG() --------");
 
         // load api if compatible; rebuild otherwise
         try {
@@ -268,6 +287,8 @@ public class UG {
 
     private UG(RemoteType remoteType) {
 
+        System.out.println("------ UG(RemoteType= " + getRemoteType() + ") --------");
+        
         setRemoteType(remoteType);
 
 //         // we must set the singleton instance to prevent
@@ -279,8 +300,6 @@ public class UG {
 
 
         if (!remoteType.equals(RemoteType.SERVER)) {
-            
-            System.out.println("------ RemoteType NOT SERVER in constructor UG(RemoteType)");
 
 
             // load api if compatible; rebuild otherwise
@@ -297,10 +316,10 @@ public class UG {
                     }
 
                     NativeAPIInfo nativeAPI = convertRegistryInfo();
+
                     Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
 
                     try {
-
                         recompiled = true;
 
                         System.err.println(
@@ -332,18 +351,19 @@ public class UG {
             initialized = libLoaded;
 
         }
-        
+
         System.out.println("------ AFTER if RemoteType NOT SERVER in constructor UG(RemoteType)");
 
 
-        if (remoteType == RemoteType.CLIENT) {
-            
-            System.out.println("------ RemoteType CLIENT in constructor UG(RemoteType)");
-
-            //execute(java -jar params)
-            createXmlRpcClient(defaultHost, defaultPort);
-
-        } else if (remoteType.equals(RemoteType.SERVER)) {
+//        if ((xmlRpcClient == null) && (remoteType == RemoteType.NONE)) {
+//
+//            System.out.println("------ RemoteType CLIENT in constructor UG(RemoteType)");
+//
+//            //execute(java -jar params)
+//            createXmlRpcClient(defaultHost, defaultPort);
+//
+//        } else
+            if (remoteType.equals(RemoteType.SERVER)) {
             // load native library and connect to ug lib to generate api
             connectToNativeUG(true);
             createXmlRpcServer(defaultPort);
@@ -733,8 +753,8 @@ public class UG {
         xmlRpcServer = webServer.getXmlRpcServer();
 
 
-        xmlRpcServer.setConfig(config);
-        xmlRpcServer.setHandlerMapping(mapping);
+        getXmlRpcServer().setConfig(config);
+        getXmlRpcServer().setHandlerMapping(mapping);
 
         try {
             webServer.start();
@@ -756,9 +776,6 @@ public class UG {
     private static boolean createXmlRpcClient(String host, int port) {
         boolean result = false;
 
-        System.out.println("------ in  createXmlRpcClient() START");
-
-
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 
         try {
@@ -772,10 +789,7 @@ public class UG {
         config.setEnabledForExtensions(true);
 
         xmlRpcClient = new XmlRpcClient();
-        xmlRpcClient.setConfig(config);
-        
-        System.out.println("------ in  createXmlRpcClient() END");
-        System.out.println("------ xmlRpcClient" +xmlRpcClient);
+        getXmlRpcClient().setConfig(config);
 
         return result;
     }
@@ -866,21 +880,21 @@ public class UG {
             Object o = null;
 
             try {
-                
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
-                
-                o = xmlRpcClient.execute("RpcHandler.convertRegistryInfo", voidElement);
+
+                System.out.println("XMLCLIENT: " + getXmlRpcClient());
+
+                o = getXmlRpcClient().execute("RpcHandler.convertRegistryInfo", voidElement);
 
 
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            //@TODO String base64 remote transfer 
+            //@DONE String base64 remote transfer 
             //      and decode here to NativeAPIInfo !!!!!
             String base64 = (String) o;
 
-            o = Base64.decodeToObject(base64, null);
+            o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
             if (o instanceof NativeAPIInfo) {
                 NativeAPIInfo napiInfo = (NativeAPIInfo) o;
@@ -907,21 +921,28 @@ public class UG {
         if (remoteType.equals(RemoteType.CLIENT)) {
 
             Object o = null;
+            String base64 = null;
 
             Vector xmlRpcParams = new Vector();
+            
             xmlRpcParams.addElement(exportedClassName);
-            xmlRpcParams.addElement(String.valueOf(objPtr));
-            xmlRpcParams.addElement(String.valueOf(objPtr));
-            xmlRpcParams.addElement(String.valueOf(readOnly));
+            xmlRpcParams.addElement(String.valueOf(objPtr));//long
+            xmlRpcParams.addElement(readOnly);
             xmlRpcParams.addElement(methodName);
 
-            for (Object op : params) {
-                xmlRpcParams.addElement(op);
-            }
+            base64 = Base64.encodeObject(params);
+            xmlRpcParams.addElement(base64);
+//            for (Object op : params) {
+//                xmlRpcParams.addElement(op);
+//            }
 
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.invokeMethod", xmlRpcParams);
+                o = getXmlRpcClient().execute("RpcHandler.invokeMethod", xmlRpcParams);
+                
+                base64 =(String) o;
+                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
+                
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -939,24 +960,31 @@ public class UG {
         if (remoteType.equals(RemoteType.CLIENT)) {
 
             Object o = null;
+            String base64 = null;
 
             Vector xmlRpcParams = new Vector();
             xmlRpcParams.addElement(String.valueOf(exportedClassPtr));
 
-            for (Object op : parameters) {
-                xmlRpcParams.addElement(op);
-            }
+            base64 = Base64.encodeObject(parameters);
+            xmlRpcParams.addElement(base64);
+            
+//            xmlRpcParams.addElement(parameters);
+//            for (Object op : parameters) {
+//                xmlRpcParams.addElement(op);
+//            }
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.newInstance", xmlRpcParams);
+                o = getXmlRpcClient().execute("RpcHandler.newInstance", xmlRpcParams);
+                base64 =(String) o;
+                
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            //@TODO String base64 remote transfer 
+            //@DONE String base64 remote transfer 
             //      and decode here to long !!!!!
 
-            return (Long) o;
+            return new Long(base64);
 
         } else {
 
@@ -972,19 +1000,19 @@ public class UG {
 
             Vector xmlRpcParams = new Vector();
             xmlRpcParams.addElement(name);
-            xmlRpcParams.addElement(String.valueOf(classGrp));
+            xmlRpcParams.addElement(classGrp);
 
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.getExportedClassPtrByName", xmlRpcParams);
+                o = getXmlRpcClient().execute("RpcHandler.getExportedClassPtrByName", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            //@TODO String base64 remote transfer 
+            //@DONE String base64 remote transfer 
             //      and decode here to long !!!!!
 
-            return (Long) o;
+            return new Long((String) o);
         } else {
 
             return _getExportedClassPtrByName(name, classGrp);
@@ -1001,7 +1029,7 @@ public class UG {
             xmlRpcParams.addElement(grpName);
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.getDefaultClassNameFromGroup", xmlRpcParams);
+                o = getXmlRpcClient().execute("RpcHandler.getDefaultClassNameFromGroup", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1022,14 +1050,19 @@ public class UG {
 
             Vector xmlRpcParams = new Vector();
             xmlRpcParams.addElement(name);
-            xmlRpcParams.addElement(String.valueOf(readOnly));
+            xmlRpcParams.addElement(readOnly);
 
-            for (Object op : params) {
-                xmlRpcParams.addElement(op);
-            }
+            xmlRpcParams.addElement(params);
+//            for (Object op : params) {
+//                xmlRpcParams.addElement(op);
+//            }
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.invokeFunction", xmlRpcParams);
+                o = getXmlRpcClient().execute("RpcHandler.invokeFunction", xmlRpcParams);
+                String base64 =(String) o;
+                
+                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
+                
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1049,7 +1082,7 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.getSvnRevision", voidElement);
+                o = getXmlRpcClient().execute("RpcHandler.getSvnRevision", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1069,7 +1102,7 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.getDescription", voidElement);
+                o = getXmlRpcClient().execute("RpcHandler.getDescription", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1089,7 +1122,7 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.getAuthors", voidElement);
+                o = getXmlRpcClient().execute("RpcHandler.getAuthors", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1109,7 +1142,7 @@ public class UG {
             Object o = null;
 
             try {
-                o = xmlRpcClient.execute("RpcHandler.getCompileDate", voidElement);
+                o = getXmlRpcClient().execute("RpcHandler.getCompileDate", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1152,7 +1185,7 @@ public class UG {
 //
 //                o = xmlRpcClient.execute("RpcHandler.ugInit", new ArrayList<Object>()); //works with uginit(void)
 
-                o = xmlRpcClient.execute("RpcHandler.ugInit", xmlRpcParams);
+                o = getXmlRpcClient().execute("RpcHandler.ugInit", xmlRpcParams);
 
 //                String s = (String) xmlRpcClient.execute("RpcHandler.getAuthors", new ArrayList<Object>());
 //
@@ -1193,7 +1226,7 @@ public class UG {
             xmlRpcParams.addElement(String.valueOf(exportedClassPtr));
 
             try {
-                xmlRpcClient.execute("RpcHandler.delete", xmlRpcParams);
+                getXmlRpcClient().execute("RpcHandler.delete", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1217,7 +1250,7 @@ public class UG {
             xmlRpcParams.addElement(p);
 
             try {
-                xmlRpcClient.execute("RpcHandler.invalidate", xmlRpcParams);
+                getXmlRpcClient().execute("RpcHandler.invalidate", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }

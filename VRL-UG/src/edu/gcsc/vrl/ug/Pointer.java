@@ -4,13 +4,15 @@
  */
 package edu.gcsc.vrl.ug;
 
+import java.io.Serializable;
+
 /**
  * This class wrapps native C/C++ pointers with additional type info
  * (class name) that can be used by UGs registry to call native
  * functions or methods.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class Pointer {
+public class Pointer implements Serializable{
 
     private boolean readOnly;
     private long address;
