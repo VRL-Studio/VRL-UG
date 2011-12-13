@@ -21,6 +21,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
+@ComponentInfo(ignore=true)
 public class APIPluginConfiguratorImpl extends VPluginConfigurator {
 
 public static final PluginIdentifier API_PLUGIN_IDENTIFIER =
