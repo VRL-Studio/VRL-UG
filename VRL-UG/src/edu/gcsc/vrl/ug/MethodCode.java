@@ -81,6 +81,10 @@ public class MethodCode implements CodeElement {
             methodName += CodeUtils.methodName(method.getName());
         }
 
+        if (visual) {
+            builder.addLine("@AutoCompletionInfo(hide=true)");
+        }
+        
         new MethodInfoCode(method, visual, inherited, showMethod).build(builder).
                 newLine().append(modifier + " "
                 + method.getReturnValue().getTypeClassName() + " "
