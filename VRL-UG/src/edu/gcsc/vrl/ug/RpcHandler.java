@@ -49,7 +49,10 @@ public class RpcHandler {
 
     static String message = "first call";
 //    private static UG server = null;
-    private static final UG server = UG.getInstance(null, RemoteType.SERVER);
+    private static UG server = UG.getInstance(null, RemoteType.SERVER);
+
+    
+    
 
 //    //TEST FUNCTION
     public int show(String message) {

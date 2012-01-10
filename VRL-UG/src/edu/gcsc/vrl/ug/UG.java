@@ -92,7 +92,7 @@ public class UG {
 
         return UG.remoteType;
     }
-    private static int defaultPort = 1099;
+    private static int port = 1099;
     private static String defaultHost = "localhost";
     private static XmlRpcClient xmlRpcClient;
     private static XmlRpcServer xmlRpcServer;
@@ -104,7 +104,7 @@ public class UG {
     public static XmlRpcClient getXmlRpcClient() {
         
         if(xmlRpcClient==null){
-            createXmlRpcClient(defaultHost, defaultPort);
+            createXmlRpcClient(defaultHost, port);
         }
         
         return xmlRpcClient;
@@ -366,7 +366,7 @@ public class UG {
             if (remoteType.equals(RemoteType.SERVER)) {
             // load native library and connect to ug lib to generate api
             connectToNativeUG(true);
-            createXmlRpcServer(defaultPort);
+            createXmlRpcServer(port);
         }
 
     }
@@ -717,7 +717,7 @@ public class UG {
             this.logging = false;
         }
     }
-
+    
     /**
      * 
      * @param port the port which should be used

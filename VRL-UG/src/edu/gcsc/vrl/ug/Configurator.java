@@ -66,7 +66,8 @@ public class Configurator extends VPluginConfigurator {
         
         String option = VArgUtil.getArg(VRL.getCommandLineOptions(),"-rpc");
         
-        System.out.println("**** OPTION: " + option);
+        System.out.println(this.getClass().getName() +
+                " **** OPTION: -rpc = " + option);
         
         
         // initialize ug instance
