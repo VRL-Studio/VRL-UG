@@ -524,7 +524,8 @@ public class UG {
             long objPtr, boolean readOnly,
             String methodName, Object[] params);
 
-    native long newInstance(long exportedClassPtr, Object[] parameters);
+//    native long newInstance(long exportedClassPtr, Object[] parameters);
+    native Pointer newInstance(long exportedClassPtr, Object[] parameters);
 
     native long getExportedClassPtrByName(String name, boolean classGrp);
 
