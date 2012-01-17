@@ -8,6 +8,7 @@ import eu.mihosoft.vrl.lang.CodeBuilder;
 
 /**
  * Code element that generates method code.
+ *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class MethodCode implements CodeElement {
@@ -21,13 +22,14 @@ public class MethodCode implements CodeElement {
 
     /**
      * Constructor
+     *
      * @param method method
      * @param type code type
      * @param visual defines whether to generate code that shall be visualized
-     * @param inherited indicates whether this method is inherited
-     *                  from base class
+     * @param inherited indicates whether this method is inherited from base
+     * class
      * @param showMethod defines whether to show this method (hide=false), is
-     *                   ignored if the method provides custom options
+     * ignored if the method provides custom options
      */
     public MethodCode(NativeMethodInfo method, boolean function,
             CodeType type, boolean visual, boolean inherited,
@@ -52,9 +54,10 @@ public class MethodCode implements CodeElement {
 
     /**
      * Builds this code element.
+     *
      * @param builder bulder to use
-     * @param customInvocationCode optional custom invocation code;
-     *        if <code>null</code> is specified default invocation code is used
+     * @param customInvocationCode optional custom invocation code; if
+     * <code>null</code> is specified default invocation code is used
      * @return specified code builder
      */
     public CodeBuilder build(CodeBuilder builder,
@@ -65,6 +68,18 @@ public class MethodCode implements CodeElement {
         boolean asInterface = type == CodeType.INTERFACE;
         boolean asWrapper = type == CodeType.WRAP_POINTER_CLASS;
         boolean asFullClass = type == CodeType.FULL_CLASS;
+        
+        // if we are a real constructor and do not create a full class
+        // we don't generate code.
+        if (!asFullClass && method.isJavaConstructor()) {
+            return builder;
+        }
+        
+        // if we are a real constructor and do create visual methods
+        // we don't generate code.
+        if (visual && method.isJavaConstructor()) {
+            return builder;
+        }
 
         String methodName = "";
 
@@ -84,11 +99,22 @@ public class MethodCode implements CodeElement {
         if (visual) {
             builder.addLine("@AutoCompletionInfo(hide=true)");
         }
+
+        String methodHeader = modifier + " ";
         
-        new MethodInfoCode(method, visual, inherited, showMethod).build(builder).
-                newLine().append(modifier + " "
-                + method.getReturnValue().getTypeClassName() + " "
-                + methodName + " (");
+        if (!method.isJavaConstructor()) {
+            methodHeader += method.getReturnValue().getTypeClassName() + " ";
+        }
+        
+        methodHeader += methodName + " (";
+
+        if (!method.isJavaConstructor()) {
+        new MethodInfoCode(method, visual, inherited, showMethod).
+                build(builder).
+                newLine();
+        }
+        
+        builder.append(methodHeader);
 
         if (method.getParameters().length > 0 || visual) {
             builder.newLine().incIndentation();
@@ -100,11 +126,15 @@ public class MethodCode implements CodeElement {
             builder.newLine().decIndentation();
         }
 
-        builder.append(")");
+        builder.append(")"); // closing method header
 
         if (asFullClass || asWrapper) {
 
             builder.append(" {").newLine().incIndentation();
+            
+            if (method.isJavaConstructor()) {
+                builder.addLine("__initialize();");
+            }
 
             String params = "Object[] params = [";
 
