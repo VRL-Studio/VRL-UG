@@ -68,7 +68,9 @@ public class CodeUtils {
      * character
      */
     public static String className(String name, boolean isConst) {
-        String result = "C_";
+//        String result = "C_";
+        
+        String result = ""; // classes do not have a prefix
 
         if (isConst) {
             result += "Const__";

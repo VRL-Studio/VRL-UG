@@ -1,5 +1,5 @@
 
-
+import edu.gcsc.vrl.ug.*;
 import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.PluginAPI;
@@ -58,7 +58,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
 
             try {
                 apiCls = this.getClass().getClassLoader().
-                        loadClass("edu.gcsc.vrl.ug.UGAPI");
+                        loadClass("edu.gcsc.vrl.ug.api.UGAPI");
 
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(APIPluginConfiguratorImpl.class.getName()).
