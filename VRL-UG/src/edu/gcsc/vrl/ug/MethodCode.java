@@ -158,9 +158,9 @@ public class MethodCode implements CodeElement {
                         CodeUtils.className(
                         method.getReturnValue().getClassName(), method.isConst());
 
-                builder.append("edu.gcsc.vrl.ug.").append(returnTypeClassName).
+                builder.append("edu.gcsc.vrl.ug.api.").append(returnTypeClassName).
                         append(" convertedResult = new ").
-                        append("edu.gcsc.vrl.ug.").
+                        append("edu.gcsc.vrl.ug.api.").
                         append(returnTypeClassName).append("();").newLine();
 
 //                builder.addLine("println result;");

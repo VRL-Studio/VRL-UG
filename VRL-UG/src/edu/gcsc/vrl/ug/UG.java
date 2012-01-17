@@ -247,7 +247,7 @@ public class UG {
                 return null;
             }
 
-            Class<?> cls = cl.loadClass("edu.gcsc.vrl.ug.UGAPI");
+            Class<?> cls = cl.loadClass("edu.gcsc.vrl.ug.api.UGAPI");
 
             String apiSvn = (String) cls.getMethod(
                     "getSvnRevision").
@@ -308,7 +308,7 @@ public class UG {
             ClassLoader cl = cls.getClassLoader();
 
             URL url = cls.getResource(
-                    "/edu/gcsc/vrl/ug/UG_INFO.XML");
+                    "/edu/gcsc/vrl/ug/api/UG_INFO.XML");
 
             Thread.currentThread().setContextClassLoader(cl);
 
@@ -327,7 +327,7 @@ public class UG {
                 String clsName = apiInfo.getClassNames().get(i);
 
                 result[i] = cl.loadClass(
-                        "edu.gcsc.vrl.ug."
+                        "edu.gcsc.vrl.ug.api."
                         + clsName);
             }
 
