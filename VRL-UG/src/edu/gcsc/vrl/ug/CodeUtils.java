@@ -20,7 +20,7 @@ public class CodeUtils {
 
     /**
      * Returns a name as method name. The specified string must only contain
-     * valid characters.
+     * characters that are allowed for identifier names. 
      * @param name name to process
      * @return a name as method name, i.e., first character is a lowercase
      * character
@@ -38,8 +38,8 @@ public class CodeUtils {
 
     /**
      * Returns a name as const method name. The specified string must only 
-     * contain valid characters. The prefix "const" is added to
-     * the specified name.
+     * contain characters that are allowed for identifier names. The prefix 
+     * "const__" is added to the specified name.
      * @param name name to process
      * @return a name as const method name, i.e., the prefix "const" is added
      */
@@ -62,7 +62,7 @@ public class CodeUtils {
 
     /**
      * Returns a name as class name. The specified string must only contain
-     * valid characters. 
+     * characters that are allowed for identifier names. 
      * @param name name to process
      * @return a name as class name, i.e., first character is a uppercase
      * character
@@ -72,24 +72,24 @@ public class CodeUtils {
         
         String result = ""; // classes do not have a prefix
 
-        if (isConst) {
-            result += "Const__";
-        }
-
-        result += name;
-
         // since 15.07.2011 we want to allow lowercase classnames
         // due to possible name clashes
+        // since 17.01.2012 we allow only upper case classes because we need
+        // to support operating systems without case sensitive filesystems
 //        if (!result.isEmpty()) {
-//            result = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+            result = Character.toUpperCase(name.charAt(0)) + name.substring(1);
 //        }
+        
+        if (isConst) {
+            result = "Const__" + result;
+        }
 
         return result;
     }
     
     /**
      * Returns a name as class name. The specified string must only contain
-     * valid characters. 
+     * characters that are allowed for identifier names. 
      * @param name name to process
      * @return a name as class name, i.e., first character is a uppercase
      * character
@@ -97,61 +97,69 @@ public class CodeUtils {
     public static String classNameForParamInfo(String name, boolean isConst) {
         String result = "";
 
-        if (isConst) {
-            result += "Const__";
-        }
-
-        result += name;
-
         // since 15.07.2011 we want to allow lowercase classnames
         // due to possible name clashes
+        // since 17.01.2012 we allow only upper case classes because we need
+        // to support operating systems without case sensitive filesystems
 //        if (!result.isEmpty()) {
-//            result = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+            result = Character.toUpperCase(name.charAt(0)) + name.substring(1);
 //        }
+        
+        if (isConst) {
+            result = "Const__" + result;
+        }
 
         return result;
     }
 
     /**
-     * Returns the specified name as interface name. This method uses
-     * {@link CodeUtils#className(java.lang.String) } and appends "Interface"
+     * Returns the specified name as interface name.  The specified string must
+     * only contain characters that are allowed for identifier names. 
      * to the specified name.
      * @param name name to process
      * @return the specified name as interface name
      */
     public static String interfaceName(String name, boolean isConst) {
-        String result = "I_";
+        String result = "";
 
-        if (isConst) {
-            result += "Const__";
-        }
-
-        result += name;
+        
 
         // since 15.07.2011 we want to allow lowercase classnames
         // due to possible name clashes
+        // since 17.01.2012 we allow only upper case classes because we need
+        // to support operating systems without case sensitive filesystems
 //        if (!result.isEmpty()) {
-//            result = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+            result = Character.toUpperCase(name.charAt(0)) + name.substring(1);
 //        }
+        
+        result = "I_" + result;
+        
+        if (isConst) {
+            result = "Const__" + result;
+        }
 
         return result;
     }
 
     /**
      * Returns a name as function name. The specified string must only contain
-     * valid characters.
+     * characters that are allowed for identifier names. 
      * @param name name to process
      * @return a name as class name, i.e., first character is a uppercase
      * character
      */
     public static String functionName(String name) {
-        String result = "F_" + name;
+        String result = "";
 
         // since 15.07.2011 we want to allow lowercase classnames
         // due to possible name clashes
+        // since 17.01.2012 we allow only upper case functions because we need
+        // to support operating systems without case sensitive filesystems
 //        if (!result.isEmpty()) {
-//            result = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+            result = Character.toUpperCase(name.charAt(0)) + name.substring(1);
 //        }
+        
+        result = "F_" + result;
 
         return result;
     }
