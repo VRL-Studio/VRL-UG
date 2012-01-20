@@ -40,6 +40,11 @@ public class Configurator extends VPluginConfigurator {
         if (api instanceof VPluginAPI) {
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
 //            UG.getInstance().setMainCanvas(vCanvas);
+            
+            VPluginAPI vApi = (VPluginAPI) api;
+            
+             //TEST: component for starting an UG on an other JVM
+            vApi.addComponent(ConnectToUGserver.class);
 //
             // request restart
             if (UG.getInstance().isRecompiled()) {
