@@ -5,6 +5,7 @@
 package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.system.VRL;
+import eu.mihosoft.vrlstudio.main.Studio;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,48 +17,67 @@ import java.util.logging.Logger;
  *
  * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
  */
-public class Main {
+public class Main2 {
 
     private static Integer port = 1099; // default port
     
     public static void main(String[] args) {
         
-        initUGServer();
+        initUGServer(); //starte server
+//        startAnJVM(port);// starte studio in anderer JVM
+        startAnJVM();// starte studio in anderer JVM mit defaultport
         
     }
 
     
-       protected static void startAnJVM(int port) {
+//       protected static void startAnJVM(int port) {
+    protected static void startAnJVM() {
         
-        String commandLineCallOptions = "-Xms256m -Xmx1024m "
-                + "-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled "
-                + "-XX:+CMSPermGenSweepingEnabled -XX:MaxPermSize=256m";
+        String commandLineCallOptions = //"-Xms128m -Xmx512m " +
+//                 "-XX:+UseConcMarkSweepGC " +
+//                 "-XX:+CMSClassUnloadingEnabled " +
+//                 "-XX:+CMSPermGenSweepingEnabled " +
+                 "-XX:MaxPermSize=256m";
         
-        String addionalCommandLineCallPath = 
-        "-Dsun.boot.library.path=/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Libraries"
-                + ":natives/osx:custom-lib/osx"
-                + " -Xbootclasspath/p"
+//        String addionalCommandLineCallPath = 
+//        "-Dsun.boot.library.path=/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Libraries"
+//                + ":natives/osx:custom-lib/osx"
+//                + " -Xbootclasspath/p"
+//                + ":natives/jars/j3dcore.jar"
+//                + ":natives/jars/j3dutils.jar"
+//                + ":natives/osx/jogl.jar"
+//                + ":natives/jars/vecmath.jar"
+//                + ":natives/osx/gluegen-rt.jar"
+//                + " -Djava.library.path=\"natives/osx\""
+//                + " -enable3d yes";
+        
+        String separator = System.getProperty("file.separator");
+        String classpath = System.getProperty("java.class.path");
+//        String path = System.getProperty("java.home")
+//                + separator + "bin" + separator + "java";
+        
+        String commandLineCallPath = 
+        "-Dsun.boot.library.path=/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Libraries"+
+        ":natives/osx:custom-lib/osx";
+                
+        String bootClassPath = " -Xbootclasspath/p"
                 + ":natives/jars/j3dcore.jar"
                 + ":natives/jars/j3dutils.jar"
                 + ":natives/osx/jogl.jar"
                 + ":natives/jars/vecmath.jar"
-                + ":natives/osx/gluegen-rt.jar"
-                + " -Djava.library.path=\"natives/osx\"";
+                + ":natives/osx/gluegen-rt.jar";
         
-        String separator = System.getProperty("file.separator");
-        String classpath = System.getProperty("java.class.path");
-        String path = System.getProperty("java.home")
-                + separator + "bin" + separator + "java";
-        
+                String libraryPath = " -Djava.library.path=\"natives/osx\"";
+                String vrlOption = " -enable3d yes";
         
         System.out.println("separator = " + separator);
         System.out.println("classpath = " + classpath);
-        System.out.println("path = " + path);
+//        System.out.println("path = " + path);
         
 
-        ProcessBuilder processBuilder = new ProcessBuilder(path,
-                 addionalCommandLineCallPath, commandLineCallOptions, //von mir, abweichung von bsp
-                "-cp", classpath, Main.class.getName() );
+        ProcessBuilder processBuilder = new ProcessBuilder(commandLineCallPath,
+                 libraryPath, vrlOption, //von mir, abweichung von bsp
+                "-cp", bootClassPath, Studio.class.getName() ); //starte ein studio
 
         
         processBuilder.redirectErrorStream(true);//NEEDED TO READ / VIEW OUTPUT OF 2nd JVM
@@ -115,7 +135,8 @@ public class Main {
     protected static void initUGServer() {
 
         String[] params = {"-property-folder-suffix", "numerics-server",
-            "-plugin-checksum-test", "yes", "-rpc", "server"};
+            "-plugin-checksum-test", "yes",
+            "-rpc", "server"};
         
         VRL.initAll(params);
 

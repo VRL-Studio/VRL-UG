@@ -104,7 +104,7 @@ public class UG {
     public static XmlRpcClient getXmlRpcClient() {
         
         if(xmlRpcClient==null){
-            createXmlRpcClient(defaultHost, port);
+            createXmlRpcClient(defaultHost, getPort());
         }
         
         return xmlRpcClient;
@@ -115,6 +115,20 @@ public class UG {
      */
     public static XmlRpcServer getXmlRpcServer() {
         return xmlRpcServer;
+    }
+
+    /**
+     * @return the port
+     */
+    private static int getPort() {
+        return port;
+    }
+
+    /**
+     * @param aPort the port to set
+     */
+    private static void setPort(int aPort) {
+        port = aPort;
     }
     /**
      * VRL canvas used to visualize ug classes
@@ -366,7 +380,7 @@ public class UG {
             if (remoteType.equals(RemoteType.SERVER)) {
             // load native library and connect to ug lib to generate api
             connectToNativeUG(true);
-            createXmlRpcServer(port);
+            createXmlRpcServer(getPort());
         }
 
     }

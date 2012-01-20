@@ -1,9 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.gcsc.vrl.ug;
 
+import eu.mihosoft.vrl.annotation.MethodInfo;
+import eu.mihosoft.vrl.annotation.ObjectInfo;
 import eu.mihosoft.vrl.system.VRL;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,25 +14,18 @@ import java.util.logging.Logger;
  *
  * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
  */
-public class Main {
+@ObjectInfo(name = "ConnectToUGserver")
+public class ConnectToUGserver {
 
-    private static Integer port = 1099; // default port
-    
-    public static void main(String[] args) {
-        
-        initUGServer();
-        
-    }
+//    @MethodInfo(noGUI = true)
+    public static void startAnJVM(int port) {
 
-    
-       protected static void startAnJVM(int port) {
-        
         String commandLineCallOptions = "-Xms256m -Xmx1024m "
                 + "-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled "
                 + "-XX:+CMSPermGenSweepingEnabled -XX:MaxPermSize=256m";
-        
-        String addionalCommandLineCallPath = 
-        "-Dsun.boot.library.path=/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Libraries"
+
+        String addionalCommandLineCallPath =
+                "-Dsun.boot.library.path=/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Libraries"
                 + ":natives/osx:custom-lib/osx"
                 + " -Xbootclasspath/p"
                 + ":natives/jars/j3dcore.jar"
@@ -43,23 +34,23 @@ public class Main {
                 + ":natives/jars/vecmath.jar"
                 + ":natives/osx/gluegen-rt.jar"
                 + " -Djava.library.path=\"natives/osx\"";
-        
+
         String separator = System.getProperty("file.separator");
         String classpath = System.getProperty("java.class.path");
         String path = System.getProperty("java.home")
                 + separator + "bin" + separator + "java";
-        
-        
+
+
         System.out.println("separator = " + separator);
         System.out.println("classpath = " + classpath);
         System.out.println("path = " + path);
-        
+
 
         ProcessBuilder processBuilder = new ProcessBuilder(path,
-                 addionalCommandLineCallPath, commandLineCallOptions, //von mir, abweichung von bsp
-                "-cp", classpath, Main.class.getName() );
+                addionalCommandLineCallPath, commandLineCallOptions, //von mir, abweichung von bsp
+                "-cp", classpath, Main.class.getName());
 
-        
+
         processBuilder.redirectErrorStream(true);//NEEDED TO READ / VIEW OUTPUT OF 2nd JVM
 
         Process process = null;
@@ -83,13 +74,13 @@ public class Main {
             InputStreamReader errStreamRead = new InputStreamReader(errStream);
             BufferedReader buffErrStreamRead = new BufferedReader(errStreamRead);
 
-            
+
             // read the child process' output
             String line;
             while ((line = buffInStreamRead.readLine()) != null) {
                 System.out.println(line);
             }
-            
+
             String line2;
             // read the child process' error output
             while ((line2 = buffErrStreamRead.readLine()) != null) {
@@ -101,22 +92,22 @@ public class Main {
             System.out.println("ERROR during reading stream of Server JVM !");
 
         }
-        
+
         try {
-            
+
             process.waitFor();
-            
+
         } catch (InterruptedException ex) {
             Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
-    protected static void initUGServer() {
+
+//    @MethodInfo(noGUI = true)
+    public static void initUGServer() {
 
         String[] params = {"-property-folder-suffix", "numerics-server",
             "-plugin-checksum-test", "yes", "-rpc", "server"};
-        
+
         VRL.initAll(params);
 
 //        if (args != null) {
@@ -132,8 +123,8 @@ public class Main {
 //        }
 //        
 //        UG.createXmlRpcServer(port);
-        
-        
+
+
 
 //                if (tmp == 1) {
 

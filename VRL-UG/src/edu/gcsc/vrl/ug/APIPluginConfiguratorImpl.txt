@@ -46,13 +46,15 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
     }
 
     public void register(PluginAPI api) {
+
         if (api instanceof VPluginAPI) {
+
             VPluginAPI vApi = (VPluginAPI) api;
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
+
             UG.getInstance("CLIENT").setMainCanvas(vCanvas);
 
             Class<?> apiCls = null;
-
             boolean matchingAPI = false;
 
             try {
@@ -123,7 +125,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
             vApi.addTypeRepresentation(new UserDataType());
             vApi.addTypeRepresentation(new BoundaryUserDataType());
 
-            vApi.addComponentSearchFilter(new HideComponentFilter());
+            vApi.addComponentSearchFilter(new HideComponentFilter());           
         }
     }
 
