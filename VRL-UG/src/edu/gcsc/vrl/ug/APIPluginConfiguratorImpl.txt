@@ -104,7 +104,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
                         log(Level.SEVERE, null, ex);
             }
 
-            if (!matchingAPI) {
+            /*if (!matchingAPI) {
                 VDialog.showMessageDialog(vCanvas,
                         "UG-API not compatible to current UG version:",
                         " UG-API has to be recompiled."
@@ -112,7 +112,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
                         + " Plugin directory and restart VRL-Studio.");
 
                 VRL.exit(0);
-            }
+            }*/
 
 
             for (Class<?> cls : UG.getAPiClasses(apiCls)) {
