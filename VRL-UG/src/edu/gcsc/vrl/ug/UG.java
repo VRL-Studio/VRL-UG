@@ -133,15 +133,14 @@ public class UG {
 //    }
 //
     /**
-     * Loads all native librarties in the specified folder and optionally all
-     * of its subfolders. Please ensure that all libraries in the folder are
-     * compatible with the current os.
-     * <p><b>Note: </b>this method is an EXACT copy of 
-     * {@link eu.mihosoft.vrl.system.VSysUtil#loadNativeLibrariesInFolder(java.io.File, boolean) }. 
-     * This is necessary as using the original method would load the native 
+     * Loads all native librarties in the specified folder and optionally all of
+     * its subfolders. Please ensure that all libraries in the folder are
+     * compatible with the current os. <p><b>Note: </b>this method is an EXACT
+     * copy of
+     * {@link eu.mihosoft.vrl.system.VSysUtil#loadNativeLibrariesInFolder(java.io.File, boolean)
+     * }. This is necessary as using the original method would load the native
      * libraries in the wrong classloader (the classloader that loaded
-     * {@link eu.mihosoft.vrl.system.VSysUtil)}.
-     * </p>
+     * {@link eu.mihosoft.vrl.system.VSysUtil)}. </p>
      *
      * @param folder library folder
      * @param recursive defines whether recusrively load libraries from sub
@@ -185,19 +184,30 @@ public class UG {
 
             for (File f : dynamicLibraries) {
 
-                String libName = f.getAbsolutePath();
+                String libName = f.getName();
+
+                if (!VSysUtil.isWindows()) {
+                    libName = libName.replaceFirst("lib", "");
+                }
+
+                libName = libName.substring(0,
+                        libName.length() - dylibEnding.length());
 
                 if (!loadedLibraries.contains(libName)) {
-                    System.out.println(" --> " + f.getName());
+                    System.out.print(" --> " + f.getName());
                     try {
-                        System.load(libName);
+                        System.loadLibrary(libName);
                         loadedLibraries.add(libName);
+                        System.out.println(" [OK]");
                     } catch (Exception ex) {
+                        System.out.println(" [ERROR]");
                         ex.printStackTrace(System.err);
                     }
                 }
             }
         }
+
+        System.out.println(" --> done.");
 
         return loadedLibraries.size() == dynamicLibraries.size();
     }
@@ -230,7 +240,6 @@ public class UG {
                     + VSysUtil.getPlatformSpecificPath());
 
             loadNativeLibrariesInFolder(libFolder, false);
-
 
             libLoaded = true;
         }
