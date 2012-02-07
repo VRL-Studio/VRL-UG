@@ -23,7 +23,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
@@ -36,19 +38,15 @@ import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
 import org.apache.xmlrpc.webserver.WebServer;
 
 /**
- * <p>
- * UG class represents UG and its scripting functionality. It allows only one
- * instance which can be obtained via
- * {@link #getInstance(eu.mihosoft.vrl.reflection.VisualCanvas) }.
- * </p>
- * <p>
- * <b>Note:</b> this singleton must not be loaded by more than one
- * classloader per JVM! Although this is no problem for Java classes, it
- * does not work for native libraries. Unfortunately, we cannot provide an
- * acceptable workaround. Thus, it is recommended to use this class from
- * a valid VRL plugin only. The VRL plugin system is aware of this problem
- * and handles it correctly.
- * </p>
+ * <p> UG class represents UG and its scripting functionality. It allows only
+ * one instance which can be obtained via
+ * {@link #getInstance(eu.mihosoft.vrl.reflection.VisualCanvas) }. </p> <p>
+ * <b>Note:</b> this singleton must not be loaded by more than one classloader
+ * per JVM! Although this is no problem for Java classes, it does not work for
+ * native libraries. Unfortunately, we cannot provide an acceptable workaround.
+ * Thus, it is recommended to use this class from a valid VRL plugin only. The
+ * VRL plugin system is aware of this problem and handles it correctly. </p>
+ *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class UG {
@@ -75,8 +73,8 @@ public class UG {
     private static RemoteType remoteType = null;
 
     /**
-     * 
-     * @param remoteType 
+     *
+     * @param remoteType
      */
     static void setRemoteType(RemoteType remoteType) {
         UG.remoteType = remoteType;
@@ -86,49 +84,33 @@ public class UG {
 
     /**
      *
-     * @return 
+     * @return
      */
     static RemoteType getRemoteType() {
 
         return UG.remoteType;
     }
-    private static int port = 1099;
-    private static String defaultHost = "localhost";
-    private static XmlRpcClient xmlRpcClient;
-    private static XmlRpcServer xmlRpcServer;
-    private static WebServer webServer;
 
     /**
-     * @return the xmlRpcClient
+     * Stops the local JVM, where UG runs in server mode.
      */
-    public static XmlRpcClient getXmlRpcClient() {
-        
-        if(xmlRpcClient==null){
-            createXmlRpcClient(defaultHost, getPort());
+    public static int stopLocalServer() {
+
+//        @TODO: ...
+
+        return 0;
+    }
+
+    /**
+     * Needed for testing if a connection could be established to server UG.
+     *
+     * @return always true if called
+     */
+    public static boolean isServerRunning() {
+        if (UG.getRemoteType().equals(RemoteType.SERVER)) {
+            return true;
         }
-        
-        return xmlRpcClient;
-    }
-
-    /**
-     * @return the xmlRpcServer
-     */
-    public static XmlRpcServer getXmlRpcServer() {
-        return xmlRpcServer;
-    }
-
-    /**
-     * @return the port
-     */
-    private static int getPort() {
-        return port;
-    }
-
-    /**
-     * @param aPort the port to set
-     */
-    private static void setPort(int aPort) {
-        port = aPort;
+        return false;
     }
     /**
      * VRL canvas used to visualize ug classes
@@ -152,8 +134,8 @@ public class UG {
      */
     private static boolean libLoaded = false;
     /**
-     * temp folder conaining native libs 
-     * (must be set from ug plugin, not from api)
+     * temp folder conaining native libs (must be set from ug plugin, not from
+     * api)
      */
     private static File nativeLibFolder;
     /**
@@ -163,6 +145,7 @@ public class UG {
 
     /**
      * Returns the api description
+     *
      * @return api description
      */
     public String getDescriptionFromApi() {
@@ -205,6 +188,7 @@ public class UG {
     /**
      * Defines all native UG classes that are exported via the UG registry,
      * i.e., the equivalent Java wrapper classes.
+     *
      * @param aNativeClasses the nativeClasses to set
      */
 //    static void setNativeClasses(Class<?>[] nativeClasses) {
@@ -302,7 +286,7 @@ public class UG {
     private UG(RemoteType remoteType) {
 
         System.out.println("------ UG(RemoteType= " + getRemoteType() + ") --------");
-        
+
         setRemoteType(remoteType);
 
 //         // we must set the singleton instance to prevent
@@ -315,55 +299,116 @@ public class UG {
 
         if (!remoteType.equals(RemoteType.SERVER)) {
 
+            boolean isServerRunning = false;
 
-            // load api if compatible; rebuild otherwise
+
             try {
-                Class<?> cls = findCompatibleAPI(ugInstance);
-
-                api = cls;
-
-                if (cls == null) {
-
-                    if (remoteType == RemoteType.NONE) {
-                        // load native library and connect to ug lib to generate api
-                        connectToNativeUG(true);
-                    }
-
-                    NativeAPIInfo nativeAPI = convertRegistryInfo();
-
-                    Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
-
-                    try {
-                        recompiled = true;
-
-                        System.err.println(
-                                VTerminalUtil.red(
-                                " --> VRL-UG-API missing.\n"
-                                + " --> Recompiling API..."));
-
-                        SplashScreenGenerator.printBootMessage(
-                                ">> UG: recompiling API (this may take a while) ...");
-
-                        // generates jar file in plugin path
-                        compiler.compile(
-                                new edu.gcsc.vrl.ug.NativeAPICode(
-                                nativeAPI).getAllCodes(),
-                                VPropertyFolderManager.getPluginUpdatesFolder().
-                                getAbsolutePath());
-
-                    } catch (Exception ex) {
-                        Logger.getLogger(UG.class.getName()).
-                                log(Level.SEVERE, null, ex);
-                    }
-                }
+                //try if there is local UG server on default port running
+                isServerRunning = ServerManager.isServerRunning(
+                        ServerManager.getDefaultHost(), ServerManager.getDefaultPort());
 
             } catch (Exception ex) {
-                Logger.getLogger(UG.class.getName()).
-                        log(Level.SEVERE, null, ex);
+                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            initialized = libLoaded;
+            System.out.println(" # + # + #  is local server with default port running= " + isServerRunning);
 
+            //UGServer not running
+            if (!isServerRunning) {
+                try {
+
+                    System.out.println("# + # + #  UG(RemoteType) server not running...");
+                    System.out.println("# + # + #  ServerManager.startAnotherJVM()");
+                    ServerManager.startAnotherJVM(ServerManager.getPort());
+
+
+                } catch (Exception ex) {
+                    Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+
+                int wait = 20;
+                System.out.println("# + # + #  waiting " + wait
+                        + " secs for finishing start of server");
+                int counter = 0;
+                int maxCounter = 5;
+
+                //wait until sever is booted and running
+                while ((!isServerRunning) && (counter < maxCounter)) {
+                    counter++;
+                    try {
+
+                        TimeUnit.SECONDS.sleep(wait);
+                        System.out.println("waited " + counter + " times of maxCounter= " + maxCounter + ".");
+                        System.out.println("# + # + #  waiting another " + wait
+                                + " secs for finishing start of server ... "
+                                + Calendar.getInstance().getTime());
+                        isServerRunning = ServerManager.isServerRunning(
+                                ServerManager.getHost(), ServerManager.getPort());
+
+                    } catch (Exception ex) {
+                        Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+
+            System.out.println("3) # + # + #  isServerRunning=" + isServerRunning);
+
+            if (isServerRunning) {
+
+
+
+                // load api if compatible; rebuild otherwise
+                try {
+                    Class<?> cls = findCompatibleAPI(ugInstance);
+
+                    api = cls;
+
+                    if (cls == null) {
+
+                        if (remoteType == RemoteType.NONE) {
+                            // load native library and connect to ug lib to generate api
+                            connectToNativeUG(true);
+                        }
+
+                        NativeAPIInfo nativeAPI = convertRegistryInfo();
+
+                        Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
+
+                        try {
+                            recompiled = true;
+
+                            System.err.println(
+                                    VTerminalUtil.red(
+                                    " --> VRL-UG-API missing.\n"
+                                    + " --> Recompiling API..."));
+
+                            SplashScreenGenerator.printBootMessage(
+                                    ">> UG: recompiling API (this may take a while) ...");
+
+                            // generates jar file in plugin path
+                            compiler.compile(
+                                    new edu.gcsc.vrl.ug.NativeAPICode(
+                                    nativeAPI).getAllCodes(),
+                                    VPropertyFolderManager.getPluginUpdatesFolder().
+                                    getAbsolutePath());
+
+                        } catch (Exception ex) {
+                            Logger.getLogger(UG.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        }
+                    }
+
+                } catch (Exception ex) {
+                    Logger.getLogger(UG.class.getName()).
+                            log(Level.SEVERE, null, ex);
+                }
+
+                initialized = libLoaded;
+
+            } else {
+                System.out.println("local server could not be started.");
+            }
         }
 
         System.out.println("------ AFTER if RemoteType NOT SERVER in constructor UG(RemoteType)");
@@ -377,10 +422,17 @@ public class UG {
 //            createXmlRpcClient(defaultHost, defaultPort);
 //
 //        } else
-            if (remoteType.equals(RemoteType.SERVER)) {
+        if (remoteType.equals(RemoteType.SERVER)) {
             // load native library and connect to ug lib to generate api
             connectToNativeUG(true);
-            createXmlRpcServer(getPort());
+            
+            try {
+                //            ServerManager.startLocalServer(ServerManager.getPort());
+                            ServerManager.startAnotherJVM(ServerManager.getPort());
+                            
+            } catch (Exception ex) {
+                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
     }
@@ -388,9 +440,10 @@ public class UG {
     /**
      * Tries to find a compatible api in the class path. Compatibility is
      * defined as equal svn revision and equal compile date.
+     *
      * @param ug ug instance used to check for compatibility.
-     * @return a compatible api class object or <code>null</code> if no such
-     * api could be found
+     * @return a compatible api class object or
+     * <code>null</code> if no such api could be found
      */
     private static Class<?> findCompatibleAPI(UG ug) {
         try {
@@ -465,6 +518,7 @@ public class UG {
     /**
      * Returns the api classes defined in the jar-file the specified class
      * object is loaded from.
+     *
      * @param cls api class
      * @return the api classes
      */
@@ -505,21 +559,17 @@ public class UG {
     }
 
     /**
-     * <p>
-     * Returns the instance of this singleton. If it does not exist it will be
-     * created.
-     * <p>
-     * <p>
-     * <b>Note:</b> this singleton must not be loaded by more than one
-     * classloader per JVM! Although this is no problem for Java classes it
-     * does not work for native libraries. Unfortunately we cannot provide an
-     * acceptable workaround. Thus, it is recommended to use this method from
-     * a valid VRL plugin only. The VRL plugin system is aware of this problem
-     * and handles it correctly.
-     * </p>
+     * <p> Returns the instance of this singleton. If it does not exist it will
+     * be created. <p> <p> <b>Note:</b> this singleton must not be loaded by
+     * more than one classloader per JVM! Although this is no problem for Java
+     * classes it does not work for native libraries. Unfortunately we cannot
+     * provide an acceptable workaround. Thus, it is recommended to use this
+     * method from a valid VRL plugin only. The VRL plugin system is aware of
+     * this problem and handles it correctly. </p>
+     *
      * @param canvas VRL canvas that shall be used to visualize ug classes
-     * @param remoteType declares if remote communication is activated or not and
-     *        how UG should act as Server or Client
+     * @param remoteType declares if remote communication is activated or not
+     * and how UG should act as Server or Client
      * @return the instance of this singleton
      */
     public static synchronized UG getInstance(VisualCanvas canvas,
@@ -590,23 +640,15 @@ public class UG {
 //        return ugInstance;
 //    }
     /**
-     * <p>
-     * Returns the instance of this singleton.
-     * </p>
-     * <p>
-     * <b>Note:</b>If message
-     * logging shall be used, please assign a visible canvas. For this
-     * {@link #getInstance(eu.mihosoft.vrl.reflection.VisualCanvas)  }
-     * can be used.
-     * </p>
-     * <p>
-     * <b>Note:</b> this singleton must not be loaded by more than one
-     * classloader per JVM if native libs have been loaded! Although this is
-     * no problem for Java classes, it
-     * does not work for native libraries. Unfortunately, we cannot provide an
-     * acceptable workaround. Thus, it is recommended to use this method from
-     * a valid VRL plugin only. The VRL plugin system is aware of this problem
-     * and handles it correctly.
+     * <p> Returns the instance of this singleton. </p> <p> <b>Note:</b>If
+     * message logging shall be used, please assign a visible canvas. For this
+     * {@link #getInstance(eu.mihosoft.vrl.reflection.VisualCanvas) }
+     * can be used. </p> <p> <b>Note:</b> this singleton must not be loaded by
+     * more than one classloader per JVM if native libs have been loaded!
+     * Although this is no problem for Java classes, it does not work for native
+     * libraries. Unfortunately, we cannot provide an acceptable workaround.
+     * Thus, it is recommended to use this method from a valid VRL plugin only.
+     * The VRL plugin system is aware of this problem and handles it correctly.
      * </p>
      */
     public static UG getInstance() {
@@ -615,6 +657,7 @@ public class UG {
 
     /**
      * Returns the VRL canvas that is used to visualize the UG classes.
+     *
      * @return the VRL canvas that is used to visualize the UG classes
      */
     public VisualCanvas getMainCanvas() {
@@ -622,12 +665,10 @@ public class UG {
     }
 
     /**
-     * <p>
-     * The VRL canvas that shall be used to visualize the UG classes
+     * <p> The VRL canvas that shall be used to visualize the UG classes </p>
+     * <p> <b>Notice:</b> as a side effect this method starts UG message logging
      * </p>
-     * <p>
-     * <b>Notice:</b> as a side effect this method starts UG message logging
-     * </p>
+     *
      * @param mainCanvas the VRL canvas to set
      */
     public void setMainCanvas(VisualCanvas mainCanvas) {
@@ -731,82 +772,6 @@ public class UG {
             this.logging = false;
         }
     }
-    
-    /**
-     * 
-     * @param port the port which should be used
-     * 
-     * @return true if xmlRpcServer could be created and webServer started
-     */
-    private static boolean createXmlRpcServer(int port) {
-        boolean result = false;
-
-
-        PropertyHandlerMapping mapping = new PropertyHandlerMapping();
-
-        try {
-            mapping.addHandler("RpcHandler", RpcHandler.class);
-
-        } catch (XmlRpcException ex) {
-            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        webServer = new WebServer(port);
-
-//        //allow only connection with listed clients
-//        webserver.setParanoid(true);
-//        webserver.acceptClient("141.2.38.37");
-//        webserver.acceptClient("141.2.38.91");
-//        //end allow list
-
-        XmlRpcServerConfigImpl config = new XmlRpcServerConfigImpl();
-
-        //aktiviere erweiterungen
-        config.setEnabledForExtensions(true);
-
-        xmlRpcServer = webServer.getXmlRpcServer();
-
-
-        getXmlRpcServer().setConfig(config);
-        getXmlRpcServer().setHandlerMapping(mapping);
-
-        try {
-            webServer.start();
-
-        } catch (IOException ex) {
-            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return result;
-    }
-
-    /**
-     * 
-     * @param host localhost or ip like e.g. 141.2.22.123
-     * @param port the port which should be used
-     * 
-     * @return true if client could be created
-     */
-    private static boolean createXmlRpcClient(String host, int port) {
-        boolean result = false;
-
-        XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-
-        try {
-            config.setServerURL(new URL("http://" + host + ":" + port));
-
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        //aktiviere erweiterungen
-        config.setEnabledForExtensions(true);
-
-        xmlRpcClient = new XmlRpcClient();
-        getXmlRpcClient().setConfig(config);
-
-        return result;
-    }
 
     // ********************************************
     // ************** NATIVE METHODS **************
@@ -838,8 +803,9 @@ public class UG {
     public static native int _ugInit(String[] args);
 
     /**
-     * Deallocates specified memory. The destructor of the specified class
-     * will be called.
+     * Deallocates specified memory. The destructor of the specified class will
+     * be called.
+     *
      * @param objPtr object pointer
      * @param exportedClassPtr pointer of the exported class
      */
@@ -848,33 +814,31 @@ public class UG {
 
     /**
      * Invalidates the specified smart pointer.
+     *
      * @param p smart-pointer to invalidate
      */
     native static void _invalidate(SmartPointer p);
     //
     //
     /**
-     * NOTICE: 
-     * 
+     * NOTICE:
+     *
      * ALL METHODS need to RETURN one of the following types:
-     * 
-     * XML-RPC type      Simplest Java type     More complex Java type
-     * 
-     * i4                int                    java.lang.Integer
-     * int               int                    java.lang.Integer
-     * boolean           boolean                java.lang.Boolean
-     * string            java.lang.String       java.lang.String
-     * double            double                 java.lang.Double
-     * 
-     * dateTime.iso8601  java.util.Date         java.util.Date
-     * struct            java.util.Hashtable    java.util.Hashtable
-     * array             java.util.Vector       java.util.Vector
-     * base64            byte[]                 byte[]
-     * 
-     * nil (extension)   null                   null
+     *
+     * XML-RPC type Simplest Java type More complex Java type
+     *
+     * i4 int java.lang.Integer int int java.lang.Integer boolean boolean
+     * java.lang.Boolean string java.lang.String java.lang.String double double
+     * java.lang.Double
+     *
+     * dateTime.iso8601 java.util.Date java.util.Date struct java.util.Hashtable
+     * java.util.Hashtable array java.util.Vector java.util.Vector base64 byte[]
+     * byte[]
+     *
+     * nil (extension) null null
      *
      * ATTENTION: void is NOT valid !!!
-     * 
+     *
      */
     // ******************************************************
     // ************** REMOTE or NATIVE METHODS **************
@@ -894,10 +858,12 @@ public class UG {
             Object o = null;
 
             try {
+                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
+                        ServerManager.getHost(), ServerManager.getPort());
 
-                System.out.println("XMLCLIENT: " + getXmlRpcClient());
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
 
-                o = getXmlRpcClient().execute("RpcHandler.convertRegistryInfo", voidElement);
+                o = xmlRpcClient.execute("RpcHandler.convertRegistryInfo", voidElement);
 
 
             } catch (XmlRpcException ex) {
@@ -938,7 +904,7 @@ public class UG {
             String base64 = null;
 
             Vector xmlRpcParams = new Vector();
-            
+
             xmlRpcParams.addElement(exportedClassName);
             xmlRpcParams.addElement(String.valueOf(objPtr));//long
             xmlRpcParams.addElement(readOnly);
@@ -952,11 +918,16 @@ public class UG {
 
 
             try {
-                o = getXmlRpcClient().execute("RpcHandler.invokeMethod", xmlRpcParams);
-                
-                base64 =(String) o;
+                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
+                        ServerManager.getHost(), ServerManager.getPort());
+
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
+
+                o = xmlRpcClient.execute("RpcHandler.invokeMethod", xmlRpcParams);
+
+                base64 = (String) o;
                 o = Base64.decodeToObject(base64, UG.class.getClassLoader());
-                
+
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -981,16 +952,21 @@ public class UG {
 
             base64 = Base64.encodeObject(parameters);
             xmlRpcParams.addElement(base64);
-            
+
 //            xmlRpcParams.addElement(parameters);
 //            for (Object op : parameters) {
 //                xmlRpcParams.addElement(op);
 //            }
 
             try {
-                o = getXmlRpcClient().execute("RpcHandler.newInstance", xmlRpcParams);
-                base64 =(String) o;
-                
+                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
+                        ServerManager.getHost(), ServerManager.getPort());
+
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
+
+                o = xmlRpcClient.execute("RpcHandler.newInstance", xmlRpcParams);
+                base64 = (String) o;
+
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1018,7 +994,12 @@ public class UG {
 
 
             try {
-                o = getXmlRpcClient().execute("RpcHandler.getExportedClassPtrByName", xmlRpcParams);
+                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
+                        ServerManager.getHost(), ServerManager.getPort());
+
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
+
+                o = xmlRpcClient.execute("RpcHandler.getExportedClassPtrByName", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1043,7 +1024,12 @@ public class UG {
             xmlRpcParams.addElement(grpName);
 
             try {
-                o = getXmlRpcClient().execute("RpcHandler.getDefaultClassNameFromGroup", xmlRpcParams);
+                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
+                        ServerManager.getHost(), ServerManager.getPort());
+
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
+
+                o = xmlRpcClient.execute("RpcHandler.getDefaultClassNameFromGroup", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1072,11 +1058,16 @@ public class UG {
 //            }
 
             try {
-                o = getXmlRpcClient().execute("RpcHandler.invokeFunction", xmlRpcParams);
-                String base64 =(String) o;
-                
+                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
+                        ServerManager.getHost(), ServerManager.getPort());
+
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
+
+                o = xmlRpcClient.execute("RpcHandler.invokeFunction", xmlRpcParams);
+                String base64 = (String) o;
+
                 o = Base64.decodeToObject(base64, UG.class.getClassLoader());
-                
+
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1096,7 +1087,12 @@ public class UG {
             Object o = null;
 
             try {
-                o = getXmlRpcClient().execute("RpcHandler.getSvnRevision", voidElement);
+                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
+                        ServerManager.getHost(), ServerManager.getPort());
+
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
+
+                o = xmlRpcClient.execute("RpcHandler.getSvnRevision", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1116,7 +1112,12 @@ public class UG {
             Object o = null;
 
             try {
-                o = getXmlRpcClient().execute("RpcHandler.getDescription", voidElement);
+                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
+                        ServerManager.getHost(), ServerManager.getPort());
+
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
+
+                o = xmlRpcClient.execute("RpcHandler.getDescription", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1136,7 +1137,12 @@ public class UG {
             Object o = null;
 
             try {
-                o = getXmlRpcClient().execute("RpcHandler.getAuthors", voidElement);
+                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
+                        ServerManager.getHost(), ServerManager.getPort());
+
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
+
+                o = xmlRpcClient.execute("RpcHandler.getAuthors", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1156,7 +1162,12 @@ public class UG {
             Object o = null;
 
             try {
-                o = getXmlRpcClient().execute("RpcHandler.getCompileDate", voidElement);
+                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
+                        ServerManager.getHost(), ServerManager.getPort());
+
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
+
+                o = xmlRpcClient.execute("RpcHandler.getCompileDate", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1177,7 +1188,9 @@ public class UG {
 
             ArrayList<Object> xmlRpcParams = new ArrayList<Object>();
 
-            /*ENTWEDER*/ //eher die version
+            /*
+             * ENTWEDER
+             */ //eher die version
             xmlRpcParams.add(Arrays.asList(args)); //SCHWERWIEGEND: No method matching arguments: [Ljava.lang.Object;
 
 //            /*ODER*/
@@ -1199,7 +1212,12 @@ public class UG {
 //
 //                o = xmlRpcClient.execute("RpcHandler.ugInit", new ArrayList<Object>()); //works with uginit(void)
 
-                o = getXmlRpcClient().execute("RpcHandler.ugInit", xmlRpcParams);
+                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
+                        ServerManager.getHost(), ServerManager.getPort());
+
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
+
+                o = xmlRpcClient.execute("RpcHandler.ugInit", xmlRpcParams);
 
 //                String s = (String) xmlRpcClient.execute("RpcHandler.getAuthors", new ArrayList<Object>());
 //
@@ -1225,8 +1243,9 @@ public class UG {
     }
 
     /**
-     * Deallocates specified memory. The destructor of the specified class
-     * will be called.
+     * Deallocates specified memory. The destructor of the specified class will
+     * be called.
+     *
      * @param objPtr object pointer
      * @param exportedClassPtr pointer of the exported class
      */
@@ -1240,7 +1259,12 @@ public class UG {
             xmlRpcParams.addElement(String.valueOf(exportedClassPtr));
 
             try {
-                getXmlRpcClient().execute("RpcHandler.delete", xmlRpcParams);
+                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
+                        ServerManager.getHost(), ServerManager.getPort());
+
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
+
+                xmlRpcClient.execute("RpcHandler.delete", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1254,6 +1278,7 @@ public class UG {
 
     /**
      * Invalidates the specified smart pointer.
+     *
      * @param p smart-pointer to invalidate
      */
     static void invalidate(SmartPointer p) {
@@ -1264,7 +1289,12 @@ public class UG {
             xmlRpcParams.addElement(p);
 
             try {
-                getXmlRpcClient().execute("RpcHandler.invalidate", xmlRpcParams);
+                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
+                        ServerManager.getHost(), ServerManager.getPort());
+
+                System.out.println("XMLCLIENT: " + xmlRpcClient);
+
+                xmlRpcClient.execute("RpcHandler.invalidate", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }

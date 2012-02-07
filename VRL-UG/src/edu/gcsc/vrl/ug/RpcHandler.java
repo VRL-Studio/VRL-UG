@@ -10,6 +10,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sun.misc.BASE64Encoder;
 
 /**
@@ -260,6 +262,41 @@ public class RpcHandler {
             return true;
         }
 
+        return false;
+    }
+    
+    /**
+     * Stops the local JVM, where UG runs in server mode.
+     */
+    public int stopLocalServer() {
+        ServerManager.stopLocalServerRemotely();
+        return 0;
+    }
+    
+    /**
+     * Starts a local JVM, where UG runs in server mode.
+     */
+    public int startLocalServer(int port) {
+        try {
+            //        ServerManager.startLocalServer(port);
+                    ServerManager.startAnotherJVM(port);
+        } catch (Exception ex) {
+            Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+    
+    
+    /**
+     * Tries to connect to server and returns true if a connection could be
+     * established.
+     */
+    public boolean isServerRunning() {
+        Boolean b = UG.isServerRunning();
+        
+        if(b!=null && b.booleanValue()){
+            return true;
+        }
         return false;
     }
 }
