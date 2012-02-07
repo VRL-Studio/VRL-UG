@@ -44,7 +44,8 @@ public class Configurator extends VPluginConfigurator {
             VPluginAPI vApi = (VPluginAPI) api;
             
              //TEST: component for starting an UG on an other JVM
-            vApi.addComponent(ServerManager.class);
+//            vApi.addComponent(ServerManager.class);
+            vApi.addComponent(JVMmanager.class);
 //
             // request restart
             if (UG.getInstance().isRecompiled()) {

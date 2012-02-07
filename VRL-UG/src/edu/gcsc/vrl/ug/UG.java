@@ -90,15 +90,21 @@ public class UG {
 
         return UG.remoteType;
     }
+    private static WebServer webServer = null;
 
     /**
-     * Stops the local JVM, where UG runs in server mode.
+     * needs to be executed in the right JVM than works shutdown.
      */
-    public static int stopLocalServer() {
+    public static synchronized void stopWebServer() {
+//        System.out.println(Server.class.getName() + ".stopServer()");
 
-//        @TODO: ...
+        if (webServer != null) {
+            System.out.println("WebServer.shutdown();");
+            webServer.shutdown();
 
-        return 0;
+        } else {
+            System.out.println("webserver==null");
+        }
     }
 
     /**
@@ -111,6 +117,60 @@ public class UG {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Starts a webserver, if UG runs in server mode.
+     */
+    private static void startWebServer() {
+
+        if (UG.getRemoteType().equals(RemoteType.SERVER)) {
+
+            PropertyHandlerMapping mapping = new PropertyHandlerMapping();
+
+            try {
+                mapping.addHandler("RpcHandler", RpcHandler.class);
+
+            } catch (XmlRpcException ex) {
+                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            webServer = new WebServer(JVMmanager.getCurrentPort());
+
+//        //allow only connection with listed clients
+//        webserver.setParanoid(true);
+//        webserver.acceptClient("141.2.38.37");
+//        webserver.acceptClient("141.2.38.91");
+//        //end allow list
+
+            XmlRpcServerConfigImpl config = new XmlRpcServerConfigImpl();
+
+            //aktiviere erweiterungen
+            config.setEnabledForExtensions(true);
+
+            XmlRpcServer xmlRpcServer = webServer.getXmlRpcServer();
+
+
+            xmlRpcServer.setConfig(config);
+            xmlRpcServer.setHandlerMapping(mapping);
+
+            try {
+                webServer.start();
+
+            } catch (IOException ex) {
+                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
+    public static void main(String[] args) {
+
+        String[] params = {"-property-folder-suffix", "numerics-server",
+            "-plugin-checksum-test", "yes", "-rpc", "server"};
+
+        VRL.initAll(params);
+
     }
     /**
      * VRL canvas used to visualize ug classes
@@ -304,8 +364,9 @@ public class UG {
 
             try {
                 //try if there is local UG server on default port running
-                isServerRunning = ServerManager.isServerRunning(
-                        ServerManager.getDefaultHost(), ServerManager.getDefaultPort());
+                isServerRunning = JVMmanager.isServerRunning(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
             } catch (Exception ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
@@ -317,9 +378,15 @@ public class UG {
             if (!isServerRunning) {
                 try {
 
-                    System.out.println("# + # + #  UG(RemoteType) server not running...");
-                    System.out.println("# + # + #  ServerManager.startAnotherJVM()");
-                    ServerManager.startAnotherJVM(ServerManager.getPort());
+                    System.out.println("# + # + #  UG( " + remoteType + " ) server not running...");
+                    System.out.println("# + # + #  JVMmanager.startAnotherJVM()");
+                    JVMmanager.startAnotherJVM(
+                            UG.class, 
+                            JVMmanager.getCurrentIP(),
+                            JVMmanager.getCurrentPort()  );
+                    
+//                    System.out.println("# + # + #  UG.startWebServer() remoteType= "+ remoteType);
+//                    UG.startWebServer();
 
 
                 } catch (Exception ex) {
@@ -343,8 +410,9 @@ public class UG {
                         System.out.println("# + # + #  waiting another " + wait
                                 + " secs for finishing start of server ... "
                                 + Calendar.getInstance().getTime());
-                        isServerRunning = ServerManager.isServerRunning(
-                                ServerManager.getHost(), ServerManager.getPort());
+
+                        isServerRunning = JVMmanager.isServerRunning(
+                                JVMmanager.getCurrentIP(), JVMmanager.getCurrentPort());
 
                     } catch (Exception ex) {
                         Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
@@ -355,9 +423,6 @@ public class UG {
             System.out.println("3) # + # + #  isServerRunning=" + isServerRunning);
 
             if (isServerRunning) {
-
-
-
                 // load api if compatible; rebuild otherwise
                 try {
                     Class<?> cls = findCompatibleAPI(ugInstance);
@@ -423,16 +488,25 @@ public class UG {
 //
 //        } else
         if (remoteType.equals(RemoteType.SERVER)) {
+
+            System.out.println("# + # + #  UG.startWebServer() remoteType= "+ remoteType);
+            UG.startWebServer();
+
+
             // load native library and connect to ug lib to generate api
             connectToNativeUG(true);
-            
-            try {
-                //            ServerManager.startLocalServer(ServerManager.getPort());
-                            ServerManager.startAnotherJVM(ServerManager.getPort());
-                            
-            } catch (Exception ex) {
-                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
-            }
+
+//            try {
+//                //            ServerManager.startLocalServer(ServerManager.getPortByIP());
+//                JVMmanager.startAnotherJVM(
+//                        UG.class,
+//                        JVMmanager.getCurrentIP(),
+//                        JVMmanager.getCurrentPort());
+//
+//            } catch (Exception ex) {
+//                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+
         }
 
     }
@@ -858,8 +932,9 @@ public class UG {
             Object o = null;
 
             try {
-                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
-                        ServerManager.getHost(), ServerManager.getPort());
+                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
@@ -918,8 +993,9 @@ public class UG {
 
 
             try {
-                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
-                        ServerManager.getHost(), ServerManager.getPort());
+                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
@@ -959,8 +1035,9 @@ public class UG {
 //            }
 
             try {
-                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
-                        ServerManager.getHost(), ServerManager.getPort());
+                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
@@ -994,8 +1071,9 @@ public class UG {
 
 
             try {
-                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
-                        ServerManager.getHost(), ServerManager.getPort());
+                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
@@ -1024,8 +1102,9 @@ public class UG {
             xmlRpcParams.addElement(grpName);
 
             try {
-                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
-                        ServerManager.getHost(), ServerManager.getPort());
+                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
@@ -1058,8 +1137,9 @@ public class UG {
 //            }
 
             try {
-                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
-                        ServerManager.getHost(), ServerManager.getPort());
+                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
@@ -1087,8 +1167,9 @@ public class UG {
             Object o = null;
 
             try {
-                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
-                        ServerManager.getHost(), ServerManager.getPort());
+                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
@@ -1112,8 +1193,9 @@ public class UG {
             Object o = null;
 
             try {
-                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
-                        ServerManager.getHost(), ServerManager.getPort());
+                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
@@ -1137,8 +1219,9 @@ public class UG {
             Object o = null;
 
             try {
-                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
-                        ServerManager.getHost(), ServerManager.getPort());
+                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
@@ -1162,8 +1245,9 @@ public class UG {
             Object o = null;
 
             try {
-                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
-                        ServerManager.getHost(), ServerManager.getPort());
+                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
@@ -1212,8 +1296,9 @@ public class UG {
 //
 //                o = xmlRpcClient.execute("RpcHandler.ugInit", new ArrayList<Object>()); //works with uginit(void)
 
-                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
-                        ServerManager.getHost(), ServerManager.getPort());
+                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
@@ -1259,8 +1344,9 @@ public class UG {
             xmlRpcParams.addElement(String.valueOf(exportedClassPtr));
 
             try {
-                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
-                        ServerManager.getHost(), ServerManager.getPort());
+                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
@@ -1289,8 +1375,9 @@ public class UG {
             xmlRpcParams.addElement(p);
 
             try {
-                XmlRpcClient xmlRpcClient = ServerManager.createXmlRpcClient(
-                        ServerManager.getHost(), ServerManager.getPort());
+                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
