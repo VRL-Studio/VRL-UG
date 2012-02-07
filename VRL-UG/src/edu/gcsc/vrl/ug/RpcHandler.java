@@ -1,8 +1,8 @@
 package edu.gcsc.vrl.ug;
 
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in
+ * the editor.
  */
 import eu.mihosoft.vrl.io.Base64;
 import java.io.Serializable;
@@ -15,36 +15,33 @@ import java.util.logging.Logger;
 import sun.misc.BASE64Encoder;
 
 /**
- * NOTICE: 
- * 
+ * NOTICE:
+ *
  * ALL METHODS need to RETURN one of the following types:
- * 
- * XML-RPC type      Simplest Java type     More complex Java type
- * 
- * i4                int                    java.lang.Integer
- * int               int                    java.lang.Integer
- * boolean           boolean                java.lang.Boolean
- * string            java.lang.String       java.lang.String
- * double            double                 java.lang.Double
- * 
- * dateTime.iso8601  java.util.Date         java.util.Date
- * struct            java.util.Hashtable    java.util.Hashtable
- * array             java.util.Vector       java.util.Vector
- * base64            byte[]                 byte[]
- * 
- * nil (extension)   null                   null
+ *
+ * XML-RPC type Simplest Java type More complex Java type
+ *
+ * i4 int java.lang.Integer int int java.lang.Integer boolean boolean
+ * java.lang.Boolean string java.lang.String java.lang.String double double
+ * java.lang.Double
+ *
+ * dateTime.iso8601 java.util.Date java.util.Date struct java.util.Hashtable
+ * java.util.Hashtable array java.util.Vector java.util.Vector base64 byte[]
+ * byte[]
+ *
+ * nil (extension) null null
  *
  * ATTENTION: void is NOT valid !!!
- * 
- * 
- * The PpcHandler methods were executed on the Server.
- * So result came from server calculation.
- * 
+ *
+ *
+ * The PpcHandler methods were executed on the Server. So result came from
+ * server calculation.
+ *
  * But the parameters of the methods are filed from the clients.
- * 
- * So RpcHandler is more a part of the server, but the clients
- * need to know the interface of this class (the method-heads).
- * 
+ *
+ * So RpcHandler is more a part of the server, but the clients need to know the
+ * interface of this class (the method-heads).
+ *
  * @author christianpoliwoda
  */
 public class RpcHandler {
@@ -52,9 +49,6 @@ public class RpcHandler {
     static String message = "first call";
 //    private static UG server = null;
     private static UG server = UG.getInstance(null, RemoteType.SERVER);
-
-    
-    
 
 //    //TEST FUNCTION
     public int show(String message) {
@@ -107,16 +101,16 @@ public class RpcHandler {
             String exportedClassName, String objPtr, boolean readOnly,
             String methodName, String params) {
         show("invokeMethod");
-        
+
         Object o = Base64.decodeToObject(
                 params, server.getClass().getClassLoader());
-        Object[] objArray =(Object[]) o;
-        
-         o = server._invokeMethod(
+        Object[] objArray = (Object[]) o;
+
+        o = server._invokeMethod(
                 exportedClassName, new Long(objPtr), readOnly, methodName, objArray);
-        
-         //alles ist serialisierbar
-        String base64 = Base64.encodeObject((Serializable)o);
+
+        //alles ist serialisierbar
+        String base64 = Base64.encodeObject((Serializable) o);
 
         return base64;
     }
@@ -124,28 +118,28 @@ public class RpcHandler {
 //    public long newInstance(String exportedClassPtr, Object[] parameters) {
     public String newInstance(String exportedClassPtr, String parameters) {
         show("newInstance");
-        
+
         Object o = Base64.decodeToObject(
                 parameters, server.getClass().getClassLoader());
-        Object[] objArray =(Object[]) o;
-        
+        Object[] objArray = (Object[]) o;
+
         long result = server._newInstance(new Long(exportedClassPtr), objArray);
 
         System.out.println("result =" + result);
 
         return String.valueOf(result);
-        
-        
+
+
     }
 
     public String getExportedClassPtrByName(String name, boolean classGrp) {
         show("getExportedClassPtrByName");
- 
+
         long result = server._getExportedClassPtrByName(name, classGrp);
 
         System.out.println("result =" + result);
 
-        return  String.valueOf(result);
+        return String.valueOf(result);
     }
 
     public String getDefaultClassNameFromGroup(String grpName) {
@@ -161,17 +155,17 @@ public class RpcHandler {
 //    public Object invokeFunction(String name, boolean readOnly, Object[] params) {
     public String invokeFunction(String name, boolean readOnly, Object[] params) {
         show("invokeFunction");
-        
+
         Object o = server._invokeFunction(name, readOnly, params);
-        
+
         //annahme alle enthalten objekte sind serializierbar
-        String base64 = Base64.encodeObject((Serializable)o);
+        String base64 = Base64.encodeObject((Serializable) o);
 
 //        System.out.println("RESULT: " + base64);
 
         return base64;
 
-        
+
     }
 
     public String getSvnRevision() {
@@ -186,8 +180,8 @@ public class RpcHandler {
 
     public String getDescription() {
         show("getDescription");
- 
-        String result =  server._getDescription();
+
+        String result = server._getDescription();
 
         System.out.println("result =" + result);
 
@@ -196,8 +190,8 @@ public class RpcHandler {
 
     public String getAuthors() {
         show("getAuthors");
-     
-        String result =  server._getAuthors();
+
+        String result = server._getAuthors();
 
         System.out.println("result =" + result);
 
@@ -207,12 +201,12 @@ public class RpcHandler {
 
     public String getCompileDate() {
         show("getCompileDate");
-        
+
         String result = server._getCompileDate();
 
         System.out.println("result =" + result);
 
-        return result;        
+        return result;
     }
 
     public Integer ugInit(List<String> args) {
@@ -233,8 +227,9 @@ public class RpcHandler {
 //    }
 
     /**
-     * Deallocates specified memory. The destructor of the specified class
-     * will be called.
+     * Deallocates specified memory. The destructor of the specified class will
+     * be called.
+     *
      * @param objPtr object pointer
      * @param exportedClassPtr pointer of the exported class
      */
@@ -242,13 +237,14 @@ public class RpcHandler {
     public boolean delete(String objPtr, String exportedClassPtr) {
         show("delete");
 
-        server._delete(new Long(objPtr), new Long(exportedClassPtr) );
+        server._delete(new Long(objPtr), new Long(exportedClassPtr));
 
         return true;
     }
 
     /**
      * Invalidates the specified smart pointer.
+     *
      * @param o smart-pointer as Object to invalidate
      */
     public boolean invalidate(Object o) {
@@ -264,29 +260,21 @@ public class RpcHandler {
 
         return false;
     }
+
     
     /**
-     * Stops the local JVM, where UG runs in server mode.
+     * Stops the web server in the local JVM, where UG runs in server mode.
      */
-    public int stopLocalServer() {
-        ServerManager.stopLocalServerRemotely();
+    public int stopWebServer() {
+//        System.out.println("START "+RpcHandler.class.getName() + ".stopServer()");
+
+        UG.stopWebServer();
+//        System.out.println("END "+RpcHandler.class.getName() + ".stopServer()");
+
         return 0;
     }
-    
-    /**
-     * Starts a local JVM, where UG runs in server mode.
-     */
-    public int startLocalServer(int port) {
-        try {
-            //        ServerManager.startLocalServer(port);
-                    ServerManager.startAnotherJVM(port);
-        } catch (Exception ex) {
-            Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return 0;
-    }
-    
-    
+
+
     /**
      * Tries to connect to server and returns true if a connection could be
      * established.
