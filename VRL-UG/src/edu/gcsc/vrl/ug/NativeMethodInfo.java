@@ -21,6 +21,7 @@ public class NativeMethodInfo implements Serializable{
     private String help;
     private boolean isConst;
     private boolean constructor;
+    private boolean javaConstructor;
 
     public NativeMethodInfo() {
     }
@@ -36,6 +37,7 @@ public class NativeMethodInfo implements Serializable{
         this.help = m.help;
         this.isConst = m.isConst;
         this.constructor = m.constructor;
+        this.javaConstructor = m.javaConstructor;
     }
 
     /**
@@ -161,16 +163,38 @@ public class NativeMethodInfo implements Serializable{
     }
 
     /**
-     * @return the constructor
+     * @return <code>true</code> if this is a constructor;
+     *         <code>false</code> otherwise
      */
     public boolean isConstructor() {
         return constructor;
     }
 
     /**
+     * Indicates whether this method represents a constructor method,
+     * uses method name <code>constructor</code>.
      * @param constructor the constructor to set
      */
     public void setConstructor(boolean constructor) {
         this.constructor = constructor;
+    }
+
+    /**
+     * @return <code>true</code> if this is a java constructor;
+     *         <code>false</code> otherwise
+     */
+    public boolean isJavaConstructor() {
+        return javaConstructor;
+    }
+
+    /**
+     * Indicates whether this method represents a java constructor. In contrast
+     * to constructor method it does not use <code>constructor</code> as method
+     * name. Rather than that it's name is equal to the name of the class it
+     * belongs to.
+     * @param javaConstructor the javaConstructor to set
+     */
+    public void setJavaConstructor(boolean javaConstructor) {
+        this.javaConstructor = javaConstructor;
     }
 }

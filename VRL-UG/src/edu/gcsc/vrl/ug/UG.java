@@ -5,10 +5,11 @@
 package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.io.Base64;
+import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
-import eu.mihosoft.vrl.system.Constants;
+import eu.mihosoft.vrl.system.VParamUtil;
 import eu.mihosoft.vrl.system.VRL;
 import eu.mihosoft.vrl.system.VSysUtil;
 import eu.mihosoft.vrl.system.VTerminalUtil;
@@ -16,22 +17,19 @@ import eu.mihosoft.vrl.visual.MessageType;
 import eu.mihosoft.vrl.visual.SplashScreenGenerator;
 import java.beans.XMLDecoder;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
-import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcServer;
 import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
@@ -246,6 +244,75 @@ public class UG {
 //    }
 //
     /**
+     * Loads all native librarties in the specified folder and optionally all of
+     * its subfolders. Please ensure that all libraries in the folder are
+     * compatible with the current os. <p><b>Note: </b>this method is an EXACT
+     * copy of
+     * {@link eu.mihosoft.vrl.system.VSysUtil#loadNativeLibrariesInFolder(java.io.File, boolean)
+     * }. This is necessary as using the original method would load the native
+     * libraries in the wrong classloader (the classloader that loaded
+     * {@link eu.mihosoft.vrl.system.VSysUtil)}. </p>
+     *
+     * @param folder library folder
+     * @param recursive defines whether recusrively load libraries from sub
+     * folders
+     *
+     * @return
+     * <code>true</code> if all native libraries could be loaded;
+     * <code>false</code> otherwise
+     */
+    private static boolean loadNativeLibrariesInFolder(
+            File folder, boolean recursive) {
+        VParamUtil.throwIfNotValid(
+                VParamUtil.VALIDATOR_EXISTING_FOLDER, folder);
+
+        final String dylibEnding = "." + VSysUtil.getPlatformSpecificLibraryEnding();
+
+        Collection<File> dynamicLibraries = new ArrayList<File>();
+
+        if (recursive) {
+            dynamicLibraries.addAll(
+                    IOUtil.listFiles(folder, new String[]{dylibEnding}));
+        } else {
+            File[] libFiles = folder.listFiles(new FilenameFilter() {
+
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(dylibEnding);
+                }
+            });
+            dynamicLibraries.addAll(Arrays.asList(libFiles));
+        }
+
+        System.out.println(">> loading native libraries:");
+
+        ArrayList<String> loadedLibraries = new ArrayList<String>();
+
+        int lastSize = -1;
+
+        while (loadedLibraries.size() > lastSize) {
+
+            lastSize = loadedLibraries.size();
+
+            for (File f : dynamicLibraries) {
+
+                String libName = f.getAbsolutePath();
+
+                if (!loadedLibraries.contains(libName)) {
+                    System.out.println(" --> " + f.getName());
+                    try {
+                        System.load(libName);
+                        loadedLibraries.add(libName);
+                    } catch (Exception ex) {
+                        ex.printStackTrace(System.err);
+                    }
+                }
+            }
+        }
+
+        return loadedLibraries.size() == dynamicLibraries.size();
+    }
+
+    /**
      * Defines all native UG classes that are exported via the UG registry,
      * i.e., the equivalent Java wrapper classes.
      *
@@ -263,6 +330,9 @@ public class UG {
         }
 
         // initialize native ug libraries
+
+
+
         String pluginPath = getNativeLibFolder() + "/eu/mihosoft/vrl/natives/"
                 + VSysUtil.getPlatformSpecificPath() + "plugins".replace("/", File.separator);
 
@@ -270,9 +340,16 @@ public class UG {
 
         System.out.println(" --> UG: connecting to native ug.");
 
-        if (loadNativeLib) { // check if remote, e.g. loadNative && !remote
-//        if (loadNativeLib && !remote) {
-            System.loadLibrary("ug4");
+
+        if (loadNativeLib) {
+
+            File libFolder = new File(
+                    getNativeLibFolder() + "/eu/mihosoft/vrl/natives/"
+                    + VSysUtil.getPlatformSpecificPath());
+
+            loadNativeLibrariesInFolder(libFolder, false);
+
+
             libLoaded = true;
         }
 
@@ -325,9 +402,11 @@ public class UG {
                             ">> UG: recompiling API (this may take a while) ...");
 
                     // generates jar file in plugin path
-                    compiler.compile(
-                            new edu.gcsc.vrl.ug.NativeAPICode(
-                            nativeAPI).getAllCodes(), Constants.PLUGIN_DIR);
+                            compiler.compile(
+                                    new edu.gcsc.vrl.ug.NativeAPICode(
+                                    nativeAPI).getAllCodes(),
+                                    VPropertyFolderManager.getPluginUpdatesFolder().
+                                    getAbsolutePath());
 
                 } catch (Exception ex) {
                     Logger.getLogger(UG.class.getName()).
@@ -381,10 +460,10 @@ public class UG {
                     System.out.println("# + # + #  UG( " + remoteType + " ) server not running...");
                     System.out.println("# + # + #  JVMmanager.startAnotherJVM()");
                     JVMmanager.startAnotherJVM(
-                            UG.class, 
+                            UG.class,
                             JVMmanager.getCurrentIP(),
-                            JVMmanager.getCurrentPort()  );
-                    
+                            JVMmanager.getCurrentPort());
+
 //                    System.out.println("# + # + #  UG.startWebServer() remoteType= "+ remoteType);
 //                    UG.startWebServer();
 
@@ -489,7 +568,7 @@ public class UG {
 //        } else
         if (remoteType.equals(RemoteType.SERVER)) {
 
-            System.out.println("# + # + #  UG.startWebServer() remoteType= "+ remoteType);
+            System.out.println("# + # + #  UG.startWebServer() remoteType= " + remoteType);
             UG.startWebServer();
 
 
@@ -524,7 +603,7 @@ public class UG {
             ClassLoader cl = null;
             try {
                 cl = new URLClassLoader(
-                        new URL[]{new File(Constants.PLUGIN_DIR
+                        new URL[]{new File(eu.mihosoft.vrl.system.Constants.PLUGIN_DIR
                             + "/" + Compiler.API_JAR_NAME).toURI().toURL()});
             } catch (MalformedURLException ex) {
                 Logger.getLogger(VRL.class.getName()).
@@ -534,12 +613,12 @@ public class UG {
             if (cl == null) {
                 System.err.println("Classloader not found: This should never"
                         + " happen. Please "
-                        + Constants.WRITE_VRL_BUG_REPORT_PLAIN);
+                        + eu.mihosoft.vrl.system.Constants.WRITE_VRL_BUG_REPORT_PLAIN);
 
                 return null;
             }
 
-            Class<?> cls = cl.loadClass("edu.gcsc.vrl.ug.UGAPI");
+            Class<?> cls = cl.loadClass("edu.gcsc.vrl.ug.api.UGAPI");
 
             String apiSvn = (String) cls.getMethod(
                     "getSvnRevision").
@@ -601,7 +680,7 @@ public class UG {
             ClassLoader cl = cls.getClassLoader();
 
             URL url = cls.getResource(
-                    "/edu/gcsc/vrl/ug/UG_INFO.XML");
+                    "/edu/gcsc/vrl/ug/api/UG_INFO.XML");
 
             Thread.currentThread().setContextClassLoader(cl);
 
@@ -620,7 +699,7 @@ public class UG {
                 String clsName = apiInfo.getClassNames().get(i);
 
                 result[i] = cl.loadClass(
-                        "edu.gcsc.vrl.ug."
+                        "edu.gcsc.vrl.ug.api."
                         + clsName);
             }
 
@@ -857,7 +936,9 @@ public class UG {
             long objPtr, boolean readOnly,
             String methodName, Object[] params);
 
-    native long _newInstance(long exportedClassPtr, Object[] parameters);
+//TODO make with BASE64 xmlrpc compatible
+//    native long newInstance(long exportedClassPtr, Object[] parameters);
+    native Pointer _newInstance(long exportedClassPtr, Object[] parameters);
 
     native long _getExportedClassPtrByName(String name, boolean classGrp);
 
@@ -1012,12 +1093,14 @@ public class UG {
         }
     }
 
-    long newInstance(long exportedClassPtr, Object[] parameters) {
+//TODO make with BASE64 xmlrpc compatible
+    Pointer newInstance(long exportedClassPtr, Object[] parameters) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
             Object o = null;
             String base64 = null;
+            Pointer p = null;
 
             Vector xmlRpcParams = new Vector();
             xmlRpcParams.addElement(String.valueOf(exportedClassPtr));
@@ -1037,17 +1120,20 @@ public class UG {
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
-                o = xmlRpcClient.execute("RpcHandler.newInstance", xmlRpcParams);
+                o =  xmlRpcClient.execute("RpcHandler.newInstance", xmlRpcParams);
+                
                 base64 = (String) o;
+                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
+
+                if (o instanceof Pointer) {
+                    p = (Pointer) o;
+                }
 
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            //@DONE String base64 remote transfer 
-            //      and decode here to long !!!!!
-
-            return new Long(base64);
+            return p;
 
         } else {
 
@@ -1366,7 +1452,7 @@ public class UG {
     static void invalidate(SmartPointer p) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
-            
+
             Object o = null;
             String base64 = null;
 

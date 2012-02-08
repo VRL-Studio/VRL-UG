@@ -5,6 +5,8 @@
 package edu.gcsc.vrl.ug;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+
 
 /**
  * This class contains all properties of a native method that are
@@ -121,22 +123,42 @@ public class NativeConstructorInfo implements Serializable{
    
     /**
      * Converts this native constructor info to an equivalent method info.
+     * @param 
      * @return this native constructor info as equivalent method info
      */
     public static NativeMethodGroupInfo toNativeMethodGroupInfo(
-            NativeConstructorInfo[] constructors) {
+            NativeClassInfo cls) {
         
-        NativeMethodInfo[] methods = new NativeMethodInfo[constructors.length];
+        NativeConstructorInfo[] constructors = cls.getConstructors();
+        
+        ArrayList<NativeMethodInfo> constructorMethodList = 
+                new ArrayList<NativeMethodInfo>();
         
         for (int i = 0; i < constructors.length;i++) {
-            methods[i] = constructors[i].toNativeMethodInfo();
+            constructorMethodList.add(constructors[i].toNativeMethodInfo());
+            
+            if (constructors[i].getParameters().length>0) {
+                NativeMethodInfo contructorMethod = 
+                        constructors[i].toNativeMethodInfo();
+                
+                contructorMethod.setName(cls.getName());
+                contructorMethod.setJavaConstructor(true);
+                constructorMethodList.add(contructorMethod);
+            }
+
         }
         
         NativeMethodGroupInfo result = new NativeMethodGroupInfo();
         
         result.setConst(false);
         
-        result.setOverloads(methods);
+        NativeMethodInfo[] constructorMethodArray = 
+                new NativeMethodInfo[constructorMethodList.size()];
+        
+        constructorMethodArray = constructorMethodList.
+                toArray(constructorMethodArray);
+        
+        result.setOverloads(constructorMethodArray);
         
         return result;
     }
