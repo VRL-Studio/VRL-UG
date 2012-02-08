@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 /**
  * Represents the code of a class.
+ *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 class ClassCode implements CodeElement {
@@ -24,6 +25,7 @@ class ClassCode implements CodeElement {
 
     /**
      * Constructor.
+     *
      * @param nativeAPI native api
      * @param classInfo class info
      * @param type code type
@@ -147,11 +149,25 @@ class ClassCode implements CodeElement {
                 classGrpName = classInfo.getName();
             }
 
+//            builder.addLine(
+//                    "private static final long serialVersionUID=1L").
+//                    addLine("public " + CodeUtils.className(
+//                    classInfo.getName(), isConst)
+//                    + "() { setClassName(\"" + classInfo.getName()
+//                    + "\"); setInstantiable(" + asFullClass + " );"
+//                    + "setClassGroupObject(" + weAreAGroupClass + " );"
+//                    + "setClassGroupName(\"" + classGrpName + "\");}").
+//                    newLine();
+            
             builder.addLine(
                     "private static final long serialVersionUID=1L").
                     addLine("public " + CodeUtils.className(
                     classInfo.getName(), isConst)
-                    + "() { setClassName(\"" + classInfo.getName()
+                    + "() { __initialize();}").
+                    newLine();
+
+            builder.newLine().addLine(
+                    "private void __initialize() { setClassName(\"" + classInfo.getName()
                     + "\"); setInstantiable(" + asFullClass + " );"
                     + "setClassGroupObject(" + weAreAGroupClass + " );"
                     + "setClassGroupName(\"" + classGrpName + "\");}").
@@ -176,7 +192,7 @@ class ClassCode implements CodeElement {
         boolean[] visual = new boolean[]{false, true};
 
         for (boolean createVisual : visual) {
-            
+
             boolean inherited = false;
 
             for (NativeClassInfo cls : classes) {
@@ -185,7 +201,7 @@ class ClassCode implements CodeElement {
                     // add constructor code
                     new MethodGroupCode(api,
                             NativeConstructorInfo.toNativeMethodGroupInfo(
-                            cls.getConstructors()),
+                            cls),
                             signatures, type, createVisual,
                             inherited).build(builder).
                             newLine();
@@ -209,7 +225,7 @@ class ClassCode implements CodeElement {
                             inherited).build(
                             builder).newLine();
                 }
-                
+
                 // from now on we generate inherited methods
                 inherited = true;
 

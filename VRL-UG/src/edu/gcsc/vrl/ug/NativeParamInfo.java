@@ -7,8 +7,9 @@ package edu.gcsc.vrl.ug;
 import java.io.Serializable;
 
 /**
- * This class contains all properties of a parameter that are
- * necessary to generate parameter code for wrapper methods/functions.
+ * This class contains all properties of a parameter that are necessary to
+ * generate parameter code for wrapper methods/functions.
+ *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeParamInfo implements Serializable{
@@ -39,6 +40,7 @@ public class NativeParamInfo implements Serializable{
 
     /**
      * Returns the native parameter type.
+     *
      * @return the native parameter type
      */
     public NativeType getType() {
@@ -47,6 +49,7 @@ public class NativeParamInfo implements Serializable{
 
     /**
      * Defines the native parameter type.
+     *
      * @param type the native parameter type to set
      */
     public void setType(NativeType type) {
@@ -54,13 +57,10 @@ public class NativeParamInfo implements Serializable{
     }
 
     /**
-     * <p>
-     * Defines the native parameter type of this parameter via integers.
-     * </p>
-     * <p>
-     * <b>Note:</b> the purpose of this method is to convert native C++ enums
-     * to type safe Java enums
-     * </p>
+     * <p> Defines the native parameter type of this parameter via integers.
+     * </p> <p> <b>Note:</b> the purpose of this method is to convert native C++
+     * enums to type safe Java enums </p>
+     *
      * @param type the native parameter type to set
      */
     private void setType(int type) {
@@ -85,15 +85,18 @@ public class NativeParamInfo implements Serializable{
                 setType(NativeType.STRING);
                 break;
             case 5:
-                setType(NativeType.POINTER);
+                setType(NativeType.STRING);
                 break;
             case 6:
-                setType(NativeType.CONST_POINTER);
+                setType(NativeType.POINTER);
                 break;
             case 7:
-                setType(NativeType.SMART_POINTER);
+                setType(NativeType.CONST_POINTER);
                 break;
             case 8:
+                setType(NativeType.SMART_POINTER);
+                break;
+            case 9:
                 setType(NativeType.CONST_SMART_POINTER);
                 break;
             default:
@@ -103,6 +106,7 @@ public class NativeParamInfo implements Serializable{
 
     /**
      * Returns the id of this parameter.
+     *
      * @return the id of this parameter
      */
     public int getId() {
@@ -111,6 +115,7 @@ public class NativeParamInfo implements Serializable{
 
     /**
      * Defines the id of this parameter.
+     *
      * @param id the id to set
      */
     public void setId(int id) {
@@ -119,6 +124,7 @@ public class NativeParamInfo implements Serializable{
 
     /**
      * Returns the help string of this parameter.
+     *
      * @return the help string of this parameter
      */
     public String getHelp() {
@@ -127,6 +133,7 @@ public class NativeParamInfo implements Serializable{
 
     /**
      * Defines the help string of this parameter.
+     *
      * @param help the help string to set
      */
     public void setHelp(String help) {
@@ -135,6 +142,7 @@ public class NativeParamInfo implements Serializable{
 
     /**
      * Returns the tooltip string of this parameter.
+     *
      * @return the tooltip string of this parameter
      */
     public String getTooltip() {
@@ -143,6 +151,7 @@ public class NativeParamInfo implements Serializable{
 
     /**
      * Defines the tooltip string of this parameter.
+     *
      * @param tooltip the tooltip string to set
      */
     public void setTooltip(String tooltip) {
@@ -151,6 +160,7 @@ public class NativeParamInfo implements Serializable{
 
     /**
      * Returns the param info string (annotation string).
+     *
      * @return the param info string (annotation string)
      */
     public String[] getParamInfo() {
@@ -159,6 +169,7 @@ public class NativeParamInfo implements Serializable{
 
     /**
      * Defines the param info string (annotation string).
+     *
      * @param paramInfo the param info string to set
      */
     public void setParamInfo(String[] paramInfo) {
@@ -167,6 +178,7 @@ public class NativeParamInfo implements Serializable{
 
     /**
      * Returns the class name of this parameter.
+     *
      * @return the class name of this parameter
      */
     public String getClassName() {
@@ -175,6 +187,7 @@ public class NativeParamInfo implements Serializable{
 
     /**
      * Defines the class name of this parameter.
+     *
      * @param className the class name to set
      */
     public void setClassName(String className) {
@@ -182,8 +195,9 @@ public class NativeParamInfo implements Serializable{
     }
 
     /**
-     * Returns the class names class names of the base classes of this
-     * parameter class.
+     * Returns the class names class names of the base classes of this parameter
+     * class.
+     *
      * @return the class names of the base classes of this parameter class
      */
     public String[] getClassNames() {
@@ -191,8 +205,9 @@ public class NativeParamInfo implements Serializable{
     }
 
     /**
-     * Defines the class names class names of the base classes of this
-     * parameter class
+     * Defines the class names class names of the base classes of this parameter
+     * class
+     *
      * @param classNames the class names to set
      */
     public void setClassNames(String[] classNames) {
@@ -201,6 +216,7 @@ public class NativeParamInfo implements Serializable{
 
     /**
      * Returns the Java class name of this parameter type.
+     *
      * @return the Java class name of this parameter type
      */
     public String getTypeClassName() {
@@ -228,23 +244,27 @@ public class NativeParamInfo implements Serializable{
 
         return "/*ERROR!!! INVALID TYPE*/ void";
     }
-    
+
     /**
      * Indicates whether this parameter is const.
-     * @return  <code>true</code> if this parameter is const;
-     *          <code>false</code> otherwise
+     *
+     * @return
+     * <code>true</code> if this parameter is const;
+     * <code>false</code> otherwise
      */
     public boolean isConst() {
-        return type == NativeType.CONST_POINTER 
-                ||type == NativeType.CONST_SMART_POINTER;
+        return type == NativeType.CONST_POINTER
+                || type == NativeType.CONST_SMART_POINTER;
     }
 
     /**
      * Determines whether the type of this parameter is a registered ug class
-     * (if the type if this parameter is a (const)pointer or 
+     * (if the type if this parameter is a (const)pointer or
      * (const)smart-pointer).
-     * @return <code>true</code> if type of this parameter is a registered
-     *         ug class; <code>false</code> otherwise
+     *
+     * @return
+     * <code>true</code> if type of this parameter is a registered ug class;
+     * <code>false</code> otherwise
      */
     public boolean isRegisteredClass() {
         return getType() == NativeType.CONST_POINTER

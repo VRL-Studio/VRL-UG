@@ -62,7 +62,7 @@ public class Compiler {
     public Class<?>[] compile(String[] codes, String jarLocation)
             throws MultipleCompilationErrorsException {
 
-        String packageName = "edu.gcsc.vrl.ug";
+        String packageName = "edu.gcsc.vrl.ug.api";
 
         ArrayList<String> classNames = new ArrayList<String>();
 
@@ -71,7 +71,8 @@ public class Compiler {
         code.append("package ").append(packageName).append("\n").
                 append("import eu.mihosoft.vrl.reflection.*;\n").
                 append("import eu.mihosoft.vrl.types.*;\n").
-                append("import eu.mihosoft.vrl.annotation.*;\n");
+                append("import eu.mihosoft.vrl.annotation.*;\n").
+                append("import edu.gcsc.vrl.ug.*;\n");
 
         code.append("\n").append(new UGAPIClassCode().build(
                 new CodeBuilder()).toString());
@@ -193,7 +194,7 @@ public class Compiler {
             // write ug classes
 
             File ugInfoPath = new File(scriptPath.getAbsolutePath()
-                    + "/edu/gcsc/vrl/ug/");
+                    + "/edu/gcsc/vrl/ug/api/");
 
             ugInfoPath.mkdirs();
             

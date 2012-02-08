@@ -1,5 +1,5 @@
 
-
+import edu.gcsc.vrl.ug.*;
 import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.PluginAPI;
@@ -21,6 +21,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
+@ComponentInfo(ignore=true)
 public class APIPluginConfiguratorImpl extends VPluginConfigurator {
 
 public static final PluginIdentifier API_PLUGIN_IDENTIFIER =
@@ -59,7 +60,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
 
             try {
                 apiCls = this.getClass().getClassLoader().
-                        loadClass("edu.gcsc.vrl.ug.UGAPI");
+                        loadClass("edu.gcsc.vrl.ug.api.UGAPI");
 
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(APIPluginConfiguratorImpl.class.getName()).
@@ -105,7 +106,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
                         log(Level.SEVERE, null, ex);
             }
 
-            if (!matchingAPI) {
+            /*if (!matchingAPI) {
                 VDialog.showMessageDialog(vCanvas,
                         "UG-API not compatible to current UG version:",
                         " UG-API has to be recompiled."
@@ -113,7 +114,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
                         + " Plugin directory and restart VRL-Studio.");
 
                 VRL.exit(0);
-            }
+            }*/
 
 
             for (Class<?> cls : UG.getAPiClasses(apiCls)) {
