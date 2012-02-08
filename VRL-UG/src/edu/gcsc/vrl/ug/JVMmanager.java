@@ -32,7 +32,8 @@ public class JVMmanager implements Serializable {
     private static String defaultIP = "127.0.0.1"; //"localhost"
     private static Integer currentPort = 1099;
     private static String currentIP = "127.0.0.1"; //"localhost"
-    private static HashMap<String, Integer> hostsAndPorts = new HashMap<String, Integer>();
+    // String should have the form "ip:port"
+    private static HashMap<String, XmlRpcClient> clientsForConnection = new HashMap<String, XmlRpcClient>();
 
 //    private static HashMap<String,Process> createdProcesses = new HashMap<String, Process>();
     /**
@@ -44,8 +45,7 @@ public class JVMmanager implements Serializable {
      * @throws Exception
      */
     public static void startAnotherJVM(
-            final Class clazz, final String ip, final Integer port)
-            throws Exception {
+            final Class clazz, final String ip, final Integer port){
 
         Thread t = new Thread(new Runnable() {
 
@@ -155,21 +155,21 @@ public class JVMmanager implements Serializable {
         thread.start();
     }
 
-    /**
-     * SEEMS TO HAVE NO EFFECT YET!!
-     *
-     * print the message on the stream were the process is redirecting it.
-     *
-     * @param process the process which should be used.
-     * @param string the message which should be printed.
-     */
-    public static void printMessage(Process process, String string) {
-        if (process != null) {
-            PrintStream ps = new PrintStream(process.getOutputStream());
-            ps.println(string);
-            ps.close();
-        }
-    }
+//    /**
+//     * SEEMS TO HAVE NO EFFECT YET!!
+//     *
+//     * print the message on the stream were the process is redirecting it.
+//     *
+//     * @param process the process which should be used.
+//     * @param string the message which should be printed.
+//     */
+//    public static void printMessage(Process process, String string) {
+//        if (process != null) {
+//            PrintStream ps = new PrintStream(process.getOutputStream());
+//            ps.println(string);
+//            ps.close();
+//        }
+//    }
 
     /**
      * stops the endless loop of displayJVMOutput(Process p)
@@ -182,22 +182,9 @@ public class JVMmanager implements Serializable {
      * Calls remote the stopServer methode.
      */
     public static void stopServerRemotely() {
-//        System.out.println(JVMmanager.class.getName()+".stopServerRemotely() START");
 
-        XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-
-        try {
-            config.setServerURL(new URL("http://" + getCurrentIP() + ":" + getCurrentPort()));
-
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        config.setEnabledForExtensions(true);
-
-        XmlRpcClient xmlRpcClient = new XmlRpcClient();
-        xmlRpcClient.setConfig(config);
-
+        XmlRpcClient xmlRpcClient = getClient(getDefaultIP(), getCurrentPort());
+        
         try {
             Object o = xmlRpcClient.execute("RpcHandler.stopLocalServer", new Vector());
 
@@ -208,6 +195,14 @@ public class JVMmanager implements Serializable {
 //            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
 //        System.out.println(JVMmanager.class.getName()+".stopServerRemotely() END");
+    }
+    
+    /**
+     * Tries to start an UG server at localhost at port <code>getCurrentPort()</code>
+     */
+    public static void startLocalServer() {
+        
+            startAnotherJVM(UG.class, getDefaultIP(), getCurrentPort());
     }
 
     /**
@@ -245,88 +240,88 @@ public class JVMmanager implements Serializable {
         return vms;
     }
 
-    /**
-     * WORKS ONLY FOR LOCALHOST!
-     *
-     * Checks if at least one running JVM name contains shortname in its name
-     * and returns the PID of the first running found JVM.
-     *
-     * @param shortName the name which should be contained in the name of the
-     * searched JVM
-     *
-     * @return the ID as String or NULL if not found
-     */
-    public static String checkoutLocalID(String shortName) {
+//    /**
+//     * WORKS ONLY FOR LOCALHOST!
+//     *
+//     * Checks if at least one running JVM name contains shortname in its name
+//     * and returns the PID of the first running found JVM.
+//     *
+//     * @param shortName the name which should be contained in the name of the
+//     * searched JVM
+//     *
+//     * @return the ID as String or NULL if not found
+//     */
+//    public static String checkoutLocalID(String shortName) {
+//
+//        ArrayList<VirtualMachineDescriptor> vms =
+//                (ArrayList<VirtualMachineDescriptor>) containingLocalJVMs(shortName);
+//
+//        String searchedID = null;
+//
+//        for (VirtualMachineDescriptor vmd : vms) {
+//            if (vmd.displayName().contains(shortName)) {
+//
+//                searchedID = vmd.id();
+//
+//                System.out.println(JVMmanager.class.getName()
+//                        + ".checkoutLocalID() ID: " + searchedID);
+//                break;
+//            }
+//        }
+//
+//        return searchedID;
+//    }
 
-        ArrayList<VirtualMachineDescriptor> vms =
-                (ArrayList<VirtualMachineDescriptor>) containingLocalJVMs(shortName);
+//    /**
+//     * WORKS ONLY FOR LOCALHOST!
+//     *
+//     * @param shortName the name which should be contain in the searched JVM
+//     *
+//     * @return a list with all JVMs which contains
+//     * <code>shortName</code> in their name
+//     */
+//    public static List<VirtualMachineDescriptor> containingLocalJVMs(String shortName) {
+//
+//        ArrayList<VirtualMachineDescriptor> result =
+//                new ArrayList<VirtualMachineDescriptor>();
+//
+//        for (VirtualMachineDescriptor vmd : listLocalJVMs()) {
+//            if (vmd.displayName().contains(shortName)) {
+//
+//                result.add(vmd);
+//                System.out.println("containingLocalJVMs: " + vmd.displayName());
+//            }
+//        }
+//
+//        return result;
+//    }
 
-        String searchedID = null;
-
-        for (VirtualMachineDescriptor vmd : vms) {
-            if (vmd.displayName().contains(shortName)) {
-
-                searchedID = vmd.id();
-
-                System.out.println(JVMmanager.class.getName()
-                        + ".checkoutLocalID() ID: " + searchedID);
-                break;
-            }
-        }
-
-        return searchedID;
-    }
-
-    /**
-     * WORKS ONLY FOR LOCALHOST!
-     *
-     * @param shortName the name which should be contain in the searched JVM
-     *
-     * @return a list with all JVMs which contains
-     * <code>shortName</code> in their name
-     */
-    public static List<VirtualMachineDescriptor> containingLocalJVMs(String shortName) {
-
-        ArrayList<VirtualMachineDescriptor> result =
-                new ArrayList<VirtualMachineDescriptor>();
-
-        for (VirtualMachineDescriptor vmd : listLocalJVMs()) {
-            if (vmd.displayName().contains(shortName)) {
-
-                result.add(vmd);
-                System.out.println("containingLocalJVMs: " + vmd.displayName());
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * WORKS ONLY FOR LOCALHOST!
-     *
-     * Checks if at least one running JVM name contains shortname in its name
-     * and returns true if one found.
-     *
-     * @param shortName the name which should be contain in the searched JVM
-     *
-     * @return true if one JVM found
-     *
-     * @throws Exception
-     */
-    public static boolean isLocalServerRunning(String shortName) throws Exception {
-        boolean result = false;
-
-        if ((checkoutLocalID(shortName) != null)) {
-            result = true;
-            System.out.println("isLocalServerRunning(" + " " + shortName
-                    + " " + ")= " + result);
-
-        } else {
-            System.out.println("(checkoutLocalID(shortName) == null");
-        }
-
-        return result;
-    }
+//    /**
+//     * WORKS ONLY FOR LOCALHOST!
+//     *
+//     * Checks if at least one running JVM name contains shortname in its name
+//     * and returns true if one found.
+//     *
+//     * @param shortName the name which should be contain in the searched JVM
+//     *
+//     * @return true if one JVM found
+//     *
+//     * @throws Exception
+//     */
+//    public static boolean isLocalServerRunning(String shortName) throws Exception {
+//        boolean result = false;
+//
+//        if ((checkoutLocalID(shortName) != null)) {
+//            result = true;
+//            System.out.println("isLocalServerRunning(" + " " + shortName
+//                    + " " + ")= " + result);
+//
+//        } else {
+//            System.out.println("(checkoutLocalID(shortName) == null");
+//        }
+//
+//        return result;
+//    }
 
     /**
      * Tries to connect to server and returns true if a connection could be
@@ -340,20 +335,7 @@ public class JVMmanager implements Serializable {
      */
     public static boolean isServerRunning(String ip, Integer port) {
 
-        XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-
-        try {
-            config.setServerURL(new URL(
-                    "http://" + ip + ":" + port));
-
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        config.setEnabledForExtensions(true);
-
-        XmlRpcClient xmlRpcClient = new XmlRpcClient();
-        xmlRpcClient.setConfig(config);
+        XmlRpcClient xmlRpcClient = getClient(ip, port);
 
         try {
             Object o = xmlRpcClient.execute("RpcHandler.isServerRunning", new Vector());
@@ -371,25 +353,25 @@ public class JVMmanager implements Serializable {
 
     }
 
-    /**
-     * Prints information about the thread if thread!=null
-     *
-     * @param thread about information are wished
-     */
-    public static void printThreadInfos(Thread thread) {
-        if (thread != null) {
-            System.out.println("threadID = " + thread.getId());
-            System.out.println("threadName = " + thread.getName());
-            System.out.println("threadPriority = " + thread.getPriority());
-            System.out.println("isAlive = " + thread.isAlive());
-            System.out.println("isInterrupted = " + thread.isInterrupted());
-            System.out.println("ThreadGroupName = " + thread.getThreadGroup().getName());
-            System.out.println("ThreadGroup.activeCount = " + thread.getThreadGroup().activeCount());
-            System.out.println("ThreadGroup.getParentName = " + thread.getThreadGroup().getParent().getName());
-            System.out.println("");
-            thread.getThreadGroup().list();
-        }
-    }
+//    /**
+//     * Prints information about the thread if thread!=null
+//     *
+//     * @param thread about information are wished
+//     */
+//    public static void printThreadInfos(Thread thread) {
+//        if (thread != null) {
+//            System.out.println("threadID = " + thread.getId());
+//            System.out.println("threadName = " + thread.getName());
+//            System.out.println("threadPriority = " + thread.getPriority());
+//            System.out.println("isAlive = " + thread.isAlive());
+//            System.out.println("isInterrupted = " + thread.isInterrupted());
+//            System.out.println("ThreadGroupName = " + thread.getThreadGroup().getName());
+//            System.out.println("ThreadGroup.activeCount = " + thread.getThreadGroup().activeCount());
+//            System.out.println("ThreadGroup.getParentName = " + thread.getThreadGroup().getParent().getName());
+//            System.out.println("");
+//            thread.getThreadGroup().list();
+//        }
+//    }
 
     /**
      *
@@ -398,7 +380,7 @@ public class JVMmanager implements Serializable {
      *
      * @return the created client for
      */
-    public static XmlRpcClient createXmlRpcClient(String ip, int port) {
+    private static XmlRpcClient createXmlRpcClient(String ip, int port) {
         boolean result = false;
 
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
@@ -421,51 +403,36 @@ public class JVMmanager implements Serializable {
 
     /**
      * Adds the ip of a server and the port on which the sever is running to a
-     * list of avaiable servers.
+     * list of clients.
      *
      * @param ip the ip of the server
      * @param port the port at which communication is done with the server
+     * @param client the client which should be used for the communication
      */
-    public static void addServer(String ip, Integer port) {
+    private static void addClient(String ip, Integer port, XmlRpcClient client) {
 
-        hostsAndPorts.put(ip, port);
+        clientsForConnection.put(ip + ":" + port, client);
     }
 
-//    /**
-//     * 
-//     */
-//    public static void init(){
-//        addServer(getDefaultIP(), getDefaultPort());
-//        addServer("141.2.38.37", defaultPort);
-//        addServer("141.2.38.83", defaultPort);
-//        
-//    }
     /**
-     * DIRECT-TEST do not call this main from outside the class
+     *
+     * @param ip the ip of the server
+     * @param port the port at which communication is done with the server
+     *
+     * @return a client for the given ip-port-configuration
      */
-    private static void main(String[] args) {
-////        CODE FROM MINI-PROJECT
-//        System.out.println("STARTING: server");
-//        try {
-//
-//            startAnotherJVM(Server.class, getDefaultPort().toString(), getDefaultHost());
-//        } catch (Exception ex) {
-//            Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        for (int i = 0; i < 3; i++) {
-//
-//
-//            System.out.println("STARTING: client " + i);
-//
-//            try {
-//                startAnotherJVM(Client.class, getDefaultPort().toString(), getDefaultHost());
-//            } catch (Exception ex) {
-//                Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//
-//        }
+    public static XmlRpcClient getClient(String ip, Integer port) {
+
+        XmlRpcClient client = clientsForConnection.get(ip + ":" + port);
+
+        if (client == null) {
+            client = createXmlRpcClient(ip, port);
+            addClient(ip, port, client);
+        }
+
+        return client;
     }
+
 
     /**
      * Default is: host = "localhost" = "127.0.0.1"
@@ -483,13 +450,6 @@ public class JVMmanager implements Serializable {
      */
     public static Integer getDefaultPort() {
         return defaultPort;
-    }
-
-    /**
-     * @return the used port of server which is running on parameter ip
-     */
-    public static Integer getPortByIP(String ip) {
-        return hostsAndPorts.get(ip);
     }
 
     /**

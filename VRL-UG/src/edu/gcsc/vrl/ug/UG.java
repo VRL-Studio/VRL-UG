@@ -932,7 +932,7 @@ public class UG {
             Object o = null;
 
             try {
-                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
@@ -987,13 +987,9 @@ public class UG {
 
             base64 = Base64.encodeObject(params);
             xmlRpcParams.addElement(base64);
-//            for (Object op : params) {
-//                xmlRpcParams.addElement(op);
-//            }
-
 
             try {
-                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
@@ -1035,7 +1031,7 @@ public class UG {
 //            }
 
             try {
-                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
@@ -1071,7 +1067,7 @@ public class UG {
 
 
             try {
-                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
@@ -1102,7 +1098,7 @@ public class UG {
             xmlRpcParams.addElement(grpName);
 
             try {
-                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
@@ -1137,7 +1133,7 @@ public class UG {
 //            }
 
             try {
-                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
@@ -1167,7 +1163,7 @@ public class UG {
             Object o = null;
 
             try {
-                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
@@ -1193,7 +1189,7 @@ public class UG {
             Object o = null;
 
             try {
-                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
@@ -1219,7 +1215,7 @@ public class UG {
             Object o = null;
 
             try {
-                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
@@ -1245,7 +1241,7 @@ public class UG {
             Object o = null;
 
             try {
-                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
@@ -1296,7 +1292,7 @@ public class UG {
 //
 //                o = xmlRpcClient.execute("RpcHandler.ugInit", new ArrayList<Object>()); //works with uginit(void)
 
-                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
@@ -1344,7 +1340,7 @@ public class UG {
             xmlRpcParams.addElement(String.valueOf(exportedClassPtr));
 
             try {
-                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
@@ -1370,12 +1366,17 @@ public class UG {
     static void invalidate(SmartPointer p) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
+            
+            Object o = null;
+            String base64 = null;
 
             Vector xmlRpcParams = new Vector();
-            xmlRpcParams.addElement(p);
+
+            base64 = Base64.encodeObject(p);
+            xmlRpcParams.addElement(base64);
 
             try {
-                XmlRpcClient xmlRpcClient = JVMmanager.createXmlRpcClient(
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
