@@ -245,10 +245,13 @@ public class RpcHandler {
     /**
      * Invalidates the specified smart pointer.
      *
-     * @param o smart-pointer as Object to invalidate
+     * @param base64 smart-pointer as String to invalidate
      */
-    public boolean invalidate(Object o) {
+    public boolean invalidate(String base64) {
         show("invalidate");
+
+        Object o = Base64.decodeToObject(
+                base64, server.getClass().getClassLoader());
 
         if (o instanceof SmartPointer) {
             SmartPointer p = (SmartPointer) o;
@@ -261,7 +264,6 @@ public class RpcHandler {
         return false;
     }
 
-    
     /**
      * Stops the web server in the local JVM, where UG runs in server mode.
      */
@@ -274,15 +276,14 @@ public class RpcHandler {
         return 0;
     }
 
-
     /**
      * Tries to connect to server and returns true if a connection could be
      * established.
      */
     public boolean isServerRunning() {
         Boolean b = UG.isServerRunning();
-        
-        if(b!=null && b.booleanValue()){
+
+        if (b != null && b.booleanValue()) {
             return true;
         }
         return false;
