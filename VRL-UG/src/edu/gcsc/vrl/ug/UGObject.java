@@ -68,6 +68,7 @@ public class UGObject implements Serializable, UGObjectInterface {
 
     /**
      * Returns a pointer to this object.
+     *
      * @return a pointer to this object
      */
     protected Pointer getPointer() {
@@ -76,6 +77,7 @@ public class UGObject implements Serializable, UGObjectInterface {
             long exportedClsPtr = Pointer.NULL;
 
             if (isClassGroupObject()) {
+
                 exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
                         getExportedClassPtrByName(getClassGroupName(),
                         isClassGroupObject());
@@ -105,9 +107,14 @@ public class UGObject implements Serializable, UGObjectInterface {
 //                            + "\" is not instantiable!",
 //                            MessageType.ERROR);
 
-                    throw new IllegalStateException(
-                            "Class \"" + getClassName()
-                            + "\" is not instantiable!");
+                    String msg = "Class \"" + getClassName()
+                            + "\" is not instantiable!";
+
+                    if (isClassGroupObject()) {
+                        msg += " Possible reason: no default class in class group!";
+                    }
+
+                    throw new IllegalStateException(msg);
                 } else {
 
                     if (constructorParameters == null) {
@@ -203,6 +210,7 @@ public class UGObject implements Serializable, UGObjectInterface {
 
     /**
      * Invokes a native function.
+     *
      * @param isFunction defines whether to invoke a function
      * @param isConst defines whether to call a const method
      * @param function function name
@@ -219,8 +227,9 @@ public class UGObject implements Serializable, UGObjectInterface {
     }
 
     /**
-     * Converts the specified parameters, i.e., if UGObjects are specified, 
-     * they will be converted to their internal pointer object.
+     * Converts the specified parameters, i.e., if UGObjects are specified, they
+     * will be converted to their internal pointer object.
+     *
      * @param params parameters to convert
      * @return converted parameters
      */
@@ -258,6 +267,7 @@ public class UGObject implements Serializable, UGObjectInterface {
 
     /**
      * Invokes a native method.
+     *
      * @param isConst defines whether to call a const method
      * @param methodName method name
      * @param params method parameters
@@ -291,6 +301,7 @@ public class UGObject implements Serializable, UGObjectInterface {
 
     /**
      * Invokes a native constructor.
+     *
      * @param isFunction defines whether to invoke a function
      * @param isConst defines whether to call a const method
      * @param methodName method name
@@ -334,9 +345,11 @@ public class UGObject implements Serializable, UGObjectInterface {
 
     /**
      * Indicates whether the specified object is an ug object.
+     *
      * @param o object to check
-     * @return <code>true</code> if the specified object is an ug object;
-     *         <code>false</code> otherwise
+     * @return
+     * <code>true</code> if the specified object is an ug object;
+     * <code>false</code> otherwise
      */
     public static boolean isInstance(Object o) {
         boolean result = UGObject.class.isInstance(o);
