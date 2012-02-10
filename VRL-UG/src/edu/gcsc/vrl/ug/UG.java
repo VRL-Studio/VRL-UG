@@ -127,6 +127,9 @@ public class UG {
             PropertyHandlerMapping mapping = new PropertyHandlerMapping();
 
             try {
+//                NEED to be started in the right JVM
+//                RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
+                
                 mapping.addHandler("RpcHandler", RpcHandler.class);
 
             } catch (XmlRpcException ex) {
@@ -168,6 +171,10 @@ public class UG {
             "-plugin-checksum-test", "yes", "-rpc", "server"};
 
         VRL.initAll(params);
+        
+//        set in the server JVM the server ug objekt
+        RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
+
 
     }
     /**
@@ -402,11 +409,11 @@ public class UG {
                             ">> UG: recompiling API (this may take a while) ...");
 
                     // generates jar file in plugin path
-                            compiler.compile(
-                                    new edu.gcsc.vrl.ug.NativeAPICode(
-                                    nativeAPI).getAllCodes(),
-                                    VPropertyFolderManager.getPluginUpdatesFolder().
-                                    getAbsolutePath());
+                    compiler.compile(
+                            new edu.gcsc.vrl.ug.NativeAPICode(
+                            nativeAPI).getAllCodes(),
+                            VPropertyFolderManager.getPluginUpdatesFolder().
+                            getAbsolutePath());
 
                 } catch (Exception ex) {
                     Logger.getLogger(UG.class.getName()).
@@ -474,10 +481,11 @@ public class UG {
 
 
                 int wait = 20;
-                System.out.println("# + # + #  waiting " + wait
-                        + " secs for finishing start of server");
                 int counter = 0;
-                int maxCounter = 5;
+                int maxCounter = 13;
+                
+                System.out.println("# + # + #  checking every " + wait
+                        + " secs for finishing start of server");
 
                 //wait until sever is booted and running
                 while ((!isServerRunning) && (counter < maxCounter)) {
@@ -1108,10 +1116,16 @@ public class UG {
             base64 = Base64.encodeObject(parameters);
             xmlRpcParams.addElement(base64);
 
-//            xmlRpcParams.addElement(parameters);
-//            for (Object op : parameters) {
-//                xmlRpcParams.addElement(op);
-//            }
+//            debug info
+            System.out.println("CLIENT exportedClassPtr= " + exportedClassPtr);
+            System.out.println("CLIENT parameters.length= "+ parameters.length);
+            for (int i = 0; i < parameters.length; i++) {
+                System.out.println("CLIENT param "+i + ") = " + parameters[i]);
+            }
+            for (int i = 0; i < xmlRpcParams.size(); i++) {
+                System.out.println("CLIENT xmlRpcParams "+i + ") = " + xmlRpcParams.get(i));
+            }
+//            debug info end
 
             try {
                 XmlRpcClient xmlRpcClient = JVMmanager.getClient(
@@ -1120,13 +1134,17 @@ public class UG {
 
                 System.out.println("XMLCLIENT: " + xmlRpcClient);
 
-                o =  xmlRpcClient.execute("RpcHandler.newInstance", xmlRpcParams);
-                
+                o = xmlRpcClient.execute("RpcHandler.newInstance", xmlRpcParams);
+
                 base64 = (String) o;
                 o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
                 if (o instanceof Pointer) {
                     p = (Pointer) o;
+
+//            debug info 
+                    System.out.println("CLIENT remote received Pointer = " + p);
+//            debug info end
                 }
 
             } catch (XmlRpcException ex) {

@@ -5,6 +5,7 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.ObjectInfo;
+import eu.mihosoft.vrl.annotation.ParamInfo;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -45,7 +46,10 @@ public class JVMmanager implements Serializable {
      * @throws Exception
      */
     public static void startAnotherJVM(
-            final Class clazz, final String ip, final Integer port){
+//            @ParamInfo(name = "Class", options = "value=edu.gcsc.vrl.ug.UG.class")//as default UG.class, is possible???
+            final Class clazz,
+            final String ip,
+            final Integer port) {
 
         Thread t = new Thread(new Runnable() {
 
@@ -170,7 +174,6 @@ public class JVMmanager implements Serializable {
 //            ps.close();
 //        }
 //    }
-
     /**
      * stops the endless loop of displayJVMOutput(Process p)
      */
@@ -184,9 +187,9 @@ public class JVMmanager implements Serializable {
     public static void stopServerRemotely() {
 
         XmlRpcClient xmlRpcClient = getClient(getDefaultIP(), getCurrentPort());
-        
+
         try {
-            Object o = xmlRpcClient.execute("RpcHandler.stopLocalServer", new Vector());
+            Object o = xmlRpcClient.execute("RpcHandler.stopWebServer", new Vector());
 
             System.out.println((Integer) o);
 
@@ -196,13 +199,14 @@ public class JVMmanager implements Serializable {
         }
 //        System.out.println(JVMmanager.class.getName()+".stopServerRemotely() END");
     }
-    
+
     /**
-     * Tries to start an UG server at localhost at port <code>getCurrentPort()</code>
+     * Tries to start an UG server at localhost at port
+     * <code>getCurrentPort()</code>
      */
     public static void startLocalServer() {
-        
-            startAnotherJVM(UG.class, getDefaultIP(), getCurrentPort());
+
+        startAnotherJVM(UG.class, getDefaultIP(), getCurrentPort());
     }
 
     /**
@@ -271,7 +275,6 @@ public class JVMmanager implements Serializable {
 //
 //        return searchedID;
 //    }
-
 //    /**
 //     * WORKS ONLY FOR LOCALHOST!
 //     *
@@ -295,7 +298,6 @@ public class JVMmanager implements Serializable {
 //
 //        return result;
 //    }
-
 //    /**
 //     * WORKS ONLY FOR LOCALHOST!
 //     *
@@ -322,7 +324,6 @@ public class JVMmanager implements Serializable {
 //
 //        return result;
 //    }
-
     /**
      * Tries to connect to server and returns true if a connection could be
      * established.
@@ -372,7 +373,6 @@ public class JVMmanager implements Serializable {
 //            thread.getThreadGroup().list();
 //        }
 //    }
-
     /**
      *
      * @param ip localhost="127.0.0.1" or ip like e.g. "141.2.22.123" for remote
@@ -432,7 +432,6 @@ public class JVMmanager implements Serializable {
 
         return client;
     }
-
 
     /**
      * Default is: host = "localhost" = "127.0.0.1"

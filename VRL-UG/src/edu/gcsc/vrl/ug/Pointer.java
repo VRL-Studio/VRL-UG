@@ -13,6 +13,9 @@ import java.io.Serializable;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class Pointer implements Serializable{
+    
+    
+    private static final long serialVersionUID = 1L;
 
     private boolean readOnly;
     private long address;

@@ -5,6 +5,7 @@ package edu.gcsc.vrl.ug;
  * the editor.
  */
 import eu.mihosoft.vrl.io.Base64;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -48,7 +49,21 @@ public class RpcHandler {
 
     static String message = "first call";
 //    private static UG server = null;
-    private static UG server = UG.getInstance(null, RemoteType.SERVER);
+    private static UG server = null;
+
+    /**
+     * @return the server
+     */
+    public static UG getServer() {
+        return server;
+    }
+
+    /**
+     * @param aServer the server to set
+     */
+    public static void setServer(UG aServer) {
+        server = aServer;
+    }
 
 //    //TEST FUNCTION
     public int show(String message) {
@@ -81,7 +96,7 @@ public class RpcHandler {
 
         show("convertRegistryInfo");
 
-        NativeAPIInfo napiInfo = server._convertRegistryInfo();
+        NativeAPIInfo napiInfo = getServer()._convertRegistryInfo();
 
         if (napiInfo == null) {
             System.err.println("NativeAPIInfo IS NULL");
@@ -103,10 +118,10 @@ public class RpcHandler {
         show("invokeMethod");
 
         Object o = Base64.decodeToObject(
-                params, server.getClass().getClassLoader());
+                params, getServer().getClass().getClassLoader());
         Object[] objArray = (Object[]) o;
 
-        o = server._invokeMethod(
+        o = getServer()._invokeMethod(
                 exportedClassName, new Long(objPtr), readOnly, methodName, objArray);
 
         //alles ist serialisierbar
@@ -119,23 +134,48 @@ public class RpcHandler {
     public String newInstance(String exportedClassPtr, String parameters) {
         show("newInstance");
 
-        Object o = Base64.decodeToObject(
-                parameters, server.getClass().getClassLoader());
+        System.out.println("Server exportedClassPtr as string = " + exportedClassPtr);
+        System.out.println("Server parameters in base64 = " + parameters);
+        
+//        ClassLoader classLoader = getServer().getClass().getClassLoader();
+//        
+//        if(classLoader==null){
+//            System.out.println("classLoader==null");
+//        }else{
+//            System.out.println("classLoader!=null");
+//        }
+//        
+//        Object o = Base64.decodeToObject(parameters, classLoader);//dont work with new vrl version. information from 10.02.2012
+//        Object o = Base64.decodeToObject(parameters, ObjectInputStream.class);
+        
+        Object o = Base64.decodeToObject(parameters, ObjectInputStream.class);
         Object[] objArray = (Object[]) o;
+        
+        
+//            debug info
+            System.out.println("SERVER exportedClassPtr= " + exportedClassPtr);
+            System.out.println("SERVER parameters.length= "+ objArray.length);
+            for (int i = 0; i < objArray.length; i++) {
+                System.out.println("SERVER objArray "+i + ") = " + objArray[i]);
+            }            
+//            debug info end
 
-        long result = server._newInstance(new Long(exportedClassPtr), objArray);
+        Pointer p = getServer()._newInstance(new Long(exportedClassPtr), objArray);
 
-        System.out.println("result =" + result);
-
-        return String.valueOf(result);
-
-
+        
+//            debug info 
+                    System.out.println("SERVER remote received Pointer = " + p);
+//            debug info end
+        
+        String base64 = Base64.encodeObject((Serializable) p);
+        
+        return base64;
     }
 
     public String getExportedClassPtrByName(String name, boolean classGrp) {
         show("getExportedClassPtrByName");
 
-        long result = server._getExportedClassPtrByName(name, classGrp);
+        long result = getServer()._getExportedClassPtrByName(name, classGrp);
 
         System.out.println("result =" + result);
 
@@ -145,7 +185,7 @@ public class RpcHandler {
     public String getDefaultClassNameFromGroup(String grpName) {
         show("getDefaultClassNameFromGroup");
 
-        String result = server._getDefaultClassNameFromGroup(grpName);
+        String result = getServer()._getDefaultClassNameFromGroup(grpName);
 
         System.out.println("result =" + result);
 
@@ -156,7 +196,7 @@ public class RpcHandler {
     public String invokeFunction(String name, boolean readOnly, Object[] params) {
         show("invokeFunction");
 
-        Object o = server._invokeFunction(name, readOnly, params);
+        Object o = getServer()._invokeFunction(name, readOnly, params);
 
         //annahme alle enthalten objekte sind serializierbar
         String base64 = Base64.encodeObject((Serializable) o);
@@ -171,7 +211,7 @@ public class RpcHandler {
     public String getSvnRevision() {
         show("getSvnRevision");
 
-        String result = server._getSvnRevision();
+        String result = getServer()._getSvnRevision();
 
         System.out.println("result =" + result);
 
@@ -181,7 +221,7 @@ public class RpcHandler {
     public String getDescription() {
         show("getDescription");
 
-        String result = server._getDescription();
+        String result = getServer()._getDescription();
 
         System.out.println("result =" + result);
 
@@ -191,7 +231,7 @@ public class RpcHandler {
     public String getAuthors() {
         show("getAuthors");
 
-        String result = server._getAuthors();
+        String result = getServer()._getAuthors();
 
         System.out.println("result =" + result);
 
@@ -202,7 +242,7 @@ public class RpcHandler {
     public String getCompileDate() {
         show("getCompileDate");
 
-        String result = server._getCompileDate();
+        String result = getServer()._getCompileDate();
 
         System.out.println("result =" + result);
 
@@ -217,7 +257,7 @@ public class RpcHandler {
         argsArray = args.toArray(argsArray);
 
 //        return Integer.valueOf(456);
-        return server._ugInit(argsArray);
+        return getServer()._ugInit(argsArray);
     }
 //    //TEST DUMMY FUNCTION
 //    public Integer ugInit() {
@@ -237,7 +277,7 @@ public class RpcHandler {
     public boolean delete(String objPtr, String exportedClassPtr) {
         show("delete");
 
-        server._delete(new Long(objPtr), new Long(exportedClassPtr));
+        getServer()._delete(new Long(objPtr), new Long(exportedClassPtr));
 
         return true;
     }
@@ -251,12 +291,12 @@ public class RpcHandler {
         show("invalidate");
 
         Object o = Base64.decodeToObject(
-                base64, server.getClass().getClassLoader());
+                base64, getServer().getClass().getClassLoader());
 
         if (o instanceof SmartPointer) {
             SmartPointer p = (SmartPointer) o;
 
-            server._invalidate(p);
+            getServer()._invalidate(p);
 
             return true;
         }
@@ -270,7 +310,7 @@ public class RpcHandler {
     public int stopWebServer() {
 //        System.out.println("START "+RpcHandler.class.getName() + ".stopServer()");
 
-        UG.stopWebServer();
+        server.stopWebServer();
 //        System.out.println("END "+RpcHandler.class.getName() + ".stopServer()");
 
         return 0;
