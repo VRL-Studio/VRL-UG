@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 /**
@@ -117,8 +118,10 @@ public class RpcHandler {
             String methodName, String params) {
         show("invokeMethod");
 
-        Object o = Base64.decodeToObject(
-                params, getServer().getClass().getClassLoader());
+//        Object o = Base64.decodeToObject(
+//                params, getServer().getClass().getClassLoader());
+        Object o = Base64.decodeToObject(params, null);
+        
         Object[] objArray = (Object[]) o;
 
         o = getServer()._invokeMethod(
@@ -148,7 +151,11 @@ public class RpcHandler {
 //        Object o = Base64.decodeToObject(parameters, classLoader);//dont work with new vrl version. information from 10.02.2012
 //        Object o = Base64.decodeToObject(parameters, ObjectInputStream.class);
         
-        Object o = Base64.decodeToObject(parameters, ObjectInputStream.class);
+        
+        Object o = Base64.decodeToObject(parameters, null);
+        
+        System.out.println("Object o = "+o);
+        
         Object[] objArray = (Object[]) o;
         
         
