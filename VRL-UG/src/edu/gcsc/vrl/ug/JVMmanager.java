@@ -3,13 +3,10 @@ package edu.gcsc.vrl.ug;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 import eu.mihosoft.vrl.annotation.ComponentInfo;
-import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.ObjectInfo;
-import eu.mihosoft.vrl.annotation.ParamInfo;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -46,7 +43,6 @@ public class JVMmanager implements Serializable {
      * @throws Exception
      */
     public static void startAnotherJVM(
-//            @ParamInfo(name = "Class", options = "value=edu.gcsc.vrl.ug.UG.class")//as default UG.class, is possible???
             final Class clazz,
             final String ip,
             final Integer port) {
@@ -60,10 +56,9 @@ public class JVMmanager implements Serializable {
                 String classpath = System.getProperty("java.class.path");
 
 
-                // TODO make classpath update automatic
-                //manuel update to find VRL-UG classes 
-                String projectPath = "/Users/christianpoliwoda/Apps/VRL-UG4/VRL-UG/dist/VRL-UG.jar";
-                classpath += ":" + projectPath;
+                // DONE make general classpath update
+                String pluginPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
+                classpath += ":" + pluginPath;
 
                 String path = System.getProperty("java.home")
                         + separator + "bin" + separator + "java";
@@ -71,9 +66,8 @@ public class JVMmanager implements Serializable {
                 String name = clazz.getName();
                 String portString = port.toString();
                 // to remove outOfMemoryError message: PermGen space
+                // or better said resize the PermGen space area in the heap
                 String commandLineCallOptions = "-XX:MaxPermSize=512m";
-
-
 
                 ProcessBuilder processBuilder = new ProcessBuilder(
                         path, commandLineCallOptions,
@@ -92,9 +86,7 @@ public class JVMmanager implements Serializable {
                 try {
                     process = processBuilder.start();
 
-
                     displayJVMOutput(process);
-
 
                 } catch (IOException ex) {
                     Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
@@ -106,7 +98,7 @@ public class JVMmanager implements Serializable {
         t.start();
     }
 
-    //NO EFFECT ??
+    
     /**
      * display the output of process p at System.out.
      *
@@ -159,21 +151,6 @@ public class JVMmanager implements Serializable {
         thread.start();
     }
 
-//    /**
-//     * SEEMS TO HAVE NO EFFECT YET!!
-//     *
-//     * print the message on the stream were the process is redirecting it.
-//     *
-//     * @param process the process which should be used.
-//     * @param string the message which should be printed.
-//     */
-//    public static void printMessage(Process process, String string) {
-//        if (process != null) {
-//            PrintStream ps = new PrintStream(process.getOutputStream());
-//            ps.println(string);
-//            ps.close();
-//        }
-//    }
     /**
      * stops the endless loop of displayJVMOutput(Process p)
      */
@@ -197,7 +174,6 @@ public class JVMmanager implements Serializable {
             System.out.println("EXCEPTION: Server closed");
 //            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
-//        System.out.println(JVMmanager.class.getName()+".stopServerRemotely() END");
     }
 
     /**
@@ -209,121 +185,7 @@ public class JVMmanager implements Serializable {
         startAnotherJVM(UG.class, getDefaultIP(), getCurrentPort());
     }
 
-    /**
-     * WORKS ONLY FOR LOCALHOST!
-     *
-     * @return a list with all currently running JVMs
-     */
-    public static List<VirtualMachineDescriptor> listLocalJVMs() {
 
-        List<VirtualMachineDescriptor> vms = VirtualMachine.list();
-
-        String name = null;
-        String searchedID = null;
-        String text = null;
-
-        for (VirtualMachineDescriptor vmd : vms) {
-
-            name = vmd.displayName();
-            searchedID = vmd.id();
-            text = " NAME: " + name + " ,ID: " + searchedID;
-
-            try {
-//                getMessageBox().addMessage("JVM-Infos", text, MessageType.INFO);
-            } catch (Exception ex) {
-
-                System.out.println(JVMmanager.class.getName()
-                        + " NO MessageBox found !!!");
-//                Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            System.out.println(JVMmanager.class.getName()
-                    + ".listLocalJVMs()" + text);
-        }
-
-        return vms;
-    }
-
-//    /**
-//     * WORKS ONLY FOR LOCALHOST!
-//     *
-//     * Checks if at least one running JVM name contains shortname in its name
-//     * and returns the PID of the first running found JVM.
-//     *
-//     * @param shortName the name which should be contained in the name of the
-//     * searched JVM
-//     *
-//     * @return the ID as String or NULL if not found
-//     */
-//    public static String checkoutLocalID(String shortName) {
-//
-//        ArrayList<VirtualMachineDescriptor> vms =
-//                (ArrayList<VirtualMachineDescriptor>) containingLocalJVMs(shortName);
-//
-//        String searchedID = null;
-//
-//        for (VirtualMachineDescriptor vmd : vms) {
-//            if (vmd.displayName().contains(shortName)) {
-//
-//                searchedID = vmd.id();
-//
-//                System.out.println(JVMmanager.class.getName()
-//                        + ".checkoutLocalID() ID: " + searchedID);
-//                break;
-//            }
-//        }
-//
-//        return searchedID;
-//    }
-//    /**
-//     * WORKS ONLY FOR LOCALHOST!
-//     *
-//     * @param shortName the name which should be contain in the searched JVM
-//     *
-//     * @return a list with all JVMs which contains
-//     * <code>shortName</code> in their name
-//     */
-//    public static List<VirtualMachineDescriptor> containingLocalJVMs(String shortName) {
-//
-//        ArrayList<VirtualMachineDescriptor> result =
-//                new ArrayList<VirtualMachineDescriptor>();
-//
-//        for (VirtualMachineDescriptor vmd : listLocalJVMs()) {
-//            if (vmd.displayName().contains(shortName)) {
-//
-//                result.add(vmd);
-//                System.out.println("containingLocalJVMs: " + vmd.displayName());
-//            }
-//        }
-//
-//        return result;
-//    }
-//    /**
-//     * WORKS ONLY FOR LOCALHOST!
-//     *
-//     * Checks if at least one running JVM name contains shortname in its name
-//     * and returns true if one found.
-//     *
-//     * @param shortName the name which should be contain in the searched JVM
-//     *
-//     * @return true if one JVM found
-//     *
-//     * @throws Exception
-//     */
-//    public static boolean isLocalServerRunning(String shortName) throws Exception {
-//        boolean result = false;
-//
-//        if ((checkoutLocalID(shortName) != null)) {
-//            result = true;
-//            System.out.println("isLocalServerRunning(" + " " + shortName
-//                    + " " + ")= " + result);
-//
-//        } else {
-//            System.out.println("(checkoutLocalID(shortName) == null");
-//        }
-//
-//        return result;
-//    }
     /**
      * Tries to connect to server and returns true if a connection could be
      * established.
@@ -354,25 +216,6 @@ public class JVMmanager implements Serializable {
 
     }
 
-//    /**
-//     * Prints information about the thread if thread!=null
-//     *
-//     * @param thread about information are wished
-//     */
-//    public static void printThreadInfos(Thread thread) {
-//        if (thread != null) {
-//            System.out.println("threadID = " + thread.getId());
-//            System.out.println("threadName = " + thread.getName());
-//            System.out.println("threadPriority = " + thread.getPriority());
-//            System.out.println("isAlive = " + thread.isAlive());
-//            System.out.println("isInterrupted = " + thread.isInterrupted());
-//            System.out.println("ThreadGroupName = " + thread.getThreadGroup().getName());
-//            System.out.println("ThreadGroup.activeCount = " + thread.getThreadGroup().activeCount());
-//            System.out.println("ThreadGroup.getParentName = " + thread.getThreadGroup().getParent().getName());
-//            System.out.println("");
-//            thread.getThreadGroup().list();
-//        }
-//    }
     /**
      *
      * @param ip localhost="127.0.0.1" or ip like e.g. "141.2.22.123" for remote

@@ -129,7 +129,7 @@ public class UG {
             try {
 //                NEED to be started in the right JVM
 //                RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
-                
+
                 mapping.addHandler("RpcHandler", RpcHandler.class);
 
             } catch (XmlRpcException ex) {
@@ -171,7 +171,7 @@ public class UG {
             "-plugin-checksum-test", "yes", "-rpc", "server"};
 
         VRL.initAll(params);
-        
+
 //        set in the server JVM the server ug objekt
         RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
 
@@ -483,7 +483,7 @@ public class UG {
                 int wait = 20;
                 int counter = 0;
                 int maxCounter = 13;
-                
+
                 System.out.println("# + # + #  checking every " + wait
                         + " secs for finishing start of server");
 
@@ -944,8 +944,6 @@ public class UG {
             long objPtr, boolean readOnly,
             String methodName, Object[] params);
 
-//TODO make with BASE64 xmlrpc compatible
-//    native long newInstance(long exportedClassPtr, Object[] parameters);
     native Pointer _newInstance(long exportedClassPtr, Object[] parameters);
 
     native long _getExportedClassPtrByName(String name, boolean classGrp);
@@ -1025,8 +1023,6 @@ public class UG {
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
-
                 o = xmlRpcClient.execute("RpcHandler.convertRegistryInfo", voidElement);
 
 
@@ -1043,17 +1039,14 @@ public class UG {
             if (o instanceof NativeAPIInfo) {
                 NativeAPIInfo napiInfo = (NativeAPIInfo) o;
 
-
                 return napiInfo;
 
             } else {
                 throw new IllegalArgumentException(this.getClass()
                         + ".convertRegistryInfo() got over XMLRPC an object"
                         + "which is not instance of NativeAPIInfo.");
-//                return null;
             }
-
-        } else {
+        } else {//if not RemoteType==CLIENT
 
             return _convertRegistryInfo();
         }
@@ -1082,8 +1075,6 @@ public class UG {
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
-
                 o = xmlRpcClient.execute("RpcHandler.invokeMethod", xmlRpcParams);
 
                 base64 = (String) o;
@@ -1101,7 +1092,6 @@ public class UG {
         }
     }
 
-//TODO make with BASE64 xmlrpc compatible
     Pointer newInstance(long exportedClassPtr, Object[] parameters) {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
@@ -1120,8 +1110,6 @@ public class UG {
                 XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
-
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
 
                 o = xmlRpcClient.execute("RpcHandler.newInstance", xmlRpcParams);
 
@@ -1160,15 +1148,10 @@ public class UG {
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
-
                 o = xmlRpcClient.execute("RpcHandler.getExportedClassPtrByName", xmlRpcParams);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-            //@DONE String base64 remote transfer 
-            //      and decode here to long !!!!!
 
             return new Long((String) o);
         } else {
@@ -1190,8 +1173,6 @@ public class UG {
                 XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
-
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
 
                 o = xmlRpcClient.execute("RpcHandler.getDefaultClassNameFromGroup", xmlRpcParams);
             } catch (XmlRpcException ex) {
@@ -1217,16 +1198,11 @@ public class UG {
             xmlRpcParams.addElement(readOnly);
 
             xmlRpcParams.addElement(params);
-//            for (Object op : params) {
-//                xmlRpcParams.addElement(op);
-//            }
 
             try {
                 XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
-
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
 
                 o = xmlRpcClient.execute("RpcHandler.invokeFunction", xmlRpcParams);
                 String base64 = (String) o;
@@ -1256,8 +1232,6 @@ public class UG {
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
-
                 o = xmlRpcClient.execute("RpcHandler.getSvnRevision", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
@@ -1281,8 +1255,6 @@ public class UG {
                 XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
-
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
 
                 o = xmlRpcClient.execute("RpcHandler.getDescription", voidElement);
             } catch (XmlRpcException ex) {
@@ -1308,8 +1280,6 @@ public class UG {
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
-
                 o = xmlRpcClient.execute("RpcHandler.getAuthors", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
@@ -1334,8 +1304,6 @@ public class UG {
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
-
                 o = xmlRpcClient.execute("RpcHandler.getCompileDate", voidElement);
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
@@ -1357,52 +1325,25 @@ public class UG {
 
             ArrayList<Object> xmlRpcParams = new ArrayList<Object>();
 
-            /*
-             * ENTWEDER
-             */ //eher die version
-            xmlRpcParams.add(Arrays.asList(args)); //SCHWERWIEGEND: No method matching arguments: [Ljava.lang.Object;
-
-//            /*ODER*/
-//            for (Object op : args) {
-//                xmlRpcParams.addElement(op); // SCHWERWIEGEND: No method matching arguments: java.lang.String
-//            }
-
+            xmlRpcParams.add(Arrays.asList(args));
 
             ArrayList<Object> xmlRpcParams2 = new ArrayList<Object>();
             xmlRpcParams2.add("Client._ugInit");
 
             try {
 
-//                // start following method-calls work with non static method versions ! ! !
-//                o = xmlRpcClient.execute("RpcHandler.showMessage", new ArrayList<Object>());
-//                o = xmlRpcClient.execute("RpcHandler.show", xmlRpcParams2);
-//                o = xmlRpcClient.execute("RpcHandler.changeMessage", xmlRpcParams2);
-//                // end 
-//
-//                o = xmlRpcClient.execute("RpcHandler.ugInit", new ArrayList<Object>()); //works with uginit(void)
-
                 XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
-
                 o = xmlRpcClient.execute("RpcHandler.ugInit", xmlRpcParams);
-
-//                String s = (String) xmlRpcClient.execute("RpcHandler.getAuthors", new ArrayList<Object>());
-//
-//                System.out.println("Authors: " + s);
 
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            // ?????????
-            //@TODO String base64 remote transfer 
-            //      and decode here to int !!!!!
-
             Integer tmp = (Integer) o;
-            System.out.println("*-*-*-*-*-*-*-*-*-*-*-*-* RETURN RpcHandler.ugInit = " + tmp);
+            System.out.println(" RpcHandler.ugInit = " + tmp);
 
             return tmp;
 
@@ -1432,8 +1373,6 @@ public class UG {
                 XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
-
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
 
                 xmlRpcClient.execute("RpcHandler.delete", xmlRpcParams);
             } catch (XmlRpcException ex) {
@@ -1468,8 +1407,6 @@ public class UG {
                 XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
-
-                System.out.println("XMLCLIENT: " + xmlRpcClient);
 
                 xmlRpcClient.execute("RpcHandler.invalidate", xmlRpcParams);
             } catch (XmlRpcException ex) {
