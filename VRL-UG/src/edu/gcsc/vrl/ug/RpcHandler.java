@@ -49,7 +49,6 @@ import sun.misc.BASE64Encoder;
 public class RpcHandler {
 
     static String message = "first call";
-//    private static UG server = null;
     private static UG server = null;
 
     /**
@@ -106,76 +105,39 @@ public class RpcHandler {
         String base64 = Base64.encodeObject(napiInfo);
 
 //        System.out.println("RESULT: " + base64);
-
         return base64;
     }
 
-//    public Object invokeMethod(
-//            String exportedClassName, String objPtr, boolean readOnly,
-//            String methodName, Object[] params) {
     public String invokeMethod(
             String exportedClassName, String objPtr, boolean readOnly,
             String methodName, String params) {
         show("invokeMethod");
 
-//        Object o = Base64.decodeToObject(
-//                params, getServer().getClass().getClassLoader());
-        Object o = Base64.decodeToObject(params, null);
-        
+        Object o = Base64.decodeToObject(params);
+
         Object[] objArray = (Object[]) o;
 
         o = getServer()._invokeMethod(
                 exportedClassName, new Long(objPtr), readOnly, methodName, objArray);
 
-        //alles ist serialisierbar
+        //assumption object is serializable
         String base64 = Base64.encodeObject((Serializable) o);
 
+        System.out.println("encoded Object = " + base64);
         return base64;
     }
 
-//    public long newInstance(String exportedClassPtr, Object[] parameters) {
     public String newInstance(String exportedClassPtr, String parameters) {
         show("newInstance");
 
-        System.out.println("Server exportedClassPtr as string = " + exportedClassPtr);
-        System.out.println("Server parameters in base64 = " + parameters);
-        
-//        ClassLoader classLoader = getServer().getClass().getClassLoader();
-//        
-//        if(classLoader==null){
-//            System.out.println("classLoader==null");
-//        }else{
-//            System.out.println("classLoader!=null");
-//        }
-//        
-//        Object o = Base64.decodeToObject(parameters, classLoader);//dont work with new vrl version. information from 10.02.2012
-//        Object o = Base64.decodeToObject(parameters, ObjectInputStream.class);
-        
-        
-        Object o = Base64.decodeToObject(parameters, null);
-        
-        System.out.println("Object o = "+o);
-        
+        Object o = Base64.decodeToObject(parameters);
         Object[] objArray = (Object[]) o;
-        
-        
-//            debug info
-            System.out.println("SERVER exportedClassPtr= " + exportedClassPtr);
-            System.out.println("SERVER parameters.length= "+ objArray.length);
-            for (int i = 0; i < objArray.length; i++) {
-                System.out.println("SERVER objArray "+i + ") = " + objArray[i]);
-            }            
-//            debug info end
 
         Pointer p = getServer()._newInstance(new Long(exportedClassPtr), objArray);
 
-        
-//            debug info 
-                    System.out.println("SERVER remote received Pointer = " + p);
-//            debug info end
-        
         String base64 = Base64.encodeObject((Serializable) p);
-        
+
+        System.out.println("encoded Pointer = " + base64);
         return base64;
     }
 
@@ -185,7 +147,6 @@ public class RpcHandler {
         long result = getServer()._getExportedClassPtrByName(name, classGrp);
 
         System.out.println("result =" + result);
-
         return String.valueOf(result);
     }
 
@@ -195,21 +156,18 @@ public class RpcHandler {
         String result = getServer()._getDefaultClassNameFromGroup(grpName);
 
         System.out.println("result =" + result);
-
         return result;
     }
 
-//    public Object invokeFunction(String name, boolean readOnly, Object[] params) {
     public String invokeFunction(String name, boolean readOnly, Object[] params) {
         show("invokeFunction");
 
         Object o = getServer()._invokeFunction(name, readOnly, params);
 
-        //annahme alle enthalten objekte sind serializierbar
+        //assumption all containing objects are serializable
         String base64 = Base64.encodeObject((Serializable) o);
 
-//        System.out.println("RESULT: " + base64);
-
+        System.out.println("RESULT: " + base64);
         return base64;
 
 
@@ -221,7 +179,6 @@ public class RpcHandler {
         String result = getServer()._getSvnRevision();
 
         System.out.println("result =" + result);
-
         return result;
     }
 
@@ -231,7 +188,6 @@ public class RpcHandler {
         String result = getServer()._getDescription();
 
         System.out.println("result =" + result);
-
         return result;
     }
 
@@ -241,7 +197,6 @@ public class RpcHandler {
         String result = getServer()._getAuthors();
 
         System.out.println("result =" + result);
-
         return result;
 
     }
@@ -252,7 +207,6 @@ public class RpcHandler {
         String result = getServer()._getCompileDate();
 
         System.out.println("result =" + result);
-
         return result;
     }
 
@@ -266,12 +220,6 @@ public class RpcHandler {
 //        return Integer.valueOf(456);
         return getServer()._ugInit(argsArray);
     }
-//    //TEST DUMMY FUNCTION
-//    public Integer ugInit() {
-//        show("**** "+this.getClass().getName() +" ugInit( void )");
-//
-//        return Integer.valueOf(123);
-//    }
 
     /**
      * Deallocates specified memory. The destructor of the specified class will

@@ -1116,17 +1116,6 @@ public class UG {
             base64 = Base64.encodeObject(parameters);
             xmlRpcParams.addElement(base64);
 
-//            debug info
-            System.out.println("CLIENT exportedClassPtr= " + exportedClassPtr);
-            System.out.println("CLIENT parameters.length= "+ parameters.length);
-            for (int i = 0; i < parameters.length; i++) {
-                System.out.println("CLIENT param "+i + ") = " + parameters[i]);
-            }
-            for (int i = 0; i < xmlRpcParams.size(); i++) {
-                System.out.println("CLIENT xmlRpcParams "+i + ") = " + xmlRpcParams.get(i));
-            }
-//            debug info end
-
             try {
                 XmlRpcClient xmlRpcClient = JVMmanager.getClient(
                         JVMmanager.getCurrentIP(),
@@ -1141,10 +1130,6 @@ public class UG {
 
                 if (o instanceof Pointer) {
                     p = (Pointer) o;
-
-//            debug info 
-                    System.out.println("CLIENT remote received Pointer = " + p);
-//            debug info end
                 }
 
             } catch (XmlRpcException ex) {
