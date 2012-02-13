@@ -1012,7 +1012,7 @@ public class UG {
     private static Vector voidElement = new Vector();
 
     //
-    // Remenber all _functions() are native !!!
+    // Remember all _functions() are native !!!
     //
     final NativeAPIInfo convertRegistryInfo() {
 
