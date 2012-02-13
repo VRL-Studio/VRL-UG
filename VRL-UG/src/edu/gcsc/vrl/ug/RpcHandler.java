@@ -245,8 +245,7 @@ public class RpcHandler {
     public boolean invalidate(String base64) {
         show("invalidate");
 
-        Object o = Base64.decodeToObject(
-                base64, getServer().getClass().getClassLoader());
+        Object o = Base64.decodeToObject(base64);
 
         if (o instanceof SmartPointer) {
             SmartPointer p = (SmartPointer) o;
