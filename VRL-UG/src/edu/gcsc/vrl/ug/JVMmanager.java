@@ -17,6 +17,9 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 /**
+ * JVMmanager is helper class to make better seperation between methods which
+ * are needed to create / manage a remote communication and the methods which 
+ * should be called remote in UG.
  *
  * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
  */
@@ -33,14 +36,12 @@ public class JVMmanager implements Serializable {
     // String should have the form "ip:port"
     private static HashMap<String, XmlRpcClient> clientsForConnection = new HashMap<String, XmlRpcClient>();
 
-//    private static HashMap<String,Process> createdProcesses = new HashMap<String, Process>();
     /**
-     * Starts another JVM and executes there the main methode of the class which
-     * the parameter of this methode.
+     * Starts another JVM and executes there the main method of the class which
+     * is the parameter of this method.
      *
      * @param clazz The class which should be started in a new JVM.
      *
-     * @throws Exception
      */
     public static void startAnotherJVM(
             final Class clazz,
@@ -100,9 +101,10 @@ public class JVMmanager implements Serializable {
 
     
     /**
-     * display the output of process p at System.out.
+     * Display the output of process p at System.out as long the observered process
+     * is killed or the method stopJvmOutputRedirection() is called.
      *
-     * @param p the process which output shoult be redirected
+     * @param p the process which output should be redirected
      */
     public static void displayJVMOutput(final Process p) {
 
@@ -152,14 +154,14 @@ public class JVMmanager implements Serializable {
     }
 
     /**
-     * stops the endless loop of displayJVMOutput(Process p)
+     * Stops the endless loop of displayJVMOutput(Process p)
      */
     public static void stopJvmOutputRedirection() {
         stopJvmOutputRedirection = true;
     }
 
     /**
-     * Calls remote the stopServer methode.
+     * Calls remote the stopServer method.
      */
     public static void stopServerRemotely() {
 
@@ -217,11 +219,18 @@ public class JVMmanager implements Serializable {
     }
 
     /**
+     * For efficence reason this method should not be called from a user directly.
+     * Use instead <code>getClient(String ip, Integer port)</code>.
+     * 
+     * Creates an Client which is needed for remote communication with a remote 
+     * server class like e.g. UG with RemoteType SERVER.
      *
      * @param ip localhost="127.0.0.1" or ip like e.g. "141.2.22.123" for remote
-     * @param port the port which should be used
+     *          over network
+     * @param port the port which should be used for the communication and the 
+     *          server is listen to.
      *
-     * @return the created client for
+     * @return the created client
      */
     private static XmlRpcClient createXmlRpcClient(String ip, int port) {
         boolean result = false;
@@ -245,7 +254,7 @@ public class JVMmanager implements Serializable {
     }
 
     /**
-     * Adds the ip of a server and the port on which the sever is running to a
+     * Adds the ip of a server and the port on which the server is running to a
      * list of clients.
      *
      * @param ip the ip of the server
@@ -258,6 +267,8 @@ public class JVMmanager implements Serializable {
     }
 
     /**
+     * Checks if there is a client with the needed parameters in a list of created
+     * clients and returns the matching one or calls <code>createXmlRpcClient(String ip, int port)</code>.
      *
      * @param ip the ip of the server
      * @param port the port at which communication is done with the server
@@ -277,9 +288,9 @@ public class JVMmanager implements Serializable {
     }
 
     /**
-     * Default is: host = "localhost" = "127.0.0.1"
+     * Default is: defaultIP = "localhost" = "127.0.0.1"
      *
-     * @return the defaul host
+     * @return the default ip
      */
     public static String getDefaultIP() {
         return defaultIP;
