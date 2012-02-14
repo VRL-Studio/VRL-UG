@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
-/**
+/*
  * NOTICE:
  *
  * ALL METHODS need to RETURN one of the following types:
@@ -34,17 +34,23 @@ import sun.misc.BASE64Encoder;
  * nil (extension) null null
  *
  * ATTENTION: void is NOT valid !!!
+ */
+//
+//
+/**
+ * The RpcHandler methods were executed on a UG instance with RemoteType SERVER
+ * and called remote via clients.
  *
+ * The RpcHandler is the interface for a webserver which allows UG to act
+ * as a server, if the webserver is started in an UG instance with RemoteType SERVER.
  *
- * The PpcHandler methods were executed on the Server. So result came from
- * server calculation.
+ * So RpcHandler is more part of the server concept, but the clients need to
+ * know the interface of this class (the method-heads) for remote calls.
+ * 
+ * The implemented methods handle the result transfer of different objects via 
+ * network via Base64. Mark all so transfered objects need to be serializable.
  *
- * But the parameters of the methods are filed from the clients.
- *
- * So RpcHandler is more a part of the server, but the clients need to know the
- * interface of this class (the method-heads).
- *
- * @author christianpoliwoda
+ * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
  */
 public class RpcHandler {
 
@@ -52,14 +58,14 @@ public class RpcHandler {
     private static UG server = null;
 
     /**
-     * @return the server
+     * @return the UG instance with RemoteType SERVER
      */
     public static UG getServer() {
         return server;
     }
 
     /**
-     * @param aServer the server to set
+     * @param aServer the UG instance with RemoteType SERVER to set
      */
     public static void setServer(UG aServer) {
         server = aServer;
@@ -76,8 +82,8 @@ public class RpcHandler {
         System.out.println("RpcHandler.showMessage: " + message);
         return 1;
     }
-//    //TEST FUNCTION
 
+//    //TEST FUNCTION
     public int changeMessage(String message) {
         System.out.println("RpcHandler.changeMessage: " + "old: " + RpcHandler.message);
 
@@ -91,7 +97,14 @@ public class RpcHandler {
     // ********************************************
     // ************** NATIVE METHODS **************
     // ********************************************
-//    public final NativeAPIInfo convertRegistryInfo() {
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     */
     public final String convertRegistryInfo() {
 
         show("convertRegistryInfo");
@@ -108,6 +121,14 @@ public class RpcHandler {
         return base64;
     }
 
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     */
     public String invokeMethod(
             String exportedClassName, String objPtr, boolean readOnly,
             String methodName, String params) {
@@ -127,6 +148,14 @@ public class RpcHandler {
         return base64;
     }
 
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     */
     public String newInstance(String exportedClassPtr, String parameters) {
         show("newInstance");
 
@@ -141,6 +170,14 @@ public class RpcHandler {
         return base64;
     }
 
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     */
     public String getExportedClassPtrByName(String name, boolean classGrp) {
         show("getExportedClassPtrByName");
 
@@ -150,6 +187,14 @@ public class RpcHandler {
         return String.valueOf(result);
     }
 
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     */
     public String getDefaultClassNameFromGroup(String grpName) {
         show("getDefaultClassNameFromGroup");
 
@@ -159,6 +204,14 @@ public class RpcHandler {
         return result;
     }
 
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     */
     public String invokeFunction(String name, boolean readOnly, Object[] params) {
         show("invokeFunction");
 
@@ -173,6 +226,14 @@ public class RpcHandler {
 
     }
 
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     */
     public String getSvnRevision() {
         show("getSvnRevision");
 
@@ -182,6 +243,14 @@ public class RpcHandler {
         return result;
     }
 
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     */
     public String getDescription() {
         show("getDescription");
 
@@ -191,6 +260,14 @@ public class RpcHandler {
         return result;
     }
 
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     */
     public String getAuthors() {
         show("getAuthors");
 
@@ -201,6 +278,14 @@ public class RpcHandler {
 
     }
 
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     */
     public String getCompileDate() {
         show("getCompileDate");
 
@@ -210,6 +295,14 @@ public class RpcHandler {
         return result;
     }
 
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     */
     public Integer ugInit(List<String> args) {
         show("#### " + this.getClass().getName() + " ugInit( String[] args )");
 
@@ -222,6 +315,13 @@ public class RpcHandler {
     }
 
     /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     *
      * Deallocates specified memory. The destructor of the specified class will
      * be called.
      *
@@ -238,6 +338,13 @@ public class RpcHandler {
     }
 
     /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     *
      * Invalidates the specified smart pointer.
      *
      * @param base64 smart-pointer as String to invalidate
@@ -259,18 +366,29 @@ public class RpcHandler {
     }
 
     /**
-     * Stops the web server in the local JVM, where UG runs in server mode.
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     *
+     * Stops the web server in the server JVM, where UG runs with RemoteType server.
      */
     public int stopWebServer() {
-//        System.out.println("START "+RpcHandler.class.getName() + ".stopServer()");
 
         server.stopWebServer();
-//        System.out.println("END "+RpcHandler.class.getName() + ".stopServer()");
-
         return 0;
     }
 
     /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     *
      * Tries to connect to server and returns true if a connection could be
      * established.
      */
