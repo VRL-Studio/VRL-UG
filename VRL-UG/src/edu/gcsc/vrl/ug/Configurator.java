@@ -9,21 +9,23 @@ import eu.mihosoft.vrl.io.VersionInfo;
 import eu.mihosoft.vrl.system.PluginAPI;
 import eu.mihosoft.vrl.system.PluginConfigurator;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
+import eu.mihosoft.vrl.system.InitPluginAPI;
 import eu.mihosoft.vrl.system.PluginDependency;
 import eu.mihosoft.vrl.system.PluginIdentifier;
 import eu.mihosoft.vrl.system.VPluginAPI;
 import eu.mihosoft.vrl.system.VPluginConfigurator;
 import eu.mihosoft.vrl.system.VRL;
-import eu.mihosoft.vrl.visual.VDialog;
-import eu.mihosoft.vrl.visual.VSwingUtil;
+import eu.mihosoft.vrl.visual.*;
+import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import javax.swing.Icon;
 
 /**
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class Configurator extends VPluginConfigurator {
-
+    
     public Configurator() {
 
         setIdentifier(Constants.PLUGIN_IDENTIFIER);
@@ -39,6 +41,33 @@ public class Configurator extends VPluginConfigurator {
         if (api instanceof VPluginAPI) {
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
 //            UG.getInstance().setMainCanvas(vCanvas);
+            
+            
+            VPluginAPI vApi = (VPluginAPI) api;
+            
+//            vApi.addAction(new VAction("SetConfig") {
+//
+//                @Override
+//                public void actionPerformed(ActionEvent e, Object owner) {
+//                    getInitAPI().getConfiguration().setProperty("time", ""+System.nanoTime()).save();
+//                }
+//            }, ActionDelelator.EDIT_MENU);
+//            
+//             vApi.addAction(new VAction("GetConfig") {
+//
+//                @Override
+//                public void actionPerformed(ActionEvent e, Object owner) {
+//                    System.out.println("time: " + getInitAPI().getConfiguration().getProperty("time"));
+//                }
+//            }, ActionDelelator.EDIT_MENU);
+//             
+//              vApi.addAction(new VAction("RemoveConfig") {
+//
+//                @Override
+//                public void actionPerformed(ActionEvent e, Object owner) {
+//                    getInitAPI().getConfiguration().removeProperty("time").save();
+//                }
+//            }, ActionDelelator.EDIT_MENU);
 //
             // request restart
             if (UG.getInstance().isRecompiled()) {
@@ -58,7 +87,7 @@ public class Configurator extends VPluginConfigurator {
 //        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void init() {
+    public void init(InitPluginAPI iApi) {
 
         // define native lib location
         UG.setNativeLibFolder(getNativeLibFolder());
@@ -70,7 +99,8 @@ public class Configurator extends VPluginConfigurator {
             setDescription(UG.getInstance().getDescription()
                     + "<br><br><b>Authors:</b><br><br>"
                     + UG.getInstance().getAuthors().replace("\n", "<br>"));
-        }
+        }       
+        
     }
     
   

@@ -39,6 +39,15 @@ import javax.swing.SwingUtilities;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class UG {
+    /**
+     * maximum number of chars in log
+     */
+    private static int logMaxChars = 10000;
+    
+    /**
+     * log refresh interval in milliseconds
+     */
+    private static long logRefreshInterval = 200;
 
     /**
      * native classes
@@ -47,7 +56,7 @@ public class UG {
     /**
      * ug messages
      */
-    private static StringBuffer messages = new StringBuffer();
+    private static StringBuilder messages = new StringBuilder();
     /**
      * ug instance
      */
@@ -517,21 +526,22 @@ public class UG {
     /**
      * @return the messages
      */
-    private StringBuffer getMessages() {
+    private StringBuilder getMessages() {
         return messages;
     }
 
     public static void addMessage(String s) {
         messages.append(s);
 
-        if (messages.length() > 1000000) {
-            messages.delete(0, 1000000);
+        if (messages.length() > logMaxChars) {
+            messages.delete(0, logMaxChars);
         }
     }
 
     public void clearMessages() {
         if (messages.length() > 0) {
             messages.delete(0, messages.length());
+            //messages = new StringBuilder();
         }
     }
 
@@ -562,7 +572,7 @@ public class UG {
 
             while (logging) {
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(logRefreshInterval);
                 } catch (InterruptedException ex) {
                     //
                 }
@@ -571,7 +581,7 @@ public class UG {
                     SwingUtilities.invokeLater(new Runnable() {
 
                         public void run() {
-                            if (mainCanvas != null) {
+                            if (mainCanvas != null && messages.length() > 0) {
                                 mainCanvas.getMessageBox().addMessageAsLog(
                                         "UG-Output:",
                                         "<pre>" + messages + "</pre>",
