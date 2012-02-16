@@ -74,7 +74,7 @@ public class UG {
      * Sets the RemoteType of an UG instance in a JVM
      *
      * @param remoteType the RemoteType of the UG instance
-     * 
+     *
      *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
@@ -92,11 +92,10 @@ public class UG {
 
         return UG.remoteType;
     }
-    
     /**
      * The webserver which listen at a specific port and allows UG to interact
      * as a remote server.
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     private static WebServer webServer = null;
@@ -104,7 +103,7 @@ public class UG {
     /**
      * Closes the webserver of the UG server instance, with the effect that the
      * UG server JVM is closed by the Operating system.
-     * 
+     *
      * Needs to be executed in the server JVM than works shutdown.
      *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
@@ -134,8 +133,8 @@ public class UG {
     }
 
     /**
-     * Starts a webserver, if UGs RemoteType is SERVER.
-     * This allwos these UG instance to act as server listing on a specific port.
+     * Starts a webserver, if UGs RemoteType is SERVER. This allwos these UG
+     * instance to act as server listing on a specific port.
      *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
@@ -188,7 +187,7 @@ public class UG {
     /**
      * Executing this method starts initialization process of a VRL instance
      * with needed parameters to allow UG to act as server.
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     public static void main(String[] args) {
@@ -353,10 +352,9 @@ public class UG {
 //    static void setNativeClasses(Class<?>[] nativeClasses) {
 //        UG.nativeClasses = nativeClasses;
 //    }
-    
     /**
-     * 
-     * @param loadNativeLib 
+     *
+     * @param loadNativeLib
      */
     public static void connectToNativeUG(boolean loadNativeLib) {
 
@@ -459,11 +457,11 @@ public class UG {
 
     // TODO remove UG() and handle the RemoteType case NONE in UG(remoteType)
     /**
-     * Do the same stuff as the constructor without parameters, with the exeption
-     * that it checks which role the UG instance should play and diceds which
-     * part of initialization should be done for the choosen role.
-     * 
-     * @param remoteType 
+     * Do the same stuff as the constructor without parameters, with the
+     * exeption that it checks which role the UG instance should play and diceds
+     * which part of initialization should be done for the choosen role.
+     *
+     * @param remoteType
      */
     private UG(RemoteType remoteType) {
 
@@ -786,12 +784,13 @@ public class UG {
     }
 
     /**
-     * Needed for the start / create of UG with RemoteType Server in another JVM.
-     * 
+     * Needed for the start / create of UG with RemoteType Server in another
+     * JVM.
+     *
      * @param option dicedes in which role UG should interact with envirement
-     * 
+     *
      * @return the wished version of UG in the coresponding RemoteType
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     public static synchronized UG getInstance(String option) {
@@ -981,10 +980,11 @@ public class UG {
     // ************** NATIVE METHODS **************
     // ********************************************
     /**
-     * The native methods which will be executed by the server version of UG 
-     * have for better readability of the source code the following name 
-     * convencien: <code>_methodName</code>
-     * 
+     * The native methods which will be executed by the server version of UG
+     * have for better readability of the source code the following name
+     * convencien:
+     * <code>_methodName</code>
+     *
      */
     final native NativeAPIInfo _convertRegistryInfo();
 
@@ -1065,10 +1065,10 @@ public class UG {
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
-     * 
-     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native 
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
      * method is called.
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     final NativeAPIInfo convertRegistryInfo() {
@@ -1114,10 +1114,10 @@ public class UG {
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
-     * 
-     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native 
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
      * method is called.
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     Object invokeMethod(String exportedClassName, long objPtr, boolean readOnly,
@@ -1156,17 +1156,25 @@ public class UG {
 
         } else {
 
-            return _invokeMethod(exportedClassName, objPtr, readOnly, methodName, params);
+            Object o = _invokeMethod(exportedClassName, objPtr, readOnly, methodName, params);
+
+            if (o == null) {
+                System.out.println("Object o = _invokeMethod() == NULL");
+            } else {
+                System.out.println("o = " + o);
+            }
+
+            return o;
         }
     }
 
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
-     * 
-     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native 
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
      * method is called.
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     Pointer newInstance(long exportedClassPtr, Object[] parameters) {
@@ -1212,10 +1220,10 @@ public class UG {
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
-     * 
-     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native 
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
      * method is called.
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     long getExportedClassPtrByName(String name, boolean classGrp) {
@@ -1249,10 +1257,10 @@ public class UG {
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
-     * 
-     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native 
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
      * method is called.
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     String getDefaultClassNameFromGroup(String grpName) {
@@ -1285,10 +1293,10 @@ public class UG {
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
-     * 
-     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native 
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
      * method is called.
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     Object invokeFunction(String name, boolean readOnly, Object[] params) {
@@ -1328,10 +1336,10 @@ public class UG {
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
-     * 
-     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native 
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
      * method is called.
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     String getSvnRevision() {
@@ -1361,10 +1369,10 @@ public class UG {
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
-     * 
-     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native 
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
      * method is called.
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     String getDescription() {
@@ -1394,10 +1402,10 @@ public class UG {
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
-     * 
-     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native 
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
      * method is called.
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     String getAuthors() {
@@ -1427,10 +1435,10 @@ public class UG {
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
-     * 
-     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native 
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
      * method is called.
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     String getCompileDate() {
@@ -1460,10 +1468,10 @@ public class UG {
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
-     * 
-     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native 
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
      * method is called.
-     * 
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     static int ugInit(String[] args) {
@@ -1505,18 +1513,18 @@ public class UG {
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
-     * 
-     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native 
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
      * method is called.
-     * 
+     *
      *
      * Deallocates specified memory. The destructor of the specified class will
      * be called.
      *
      * @param objPtr object pointer
      * @param exportedClassPtr pointer of the exported class
-     * 
-     * 
+     *
+     *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     @Deprecated
@@ -1548,10 +1556,10 @@ public class UG {
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
-     * 
-     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native 
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
      * method is called.
-     * 
+     *
      *
      * Invalidates the specified smart pointer.
      *
