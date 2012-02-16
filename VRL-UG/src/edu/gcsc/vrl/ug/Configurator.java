@@ -43,8 +43,8 @@ public class Configurator extends VPluginConfigurator {
 //            UG.getInstance().setMainCanvas(vCanvas);
             
             
-            VPluginAPI vApi = (VPluginAPI) api;
-            
+//            VPluginAPI vApi = (VPluginAPI) api;
+//            
 //            vApi.addAction(new VAction("SetConfig") {
 //
 //                @Override
