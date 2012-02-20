@@ -464,7 +464,15 @@ public class UG {
      * @param remoteType
      */
     private UG(RemoteType remoteType) {
+        constructorWithRemoteType(remoteType);
 
+    }
+
+    /**
+     * 
+     * @param remoteType 
+     */
+    private synchronized void constructorWithRemoteType(RemoteType remoteType) {
         System.out.println("------ UG(RemoteType= " + getRemoteType() + ") --------");
 
         setRemoteType(remoteType);
@@ -627,7 +635,6 @@ public class UG {
 //            }
 
         }
-
     }
 
     /**
@@ -1123,6 +1130,13 @@ public class UG {
     Object invokeMethod(String exportedClassName, long objPtr, boolean readOnly,
             String methodName, Object[] params) {
 
+        System.out.println("UG.invokeMethod() paramas values are:");
+        System.out.println("exportedClassName = " + exportedClassName);
+        System.out.println("objPtr = " + objPtr);
+        System.out.println("readOnly = " + readOnly);
+        System.out.println("methodName = " + methodName);
+        System.out.println("params = " + params);
+
         if (remoteType.equals(RemoteType.CLIENT)) {
 
             Object o = null;
@@ -1144,6 +1158,9 @@ public class UG {
                         JVMmanager.getCurrentPort());
 
                 o = xmlRpcClient.execute("RpcHandler.invokeMethod", xmlRpcParams);
+
+
+                System.out.println("o = xmlRpcClient.execute(RpcHandler.invokeMethod,-) = " + o);
 
                 base64 = (String) o;
                 o = Base64.decodeToObject(base64, UG.class.getClassLoader());
