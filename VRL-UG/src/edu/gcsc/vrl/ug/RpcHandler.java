@@ -5,16 +5,8 @@ package edu.gcsc.vrl.ug;
  * the editor.
  */
 import eu.mihosoft.vrl.io.Base64;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 /*
  * NOTICE:
@@ -72,27 +64,27 @@ public class RpcHandler {
     }
 
 //    //TEST FUNCTION
-    public int show(String message) {
-        System.out.println("RpcHandler.show: " + message);
+    public int show(String methodName) {
+        System.out.println("RpcHandler." + methodName+"() invoked.");
         return 1;
     }
 
-//    //TEST FUNCTION
-    public int showMessage() {
-        System.out.println("RpcHandler.showMessage: " + message);
-        return 1;
-    }
+////    //TEST FUNCTION
+//    public int showMessage() {
+//        System.out.println("RpcHandler.showMessage: " + message);
+//        return 1;
+//    }
 
-//    //TEST FUNCTION
-    public int changeMessage(String message) {
-        System.out.println("RpcHandler.changeMessage: " + "old: " + RpcHandler.message);
-
-        RpcHandler.message = message;
-
-        System.out.println("RpcHandler.changeMessage: " + "new: " + RpcHandler.message);
-
-        return 2;
-    }
+////    //TEST FUNCTION
+//    public int changeMessage(String message) {
+//        System.out.println("RpcHandler.changeMessage: " + "old: " + RpcHandler.message);
+//
+//        RpcHandler.message = message;
+//
+//        System.out.println("RpcHandler.changeMessage: " + "new: " + RpcHandler.message);
+//
+//        return 2;
+//    }
 
     // ********************************************
     // ************** NATIVE METHODS **************
@@ -133,6 +125,15 @@ public class RpcHandler {
             String exportedClassName, String objPtr, boolean readOnly,
             String methodName, String params) {
         show("invokeMethod");
+        
+        
+        System.out.println("RpcHandler.invokeMethod() paramas values are:");
+        System.out.println("exportedClassName = " + exportedClassName);
+        System.out.println("objPtr = " + objPtr);
+        System.out.println("readOnly = " + readOnly);
+        System.out.println("methodName = " + methodName);
+        System.out.println("params = " + params);
+        
 
         Object o = Base64.decodeToObject(params);
 
@@ -393,7 +394,11 @@ public class RpcHandler {
      * established.
      */
     public boolean isServerRunning() {
+        System.out.println("RpcHandler.isServerRunning()");
+        
         Boolean b = UG.isServerRunning();
+        
+        System.out.println("UG.isServerRunning() = "+ b);
 
         if (b != null && b.booleanValue()) {
             return true;
