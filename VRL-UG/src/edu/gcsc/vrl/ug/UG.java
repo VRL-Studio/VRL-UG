@@ -1118,12 +1118,17 @@ public class UG {
     Object invokeMethod(String exportedClassName, long objPtr, boolean readOnly,
             String methodName, Object[] params) {
 
-        System.out.println("UG.invokeMethod() paramas values are:");
-        System.out.println("exportedClassName = " + exportedClassName);
-        System.out.println("objPtr = " + objPtr);
-        System.out.println("readOnly = " + readOnly);
-        System.out.println("methodName = " + methodName);
-        System.out.println("params = " + params);
+//        System.out.println("---- ---- UG.invokeMethod() paramas values are: ---- ----");
+//        System.out.println("exportedClassName = " + exportedClassName);
+//        System.out.println("objPtr = " + objPtr);
+//        System.out.println("readOnly = " + readOnly);
+//        System.out.println("methodName = " + methodName);
+//        System.out.println("params = " + params);
+//
+//        for (int i = 0; i < params.length; i++) {
+//            System.out.println("    params[" + i + "] = " + params[i]);
+//        }
+
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
@@ -1148,7 +1153,7 @@ public class UG {
                 o = xmlRpcClient.execute("RpcHandler.invokeMethod", xmlRpcParams);
 
 
-                System.out.println("o = xmlRpcClient.execute(RpcHandler.invokeMethod,-) = " + o);
+//                System.out.println("o = xmlRpcClient.execute(RpcHandler.invokeMethod, xmlRpcParams) = " + o);
 
                 base64 = (String) o;
                 o = Base64.decodeToObject(base64, UG.class.getClassLoader());
@@ -1163,11 +1168,11 @@ public class UG {
 
             Object o = _invokeMethod(exportedClassName, objPtr, readOnly, methodName, params);
 
-            if (o == null) {
-                System.out.println("Object o = _invokeMethod() == NULL");
-            } else {
-                System.out.println("o = " + o);
-            }
+//            if (o == null) {
+//                System.out.println("Object o = _invokeMethod() == NULL");
+//            } else {
+//                System.out.println("o = " + o);
+//            }
 
             return o;
         }
