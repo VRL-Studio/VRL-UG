@@ -26,7 +26,7 @@ public class JVMmanager implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static boolean stopJvmOutputRedirection = false;
-    private static boolean isServerJVMstarting = false;
+    private static boolean isServerJVMrunning = false;
     private static Integer defaultPort = 1099;
     private static String defaultIP = "127.0.0.1"; //"localhost"
     private static Integer currentPort = 1099;
@@ -164,7 +164,7 @@ public class JVMmanager implements Serializable {
 
         XmlRpcClient xmlRpcClient = getClient(getDefaultIP(), getCurrentPort());
         Vector empty = new Vector();
-        Object o=null;
+        Object o = null;
         try {
             o = xmlRpcClient.execute("RpcHandler.stopWebServer", empty);
 
@@ -172,20 +172,22 @@ public class JVMmanager implements Serializable {
 
         } catch (XmlRpcException ex) {
             System.out.println("EXCEPTION: Server closed");
-            
-            isServerJVMstarting=false;
-            
+
+            isServerJVMrunning = false;
+
 //            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
 //        to be save that a server is not running
         try {
-            o= xmlRpcClient.execute("RpcHandler.isServerRunning", empty);
-            
-            if(o instanceof Boolean){
-                isServerJVMstarting= ((Boolean)o).booleanValue();
+            o = xmlRpcClient.execute("RpcHandler.isServerRunning", empty);
+
+            if (o instanceof Boolean) {
+                System.out.println("webserver should be closed!");
+                isServerJVMrunning = ((Boolean) o).booleanValue();
+                System.out.println("isServerJVMrunning = " + isServerJVMrunning);
             }
-            
+
         } catch (XmlRpcException ex) {
 //            Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -196,11 +198,12 @@ public class JVMmanager implements Serializable {
      * <code>getCurrentPort()</code>
      */
     public static synchronized void startLocalServer() {
-
-        if (!isServerJVMstarting) {
+        System.out.println("startLocalServer() : isServerJVMrunning = " + isServerJVMrunning);
+        
+        if (!isServerJVMrunning) {
+            isServerJVMrunning = true;
             startAnotherJVM(UG.class, getDefaultIP(), getCurrentPort());
         }
-        isServerJVMstarting = true;
     }
 
     /**
