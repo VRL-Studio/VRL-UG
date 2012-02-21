@@ -464,15 +464,6 @@ public class UG {
      * @param remoteType
      */
     private UG(RemoteType remoteType) {
-        constructorWithRemoteType(remoteType);
-
-    }
-
-    /**
-     * 
-     * @param remoteType 
-     */
-    private synchronized void constructorWithRemoteType(RemoteType remoteType) {
         System.out.println("------ UG(RemoteType= " + getRemoteType() + ") --------");
 
         setRemoteType(remoteType);
@@ -505,11 +496,8 @@ public class UG {
                 try {
 
                     System.out.println("# + # + #  UG( " + remoteType + " ) server not running...");
-                    System.out.println("# + # + #  JVMmanager.startAnotherJVM()");
-                    JVMmanager.startAnotherJVM(
-                            UG.class,
-                            JVMmanager.getCurrentIP(),
-                            JVMmanager.getCurrentPort());
+                    System.out.println("# + # + #  JVMmanager.startLocalServer()");
+                    JVMmanager.startLocalServer();
 
 //                    System.out.println("# + # + #  UG.startWebServer() remoteType= "+ remoteType);
 //                    UG.startWebServer();

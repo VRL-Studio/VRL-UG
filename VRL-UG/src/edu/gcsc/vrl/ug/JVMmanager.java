@@ -15,7 +15,7 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 /**
  * JVMmanager is helper class to make better seperation between methods which
- * are needed to create / manage a remote communication and the methods which 
+ * are needed to create / manage a remote communication and the methods which
  * should be called remote in UG.
  *
  * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
@@ -26,6 +26,7 @@ public class JVMmanager implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static boolean stopJvmOutputRedirection = false;
+    private static boolean isServerJVMstarting = false;
     private static Integer defaultPort = 1099;
     private static String defaultIP = "127.0.0.1"; //"localhost"
     private static Integer currentPort = 1099;
@@ -40,7 +41,7 @@ public class JVMmanager implements Serializable {
      * @param clazz The class which should be started in a new JVM.
      *
      */
-    public static void startAnotherJVM(
+    private static void startAnotherJVM(
             final Class clazz,
             final String ip,
             final Integer port) {
@@ -96,10 +97,9 @@ public class JVMmanager implements Serializable {
         t.start();
     }
 
-    
     /**
-     * Display the output of process p at System.out as long the observered process
-     * is killed or the method stopJvmOutputRedirection() is called.
+     * Display the output of process p at System.out as long the observered
+     * process is killed or the method stopJvmOutputRedirection() is called.
      *
      * @param p the process which output should be redirected
      */
@@ -158,20 +158,36 @@ public class JVMmanager implements Serializable {
     }
 
     /**
-     * Calls remote the stopServer method.
+     * Calls remote the stopWebServer method.
      */
-    public static void stopServerRemotely() {
+    public static void stopLocalServer() {
 
         XmlRpcClient xmlRpcClient = getClient(getDefaultIP(), getCurrentPort());
-
+        Vector empty = new Vector();
+        Object o=null;
         try {
-            Object o = xmlRpcClient.execute("RpcHandler.stopWebServer", new Vector());
+            o = xmlRpcClient.execute("RpcHandler.stopWebServer", empty);
 
             System.out.println((Integer) o);
 
         } catch (XmlRpcException ex) {
             System.out.println("EXCEPTION: Server closed");
+            
+            isServerJVMstarting=false;
+            
 //            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+//        to be save that a server is not running
+        try {
+            o= xmlRpcClient.execute("RpcHandler.isServerRunning", empty);
+            
+            if(o instanceof Boolean){
+                isServerJVMstarting= ((Boolean)o).booleanValue();
+            }
+            
+        } catch (XmlRpcException ex) {
+//            Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -179,11 +195,13 @@ public class JVMmanager implements Serializable {
      * Tries to start an UG server at localhost at port
      * <code>getCurrentPort()</code>
      */
-    public static void startLocalServer() {
+    public static synchronized void startLocalServer() {
 
-        startAnotherJVM(UG.class, getDefaultIP(), getCurrentPort());
+        if (!isServerJVMstarting) {
+            startAnotherJVM(UG.class, getDefaultIP(), getCurrentPort());
+        }
+        isServerJVMstarting = true;
     }
-
 
     /**
      * Tries to connect to server and returns true if a connection could be
@@ -216,16 +234,17 @@ public class JVMmanager implements Serializable {
     }
 
     /**
-     * For efficence reason this method should not be called from a user directly.
-     * Use instead <code>getClient(String ip, Integer port)</code>.
-     * 
-     * Creates an Client which is needed for remote communication with a remote 
+     * For efficence reason this method should not be called from a user
+     * directly. Use instead
+     * <code>getClient(String ip, Integer port)</code>.
+     *
+     * Creates an Client which is needed for remote communication with a remote
      * server class like e.g. UG with RemoteType SERVER.
      *
      * @param ip localhost="127.0.0.1" or ip like e.g. "141.2.22.123" for remote
-     *          over network
-     * @param port the port which should be used for the communication and the 
-     *          server is listen to.
+     * over network
+     * @param port the port which should be used for the communication and the
+     * server is listen to.
      *
      * @return the created client
      */
@@ -264,8 +283,9 @@ public class JVMmanager implements Serializable {
     }
 
     /**
-     * Checks if there is a client with the needed parameters in a list of created
-     * clients and returns the matching one or calls <code>createXmlRpcClient(String ip, int port)</code>.
+     * Checks if there is a client with the needed parameters in a list of
+     * created clients and returns the matching one or calls
+     * <code>createXmlRpcClient(String ip, int port)</code>.
      *
      * @param ip the ip of the server
      * @param port the port at which communication is done with the server
