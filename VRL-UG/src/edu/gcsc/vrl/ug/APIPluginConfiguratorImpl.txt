@@ -7,6 +7,7 @@ import eu.mihosoft.vrl.system.PluginConfigurator;
 import eu.mihosoft.vrl.system.PluginDependency;
 import eu.mihosoft.vrl.system.PluginIdentifier;
 import eu.mihosoft.vrl.system.VPluginAPI;
+import eu.mihosoft.vrl.system.InitPluginAPI;
 import eu.mihosoft.vrl.system.VPluginConfigurator;
 import eu.mihosoft.vrl.system.VRL;
 import eu.mihosoft.vrl.visual.VDialog;
@@ -132,7 +133,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
         //
     }
 
-    public void init() {
+    public void init(InitPluginAPI iApi) {
         UG.connectToNativeUG(isLoadNativeLibraries());
     }
 }
