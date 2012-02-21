@@ -39,6 +39,15 @@ import javax.swing.SwingUtilities;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class UG {
+    /**
+     * maximum number of chars in log
+     */
+    private static int logMaxChars = 10000;
+    
+    /**
+     * log refresh interval in milliseconds
+     */
+    private static long logRefreshInterval = 200;
 
     /**
      * native classes
@@ -47,7 +56,7 @@ public class UG {
     /**
      * ug messages
      */
-    private static StringBuffer messages = new StringBuffer();
+    private static StringBuilder messages = new StringBuilder();
     /**
      * ug instance
      */
@@ -133,15 +142,14 @@ public class UG {
 //    }
 //
     /**
-     * Loads all native librarties in the specified folder and optionally all
-     * of its subfolders. Please ensure that all libraries in the folder are
-     * compatible with the current os.
-     * <p><b>Note: </b>this method is an EXACT copy of 
-     * {@link eu.mihosoft.vrl.system.VSysUtil#loadNativeLibrariesInFolder(java.io.File, boolean) }. 
-     * This is necessary as using the original method would load the native 
+     * Loads all native librarties in the specified folder and optionally all of
+     * its subfolders. Please ensure that all libraries in the folder are
+     * compatible with the current os. <p><b>Note: </b>this method is an EXACT
+     * copy of
+     * {@link eu.mihosoft.vrl.system.VSysUtil#loadNativeLibrariesInFolder(java.io.File, boolean)
+     * }. This is necessary as using the original method would load the native
      * libraries in the wrong classloader (the classloader that loaded
-     * {@link eu.mihosoft.vrl.system.VSysUtil)}.
-     * </p>
+     * {@link eu.mihosoft.vrl.system.VSysUtil)}. </p>
      *
      * @param folder library folder
      * @param recursive defines whether recusrively load libraries from sub
@@ -185,19 +193,30 @@ public class UG {
 
             for (File f : dynamicLibraries) {
 
-                String libName = f.getAbsolutePath();
+                String libName = f.getName();
+
+                if (!VSysUtil.isWindows()) {
+                    libName = libName.replaceFirst("lib", "");
+                }
+
+                libName = libName.substring(0,
+                        libName.length() - dylibEnding.length());
 
                 if (!loadedLibraries.contains(libName)) {
-                    System.out.println(" --> " + f.getName());
+                    System.out.print(" --> " + f.getName());
                     try {
-                        System.load(libName);
+                        System.loadLibrary(libName);
                         loadedLibraries.add(libName);
+                        System.out.println(" [OK]");
                     } catch (Exception ex) {
+                        System.out.println(" [ERROR]");
                         ex.printStackTrace(System.err);
                     }
                 }
             }
         }
+
+        System.out.println(" --> done.");
 
         return loadedLibraries.size() == dynamicLibraries.size();
     }
@@ -230,7 +249,6 @@ public class UG {
                     + VSysUtil.getPlatformSpecificPath());
 
             loadNativeLibrariesInFolder(libFolder, false);
-
 
             libLoaded = true;
         }
@@ -508,21 +526,22 @@ public class UG {
     /**
      * @return the messages
      */
-    private StringBuffer getMessages() {
+    private StringBuilder getMessages() {
         return messages;
     }
 
     public static void addMessage(String s) {
         messages.append(s);
 
-        if (messages.length() > 1000000) {
-            messages.delete(0, 1000000);
+        if (messages.length() > logMaxChars) {
+            messages.delete(0, logMaxChars);
         }
     }
 
     public void clearMessages() {
         if (messages.length() > 0) {
             messages.delete(0, messages.length());
+            //messages = new StringBuilder();
         }
     }
 
@@ -553,7 +572,7 @@ public class UG {
 
             while (logging) {
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(logRefreshInterval);
                 } catch (InterruptedException ex) {
                     //
                 }
@@ -562,7 +581,7 @@ public class UG {
                     SwingUtilities.invokeLater(new Runnable() {
 
                         public void run() {
-                            if (mainCanvas != null) {
+                            if (mainCanvas != null && messages.length() > 0) {
                                 mainCanvas.getMessageBox().addMessageAsLog(
                                         "UG-Output:",
                                         "<pre>" + messages + "</pre>",
