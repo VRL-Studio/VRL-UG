@@ -57,6 +57,9 @@ public class JVMmanager implements Serializable {
 
                 // DONE make general classpath update
                 String pluginPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
+                System.out.println("-- --- JVMmanager.startAnotherJVM():pluginPath = "
+                        +pluginPath);
+                
                 classpath += ":" + pluginPath;
 
                 String path = System.getProperty("java.home")

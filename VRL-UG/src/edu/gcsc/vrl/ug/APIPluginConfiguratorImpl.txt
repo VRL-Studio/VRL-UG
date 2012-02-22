@@ -137,7 +137,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
 
 
     public void init(InitPluginAPI iApi) {
-        UG.connectToNativeUG(isLoadNativeLibraries());
+       // UG.connectToNativeUG(isLoadNativeLibraries());
     }
 }
 

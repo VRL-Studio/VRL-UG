@@ -13,6 +13,8 @@ import java.io.Serializable;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeParamInfo implements Serializable{
+    
+    private static final long serialVersionUID = 1L;
 
     private NativeType type;
     private String className;

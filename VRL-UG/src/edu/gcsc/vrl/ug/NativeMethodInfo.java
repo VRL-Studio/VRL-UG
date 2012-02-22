@@ -12,6 +12,8 @@ import java.io.Serializable;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeMethodInfo implements Serializable{
+    
+    private static final long serialVersionUID = 1L;
 
     private String name;
     private String options;

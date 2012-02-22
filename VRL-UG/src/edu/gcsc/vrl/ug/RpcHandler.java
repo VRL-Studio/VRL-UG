@@ -53,6 +53,13 @@ public class RpcHandler {
      * @return the UG instance with RemoteType SERVER
      */
     public static UG getServer() {
+        
+        System.out.print("---- RpcHandler.getServer() is ");
+        if(server!=null){
+            System.out.print("NOT ");
+        }
+        System.out.println("NULL.");
+        
         return server;
     }
 
@@ -104,12 +111,15 @@ public class RpcHandler {
         NativeAPIInfo napiInfo = getServer()._convertRegistryInfo();
 
         if (napiInfo == null) {
-            System.err.println("NativeAPIInfo IS NULL");
+            System.out.println("NativeAPIInfo IS NULL");
+        }else{
+             System.out.println("NativeAPIInfo IS NOT NULL");
         }
 
         String base64 = Base64.encodeObject(napiInfo);
 
-//        System.out.println("RESULT: " + base64);
+        System.out.println("RESULT: " + base64);
+        
         return base64;
     }
 
