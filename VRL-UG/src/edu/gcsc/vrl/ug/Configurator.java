@@ -89,7 +89,7 @@ public class Configurator extends VPluginConfigurator {
 //        String option = VArgUtil.getArg(VRL.getCommandLineOptions(),"-rpc");
         
          PluginConfiguration pConf = iApi.getConfiguration();
-//         pConf.setProperty("-rpc", null);
+//         pConf.setProperty("-rpc", "client");
         
         System.out.println(this.getClass().getName() +
                 " **** OPTION: -rpc = " + pConf.getProperty("-rpc"));
