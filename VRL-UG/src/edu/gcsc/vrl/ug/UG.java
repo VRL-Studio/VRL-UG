@@ -1172,7 +1172,6 @@ public class UG {
 
                 o = xmlRpcClient.execute("RpcHandler.invokeMethod", xmlRpcParams);
 
-
 //                System.out.println("o = xmlRpcClient.execute(RpcHandler.invokeMethod, xmlRpcParams) = " + o);
 
                 base64 = (String) o;
