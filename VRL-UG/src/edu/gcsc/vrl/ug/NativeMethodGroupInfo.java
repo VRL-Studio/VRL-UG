@@ -12,6 +12,8 @@ import java.io.Serializable;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeMethodGroupInfo implements Serializable{
+    
+    private static final long serialVersionUID = 1L;
 
     private NativeMethodInfo[] overloads;
     private boolean isConst;

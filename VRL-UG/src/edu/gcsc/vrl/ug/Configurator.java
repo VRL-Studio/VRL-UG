@@ -14,7 +14,9 @@ import eu.mihosoft.vrl.visual.VDialog;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class Configurator extends VPluginConfigurator {
-    
+
+    private static boolean serverConfiguration = false;
+
     public Configurator() {
 
         setIdentifier(Constants.PLUGIN_IDENTIFIER);
@@ -22,7 +24,7 @@ public class Configurator extends VPluginConfigurator {
         // ug is only allowed to load the native ug lib if api plugin could
         // not be found. in this case this plugin will generate it.
         setLoadNativeLibraries(false);
-        
+
         exportPackage("edu.gcsc.vrl.ug");
     }
 
@@ -30,13 +32,16 @@ public class Configurator extends VPluginConfigurator {
         if (api instanceof VPluginAPI) {
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
 //            UG.getInstance().setMainCanvas(vCanvas);
-        
+
             VPluginAPI vApi = (VPluginAPI) api;
-            
-             //TEST: component for starting an UG on an other JVM
+
+            //TEST: component for starting an UG on an other JVM
             vApi.addComponent(JVMmanager.class);
 
-            
+
+            System.out.println("Configurator CLS:main=" + UG.class.getClassLoader());
+
+
 //            VPluginAPI vApi = (VPluginAPI) api;
 //            
 //            vApi.addAction(new VAction("SetConfig") {
@@ -71,7 +76,7 @@ public class Configurator extends VPluginConfigurator {
                         " UG-API had to be recompiled."
                         + " VRL-Studio will be closed now."
                         + " Restart it to use the new API.");
-                
+
                 VRL.exit(0);
             }
         }
@@ -83,32 +88,84 @@ public class Configurator extends VPluginConfigurator {
 
     public void init(InitPluginAPI iApi) {
 
+        setConfigurationEntries();
+
         // define native lib location
         UG.setNativeLibFolder(getNativeLibFolder());
-        
-//        String option = VArgUtil.getArg(VRL.getCommandLineOptions(),"-rpc");
-        
-         PluginConfiguration pConf = iApi.getConfiguration();
+
+        String option = VArgUtil.getArg(VRL.getCommandLineOptions(), "-rpc");
+
+        if (!option.toLowerCase().equals("server")) {
+            
+            PluginConfiguration pConf = iApi.getConfiguration();
 //         pConf.setProperty("-rpc", "client");
-        
-        System.out.println(this.getClass().getName() +
-                " **** OPTION: -rpc = " + pConf.getProperty("-rpc"));
-        
-        
+
+            option = pConf.getProperty("rpc");
+            System.out.println(" ****CONFIGURATOR.init( iAPI) OPTION: -rpc = "
+                    + option);
+
+        }
+
         // initialize ug instance
-        UG.getInstance(pConf.getProperty("-rpc"));
+        UG.getInstance(option);
+
 
         if (UG.isLibloaded()) {
             setDescription(UG.getInstance().getDescription()
                     + "<br><br><b>Authors:</b><br><br>"
                     + UG.getInstance().getAuthors().replace("\n", "<br>"));
-        }       
-        
+        }
+
     }
-    
-  
+
     @Override
     public String getDescription() {
         return UG.getInstance().getDescriptionFromApi();
+    }
+
+    /**
+     *
+     * @param server
+     */
+    private void setConfigurationEntries() {
+
+        System.out.println("Configurator.setConfigurationEntries()");
+        System.out.println("isServerConfiguration() = " + isServerConfiguration());
+
+        InitPluginAPI iAPI = getInitAPI();
+        PluginConfiguration pConf = iAPI.getConfiguration();
+//        pConf.setProperty("plugin-checksum-test", "yes");
+
+        if (isServerConfiguration()) {
+
+//            pConf.setProperty("property-folder-suffix", "numerics-server");
+            pConf.setProperty("rpc", "server");
+
+            String serverJarPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
+            System.out.println("Configurator.setConfigurationEntries():serverJarPath = "
+                    + serverJarPath);
+            pConf.setProperty("server-dir", serverJarPath);
+
+        } else {
+
+//            pConf.setProperty("property-folder-suffix", "numerics-studio");
+            pConf.setProperty("rpc", "client");
+
+        }
+        pConf.save();
+    }
+
+    /**
+     * @return the serverConfiguration
+     */
+    public static boolean isServerConfiguration() {
+        return serverConfiguration;
+    }
+
+    /**
+     * @param serverConfiguration the serverConfiguration to set
+     */
+    public static void setServerConfiguration(boolean serverConfiguration) {
+        Configurator.serverConfiguration = serverConfiguration;
     }
 }

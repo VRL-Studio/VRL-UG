@@ -14,6 +14,8 @@ import java.util.ArrayList;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class NativeConstructorInfo implements Serializable{
+    
+    private static final long serialVersionUID = 1L;
 
     private String options;
     private NativeParamInfo[] parameters;

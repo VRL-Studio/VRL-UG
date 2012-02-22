@@ -48,16 +48,15 @@ import org.apache.xmlrpc.webserver.WebServer;
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class UG {
+
     /**
      * maximum number of chars in log
      */
     private static int logMaxChars = 10000;
-    
     /**
      * log refresh interval in milliseconds
      */
     private static long logRefreshInterval = 200;
-
     /**
      * native classes
      */
@@ -203,10 +202,18 @@ public class UG {
 
         String[] params = {"-property-folder-suffix", "numerics-server",
             "-plugin-checksum-test", "yes", "-rpc", "server"};
-
         VRL.initAll(params);
 
-//        set in the server JVM the server ug objekt
+//        String[] params = {"-property-folder-suffix", "numerics-server",
+//            "-plugin-checksum-test", "yes"};
+//
+//        Configurator.setServerConfiguration(true);
+
+        VRL.initAll(params);
+        
+        System.out.println("UG CLS:main=" + UG.class.getClassLoader());
+
+//        set in the server JVM the server ug object
         RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
 
 
@@ -378,6 +385,9 @@ public class UG {
      */
     public static void connectToNativeUG(boolean loadNativeLib) {
 
+//        System.out.println("-.-.-.-.-.-.-. UG.connectToNativeUG() "
+//                + "remoteType = " + remoteType);
+
         if (remoteType == RemoteType.CLIENT) {
             System.err.println("Cannot connect to native UG in client mode!");
             ugInit(new String[]{});  //non native
@@ -399,6 +409,9 @@ public class UG {
             File libFolder = new File(
                     getNativeLibFolder() + "/eu/mihosoft/vrl/natives/"
                     + VSysUtil.getPlatformSpecificPath());
+
+//            System.out.println("-.-.-.-.-.-.-. UG.connectToNativeUG() "
+//                    + "libFolder.getPath() = " + libFolder.getPath());
 
             loadNativeLibrariesInFolder(libFolder, false);
 
@@ -483,9 +496,11 @@ public class UG {
      * @param remoteType
      */
     private UG(RemoteType remoteType) {
-        System.out.println("------ UG(RemoteType= " + getRemoteType() + ") --------");
 
         setRemoteType(remoteType);
+
+        System.out.println("------ UG(RemoteType= " + getRemoteType() + ") --------");
+
 
 //         // we must set the singleton instance to prevent
 //        // calling multiple constructors.
@@ -610,7 +625,7 @@ public class UG {
             }
         }
 
-        System.out.println("------ AFTER if RemoteType NOT SERVER in constructor UG(RemoteType)");
+        System.out.println("------ AFTER if(!remoteType==SERVER) in UG(RemoteType)");
 
 
 //        if ((xmlRpcClient == null) && (remoteType == RemoteType.NONE)) {
@@ -809,6 +824,8 @@ public class UG {
      */
     public static synchronized UG getInstance(String option) {
 
+        System.out.println("UG.getInstance(String option) = " + option);
+
         if (option != null) {
 
             if (option.toLowerCase().equals("server")) {
@@ -819,6 +836,9 @@ public class UG {
 
             } else if (option.toLowerCase().equals("none")) {
                 return getInstance(null, RemoteType.NONE);
+            } else {
+                System.out.println("in UG.getInstance(String option),"
+                        + " option could not be recognized.");
             }
         }
 
@@ -1097,6 +1117,8 @@ public class UG {
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
+                System.out.println("******* UG.convertRegistryInfo(): before RpcHandler call");
+
                 o = xmlRpcClient.execute("RpcHandler.convertRegistryInfo", voidElement);
 
 
@@ -1108,7 +1130,12 @@ public class UG {
             //      and decode here to NativeAPIInfo !!!!!
             String base64 = (String) o;
 
-            o = Base64.decodeToObject(base64, UG.class.getClassLoader());
+//            o = Base64.decodeToObject(base64, UG.class.getClassLoader());
+            o = Base64.decodeToObject(base64, ClassLoader.getSystemClassLoader());
+//            System.out.println("******* UG.convertRegistryInfo():classloader = "+ UG.class.getClassLoader());
+//            
+//            o = Base64.decodeToObject(base64);
+            System.out.println("UG.convertRegistryInfo() via RpcHandler -> o = " + o);
 
             if (o instanceof NativeAPIInfo) {
                 NativeAPIInfo napiInfo = (NativeAPIInfo) o;
@@ -1116,6 +1143,10 @@ public class UG {
                 return napiInfo;
 
             } else {
+                System.out.println(" - - - - ERROR - - - -");
+
+                System.out.println("class of o = " + o.getClass());
+
                 throw new IllegalArgumentException(this.getClass()
                         + ".convertRegistryInfo() got over XMLRPC an object"
                         + "which is not instance of NativeAPIInfo.");
