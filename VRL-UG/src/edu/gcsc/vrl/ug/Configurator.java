@@ -38,8 +38,31 @@ public class Configurator extends VPluginConfigurator {
             //TEST: component for starting an UG on an other JVM
             vApi.addComponent(JVMmanager.class);
 
+            System.out.println("CLS RemoteType of UG =" + UG.getRemoteType());
 
-            System.out.println("Configurator CLS:main=" + UG.class.getClassLoader());
+            System.out.println("Configurator.register() CLS.RpcHandler:="
+                    + RpcHandler.class.getClassLoader());
+
+            System.out.println("Configurator.register() CLS.Configurator:="
+                    + Configurator.class.getClassLoader());
+
+            System.out.println("Configurator.register() CLS.UG:="
+                    + UG.class.getClassLoader());
+
+            System.out.println("Configurator.register() CLS.System:="
+                    + ClassLoader.getSystemClassLoader());
+
+
+//            System.out.println("Configurator.register(): isServerConfiguration() = "
+//                    + isServerConfiguration());
+//
+//            if (isServerConfiguration()) {
+//
+////        set in the server JVM the server ug object
+//                RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
+//
+//            }
+
 
 
 //            VPluginAPI vApi = (VPluginAPI) api;
@@ -88,6 +111,21 @@ public class Configurator extends VPluginConfigurator {
 
     public void init(InitPluginAPI iApi) {
 
+        System.out.println("CLS RemoteType of UG =" + UG.getRemoteType());
+
+        System.out.println("Configurator.init() CLS.RpcHandler:="
+                + RpcHandler.class.getClassLoader());
+
+        System.out.println("Configurator.init() CLS.Configurator:="
+                + Configurator.class.getClassLoader());
+
+        System.out.println("Configurator.init() CLS.UG:="
+                + UG.class.getClassLoader());
+
+        System.out.println("Configurator.init() CLS.System:="
+                + ClassLoader.getSystemClassLoader());
+
+
         setConfigurationEntries();
 
         // define native lib location
@@ -96,7 +134,7 @@ public class Configurator extends VPluginConfigurator {
         String option = VArgUtil.getArg(VRL.getCommandLineOptions(), "-rpc");
 
         if (!option.toLowerCase().equals("server")) {
-            
+
             PluginConfiguration pConf = iApi.getConfiguration();
 //         pConf.setProperty("-rpc", "client");
 
@@ -168,4 +206,24 @@ public class Configurator extends VPluginConfigurator {
     public static void setServerConfiguration(boolean serverConfiguration) {
         Configurator.serverConfiguration = serverConfiguration;
     }
+//    public static UG getUGserver(){
+//        
+//        System.out.println("Configurator.getUGserver(): isServerConfiguration() = "
+//                + isServerConfiguration());
+//
+//        if (isServerConfiguration()) {
+//
+//        System.out.println("Configurator.getUGserver(): UG:CLS= "+
+//                UG.class.getClassLoader());
+//        
+////        set in the server JVM the server ug object
+//            return UG.getInstance(null, RemoteType.SERVER);
+//
+//        }else{
+//            
+//            throw new UnsupportedOperationException("Calling Configurator.getUGserver"
+//                    + " is only allowed if isServerConfiguration()=true.");
+//        }
+//        
+//    }
 }
