@@ -200,21 +200,24 @@ public class UG {
      */
     public static void main(String[] args) {
 
+        System.out.println("- - UG.main: Configurator.setServerConfiguration(true);");
+        Configurator.setServerConfiguration(true);
+
         String[] params = {"-property-folder-suffix", "numerics-server",
             "-plugin-checksum-test", "yes", "-rpc", "server"};
+        
         VRL.initAll(params);
 
 //        String[] params = {"-property-folder-suffix", "numerics-server",
 //            "-plugin-checksum-test", "yes"};
 //
-//        Configurator.setServerConfiguration(true);
 
-        VRL.initAll(params);
-        
-        System.out.println("UG CLS:main=" + UG.class.getClassLoader());
-
-//        set in the server JVM the server ug object
-        RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
+//        VRL.initAll(params);
+//        
+//        System.out.println("UG CLS:main=" + UG.class.getClassLoader());
+//
+////        set in the server JVM the server ug object
+//        RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
 
 
     }
@@ -1117,9 +1120,14 @@ public class UG {
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
-                System.out.println("******* UG.convertRegistryInfo(): before RpcHandler call");
+//                System.out.println("******* UG.convertRegistryInfo(): BEFORE RpcHandler call");
 
                 o = xmlRpcClient.execute("RpcHandler.convertRegistryInfo", voidElement);
+
+//                System.out.println("******* UG.convertRegistryInfo(): AFTER RpcHandler call");
+
+//                System.out.println("UG.convertRegistryInfo(): "
+//                    + "o.substring(0, 11) = " + o.toString().substring(0, 11));
 
 
             } catch (XmlRpcException ex) {
@@ -1130,9 +1138,65 @@ public class UG {
             //      and decode here to NativeAPIInfo !!!!!
             String base64 = (String) o;
 
-//            o = Base64.decodeToObject(base64, UG.class.getClassLoader());
-            o = Base64.decodeToObject(base64, ClassLoader.getSystemClassLoader());
-//            System.out.println("******* UG.convertRegistryInfo():classloader = "+ UG.class.getClassLoader());
+//            System.out.println("UG.convertRegistryInfo(): "
+//                    + "base64.substring(0, 11) = " + base64.substring(0, 11));
+            
+            System.out.println("1 CLS RemoteType of UG ="+ UG.getRemoteType());
+
+            System.out.println("UG.convertRegistryInfo(): CLS.RpcHandler:="
+                    + RpcHandler.class.getClassLoader());
+
+            System.out.println("UG.convertRegistryInfo(): CLS.Configurator:="
+                    + Configurator.class.getClassLoader());         
+            
+            System.out.println("UG.convertRegistryInfo(): CLS.UG:="
+                    + UG.class.getClassLoader());
+
+            System.out.println("UG.convertRegistryInfo(): CLS.System:="
+                    + ClassLoader.getSystemClassLoader());
+            
+            
+
+            System.out.println("UG.convertRegistryInfo(): CLS.Base64:="
+                    + Base64.class.getClassLoader());   
+            
+            System.out.println("UG.convertRegistryInfo(): CLS.NativeAPIInfo:="
+                    + NativeAPIInfo.class.getClassLoader());
+            
+            System.out.println("UG.convertRegistryInfo(): CLS.NativeClassGroupInfo:="
+                    + NativeClassGroupInfo.class.getClassLoader());
+            
+            System.out.println("UG.convertRegistryInfo() :::: -> ");
+            System.out.println("o = Base64.decodeToObject(base64);");
+            System.out.println("leads to -> ");
+            System.out.println("java.lang.ClassNotFoundException: edu.gcsc.vrl.ug.NativeAPIInfo");
+            
+            System.out.println("UG.convertRegistryInfo() :::: -> ");
+            System.out.println("o = Base64.decodeToObject(base64, UG.class.getClassLoader());");
+            System.out.println("leads to -> ");
+            System.out.println("java.lang.ClassNotFoundException: [Ledu.gcsc.vrl.ug.NativeClassGroupInfo;");
+            
+            
+//            o = Base64.decodeToObject(base64);
+            o = Base64.decodeToObject(base64, UG.class.getClassLoader());
+//            o = Base64.decodeToObject(base64, ClassLoader.getSystemClassLoader());
+
+
+            System.out.println("2 CLS RemoteType of UG ="+ UG.getRemoteType());
+
+            System.out.println("UG.convertRegistryInfo(): CLS.RpcHandler:="
+                    + RpcHandler.class.getClassLoader());
+
+            System.out.println("UG.convertRegistryInfo(): CLS.Configurator:="
+                    + Configurator.class.getClassLoader());
+
+            System.out.println("UG.convertRegistryInfo(): CLS.UG:="
+                    + UG.class.getClassLoader());
+
+            System.out.println("UG.convertRegistryInfo(): CLS.System:="
+                    + ClassLoader.getSystemClassLoader());
+
+
 //            
 //            o = Base64.decodeToObject(base64);
             System.out.println("UG.convertRegistryInfo() via RpcHandler -> o = " + o);
