@@ -55,19 +55,19 @@ public class RpcHandler {
     public static UG getServer() {
         
         
-//        System.out.println("CLS RemoteType of UG =" + UG.getRemoteType());
-//        
-//        System.out.println("RpcHandler.getServer(): CLS.RpcHandler:="
-//                + RpcHandler.class.getClassLoader());
-//        
-//        System.out.println("RpcHandler.getServer(): CLS.Configurator:="
-//                + Configurator.class.getClassLoader());
-//        
-//        System.out.println("RpcHandler.getServer(): CLS.UG:="
-//                + UG.class.getClassLoader());
-//        
-//        System.out.println("RpcHandler.getServer(): CLS.System:="
-//                + ClassLoader.getSystemClassLoader());
+        System.out.println("CLS RemoteType of UG =" + UG.getRemoteType());
+        
+        System.out.println("RpcHandler.getServer(): CLS.RpcHandler:="
+                + RpcHandler.class.getClassLoader());
+        
+        System.out.println("RpcHandler.getServer(): CLS.Configurator:="
+                + Configurator.class.getClassLoader());
+        
+        System.out.println("RpcHandler.getServer(): CLS.UG:="
+                + UG.class.getClassLoader());
+        
+        System.out.println("RpcHandler.getServer(): CLS.System:="
+                + ClassLoader.getSystemClassLoader());
         
         
         if (server == null) {
@@ -87,11 +87,11 @@ public class RpcHandler {
             }
         }
         
-//        System.out.print("---- RpcHandler.getServer() is ");
-//        if (server != null) {
-//            System.out.print("NOT ");
-//        }
-//        System.out.println("NULL.");
+        System.out.print("---- RpcHandler.getServer() is ");
+        if (server != null) {
+            System.out.print("NOT ");
+        }
+        System.out.println("NULL.");
         
         return server;
     }
@@ -140,27 +140,27 @@ public class RpcHandler {
         show("convertRegistryInfo");
         
         
-//        System.out.println("RpcHandler.convertRegistryInfo(): CLS.RpcHandler:="
-//                + RpcHandler.class.getClassLoader());
-//        
-//        System.out.println("RpcHandler.convertRegistryInfo(): CLS.Configurator:="
-//                + Configurator.class.getClassLoader());        
-//        
-//        System.out.println("RpcHandler.convertRegistryInfo(): CLS.UG:="
-//                + UG.class.getClassLoader());
-//        
-//        System.out.println("RpcHandler.convertRegistryInfo(): CLS.System:="
-//                + ClassLoader.getSystemClassLoader());
-//        
-//        
-//        System.out.println("RpcHandler.convertRegistryInfo(): CLS.Base64:="
-//                + Base64.class.getClassLoader());        
-//        
-//        System.out.println("RpcHandler.convertRegistryInfo(): CLS.NativeAPIInfo:="
-//                + NativeAPIInfo.class.getClassLoader());
-//        
-//        System.out.println("RpcHandler.convertRegistryInfo(): CLS.NativeClassGroupInfo:="
-//                + NativeClassGroupInfo.class.getClassLoader());
+        System.out.println("RpcHandler.convertRegistryInfo(): CLS.RpcHandler:="
+                + RpcHandler.class.getClassLoader());
+        
+        System.out.println("RpcHandler.convertRegistryInfo(): CLS.Configurator:="
+                + Configurator.class.getClassLoader());        
+        
+        System.out.println("RpcHandler.convertRegistryInfo(): CLS.UG:="
+                + UG.class.getClassLoader());
+        
+        System.out.println("RpcHandler.convertRegistryInfo(): CLS.System:="
+                + ClassLoader.getSystemClassLoader());
+        
+        
+        System.out.println("RpcHandler.convertRegistryInfo(): CLS.Base64:="
+                + Base64.class.getClassLoader());        
+        
+        System.out.println("RpcHandler.convertRegistryInfo(): CLS.NativeAPIInfo:="
+                + NativeAPIInfo.class.getClassLoader());
+        
+        System.out.println("RpcHandler.convertRegistryInfo(): CLS.NativeClassGroupInfo:="
+                + NativeClassGroupInfo.class.getClassLoader());
 
 //            System.out.println("RpcHandler.convertRegistryInfo() :::: -> ");
 //            System.out.println("o = Base64.decodeToObject(base64);");
@@ -205,17 +205,15 @@ public class RpcHandler {
         show("invokeMethod");
         
         
-//        System.out.println("RpcHandler.invokeMethod() paramas values are:");
-//        System.out.println("exportedClassName = " + exportedClassName);
-//        System.out.println("objPtr = " + objPtr);
-//        System.out.println("readOnly = " + readOnly);
-//        System.out.println("methodName = " + methodName);
-//        System.out.println("params = " + params);
+        System.out.println("RpcHandler.invokeMethod() paramas values are:");
+        System.out.println("exportedClassName = " + exportedClassName);
+        System.out.println("objPtr = " + objPtr);
+        System.out.println("readOnly = " + readOnly);
+        System.out.println("methodName = " + methodName);
+        System.out.println("params = " + params);
         
         
-//        Object o = Base64.decodeToObject(params);
-        
-        Object o = UGBase64.decodeToObject(params);
+        Object o = Base64.decodeToObject(params);
         
         Object[] objArray = (Object[]) o;
         
@@ -240,10 +238,7 @@ public class RpcHandler {
     public String newInstance(String exportedClassPtr, String parameters) {
         show("newInstance");
         
-//        Object o = Base64.decodeToObject(parameters);
-        
-        Object o = UGBase64.decodeToObject(parameters);
-        
+        Object o = Base64.decodeToObject(parameters);
         Object[] objArray = (Object[]) o;
         
         Pointer p = getServer()._newInstance(new Long(exportedClassPtr), objArray);
@@ -436,9 +431,7 @@ public class RpcHandler {
     public boolean invalidate(String base64) {
         show("invalidate");
         
-//        Object o = Base64.decodeToObject(base64);
-        
-        Object o = UGBase64.decodeToObject(base64);
+        Object o = Base64.decodeToObject(base64);
         
         if (o instanceof SmartPointer) {
             SmartPointer p = (SmartPointer) o;

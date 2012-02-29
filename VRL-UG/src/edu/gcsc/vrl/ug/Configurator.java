@@ -16,14 +16,6 @@ import eu.mihosoft.vrl.visual.VDialog;
 public class Configurator extends VPluginConfigurator {
 
     private static boolean serverConfiguration = false;
-    private static String serverJarPath = null;
-
-    /**
-     * @return the serverJarPath
-     */
-    public static String getServerJarPath() {
-        return serverJarPath;
-    }
 
     public Configurator() {
 
@@ -46,19 +38,19 @@ public class Configurator extends VPluginConfigurator {
             //TEST: component for starting an UG on an other JVM
             vApi.addComponent(JVMmanager.class);
 
-//            System.out.println("CLS RemoteType of UG =" + UG.getRemoteType());
-//
-//            System.out.println("Configurator.register() CLS.RpcHandler:="
-//                    + RpcHandler.class.getClassLoader());
-//
-//            System.out.println("Configurator.register() CLS.Configurator:="
-//                    + Configurator.class.getClassLoader());
-//
-//            System.out.println("Configurator.register() CLS.UG:="
-//                    + UG.class.getClassLoader());
-//
-//            System.out.println("Configurator.register() CLS.System:="
-//                    + ClassLoader.getSystemClassLoader());
+            System.out.println("CLS RemoteType of UG =" + UG.getRemoteType());
+
+            System.out.println("Configurator.register() CLS.RpcHandler:="
+                    + RpcHandler.class.getClassLoader());
+
+            System.out.println("Configurator.register() CLS.Configurator:="
+                    + Configurator.class.getClassLoader());
+
+            System.out.println("Configurator.register() CLS.UG:="
+                    + UG.class.getClassLoader());
+
+            System.out.println("Configurator.register() CLS.System:="
+                    + ClassLoader.getSystemClassLoader());
 
 
 //            System.out.println("Configurator.register(): isServerConfiguration() = "
@@ -119,19 +111,19 @@ public class Configurator extends VPluginConfigurator {
 
     public void init(InitPluginAPI iApi) {
 
-//        System.out.println("CLS RemoteType of UG =" + UG.getRemoteType());
-//
-//        System.out.println("Configurator.init() CLS.RpcHandler:="
-//                + RpcHandler.class.getClassLoader());
-//
-//        System.out.println("Configurator.init() CLS.Configurator:="
-//                + Configurator.class.getClassLoader());
-//
-//        System.out.println("Configurator.init() CLS.UG:="
-//                + UG.class.getClassLoader());
-//
-//        System.out.println("Configurator.init() CLS.System:="
-//                + ClassLoader.getSystemClassLoader());
+        System.out.println("CLS RemoteType of UG =" + UG.getRemoteType());
+
+        System.out.println("Configurator.init() CLS.RpcHandler:="
+                + RpcHandler.class.getClassLoader());
+
+        System.out.println("Configurator.init() CLS.Configurator:="
+                + Configurator.class.getClassLoader());
+
+        System.out.println("Configurator.init() CLS.UG:="
+                + UG.class.getClassLoader());
+
+        System.out.println("Configurator.init() CLS.System:="
+                + ClassLoader.getSystemClassLoader());
 
 
         setConfigurationEntries();
@@ -155,13 +147,6 @@ public class Configurator extends VPluginConfigurator {
         // initialize ug instance
         UG.getInstance(option);
 
-//        DID NOT WORK
-//        //setting boolean for checking and setting serverConfigurationProperties
-//        //this should be only executed in server JVM
-//        if (option.toLowerCase().equals("server")) {
-//            setServerConfiguration(true);
-//        }
-
 
         if (UG.isLibloaded()) {
             setDescription(UG.getInstance().getDescription()
@@ -182,39 +167,27 @@ public class Configurator extends VPluginConfigurator {
      */
     private void setConfigurationEntries() {
 
-
-        String option = VArgUtil.getArg(VRL.getCommandLineOptions(), "-rpc");
-
-        if (option.toLowerCase().equals("server")) {
-            setServerConfiguration(true);
-        }
-
-//        System.out.println("Configurator.setConfigurationEntries()");
-//        System.out.println("isServerConfiguration() = " + isServerConfiguration());
+        System.out.println("Configurator.setConfigurationEntries()");
+        System.out.println("isServerConfiguration() = " + isServerConfiguration());
 
         InitPluginAPI iAPI = getInitAPI();
         PluginConfiguration pConf = iAPI.getConfiguration();
+//        pConf.setProperty("plugin-checksum-test", "yes");
 
         if (isServerConfiguration()) {
 
-            if (pConf.getProperty("rpc") == null) {
-                
-                pConf.setProperty("rpc", "server");
-            }
+//            pConf.setProperty("property-folder-suffix", "numerics-server");
+            pConf.setProperty("rpc", "server");
 
-            if (pConf.getProperty("serverJarPath") == null) {
-                
-                serverJarPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
-                System.out.println("Configurator.setConfigurationEntries():serverJarPath = "
-                        + getServerJarPath());
-                pConf.setProperty("serverJarPath", getServerJarPath());
-            }
+            String serverJarPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
+            System.out.println("Configurator.setConfigurationEntries():serverJarPath = "
+                    + serverJarPath);
+            pConf.setProperty("server-dir", serverJarPath);
 
         } else {
-            if (pConf.getProperty("rpc") == null) {
-                
-                pConf.setProperty("rpc", "client");
-            }
+
+//            pConf.setProperty("property-folder-suffix", "numerics-studio");
+            pConf.setProperty("rpc", "client");
 
         }
         pConf.save();
