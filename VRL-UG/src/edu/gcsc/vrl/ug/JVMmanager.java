@@ -56,21 +56,24 @@ public class JVMmanager implements Serializable {
 
                 // TODO check if correct respectively change to numeric-server path
                 // DONE make general classpath update
-                String pluginPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
-                
-                classpath += ":" + pluginPath;
-                
-                
+//                String pluginPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
+
+                String ServerJarPath = Configurator.getServerJarPath();
+
+                if (ServerJarPath != null) {
+                    classpath += ":" + ServerJarPath;
+                }
+
                 //DEBUG SOUT
-                System.out.println("-- --- JVMmanager.startAnotherJVM():pluginPath = "
-                        + pluginPath);
+                System.out.println("-- --- JVMmanager.startAnotherJVM():ServerJarPath = "
+                        + ServerJarPath);
 
                 //DEBUG LOOP
                 for (String split : classpath.split(":")) {
-                    System.out.println("-- --- classpath.split(:) = "+ split);
+                    System.out.println("-- --- classpath.split(:) = " + split);
                 }
 
-                
+
                 String path = System.getProperty("java.home")
                         + separator + "bin" + separator + "java";
 
