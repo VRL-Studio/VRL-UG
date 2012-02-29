@@ -74,7 +74,7 @@ public class UG {
     public static boolean isLibloaded() {
         return libLoaded;
     }
-    private static RemoteType remoteType = null;
+    private static RemoteType remoteType = RemoteType.NONE;
 
     /**
      * Sets the RemoteType of an UG instance in a JVM
@@ -85,7 +85,12 @@ public class UG {
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     static void setRemoteType(RemoteType remoteType) {
-        UG.remoteType = remoteType;
+        if (remoteType == null) {
+            UG.remoteType = RemoteType.NONE;
+        } else {
+            UG.remoteType = remoteType;
+        }
+
     }
 
     /**
@@ -1105,14 +1110,14 @@ public class UG {
 
 //        System.out.println("UG.convertRegistryInfo():: getRemoteType() = " 
 //                + UG.getRemoteType());
-        
+
 //        for (String key : System.getenv().keySet()) {
 //            System.out.println("KEY: " + key);
 //            System.out.print("Value=");
 //            System.out.println(System.getenv().get(key) + "\n");
 //
 //        }
-        
+
 //        String classpath = System.getProperty("java.class.path");
 //
 //        for (String split : classpath.split(":")) {
@@ -1146,7 +1151,7 @@ public class UG {
             //@DONE String base64 remote transfer 
             //      and decode here to NativeAPIInfo !!!!!
             String base64 = (String) o;
-            
+
             o = UGBase64.decodeToObject(base64);
 
 //            System.out.println("UG.convertRegistryInfo(): "
@@ -1208,11 +1213,11 @@ public class UG {
 
 //            o = Base64.decodeToObject(base64, ObjectInputStream.class);
 
-            
+
 //            UGBase64 decoder = new UGBase64();
-            
+
 //            o = UGBase64.decodeToObject(base64);
-            
+
 
 //            System.out.println("2 CLS RemoteType of UG =" + UG.getRemoteType());
 //
@@ -1308,7 +1313,7 @@ public class UG {
 
                 base64 = (String) o;
 //                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
-                 
+
                 o = UGBase64.decodeToObject(base64);
 
             } catch (XmlRpcException ex) {
@@ -1363,7 +1368,7 @@ public class UG {
 
                 base64 = (String) o;
 //                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
-                
+
                 o = UGBase64.decodeToObject(base64);
 
                 if (o instanceof Pointer) {
@@ -1485,7 +1490,7 @@ public class UG {
                 String base64 = (String) o;
 
 //                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
-                
+
                 o = UGBase64.decodeToObject(base64);
 
             } catch (XmlRpcException ex) {

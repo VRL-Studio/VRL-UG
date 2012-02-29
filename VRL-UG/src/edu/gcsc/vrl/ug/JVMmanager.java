@@ -64,14 +64,14 @@ public class JVMmanager implements Serializable {
                     classpath += ":" + ServerJarPath;
                 }
 
-                //DEBUG SOUT
-                System.out.println("-- --- JVMmanager.startAnotherJVM():ServerJarPath = "
-                        + ServerJarPath);
-
-                //DEBUG LOOP
-                for (String split : classpath.split(":")) {
-                    System.out.println("-- --- classpath.split(:) = " + split);
-                }
+//                //DEBUG SOUT
+//                System.out.println("-- --- JVMmanager.startAnotherJVM():ServerJarPath = "
+//                        + ServerJarPath);
+//
+//                //DEBUG LOOP
+//                for (String split : classpath.split(":")) {
+//                    System.out.println("-- --- classpath.split(:) = " + split);
+//                }
 
 
                 String path = System.getProperty("java.home")
