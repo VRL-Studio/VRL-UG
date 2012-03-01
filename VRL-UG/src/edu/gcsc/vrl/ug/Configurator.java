@@ -16,13 +16,17 @@ import eu.mihosoft.vrl.visual.VDialog;
 public class Configurator extends VPluginConfigurator {
 
     private static boolean serverConfiguration = false;
-    private static String serverJarPath = null;
-
+    
     /**
      * @return the serverJarPath
      */
     public static String getServerJarPath() {
+        String serverJarPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
+        
+        System.out.println("serverJarPath = "+ serverJarPath);
+        
         return serverJarPath;
+                
     }
 
     public Configurator() {
@@ -139,19 +143,17 @@ public class Configurator extends VPluginConfigurator {
 
             if (pConf.getProperty("serverJarPath") == null) {
                 
-                serverJarPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
-                System.out.println("Configurator.setConfigurationEntries():serverJarPath = "
-                        + getServerJarPath());
                 pConf.setProperty("serverJarPath", getServerJarPath());
             }
 
-        } else {
-            if (pConf.getProperty("rpc") == null) {
-                
-                pConf.setProperty("rpc", "client");
-            }
-
-        }
+        } 
+//        else {
+//            if (pConf.getProperty("rpc") == null) {
+//                
+//                pConf.setProperty("rpc", "client");
+//            }
+//
+//        }
         pConf.save();
     }
 
