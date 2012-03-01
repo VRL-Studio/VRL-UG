@@ -202,21 +202,22 @@ public class UG {
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     public static void main(String[] args) {
-//        System.out.println("- - UG.main: Configurator.setServerConfiguration(true);");
-//        Configurator.setServerConfiguration(true);
-//        String[] params = {"-property-folder-suffix", "numerics-server",
-//            "-plugin-checksum-test", "yes", "-rpc", "server"};
-//        
-//        VRL.initAll(params);
-//        String[] params = {"-property-folder-suffix", "numerics-server",
-//            "-plugin-checksum-test", "yes"};
-//
-//        VRL.initAll(params);
-//        
-//        System.out.println("UG CLS:main=" + UG.class.getClassLoader());
-//
-////        set in the server JVM the server ug object
-//        RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
+        System.out.println("UG.main() starts");
+        
+        String[] params = {"-property-folder-suffix", "numerics-server",
+            "-plugin-checksum-test", "yes", "-rpc", "server"};
+        
+        
+        System.out.println("UG.main() VRL.initAll(params)");
+        
+        VRL.initAll(params);
+        
+        System.out.println("UG.main() RpcHandler.setServer(--)");
+//        set in the server JVM the server ug object
+        RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
+        
+        System.out.println("UG.main() ends");
+        
     }
     /**
      * VRL canvas used to visualize ug classes
@@ -388,7 +389,7 @@ public class UG {
 //        System.out.println("-.-.-.-.-.-.-. UG.connectToNativeUG() "
 //                + "remoteType = " + remoteType);
 
-        if (remoteType == RemoteType.CLIENT) {
+        if (remoteType.equals(RemoteType.CLIENT)) {
             System.err.println("Cannot connect to native UG in client mode!");
             ugInit(new String[]{});  //non native
             return;
@@ -508,10 +509,9 @@ public class UG {
 //        // as we need the instance for searching a compiled UG-API.
         ugInstance = this;
 
-        if (!remoteType.equals(RemoteType.SERVER)) {
+        boolean isServerRunning = false;
 
-            boolean isServerRunning = false;
-
+        if (remoteType.equals(RemoteType.CLIENT)) {
 
             try {
                 //try if there is local UG server on default port running
@@ -571,92 +571,79 @@ public class UG {
 
             System.out.println("3) # + # + #  isServerRunning=" + isServerRunning);
 
-            if (isServerRunning) {
-                // load api if compatible; rebuild otherwise
-                try {
-                    Class<?> cls = findCompatibleAPI(ugInstance);
+        }//END if (remoteType.equals(RemoteType.CLIENT)) 
 
-                    api = cls;
+        if ((isServerRunning) || (remoteType.equals(RemoteType.NONE))) {
 
-                    if (cls == null) {
+            System.out.println("if ((isServerRunning) || (remoteType.equals(RemoteType.NONE)))==true");
 
-                        if (remoteType == RemoteType.NONE) {
-                            // load native library and connect to ug lib to generate api
-                            connectToNativeUG(true);
-                        }
+            // load api if compatible; rebuild otherwise
+            try {
+                Class<?> cls = findCompatibleAPI(ugInstance);
 
-                        NativeAPIInfo nativeAPI = convertRegistryInfo();
+                api = cls;
+                
+                //if is needed because error message if client mode
+                    if (remoteType.equals(RemoteType.NONE)) {
+                        System.out.println("if (remoteType.equals(RemoteType.NONE)) == true");
 
-                        Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
-
-                        try {
-                            recompiled = true;
-
-                            System.err.println(
-                                    VTerminalUtil.red(
-                                    " --> VRL-UG-API missing.\n"
-                                    + " --> Recompiling API..."));
-
-                            SplashScreenGenerator.printBootMessage(
-                                    ">> UG: recompiling API (this may take a while) ...");
-
-                            // generates jar file in plugin path
-                            compiler.compile(
-                                    new edu.gcsc.vrl.ug.NativeAPICode(
-                                    nativeAPI).getAllCodes(),
-                                    VPropertyFolderManager.getPluginUpdatesFolder().
-                                    getAbsolutePath());
-
-                        } catch (Exception ex) {
-                            Logger.getLogger(UG.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        }
+                        // load native library and connect to ug lib to generate api
+                        connectToNativeUG(true);
                     }
 
-                } catch (Exception ex) {
-                    Logger.getLogger(UG.class.getName()).
-                            log(Level.SEVERE, null, ex);
+                 
+                if (api == null) {
+                    
+                    NativeAPIInfo nativeAPI  = convertRegistryInfo();
+                    Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
+
+                    try {
+                        recompiled = true;
+
+                        System.err.println(
+                                VTerminalUtil.red(
+                                " --> VRL-UG-API missing.\n"
+                                + " --> Recompiling API..."));
+
+                        SplashScreenGenerator.printBootMessage(
+                                ">> UG: recompiling API (this may take a while) ...");
+
+                        // generates jar file in plugin path
+                        compiler.compile(
+                                new edu.gcsc.vrl.ug.NativeAPICode(
+                                nativeAPI).getAllCodes(),
+                                VPropertyFolderManager.getPluginUpdatesFolder().
+                                getAbsolutePath());
+
+                    } catch (Exception ex) {
+                        Logger.getLogger(UG.class.getName()).
+                                log(Level.SEVERE, null, ex);
+                    }
                 }
 
-                initialized = libLoaded;
-
-            } else {
-                System.out.println("local server could not be started.");
+            } catch (Exception ex) {
+                Logger.getLogger(UG.class.getName()).
+                        log(Level.SEVERE, null, ex);
             }
+
+            initialized = libLoaded;
+
+        }//END if ((isServerRunning) || (remoteType.equals(RemoteType.NONE))) 
+        else {
+            System.out.println(" UG(" + remoteType + ") could not connect to NATIVE UG.");
         }
 
-        System.out.println("------ AFTER if(!remoteType==SERVER) in UG(RemoteType)");
 
 
-//        if ((xmlRpcClient == null) && (remoteType == RemoteType.NONE)) {
-//
-//            System.out.println("------ RemoteType CLIENT in constructor UG(RemoteType)");
-//
-//            //execute(java -jar params)
-//            createXmlRpcClient(defaultHost, defaultPort);
-//
-//        } else
         if (remoteType.equals(RemoteType.SERVER)) {
 
-            System.out.println("# + # + #  UG.startWebServer() remoteType= " + remoteType);
+            System.out.println("# + # + #  UG(" + remoteType + ").startWebServer() ");
             UG.startWebServer();
-
 
             // load native library and connect to ug lib to generate api
             connectToNativeUG(true);
 
-//            try {
-//                //            ServerManager.startLocalServer(ServerManager.getPortByIP());
-//                JVMmanager.startAnotherJVM(
-//                        UG.class,
-//                        JVMmanager.getCurrentIP(),
-//                        JVMmanager.getCurrentPort());
-//
-//            } catch (Exception ex) {
-//                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-
-        }
+        }//END if (remoteType.equals(RemoteType.SERVER)) 
     }
 
     /**
@@ -824,17 +811,20 @@ public class UG {
      */
     public static synchronized UG getInstance(String option) {
 
-        System.out.println("UG.getInstance(String option) = " + option);
+        System.out.println("  synchronized UG.getInstance(String option) = " + option);
 
         if (option != null) {
 
             if (option.toLowerCase().equals("server")) {
+                System.out.println("SERVER");
                 return getInstance(null, RemoteType.SERVER);
 
             } else if (option.toLowerCase().equals("client")) {
+                System.out.println("CLIENT");
                 return getInstance(null, RemoteType.CLIENT);
 
             } else if (option.toLowerCase().equals("none")) {
+                System.out.println("NONE");
                 return getInstance(null, RemoteType.NONE);
             } else {
                 System.out.println("in UG.getInstance(String option),"
@@ -1108,23 +1098,6 @@ public class UG {
      */
     final NativeAPIInfo convertRegistryInfo() {
 
-//        System.out.println("UG.convertRegistryInfo():: getRemoteType() = " 
-//                + UG.getRemoteType());
-
-//        for (String key : System.getenv().keySet()) {
-//            System.out.println("KEY: " + key);
-//            System.out.print("Value=");
-//            System.out.println(System.getenv().get(key) + "\n");
-//
-//        }
-
-//        String classpath = System.getProperty("java.class.path");
-//
-//        for (String split : classpath.split(":")) {
-//            System.out.println("-- --- classpath.split(:) = " + split);
-//        }
-
-
         if (remoteType.equals(RemoteType.CLIENT)) {
 
             Object o = null;
@@ -1134,15 +1107,7 @@ public class UG {
                         JVMmanager.getCurrentIP(),
                         JVMmanager.getCurrentPort());
 
-//                System.out.println("******* UG.convertRegistryInfo(): BEFORE RpcHandler call");
-
                 o = xmlRpcClient.execute("RpcHandler.convertRegistryInfo", voidElement);
-
-//                System.out.println("******* UG.convertRegistryInfo(): AFTER RpcHandler call");
-
-//                System.out.println("UG.convertRegistryInfo(): "
-//                    + "o.substring(0, 11) = " + o.toString().substring(0, 11));
-
 
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
@@ -1153,90 +1118,6 @@ public class UG {
             String base64 = (String) o;
 
             o = UGBase64.decodeToObject(base64);
-
-//            System.out.println("UG.convertRegistryInfo(): "
-//                    + "base64.substring(0, 11) = " + base64.substring(0, 11));
-
-//            System.out.println("1 CLS RemoteType of UG =" + UG.getRemoteType());
-//
-//            System.out.println("UG.convertRegistryInfo(): CLS.RpcHandler:="
-//                    + RpcHandler.class.getClassLoader());
-//
-//            System.out.println("UG.convertRegistryInfo(): CLS.Configurator:="
-//                    + Configurator.class.getClassLoader());
-//
-//            System.out.println("UG.convertRegistryInfo(): CLS.UG:="
-//                    + UG.class.getClassLoader());
-//
-//            System.out.println("UG.convertRegistryInfo(): CLS.System:="
-//                    + ClassLoader.getSystemClassLoader());
-//
-//
-//
-//            System.out.println("UG.convertRegistryInfo(): CLS.Base64:="
-//                    + Base64.class.getClassLoader());
-//
-//            System.out.println("UG.convertRegistryInfo(): CLS.NativeAPIInfo:="
-//                    + NativeAPIInfo.class.getClassLoader());
-//
-//            System.out.println("UG.convertRegistryInfo(): CLS.NativeClassGroupInfo:="
-//                    + NativeClassGroupInfo.class.getClassLoader());
-//
-//            System.out.println("UG.convertRegistryInfo(): CLS.[LNativeClassGroupInfo;:="
-//                    + NativeClassGroupInfo[].class.getClassLoader());
-
-
-//            System.out.println("UG.convertRegistryInfo() :::: -> ");
-//            System.out.println("o = Base64.decodeToObject(base64);");
-//            System.out.println("leads to -> ");
-//            System.out.println("java.lang.ClassNotFoundException: edu.gcsc.vrl.ug.NativeAPIInfo");
-//            
-//            System.out.println("UG.convertRegistryInfo() :::: -> ");
-//            System.out.println("o = Base64.decodeToObject(base64, UG.class.getClassLoader());");
-//            System.out.println("leads to -> ");
-//            System.out.println("java.lang.ClassNotFoundException: [Ledu.gcsc.vrl.ug.NativeClassGroupInfo;");
-
-
-//            o = Base64.decodeToObject(base64);
-//            o = Base64.decodeToObject(base64, UG.class.getClassLoader());
-//            o = Base64.decodeToObject(base64, ClassLoader.getSystemClassLoader());
-
-//            Class<? extends ObjectInputStream> oisCls
-//            InputStream inStream = System.in;
-//            ObjectInputStream objInStream = null;
-//            
-//            try {
-//                 objInStream = new ObjectInputStream(inStream);
-//            } catch (IOException ex) {
-//                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-
-//            o = Base64.decodeToObject(base64, ObjectInputStream.class);
-
-
-//            UGBase64 decoder = new UGBase64();
-
-//            o = UGBase64.decodeToObject(base64);
-
-
-//            System.out.println("2 CLS RemoteType of UG =" + UG.getRemoteType());
-//
-//            System.out.println("UG.convertRegistryInfo(): CLS.RpcHandler:="
-//                    + RpcHandler.class.getClassLoader());
-//
-//            System.out.println("UG.convertRegistryInfo(): CLS.Configurator:="
-//                    + Configurator.class.getClassLoader());
-//
-//            System.out.println("UG.convertRegistryInfo(): CLS.UG:="
-//                    + UG.class.getClassLoader());
-//
-//            System.out.println("UG.convertRegistryInfo(): CLS.System:="
-//                    + ClassLoader.getSystemClassLoader());
-
-
-//            
-//            o = Base64.decodeToObject(base64);
-//            System.out.println("UG.convertRegistryInfo(): Base64.decodeToObject(base64, -- ) = o = " + o);
 
             if (o instanceof NativeAPIInfo) {
                 NativeAPIInfo napiInfo = (NativeAPIInfo) o;

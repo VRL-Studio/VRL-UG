@@ -39,66 +39,13 @@ public class Configurator extends VPluginConfigurator {
     public void register(PluginAPI api) {
         if (api instanceof VPluginAPI) {
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
-//            UG.getInstance().setMainCanvas(vCanvas);
 
             VPluginAPI vApi = (VPluginAPI) api;
 
             //TEST: component for starting an UG on an other JVM
             vApi.addComponent(JVMmanager.class);
 
-//            System.out.println("CLS RemoteType of UG =" + UG.getRemoteType());
-//
-//            System.out.println("Configurator.register() CLS.RpcHandler:="
-//                    + RpcHandler.class.getClassLoader());
-//
-//            System.out.println("Configurator.register() CLS.Configurator:="
-//                    + Configurator.class.getClassLoader());
-//
-//            System.out.println("Configurator.register() CLS.UG:="
-//                    + UG.class.getClassLoader());
-//
-//            System.out.println("Configurator.register() CLS.System:="
-//                    + ClassLoader.getSystemClassLoader());
-
-
-//            System.out.println("Configurator.register(): isServerConfiguration() = "
-//                    + isServerConfiguration());
-//
-//            if (isServerConfiguration()) {
-//
-////        set in the server JVM the server ug object
-//                RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
-//
-//            }
-
-
-
-//            VPluginAPI vApi = (VPluginAPI) api;
-//            
-//            vApi.addAction(new VAction("SetConfig") {
-//
-//                @Override
-//                public void actionPerformed(ActionEvent e, Object owner) {
-//                    getInitAPI().getConfiguration().setProperty("time", ""+System.nanoTime()).save();
-//                }
-//            }, ActionDelelator.EDIT_MENU);
-//            
-//             vApi.addAction(new VAction("GetConfig") {
-//
-//                @Override
-//                public void actionPerformed(ActionEvent e, Object owner) {
-//                    System.out.println("time: " + getInitAPI().getConfiguration().getProperty("time"));
-//                }
-//            }, ActionDelelator.EDIT_MENU);
-//             
-//              vApi.addAction(new VAction("RemoveConfig") {
-//
-//                @Override
-//                public void actionPerformed(ActionEvent e, Object owner) {
-//                    getInitAPI().getConfiguration().removeProperty("time").save();
-//                }
-//            }, ActionDelelator.EDIT_MENU);
-//
+//          
             // request restart
             if (UG.getInstance().isRecompiled()) {
 
@@ -118,21 +65,7 @@ public class Configurator extends VPluginConfigurator {
     }
 
     public void init(InitPluginAPI iApi) {
-
-//        System.out.println("CLS RemoteType of UG =" + UG.getRemoteType());
-//
-//        System.out.println("Configurator.init() CLS.RpcHandler:="
-//                + RpcHandler.class.getClassLoader());
-//
-//        System.out.println("Configurator.init() CLS.Configurator:="
-//                + Configurator.class.getClassLoader());
-//
-//        System.out.println("Configurator.init() CLS.UG:="
-//                + UG.class.getClassLoader());
-//
-//        System.out.println("Configurator.init() CLS.System:="
-//                + ClassLoader.getSystemClassLoader());
-
+        System.out.println(" ****CONFIGURATOR.init( iAPI)");
 
         setConfigurationEntries();
 
@@ -140,6 +73,8 @@ public class Configurator extends VPluginConfigurator {
         UG.setNativeLibFolder(getNativeLibFolder());
 
         String option = VArgUtil.getArg(VRL.getCommandLineOptions(), "-rpc");
+        
+        System.out.println("VRL.getCommandLineOptions(rpc) = "+ option);
 
         if (!option.toLowerCase().equals("server")) {
 
@@ -233,24 +168,4 @@ public class Configurator extends VPluginConfigurator {
     public static void setServerConfiguration(boolean serverConfiguration) {
         Configurator.serverConfiguration = serverConfiguration;
     }
-//    public static UG getUGserver(){
-//        
-//        System.out.println("Configurator.getUGserver(): isServerConfiguration() = "
-//                + isServerConfiguration());
-//
-//        if (isServerConfiguration()) {
-//
-//        System.out.println("Configurator.getUGserver(): UG:CLS= "+
-//                UG.class.getClassLoader());
-//        
-////        set in the server JVM the server ug object
-//            return UG.getInstance(null, RemoteType.SERVER);
-//
-//        }else{
-//            
-//            throw new UnsupportedOperationException("Calling Configurator.getUGserver"
-//                    + " is only allowed if isServerConfiguration()=true.");
-//        }
-//        
-//    }
 }
