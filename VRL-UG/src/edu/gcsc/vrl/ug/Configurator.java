@@ -8,6 +8,9 @@ import eu.mihosoft.vrl.io.VArgUtil;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.*;
 import eu.mihosoft.vrl.visual.VDialog;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
 
 /**
  *
@@ -15,7 +18,12 @@ import eu.mihosoft.vrl.visual.VDialog;
  */
 public class Configurator extends VPluginConfigurator {
 
+    private static String SERVER_JAR_PATH_KEY = "serverJarPath";
+    private static String REMOTETYP_KEY = "rpc";
+    
     private static boolean serverConfiguration = false;
+    private static PluginConfiguration pluginConfiguration = null;
+    
     
     /**
      * @return the serverJarPath
@@ -27,6 +35,17 @@ public class Configurator extends VPluginConfigurator {
         
         return serverJarPath;
                 
+    }
+
+    /**
+     * @return the pluginConfiguration
+     */
+    public static PluginConfiguration getPluginConfiguration() {
+        if(pluginConfiguration==null){
+            System.err.println("ERROR Configurator: pluginConfiguration == null");
+        }
+        
+        return pluginConfiguration;
     }
 
     public Configurator() {
@@ -76,18 +95,22 @@ public class Configurator extends VPluginConfigurator {
         // define native lib location
         UG.setNativeLibFolder(getNativeLibFolder());
 
-        String option = VArgUtil.getArg(VRL.getCommandLineOptions(), "-rpc");
+        String option = VArgUtil.getArg(VRL.getCommandLineOptions(), 
+                "-"+Configurator.REMOTETYP_KEY);
         
-        System.out.println("VRL.getCommandLineOptions(rpc) = "+ option);
+        System.out.println("VRL.getCommandLineOptions("+
+                Configurator.REMOTETYP_KEY+") = "+ option);
 
         if (!option.toLowerCase().equals("server")) {
 
-            PluginConfiguration pConf = iApi.getConfiguration();
+            if(getPluginConfiguration()==null){
+            pluginConfiguration  = iApi.getConfiguration();
+            }
 //         pConf.setProperty("-rpc", "client");
 
-            option = pConf.getProperty("rpc");
-            System.out.println(" ****CONFIGURATOR.init( iAPI) OPTION: -rpc = "
-                    + option);
+            option = pluginConfiguration.getProperty(Configurator.REMOTETYP_KEY);
+            System.out.println(" ****CONFIGURATOR.init( iAPI) OPTION: -"
+                    +Configurator.REMOTETYP_KEY+" = "  + option);
 
         }
 
@@ -108,6 +131,67 @@ public class Configurator extends VPluginConfigurator {
                     + UG.getInstance().getAuthors().replace("\n", "<br>"));
         }
 
+        
+        setPreferencePane(new PreferencePane() {
+
+            public String getTitle() {
+                return "VRL-UG Preferences";
+            }
+
+            public JComponent getInterface() {
+                JPanel p = new JPanel();
+                Box outerBox =Box.createVerticalBox();
+                p.add(outerBox);
+                
+                outerBox.add(new JLabel("VRL-UG Preferences"));
+                
+                //REMOTETYPE
+                
+                //PATH TO VRL-UG JAR
+                final JTextField path = new JTextField(getServerJarPath());
+                path.setEditable(true);
+                
+                outerBox.add(path);
+                
+                
+                //BUTTONS
+                Box innerBox =Box.createHorizontalBox();
+                outerBox.add(innerBox);
+                
+                JButton save = new JButton("Save");
+                save.addActionListener(new ActionListener() {
+
+                    public void actionPerformed(ActionEvent e) {
+                        
+                        // TODO hole die Infos von JTextField und ComboBox und
+                        // speichere die werte in PluginConfiguration-Datei
+                        // ...
+                        
+                        getPluginConfiguration().setProperty(
+                                Configurator.REMOTETYP_KEY, 
+                                path.getText());
+                        
+                        getPluginConfiguration().save();
+                    }
+                });
+                
+                JButton cancel = new JButton("Cancel");
+                //... update of vrl needed
+
+                
+                innerBox.add(Box.createHorizontalGlue());
+                innerBox.add(save);
+                innerBox.add(Box.createHorizontalGlue());
+                innerBox.add(cancel);
+                innerBox.add(Box.createHorizontalGlue());
+                
+                return p;
+            }
+
+            public String getKeywords() {
+                return "VRL-UG, Preferences";
+            }
+        });
     }
 
     @Override
@@ -122,7 +206,8 @@ public class Configurator extends VPluginConfigurator {
     private void setConfigurationEntries() {
 
 
-        String option = VArgUtil.getArg(VRL.getCommandLineOptions(), "-rpc");
+        String option = VArgUtil.getArg(VRL.getCommandLineOptions(), "-"
+                +Configurator.REMOTETYP_KEY);
 
         if (option.toLowerCase().equals("server")) {
             setServerConfiguration(true);
@@ -131,19 +216,26 @@ public class Configurator extends VPluginConfigurator {
 //        System.out.println("Configurator.setConfigurationEntries()");
 //        System.out.println("isServerConfiguration() = " + isServerConfiguration());
 
-        InitPluginAPI iAPI = getInitAPI();
-        PluginConfiguration pConf = iAPI.getConfiguration();
-
+//        InitPluginAPI iApi = getInitAPI();
+        
+//         if(getPluginConfiguration()==null){
+//            pluginConfiguration  = iApi.getConfiguration();
+//            }
+         
         if (isServerConfiguration()) {
 
-            if (pConf.getProperty("rpc") == null) {
+            if (getPluginConfiguration().getProperty(
+                    Configurator.REMOTETYP_KEY) == null) {
                 
-                pConf.setProperty("rpc", "server");
+                getPluginConfiguration().setProperty(
+                        Configurator.REMOTETYP_KEY, "server");
             }
 
-            if (pConf.getProperty("serverJarPath") == null) {
+            if (getPluginConfiguration().getProperty(
+                    Configurator.SERVER_JAR_PATH_KEY) == null) {
                 
-                pConf.setProperty("serverJarPath", getServerJarPath());
+                getPluginConfiguration().setProperty(
+                        Configurator.SERVER_JAR_PATH_KEY, getServerJarPath());
             }
 
         } 
@@ -154,7 +246,7 @@ public class Configurator extends VPluginConfigurator {
 //            }
 //
 //        }
-        pConf.save();
+        getPluginConfiguration().save();
     }
 
     /**
