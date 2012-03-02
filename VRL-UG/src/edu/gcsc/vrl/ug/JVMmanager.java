@@ -93,7 +93,9 @@ public class JVMmanager implements Serializable {
                 ProcessBuilder processBuilder = new ProcessBuilder(
                         path, commandLineCallOptions,
                         "-cp", classpath,
-                        name, portString, ip);
+                        name
+//                        , portString, ip
+                        );
 
 
                 //NEEDED TO READ / VIEW OUTPUT OF 2nd JVM

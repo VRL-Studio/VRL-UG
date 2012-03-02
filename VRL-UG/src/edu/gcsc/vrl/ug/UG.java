@@ -205,7 +205,7 @@ public class UG {
         System.out.println("UG.main() starts");
         
         String[] params = {"-property-folder-suffix", "numerics-server",
-            "-plugin-checksum-test", "yes", "-rpc", "server"};
+            "-plugin-checksum-test", "yes", "-"+Constants.REMOTETYP_KEY, "server"};
         
         
         System.out.println("UG.main() VRL.initAll(params)");
