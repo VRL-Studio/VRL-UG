@@ -10,6 +10,7 @@ import eu.mihosoft.vrl.system.*;
 import eu.mihosoft.vrl.visual.VDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 import javax.swing.*;
 
 /**
@@ -20,31 +21,29 @@ public class Configurator extends VPluginConfigurator {
 
     private static String SERVER_JAR_PATH_KEY = "serverJarPath";
     private static String REMOTETYP_KEY = "rpc";
-    
     private static boolean serverConfiguration = false;
     private static PluginConfiguration pluginConfiguration = null;
-    
-    
+
     /**
      * @return the serverJarPath
      */
     public static String getServerJarPath() {
         String serverJarPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
-        
-        System.out.println("serverJarPath = "+ serverJarPath);
-        
+
+        System.out.println("serverJarPath = " + serverJarPath);
+
         return serverJarPath;
-                
+
     }
 
     /**
      * @return the pluginConfiguration
      */
     public static PluginConfiguration getPluginConfiguration() {
-        if(pluginConfiguration==null){
+        if (pluginConfiguration == null) {
             System.err.println("ERROR Configurator: pluginConfiguration == null");
         }
-        
+
         return pluginConfiguration;
     }
 
@@ -95,22 +94,22 @@ public class Configurator extends VPluginConfigurator {
         // define native lib location
         UG.setNativeLibFolder(getNativeLibFolder());
 
-        String option = VArgUtil.getArg(VRL.getCommandLineOptions(), 
-                "-"+Configurator.REMOTETYP_KEY);
-        
-        System.out.println("VRL.getCommandLineOptions("+
-                Configurator.REMOTETYP_KEY+") = "+ option);
+        String option = VArgUtil.getArg(VRL.getCommandLineOptions(),
+                "-" + Configurator.REMOTETYP_KEY);
+
+        System.out.println("VRL.getCommandLineOptions("
+                + Configurator.REMOTETYP_KEY + ") = " + option);
 
         if (!option.toLowerCase().equals("server")) {
 
-            if(getPluginConfiguration()==null){
-            pluginConfiguration  = iApi.getConfiguration();
+            if (getPluginConfiguration() == null) {
+                pluginConfiguration = iApi.getConfiguration();
             }
 //         pConf.setProperty("-rpc", "client");
 
             option = pluginConfiguration.getProperty(Configurator.REMOTETYP_KEY);
             System.out.println(" ****CONFIGURATOR.init( iAPI) OPTION: -"
-                    +Configurator.REMOTETYP_KEY+" = "  + option);
+                    + Configurator.REMOTETYP_KEY + " = " + option);
 
         }
 
@@ -131,65 +130,96 @@ public class Configurator extends VPluginConfigurator {
                     + UG.getInstance().getAuthors().replace("\n", "<br>"));
         }
 
-        
+
         setPreferencePane(new PreferencePane() {
 
+            private PreferencePaneControl control;
+
+            @Override
             public String getTitle() {
                 return "VRL-UG Preferences";
             }
 
+            @Override
             public JComponent getInterface() {
                 JPanel p = new JPanel();
-                Box outerBox =Box.createVerticalBox();
+                Box outerBox = Box.createVerticalBox();
                 p.add(outerBox);
-                
+
                 outerBox.add(new JLabel("VRL-UG Preferences"));
-                
+
                 //REMOTETYPE
-                
+                Vector<RemoteType> remoteTypVec = new Vector<RemoteType>();
+                remoteTypVec.add(RemoteType.NONE);
+                remoteTypVec.add(RemoteType.CLIENT);
+                remoteTypVec.add(RemoteType.SERVER);
+
+                final JComboBox remoteTypChoise = new JComboBox(remoteTypVec);
+                remoteTypChoise.setEnabled(true);
+
+                outerBox.add(remoteTypChoise);
+
                 //PATH TO VRL-UG JAR
                 final JTextField path = new JTextField(getServerJarPath());
                 path.setEditable(true);
-                
+                path.setEnabled(true);
+
                 outerBox.add(path);
-                
-                
+
+
                 //BUTTONS
-                Box innerBox =Box.createHorizontalBox();
+                Box innerBox = Box.createHorizontalBox();
                 outerBox.add(innerBox);
-                
+
                 JButton save = new JButton("Save");
                 save.addActionListener(new ActionListener() {
 
                     public void actionPerformed(ActionEvent e) {
-                        
-                        // TODO hole die Infos von JTextField und ComboBox und
-                        // speichere die werte in PluginConfiguration-Datei
-                        // ...
-                        
+
+                        // get info of ComboBox 
+                        RemoteType rt = (RemoteType) remoteTypChoise.getSelectedItem();
+
                         getPluginConfiguration().setProperty(
-                                Configurator.REMOTETYP_KEY, 
+                                Configurator.REMOTETYP_KEY,
+                                rt.toString());
+
+
+                        //get info of JTextField and set in config file
+                        getPluginConfiguration().setProperty(
+                                Configurator.SERVER_JAR_PATH_KEY,
                                 path.getText());
-                        
+
+                        //save change in config file
                         getPluginConfiguration().save();
                     }
                 });
-                
-                JButton cancel = new JButton("Cancel");
-                //... update of vrl needed
 
-                
+                JButton cancel = new JButton("Cancel");
+                cancel.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        control.close();
+                    }
+                });
+
                 innerBox.add(Box.createHorizontalGlue());
                 innerBox.add(save);
                 innerBox.add(Box.createHorizontalGlue());
                 innerBox.add(cancel);
                 innerBox.add(Box.createHorizontalGlue());
-                
+
                 return p;
             }
 
+            @Override
             public String getKeywords() {
                 return "VRL-UG, Preferences";
+            }
+
+            @Override
+            public void setControl(PreferencePaneControl ctrl) {
+                this.control = ctrl;
             }
         });
     }
@@ -207,7 +237,7 @@ public class Configurator extends VPluginConfigurator {
 
 
         String option = VArgUtil.getArg(VRL.getCommandLineOptions(), "-"
-                +Configurator.REMOTETYP_KEY);
+                + Configurator.REMOTETYP_KEY);
 
         if (option.toLowerCase().equals("server")) {
             setServerConfiguration(true);
@@ -217,28 +247,28 @@ public class Configurator extends VPluginConfigurator {
 //        System.out.println("isServerConfiguration() = " + isServerConfiguration());
 
 //        InitPluginAPI iApi = getInitAPI();
-        
+
 //         if(getPluginConfiguration()==null){
 //            pluginConfiguration  = iApi.getConfiguration();
 //            }
-         
+
         if (isServerConfiguration()) {
 
             if (getPluginConfiguration().getProperty(
                     Configurator.REMOTETYP_KEY) == null) {
-                
+
                 getPluginConfiguration().setProperty(
                         Configurator.REMOTETYP_KEY, "server");
             }
 
             if (getPluginConfiguration().getProperty(
                     Configurator.SERVER_JAR_PATH_KEY) == null) {
-                
+
                 getPluginConfiguration().setProperty(
                         Configurator.SERVER_JAR_PATH_KEY, getServerJarPath());
             }
 
-        } 
+        }
 //        else {
 //            if (pConf.getProperty("rpc") == null) {
 //                
@@ -246,7 +276,9 @@ public class Configurator extends VPluginConfigurator {
 //            }
 //
 //        }
-        getPluginConfiguration().save();
+        if (getPluginConfiguration() != null) {
+            getPluginConfiguration().save();
+        }
     }
 
     /**
