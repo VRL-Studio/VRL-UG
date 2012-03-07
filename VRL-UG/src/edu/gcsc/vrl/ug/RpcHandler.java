@@ -71,7 +71,7 @@ public class RpcHandler {
         
         
         if (server == null) {
-//            server = Configurator.getUGserver();
+            System.out.println("RpcHandler.getServer()==null");
 
             if (Configurator.isServerConfiguration()) {
                 System.out.println("RpcHandler.getServer():"

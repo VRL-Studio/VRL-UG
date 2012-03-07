@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import eu.mihosoft.vrl.io.ConfigurationFile;
 import eu.mihosoft.vrl.io.VArgUtil;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.*;
@@ -20,24 +21,24 @@ import javax.swing.*;
 public class Configurator extends VPluginConfigurator {
 
     private static boolean serverConfiguration = false;
-    private static PluginConfiguration pluginConfiguration = null;
+    private static ConfigurationFile pluginConfiguration = null;
 
     /**
      * @return the serverJarPath
      */
-    public static String getServerJarPath() {
-        String serverJarPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
+    public static String getJarPath() {
+        String jarPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
 
-        System.out.println("serverJarPath = " + serverJarPath);
+        System.out.println("jarPath = " + jarPath);
 
-        return serverJarPath;
+        return jarPath;
 
     }
 
     /**
      * @return the pluginConfiguration
      */
-    public static PluginConfiguration getPluginConfiguration() {
+    public static ConfigurationFile getConfigurationFile() {
         if (pluginConfiguration == null) {
             System.err.println("ERROR Configurator: pluginConfiguration == null");
         }
@@ -89,7 +90,7 @@ public class Configurator extends VPluginConfigurator {
 
         //set pluginConfiguration if not done already
         //is needed for interaction with config file
-        if (getPluginConfiguration() == null) {
+        if (getConfigurationFile() == null) {
             pluginConfiguration = iApi.getConfiguration();
         }
 
@@ -137,14 +138,14 @@ public class Configurator extends VPluginConfigurator {
                 remoteTypeChoise.setEnabled(true);
 
                 //set in combobox the current remotetyp as selected one
-                String currentRTstr = getPluginConfiguration().getProperty(
-                        Constants.REMOTETYP_KEY);
+                String currentRTstr = getConfigurationFile().getProperty(
+                        Constants.REMOTETYPE_KEY);
                 if (currentRTstr != null) {
 
                     if (currentRTstr.toLowerCase().
                             equals(
                             RemoteType.NONE.toString().toLowerCase())) {
-                        
+
                         remoteTypeChoise.setSelectedItem(RemoteType.NONE);
                         System.out.println("IF ComboBox RemoteType.NONE");
                     }
@@ -152,12 +153,12 @@ public class Configurator extends VPluginConfigurator {
                     if (currentRTstr.toLowerCase().
                             equals(
                             RemoteType.CLIENT.toString().toLowerCase())) {
-                        
+
                         remoteTypeChoise.setSelectedItem(RemoteType.CLIENT);
                         System.out.println("IF ComboBox RemoteType.CLIENT");
                     }
 
-                    
+
 //                    if (currentRTstr.toLowerCase().
 //                            equals(
 //                            RemoteType.SERVER.toString().toLowerCase())) {
@@ -172,7 +173,7 @@ public class Configurator extends VPluginConfigurator {
                 outerBox.add(remoteTypeChoise);
 
 //                //PATH TO VRL-UG JAR
-//                final JTextField path = new JTextField(getServerJarPath());
+//                final JTextField path = new JTextField(getJarPath());
 //                path.setEditable(true);
 //                path.setEnabled(true);
 
@@ -191,18 +192,18 @@ public class Configurator extends VPluginConfigurator {
                         // get info of ComboBox 
                         RemoteType rt = (RemoteType) remoteTypeChoise.getSelectedItem();
 
-                        getPluginConfiguration().setProperty(
-                                Constants.REMOTETYP_KEY,
+                        getConfigurationFile().setProperty(
+                                Constants.REMOTETYPE_KEY,
                                 rt.toString());
 
 
 //                        //get info of JTextField and set in config file
-//                        getPluginConfiguration().setProperty(
-//                                Constants.SERVER_JAR_PATH_KEY,
+//                        getConfigurationFile().setProperty(
+//                                Constants.JAR_PATH_KEY,
 //                                path.getText());
 
                         //save change in config file and close window
-                        getPluginConfiguration().save();
+                        getConfigurationFile().save();
                         control.close();
                     }
                 });
@@ -252,26 +253,40 @@ public class Configurator extends VPluginConfigurator {
 //        System.out.println("Configurator.setConfigurationEntries()");
 //        System.out.println("isServerConfiguration() = " + isServerConfiguration());
 
-        if (isServerConfiguration()) {
+//        if (isServerConfiguration()) {
 
-            if (getPluginConfiguration().getProperty(
-                    Constants.REMOTETYP_KEY) == null) {
+//        boolean isNull = getConfigurationFile().getProperty(Constants.REMOTETYPE_KEY) == null;
+//        boolean isNONE = false;
+//        
+//        if(!isNull){
+//         isNONE = getConfigurationFile().getProperty(Constants.REMOTETYPE_KEY).
+//                 equals(RemoteType.NONE);
+//        }
+//        
+//        if (isNull || isNONE) {
 
-                getPluginConfiguration().setProperty(
-                        Constants.REMOTETYP_KEY,
-                        RemoteType.SERVER.toString());
-            }
+        if (isServerConfiguration() && (getConfigurationFile().getProperty(
+                Constants.REMOTETYPE_KEY) == null)) {
 
-            if (getPluginConfiguration().getProperty(
-                    Constants.SERVER_JAR_PATH_KEY) == null) {
-
-                getPluginConfiguration().setProperty(
-                        Constants.SERVER_JAR_PATH_KEY, getServerJarPath());
-            }
-
-            getPluginConfiguration().save();
-
+            getConfigurationFile().setProperty(
+                    Constants.REMOTETYPE_KEY,
+                    RemoteType.SERVER.toString());
         }
+
+////            getConfigurationFile().setProperty(
+////                    Constants.REMOTETYPE_KEY,
+////                    RemoteType.NONE.toString());
+//        }
+
+        if (getConfigurationFile().getProperty(Constants.JAR_PATH_KEY) == null) {
+
+            getConfigurationFile().setProperty(
+                    Constants.JAR_PATH_KEY, getJarPath());
+        }
+
+        getConfigurationFile().save();
+
+//        }
     }
 
     /**
@@ -281,6 +296,7 @@ public class Configurator extends VPluginConfigurator {
      * @return the remoteType that should be used
      */
     private static String checkRemoteTypeOption() {
+        System.out.println("Configurator.checkRemoteTypeOption()");
 
         String tmp = null;
         String option = null;
@@ -288,10 +304,10 @@ public class Configurator extends VPluginConfigurator {
         //check if there is an information on commandline
         //needed at the moment for the sever
         tmp = VArgUtil.getArg(VRL.getCommandLineOptions(),
-                "-" + Constants.REMOTETYP_KEY);
+                "-" + Constants.REMOTETYPE_KEY);
 
         System.out.println("VRL.getCommandLineOptions("
-                + Constants.REMOTETYP_KEY + ") = " + tmp);
+                + Constants.REMOTETYPE_KEY + ") = " + tmp);
 
         if (tmp != null) {
             option = tmp;
@@ -304,9 +320,10 @@ public class Configurator extends VPluginConfigurator {
 
         //check if there is an information in config file
         //this should be the prefered way of getting informations
-        tmp = pluginConfiguration.getProperty(Constants.REMOTETYP_KEY);
-        System.out.println(" ****CONFIGURATOR.checkRemoteTypeOption( iAPI) OPTION: -"
-                + Constants.REMOTETYP_KEY + " = " + tmp);
+        tmp = pluginConfiguration.getProperty(Constants.REMOTETYPE_KEY);
+
+        System.out.println(" **** checkRemoteTypeOption( iAPI) OPTION: "
+                + Constants.REMOTETYPE_KEY + " = " + tmp);
 
 //        }
 
@@ -314,12 +331,17 @@ public class Configurator extends VPluginConfigurator {
             option = tmp;
         }
 
+        System.out.println(" # # # after checking commandline and property file");
+        System.out.println(" # # # REMOTETYPE option = "+ option);
+        
+        
 //        //setting boolean for checking and setting serverConfigurationProperties
 //        //this should be only executed in server JVM
         if ((option != null)
                 && (option.toLowerCase().
                 equals(
                 RemoteType.SERVER.toString().toLowerCase()))) {
+            System.out.println(" # # # if option!=null && SERVER.toLowerCase()");
 
             setServerConfiguration(true);
         }
@@ -338,6 +360,8 @@ public class Configurator extends VPluginConfigurator {
      * @param serverConfiguration the serverConfiguration to set
      */
     public static void setServerConfiguration(boolean serverConfiguration) {
+
+        System.out.println("configurator.setServerConfiguration(" + serverConfiguration + ")");
         Configurator.serverConfiguration = serverConfiguration;
     }
 }

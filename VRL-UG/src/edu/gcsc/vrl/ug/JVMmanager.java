@@ -60,7 +60,7 @@ public class JVMmanager implements Serializable {
 //                String pluginPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
 //                classpath += ":" + pluginPath;
 
-                String ServerJarPath = Configurator.getServerJarPath();
+                String ServerJarPath = Configurator.getJarPath();
 
                 if (ServerJarPath != null) {
                     classpath += ":" + ServerJarPath;
@@ -215,6 +215,10 @@ public class JVMmanager implements Serializable {
         } catch (XmlRpcException ex) {
 //            Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        //remove the cached client from map
+        removeClient(getDefaultIP(), getCurrentPort());
+        
     }
 
     /**
@@ -307,6 +311,17 @@ public class JVMmanager implements Serializable {
     private static void addClient(String ip, Integer port, XmlRpcClient client) {
 
         clientsForConnection.put(ip + ":" + port, client);
+    }
+    
+    /**
+     * Removes the client with "ip" and "port" of the list of clients.
+     *
+     * @param ip the ip of the server
+     * @param port the port at which communication is done with the server
+     */
+    private static void removeClient(String ip, Integer port) {
+
+        clientsForConnection.remove(ip + ":" + port);
     }
 
     /**
