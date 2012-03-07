@@ -203,21 +203,22 @@ public class UG {
      */
     public static void main(String[] args) {
         System.out.println("UG.main() starts");
-        
+
         String[] params = {"-property-folder-suffix", "numerics-server",
-            "-plugin-checksum-test", "yes", "-"+Constants.REMOTETYP_KEY, "server"};
-        
-        
+            "-plugin-checksum-test", "yes",
+            "-" + Constants.REMOTETYPE_KEY, RemoteType.SERVER.toString()};
+
+
         System.out.println("UG.main() VRL.initAll(params)");
-        
+
         VRL.initAll(params);
-        
-        System.out.println("UG.main() RpcHandler.setServer(--)");
+
+        System.out.println("UG.main(): RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER))");
 //        set in the server JVM the server ug object
         RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
-        
+
         System.out.println("UG.main() ends");
-        
+
     }
     /**
      * VRL canvas used to visualize ug classes
@@ -575,26 +576,28 @@ public class UG {
 
         if ((isServerRunning) || (remoteType.equals(RemoteType.NONE))) {
 
-            System.out.println("if ((isServerRunning) || (remoteType.equals(RemoteType.NONE)))==true");
+            System.out.println("if ((isServerRunning = " + isServerRunning + ") || "
+                    + "(remoteType.equals(RemoteType.NONE))) = "
+                    + remoteType.equals(RemoteType.NONE));
 
             // load api if compatible; rebuild otherwise
             try {
                 Class<?> cls = findCompatibleAPI(ugInstance);
 
                 api = cls;
-                
+
                 //if is needed because error message if client mode
-                    if (remoteType.equals(RemoteType.NONE)) {
-                        System.out.println("if (remoteType.equals(RemoteType.NONE)) == true");
+                if (remoteType.equals(RemoteType.NONE)) {
+                    System.out.println("if (remoteType.equals(RemoteType.NONE)) == true");
 
-                        // load native library and connect to ug lib to generate api
-                        connectToNativeUG(true);
-                    }
+                    // load native library and connect to ug lib to generate api
+                    connectToNativeUG(true);
+                }
 
-                 
+
                 if (api == null) {
-                    
-                    NativeAPIInfo nativeAPI  = convertRegistryInfo();
+
+                    NativeAPIInfo nativeAPI = convertRegistryInfo();
                     Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
 
                     try {
@@ -629,12 +632,7 @@ public class UG {
             initialized = libLoaded;
 
         }//END if ((isServerRunning) || (remoteType.equals(RemoteType.NONE))) 
-        else {
-            System.out.println(" UG(" + remoteType + ") could not connect to NATIVE UG.");
-        }
-
-
-
+        
         if (remoteType.equals(RemoteType.SERVER)) {
 
             System.out.println("# + # + #  UG(" + remoteType + ").startWebServer() ");
