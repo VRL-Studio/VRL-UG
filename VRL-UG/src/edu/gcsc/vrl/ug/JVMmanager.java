@@ -2,6 +2,9 @@ package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.ObjectInfo;
+import eu.mihosoft.vrl.reflection.VisualCanvas;
+import eu.mihosoft.vrl.system.VRL;
+import eu.mihosoft.vrl.visual.Canvas;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -216,8 +219,12 @@ public class JVMmanager implements Serializable {
 //            Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        // MAKE SOME CLEANUP
+        
         //remove the cached client from map
         removeClient(getDefaultIP(), getCurrentPort());
+        
+        releaseUGpointers();
         
     }
 
@@ -230,6 +237,9 @@ public class JVMmanager implements Serializable {
 
         if (!isServerJVMrunning) {
             isServerJVMrunning = true;
+            
+            releaseUGpointers();
+            
             startAnotherJVM(UG.class, getDefaultIP(), getCurrentPort());
         }
     }
@@ -344,6 +354,21 @@ public class JVMmanager implements Serializable {
         }
 
         return client;
+    }
+    
+    /**
+     * Releases all Pointer of UGObjects. This is needed if we want to connect 
+     * to another server or we need to start a chrashed server.
+     * All Object in VRL-Studio needed to update their pointer, therefore we must
+     * force them to do this by releasing their pointer.
+     */
+    private static void releaseUGpointers(){
+        
+        for (Canvas c : VRL.getCanvases()) {
+                if (c instanceof VisualCanvas) {
+                    MemoryManager.releaseAll((VisualCanvas)c);
+                }
+            }
     }
 
     /**
