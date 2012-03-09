@@ -46,7 +46,6 @@ import java.util.List;
  */
 public class RpcHandler {
 
-    static String message = "first call";
     private static UG server = null;
 
     /**
@@ -109,21 +108,6 @@ public class RpcHandler {
         return 1;
     }
 
-////    //TEST FUNCTION
-//    public int showMessage() {
-//        System.out.println("RpcHandler.showMessage: " + message);
-//        return 1;
-//    }
-////    //TEST FUNCTION
-//    public int changeMessage(String message) {
-//        System.out.println("RpcHandler.changeMessage: " + "old: " + RpcHandler.message);
-//
-//        RpcHandler.message = message;
-//
-//        System.out.println("RpcHandler.changeMessage: " + "new: " + RpcHandler.message);
-//
-//        return 2;
-//    }
     // ********************************************
     // ************** NATIVE METHODS **************
     // ********************************************
@@ -186,7 +170,7 @@ public class RpcHandler {
 
         String base64 = Base64.encodeObject(napiInfo);
 
-        System.out.println("base64.substring(0,11): " + base64.substring(0, 11));
+//        System.out.println("base64.substring(0,11): " + base64.substring(0, 11));
 
         return base64;
     }
@@ -205,12 +189,12 @@ public class RpcHandler {
         show("invokeMethod");
 
 
-        System.out.println("RpcHandler.invokeMethod() paramas values are:");
-        System.out.println("exportedClassName = " + exportedClassName);
-        System.out.println("objPtr = " + objPtr);
-        System.out.println("readOnly = " + readOnly);
-        System.out.println("methodName = " + methodName);
-        System.out.println("params = " + params);
+//        System.out.println("RpcHandler.invokeMethod() paramas values are:");
+//        System.out.println("exportedClassName = " + exportedClassName);
+//        System.out.println("objPtr = " + objPtr);
+//        System.out.println("readOnly = " + readOnly);
+//        System.out.println("methodName = " + methodName);
+//        System.out.println("params = " + params);
 
 
 
@@ -220,11 +204,11 @@ public class RpcHandler {
 
         Object[] objArray = (Object[]) o;
 
-        //DEBUG LOOP
-        for (int i = 0; i < objArray.length; i++) {
-            System.out.println("params[" + i + "] = " + objArray[i]);
-
-        }
+//        //DEBUG LOOP
+//        for (int i = 0; i < objArray.length; i++) {
+//            System.out.println("params[" + i + "] = " + objArray[i]);
+//
+//        }
 
 
         o = getServer()._invokeMethod(
@@ -233,7 +217,7 @@ public class RpcHandler {
         //assumption object is serializable
         String base64 = Base64.encodeObject((Serializable) o);
 
-        System.out.println("encoded Object = " + base64);
+//        System.out.println("encoded Object = " + base64);
         return base64;
     }
 
@@ -258,7 +242,7 @@ public class RpcHandler {
 
         String base64 = Base64.encodeObject((Serializable) p);
 
-        System.out.println("encoded Pointer = " + base64);
+//        System.out.println("encoded Pointer = " + base64);
         return base64;
     }
 
@@ -275,7 +259,7 @@ public class RpcHandler {
 
         long result = getServer()._getExportedClassPtrByName(name, classGrp);
 
-        System.out.println("result =" + result);
+//        System.out.println("result =" + result);
         return String.valueOf(result);
     }
 
@@ -292,7 +276,7 @@ public class RpcHandler {
 
         String result = getServer()._getDefaultClassNameFromGroup(grpName);
 
-        System.out.println("result =" + result);
+//        System.out.println("result =" + result);
         return result;
     }
 
@@ -312,7 +296,7 @@ public class RpcHandler {
         //assumption all containing objects are serializable
         String base64 = Base64.encodeObject((Serializable) o);
 
-        System.out.println("RESULT: " + base64);
+//        System.out.println("RESULT: " + base64);
         return base64;
 
 
@@ -331,7 +315,7 @@ public class RpcHandler {
 
         String result = getServer()._getSvnRevision();
 
-        System.out.println("result =" + result);
+//        System.out.println("result =" + result);
         return result;
     }
 
@@ -348,7 +332,7 @@ public class RpcHandler {
 
         String result = getServer()._getDescription();
 
-        System.out.println("result =" + result);
+//        System.out.println("result =" + result);
         return result;
     }
 
@@ -365,7 +349,7 @@ public class RpcHandler {
 
         String result = getServer()._getAuthors();
 
-        System.out.println("result =" + result);
+//        System.out.println("result =" + result);
         return result;
 
     }
@@ -383,7 +367,7 @@ public class RpcHandler {
 
         String result = getServer()._getCompileDate();
 
-        System.out.println("result =" + result);
+//        System.out.println("result =" + result);
         return result;
     }
 
@@ -471,6 +455,7 @@ public class RpcHandler {
      * server.
      */
     public int stopWebServer() {
+        show("stopWebServer");
 
         server.stopWebServer();
         return 0;
@@ -488,7 +473,7 @@ public class RpcHandler {
      * established.
      */
     public boolean isServerRunning() {
-        System.out.println("RpcHandler.isServerRunning()");
+        show("isServerRunning");
 
         Boolean b = UG.isServerRunning();
 
@@ -498,5 +483,28 @@ public class RpcHandler {
             return true;
         }
         return false;
+    }
+
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     *
+     * Tries to connect to server and returns true if a connection could be
+     * established.
+     */
+    public String getMessages() {
+        show("getMessages");
+
+        StringBuilder builder = UG.getMessages();
+
+        String base64 = Base64.encodeObject((Serializable) builder);
+
+//        System.out.println("encoded Pointer = " + base64);
+        return base64;
+
     }
 }
