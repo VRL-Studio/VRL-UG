@@ -489,7 +489,8 @@ public class UG {
         initialized = libLoaded;
     }
 
-    // TODO remove UG() and handle the RemoteType case NONE in UG(remoteType)
+    // TODO remove UG() resp. redirect to UG(RemoteType.NONE) 
+    // DONE handle the RemoteType case NONE in UG(remoteType)
     /**
      * Do the same stuff as the constructor without parameters, with the
      * exeption that it checks which role the UG instance should play and diceds
@@ -632,7 +633,7 @@ public class UG {
             initialized = libLoaded;
 
         }//END if ((isServerRunning) || (remoteType.equals(RemoteType.NONE))) 
-        
+
         if (remoteType.equals(RemoteType.SERVER)) {
 
             System.out.println("# + # + #  UG(" + remoteType + ").startWebServer() ");
@@ -921,10 +922,34 @@ public class UG {
     }
 
     /**
+     * @author Michael Hoffer <info@michaelhoffer.de>
      * @return the messages
+     * 
+     * TODO Updated to work with remoteTypes
+     * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
-    private StringBuilder getMessages() {
-        return messages;
+    static StringBuilder getMessages() {
+
+        if (remoteType.equals(RemoteType.CLIENT)) {
+
+            Object o = null;
+
+            try {
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
+
+                o = xmlRpcClient.execute("RpcHandler.getMessages", voidElement);
+            } catch (XmlRpcException ex) {
+                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            return (StringBuilder) o;
+
+        } else {
+
+            return messages;
+        }
     }
 
     public static void addMessage(String s) {

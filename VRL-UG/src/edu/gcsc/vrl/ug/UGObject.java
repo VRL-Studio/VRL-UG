@@ -31,6 +31,18 @@ public class UGObject implements Serializable, UGObjectInterface {
     private boolean isInstantiable;
     private boolean isClassGroupObject;
     private transient Object[] constructorParameters;
+    //
+    //DEBUG
+    public static long counter = 0;
+
+    public UGObject() {
+//
+//        System.out.println(" #+#+#+# UGObject()");
+//        counter++;
+//        System.out.println("counter = " + counter);
+
+        JVMmanager.addUGObjectToWeakReferences(this);
+    }
 
     protected void setThis(UGObject o) {
 //        System.out.println(className + ">> Set This: "
@@ -180,7 +192,7 @@ public class UGObject implements Serializable, UGObjectInterface {
             this.objPointer.setClassName(className);
 //            System.out.println(getClassName() + " >> SetPointer: "
 //                    + pointer.getClassName()
-//                    + " [" + pointer.getAddress() + "]");
+//                    + " [" + pointer.getAddress() + "]");            
         } else {
 //            System.out.println(getClassName() + " >> SetPointer: [null]");
         }

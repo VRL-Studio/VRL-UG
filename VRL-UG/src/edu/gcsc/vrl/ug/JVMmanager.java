@@ -6,10 +6,13 @@ import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.VRL;
 import eu.mihosoft.vrl.visual.Canvas;
 import java.io.*;
+import java.lang.ref.PhantomReference;
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Vector;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.xmlrpc.XmlRpcException;
@@ -35,7 +38,13 @@ public class JVMmanager implements Serializable {
     private static Integer currentPort = 1099;
     private static String currentIP = "127.0.0.1"; //"localhost"
     // String should have the form "ip:port"
-    private static HashMap<String, XmlRpcClient> clientsForConnection = new HashMap<String, XmlRpcClient>();
+    private static HashMap<String, XmlRpcClient> clientsForConnection =
+            new HashMap<String, XmlRpcClient>();
+    // to solve references problems which could occur with handling ug objects and
+    // server client concept
+    private static ArrayList<WeakReference<UGObject>> weakReferencesOfUGObjects =
+            new ArrayList<WeakReference<UGObject>>();
+    
 
     /**
      * Starts another JVM and executes there the main method of the class which
@@ -44,10 +53,13 @@ public class JVMmanager implements Serializable {
      * @param clazz The class which should be started in a new JVM.
      *
      */
+    
     private static void startAnotherJVM(
-            final Class clazz,
-            final String ip,
-            final Integer port) {
+            final Class clazz
+//            ,
+//            final String ip,
+//            final Integer port
+            ) {
 
         Thread t = new Thread(new Runnable() {
 
@@ -57,7 +69,8 @@ public class JVMmanager implements Serializable {
                 String separator = System.getProperty("file.separator");
                 String classpath = System.getProperty("java.class.path");
 
-                // TODO check if correct respectively change to numeric-server path
+                // TODO ! ! ! 
+                // check if correct respectively change to numeric-server path
                 // make general classpath update
                 // This is the wrong path (client-folder) , server path is needed
 //                String pluginPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
@@ -88,15 +101,16 @@ public class JVMmanager implements Serializable {
                         + separator + "bin" + separator + "java";
 
                 String name = clazz.getName();
-                String portString = port.toString();
+                
+//                String portString = port.toString();
+                
                 // to remove outOfMemoryError message: PermGen space
                 // or better said resize the PermGen space area in the heap
                 String commandLineCallOptions = "-XX:MaxPermSize=512m";
 
                 ProcessBuilder processBuilder = new ProcessBuilder(
                         path, commandLineCallOptions,
-                        "-cp", classpath,
-                        name
+                        "-cp", classpath, name
 //                        , portString, ip
                         );
 
@@ -104,8 +118,8 @@ public class JVMmanager implements Serializable {
                 //NEEDED TO READ / VIEW OUTPUT OF 2nd JVM
                 processBuilder.redirectErrorStream(true);
 
-                //set selfdefined variable in new JVM
-                processBuilder.environment().put("APP_NAME", name);
+//                //set selfdefined variable in new JVM
+//                processBuilder.environment().put("APP_NAME", name);
 
                 Process process = null;
 
@@ -240,7 +254,7 @@ public class JVMmanager implements Serializable {
             
             releaseUGpointers();
             
-            startAnotherJVM(UG.class, getDefaultIP(), getCurrentPort());
+            startAnotherJVM(UG.class);//, getDefaultIP(), getCurrentPort());
         }
     }
 
@@ -364,11 +378,54 @@ public class JVMmanager implements Serializable {
      */
     private static void releaseUGpointers(){
         
+        System.out.println("JVMmanager.releaseUGpointers()");
+//        System.out.println("weakReferenceSetofUGObjects.size() = "
+//                +weakReferencesOfUGObjects.size());
+//        
+//        long count = 0;
+        
         for (Canvas c : VRL.getCanvases()) {
                 if (c instanceof VisualCanvas) {
                     MemoryManager.releaseAll((VisualCanvas)c);
                 }
             }
+        
+        // TODO get releaseUGpointers() working with weak references :-)
+        //did not work ! still an invalid memory acess error occur
+        //to allow groovy code to interact with UGObjects after server crash
+        
+//        for (WeakReference<UGObject> weakReference : weakReferencesOfUGObjects) {
+//            UGObject obj = weakReference.get();
+//            
+//            if(obj!=null){
+//                obj.releaseThis();
+//            }else{
+//                count++;
+//                
+//            }
+//        }
+//        System.out.println(count +" UGObjects are NULL in weakReferencesOfUGObjects");
+//        System.out.println(UGObject.counter +" UGObjects were created");
+        
+//        for (UGObject obj : weakReferenceSetofUGObjects.) {
+//            
+//            if(obj!=null){
+//                obj.releaseThis();
+//            }
+//        }
+     
+    }
+    
+    /**
+     * 
+     * @param obj the UGObject to be added
+     * 
+     * @return true if the reference of the UGObject could be added to the
+     *         collection of references.
+     */
+    public static boolean addUGObjectToWeakReferences(UGObject ugObject){
+        return weakReferencesOfUGObjects.add(
+                new WeakReference<UGObject>(ugObject));
     }
 
     /**
