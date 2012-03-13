@@ -44,7 +44,6 @@ public class JVMmanager implements Serializable {
     // server client concept
     private static ArrayList<WeakReference<UGObject>> weakReferencesOfUGObjects =
             new ArrayList<WeakReference<UGObject>>();
-    
 
     /**
      * Starts another JVM and executes there the main method of the class which
@@ -53,12 +52,10 @@ public class JVMmanager implements Serializable {
      * @param clazz The class which should be started in a new JVM.
      *
      */
-    
     private static void startAnotherJVM(
-            final Class clazz
-//            ,
-//            final String ip,
-//            final Integer port
+            final Class clazz //            ,
+            //            final String ip,
+            //            final Integer port
             ) {
 
         Thread t = new Thread(new Runnable() {
@@ -80,9 +77,8 @@ public class JVMmanager implements Serializable {
 
                 if (ServerJarPath != null) {
                     classpath += ":" + ServerJarPath;
-                    System.out.println("ServerJarPath = "+ServerJarPath);
-                }
-                else{
+                    System.out.println("ServerJarPath = " + ServerJarPath);
+                } else {
                     System.out.println("ERROR in JVMmanager.startAnotherJVM():"
                             + " ServerJarPath is NULL");
                 }
@@ -101,17 +97,16 @@ public class JVMmanager implements Serializable {
                         + separator + "bin" + separator + "java";
 
                 String name = clazz.getName();
-                
+
 //                String portString = port.toString();
-                
+
                 // to remove outOfMemoryError message: PermGen space
                 // or better said resize the PermGen space area in the heap
                 String commandLineCallOptions = "-XX:MaxPermSize=512m";
 
                 ProcessBuilder processBuilder = new ProcessBuilder(
                         path, commandLineCallOptions,
-                        "-cp", classpath, name
-//                        , portString, ip
+                        "-cp", classpath, name //                        , portString, ip
                         );
 
 
@@ -232,14 +227,14 @@ public class JVMmanager implements Serializable {
         } catch (XmlRpcException ex) {
 //            Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         // MAKE SOME CLEANUP
-        
+
         //remove the cached client from map
         removeClient(getDefaultIP(), getCurrentPort());
-        
+
         releaseUGpointers();
-        
+
     }
 
     /**
@@ -251,9 +246,11 @@ public class JVMmanager implements Serializable {
 
         if (!isServerJVMrunning) {
             isServerJVMrunning = true;
-            
+
+            //make sure nothing from last server run is cached ! ! !
+            removeClient(getDefaultIP(), getCurrentPort());
             releaseUGpointers();
-            
+
             startAnotherJVM(UG.class);//, getDefaultIP(), getCurrentPort());
         }
     }
@@ -336,7 +333,7 @@ public class JVMmanager implements Serializable {
 
         clientsForConnection.put(ip + ":" + port, client);
     }
-    
+
     /**
      * Removes the client with "ip" and "port" of the list of clients.
      *
@@ -362,38 +359,44 @@ public class JVMmanager implements Serializable {
 
         XmlRpcClient client = clientsForConnection.get(ip + ":" + port);
 
+//        System.out.println("JVMmanager.getClient() :"
+//                + "clientsForConnection.get(" + ip + ":" + port + ") = " + client);
+
         if (client == null) {
+//            System.out.println("if (client == null)");
             client = createXmlRpcClient(ip, port);
             addClient(ip, port, client);
         }
 
+//        System.out.println("return of getClient(" + ip + ":" + port + ") = " + client);
+
         return client;
     }
-    
+
     /**
-     * Releases all Pointer of UGObjects. This is needed if we want to connect 
-     * to another server or we need to start a chrashed server.
-     * All Object in VRL-Studio needed to update their pointer, therefore we must
-     * force them to do this by releasing their pointer.
+     * Releases all Pointer of UGObjects. This is needed if we want to connect
+     * to another server or we need to start a chrashed server. All Object in
+     * VRL-Studio needed to update their pointer, therefore we must force them
+     * to do this by releasing their pointer.
      */
-    private static void releaseUGpointers(){
-        
+    private static void releaseUGpointers() {
+
         System.out.println("JVMmanager.releaseUGpointers()");
 //        System.out.println("weakReferenceSetofUGObjects.size() = "
 //                +weakReferencesOfUGObjects.size());
 //        
 //        long count = 0;
-        
+
         for (Canvas c : VRL.getCanvases()) {
-                if (c instanceof VisualCanvas) {
-                    MemoryManager.releaseAll((VisualCanvas)c);
-                }
+            if (c instanceof VisualCanvas) {
+                MemoryManager.releaseAll((VisualCanvas) c);
             }
-        
+        }
+
         // TODO get releaseUGpointers() working with weak references :-)
         //did not work ! still an invalid memory acess error occur
         //to allow groovy code to interact with UGObjects after server crash
-        
+
 //        for (WeakReference<UGObject> weakReference : weakReferencesOfUGObjects) {
 //            UGObject obj = weakReference.get();
 //            
@@ -406,24 +409,24 @@ public class JVMmanager implements Serializable {
 //        }
 //        System.out.println(count +" UGObjects are NULL in weakReferencesOfUGObjects");
 //        System.out.println(UGObject.counter +" UGObjects were created");
-        
+
 //        for (UGObject obj : weakReferenceSetofUGObjects.) {
 //            
 //            if(obj!=null){
 //                obj.releaseThis();
 //            }
 //        }
-     
+
     }
-    
+
     /**
-     * 
+     *
      * @param obj the UGObject to be added
-     * 
+     *
      * @return true if the reference of the UGObject could be added to the
-     *         collection of references.
+     * collection of references.
      */
-    public static boolean addUGObjectToWeakReferences(UGObject ugObject){
+    public static boolean addUGObjectToWeakReferences(UGObject ugObject) {
         return weakReferencesOfUGObjects.add(
                 new WeakReference<UGObject>(ugObject));
     }
