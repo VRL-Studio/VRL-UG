@@ -924,7 +924,7 @@ public class UG {
     /**
      * @author Michael Hoffer <info@michaelhoffer.de>
      * @return the messages
-     * 
+     *
      * TODO Updated to work with remoteTypes
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
@@ -944,6 +944,10 @@ public class UG {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+            String base64 = (String) o;
+
+            o = Base64.decodeToObject(base64, UG.class.getClassLoader());
+
             return (StringBuilder) o;
 
         } else {
@@ -961,9 +965,28 @@ public class UG {
     }
 
     public void clearMessages() {
-        if (messages.length() > 0) {
-            messages.delete(0, messages.length());
-            //messages = new StringBuilder();
+
+        if (remoteType.equals(RemoteType.CLIENT)) {
+
+            try {
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
+
+                System.out.println("UG.clearMessages()");
+                
+                xmlRpcClient.execute("RpcHandler.clearMessages", voidElement);
+
+            } catch (XmlRpcException ex) {
+                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } else {
+
+            if (messages.length() > 0) {
+                messages.delete(0, messages.length());
+                //messages = new StringBuilder();
+            }
         }
     }
 
@@ -992,28 +1015,35 @@ public class UG {
         @Override
         public void run() {
 
-            while (logging) {
-                try {
-                    Thread.sleep(logRefreshInterval);
-                } catch (InterruptedException ex) {
-                    //
-                }
+            if (!remoteType.equals(RemoteType.SERVER)) {
+                while (logging) {
 
-                if (getMessages().length() > 0) {
-                    SwingUtilities.invokeLater(new Runnable() {
+                    try {
+                        Thread.sleep(logRefreshInterval);
+                    } catch (InterruptedException ex) {
+                        //
+                    }
 
-                        public void run() {
-                            if (mainCanvas != null && messages.length() > 0) {
-                                mainCanvas.getMessageBox().addMessageAsLog(
-                                        "UG-Output:",
-                                        "<pre>" + messages + "</pre>",
-                                        MessageType.INFO);
-                                clearMessages();
+                    final StringBuilder messages = getMessages();
+
+                    if ((messages != null) && (messages.length() > 0)) {
+                        SwingUtilities.invokeLater(new Runnable() {
+
+                            public void run() {
+
+                                if (mainCanvas != null && messages.length() > 0) {
+                                    mainCanvas.getMessageBox().addMessageAsLog(
+                                            "UG-Output:",
+                                            "<pre>" + messages + "</pre>",
+                                            MessageType.INFO);
+                                    clearMessages();
+                                }
                             }
-                        }
-                    });
-                }
-            }
+                        });
+                    }
+                }//end while
+            }//if ( ! remoteType.equals(RemoteType.SERVER)) 
+
         }
 
         /**
@@ -1140,7 +1170,7 @@ public class UG {
             //      and decode here to NativeAPIInfo !!!!!
             String base64 = (String) o;
 
-            o = UGBase64.decodeToObject(base64);
+            o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
             if (o instanceof NativeAPIInfo) {
                 NativeAPIInfo napiInfo = (NativeAPIInfo) o;
@@ -1218,7 +1248,7 @@ public class UG {
                 base64 = (String) o;
 //                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
-                o = UGBase64.decodeToObject(base64);
+                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
@@ -1273,7 +1303,7 @@ public class UG {
                 base64 = (String) o;
 //                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
-                o = UGBase64.decodeToObject(base64);
+                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
                 if (o instanceof Pointer) {
                     p = (Pointer) o;
@@ -1395,7 +1425,7 @@ public class UG {
 
 //                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
-                o = UGBase64.decodeToObject(base64);
+                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
             } catch (XmlRpcException ex) {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);

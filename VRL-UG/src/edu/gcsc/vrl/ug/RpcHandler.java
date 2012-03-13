@@ -198,9 +198,9 @@ public class RpcHandler {
 
 
 
-//        Object o = Base64.decodeToObject(params);
+        Object o = Base64.decodeToObject(params, UG.class.getClassLoader());
 
-        Object o = UGBase64.decodeToObject(params);
+//        Object o = UGBase64.decodeToObject(params);
 
         Object[] objArray = (Object[]) o;
 
@@ -232,9 +232,9 @@ public class RpcHandler {
     public String newInstance(String exportedClassPtr, String parameters) {
         show("newInstance");
 
-//        Object o = Base64.decodeToObject(parameters);
+        Object o = Base64.decodeToObject(parameters, UG.class.getClassLoader());
 
-        Object o = UGBase64.decodeToObject(parameters);
+//        Object o = UGBase64.decodeToObject(parameters);
 
         Object[] objArray = (Object[]) o;
 
@@ -428,9 +428,9 @@ public class RpcHandler {
     public boolean invalidate(String base64) {
         show("invalidate");
 
-//        Object o = Base64.decodeToObject(base64);
+        Object o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
-        Object o = UGBase64.decodeToObject(base64);
+//        Object o = UGBase64.decodeToObject(base64);
 
         if (o instanceof SmartPointer) {
             SmartPointer p = (SmartPointer) o;
@@ -449,7 +449,7 @@ public class RpcHandler {
      *
      * The result is send remote packed as Base64-String to the calling client.
      *
-     * @return the result of the on server executed method
+     * @return void : because of xmlrpc return type int
      *
      * Stops the web server in the server JVM, where UG runs with RemoteType
      * server.
@@ -497,14 +497,34 @@ public class RpcHandler {
      * established.
      */
     public String getMessages() {
-        show("getMessages");
+//        show("getMessages");
 
-        StringBuilder builder = UG.getMessages();
+        StringBuilder builder = getServer().getMessages();
 
         String base64 = Base64.encodeObject((Serializable) builder);
 
 //        System.out.println("encoded Pointer = " + base64);
         return base64;
 
+    }
+    
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     * 
+     * @return void : because of xmlrpc return type int
+     */
+    public int clearMessages()
+    {
+//        show("clearMessages");
+        
+        StringBuilder messages = getServer().getMessages();
+        
+        if (messages.length() > 0) {
+            messages.delete(0, messages.length());
+            //messages = new StringBuilder();
+        }
+        
+        return 0;
     }
 }
