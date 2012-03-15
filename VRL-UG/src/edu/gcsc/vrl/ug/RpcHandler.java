@@ -473,11 +473,11 @@ public class RpcHandler {
      * established.
      */
     public boolean isServerRunning() {
-        show("isServerRunning");
+//        show("isServerRunning");
 
         Boolean b = UG.isServerRunning();
 
-        System.out.println("UG.isServerRunning() = " + b);
+//        System.out.println("UG.isServerRunning() = " + b);
 
         if (b != null && b.booleanValue()) {
             return true;
