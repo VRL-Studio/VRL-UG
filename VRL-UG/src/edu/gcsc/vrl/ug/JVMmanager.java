@@ -254,7 +254,7 @@ public class JVMmanager implements Serializable {
 
             startAnotherJVM(UG.class);//, getDefaultIP(), getCurrentPort());
         }
-        
+
         System.out.println("startLocalServer() : UG.startLogging()");
 
         UG.startLogging();
@@ -465,7 +465,14 @@ public class JVMmanager implements Serializable {
      * @param aCurrentPort the currentPort to set
      */
     public static void setCurrentPort(Integer aCurrentPort) {
-        currentPort = aCurrentPort;
+        
+        //releaseUGpointers if port has changed to make client possible to
+        //react on server change
+        if (currentPort != aCurrentPort) {
+            JVMmanager.releaseUGpointers();
+            currentPort = aCurrentPort;
+        }
+
     }
 
     /**
@@ -479,6 +486,12 @@ public class JVMmanager implements Serializable {
      * @param aCurrentIP the currentIP to set
      */
     public static void setCurrentIP(String aCurrentIP) {
-        currentIP = aCurrentIP;
+
+        //releaseUGpointers if IP has changed to make client possible to
+        //react on server change
+        if (currentIP != aCurrentIP) {
+            JVMmanager.releaseUGpointers();
+            currentIP = aCurrentIP;
+        }
     }
 }
