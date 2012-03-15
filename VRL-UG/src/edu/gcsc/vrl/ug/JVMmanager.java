@@ -244,6 +244,7 @@ public class JVMmanager implements Serializable {
     public static synchronized void startLocalServer() {
         System.out.println("startLocalServer() : isServerJVMrunning = " + isServerJVMrunning);
 
+
         if (!isServerJVMrunning) {
             isServerJVMrunning = true;
 
@@ -253,6 +254,10 @@ public class JVMmanager implements Serializable {
 
             startAnotherJVM(UG.class);//, getDefaultIP(), getCurrentPort());
         }
+        
+        System.out.println("startLocalServer() : UG.startLogging()");
+
+        UG.startLogging();
     }
 
     /**
@@ -273,13 +278,13 @@ public class JVMmanager implements Serializable {
             Object o = xmlRpcClient.execute("RpcHandler.isServerRunning", new Vector());
 
             Boolean b = (Boolean) o;
-            System.out.println(b);
+//            System.out.println(b);
 
             return b.booleanValue();
 
         } catch (XmlRpcException ex) {
 //            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("Connection ERROR");
+//            System.out.println("Connection ERROR");
             return false;
         }
 

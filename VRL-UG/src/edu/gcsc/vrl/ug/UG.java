@@ -223,12 +223,28 @@ public class UG {
     /**
      * VRL canvas used to visualize ug classes
      */
-    private VisualCanvas mainCanvas;
+    private static VisualCanvas mainCanvas;
     /**
      * Messaging thread which displays messages generated from native UG
      * methods.
      */
-    private MessageThread messagingThread;
+    private static MessageThread messagingThread;
+
+    /**
+     * @return the messagingThread
+     */
+    public static MessageThread getMessagingThread() {
+        System.out.println(" +#+ #+# UG.getMessagingThread()");
+        return messagingThread;
+    }
+
+    /**
+     * @param aMessagingThread the messagingThread to set
+     */
+    public static void setMessagingThread(MessageThread aMessagingThread) {
+        System.out.println(" +#+ #+# UG.setMessagingThread( mT )");
+        messagingThread = aMessagingThread;
+    }
     /**
      * Indicates whether ug instance is initialized.
      */
@@ -906,18 +922,27 @@ public class UG {
     /**
      * Starts UG message logging.
      */
-    public void startLogging() {
+    public static void startLogging() {
+        System.out.println(" ++ ## UG.startLogging");
+
         stopLogging();
-        messagingThread = new MessageThread();
-        messagingThread.start();
+
+        MessageThread t = new MessageThread();
+
+        t.setPriority(Thread.MAX_PRIORITY);
+        t.start();
+        t.setPriority(Thread.NORM_PRIORITY);
+
+        setMessagingThread(t);
+
     }
 
     /**
      * Stops UG message logging.
      */
-    public void stopLogging() {
-        if (messagingThread != null) {
-            messagingThread.stopLogging();
+    public static void stopLogging() {
+        if (getMessagingThread() != null) {
+            getMessagingThread().stopLogging();
         }
     }
 
@@ -930,8 +955,15 @@ public class UG {
      */
     static StringBuilder getMessages() {
 
-        if (remoteType.equals(RemoteType.CLIENT)) {
-
+        if (remoteType.equals(RemoteType.CLIENT) && 
+                JVMmanager.isServerRunning(
+                JVMmanager.getCurrentIP(),
+                JVMmanager.getCurrentPort())) {
+            
+//            System.out.println("UG.getMessages(): \n"
+//                    + "if(remoteType.equals(RemoteType.CLIENT) && "
+//                    + "JVMmanager.isServerRunning(currentIP, currentPort)");
+            
             Object o = null;
 
             try {
@@ -941,7 +973,10 @@ public class UG {
 
                 o = xmlRpcClient.execute("RpcHandler.getMessages", voidElement);
             } catch (XmlRpcException ex) {
-                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+//                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("UG.getMessages(): catch of -> \n"
+                        + "xmlRpcClient.execute(RpcHandler.getMessages, voidElement)"
+                        + " = "+o);
             }
 
             String base64 = (String) o;
@@ -964,7 +999,7 @@ public class UG {
         }
     }
 
-    public void clearMessages() {
+    public static void clearMessages() {
 
         if (remoteType.equals(RemoteType.CLIENT)) {
 
@@ -974,7 +1009,7 @@ public class UG {
                         JVMmanager.getCurrentPort());
 
                 System.out.println("UG.clearMessages()");
-                
+
                 xmlRpcClient.execute("RpcHandler.clearMessages", voidElement);
 
             } catch (XmlRpcException ex) {
@@ -1004,12 +1039,13 @@ public class UG {
         UG.nativeLibFolder = nativeLibFolder;
     }
 
-    class MessageThread extends Thread {
+    static class MessageThread extends Thread {
 
         private boolean logging = true;
 
         public MessageThread() {
             //
+            setName("MessageThread-" + remoteType);
         }
 
         @Override
@@ -1024,22 +1060,28 @@ public class UG {
                         //
                     }
 
-                    final StringBuilder messages = getMessages();
+                    try {
+                        final StringBuilder messages = getMessages();
 
-                    if ((messages != null) && (messages.length() > 0)) {
-                        SwingUtilities.invokeLater(new Runnable() {
+                        if ((messages != null) && (messages.length() > 0)) {
+                            SwingUtilities.invokeLater(new Runnable() {
 
-                            public void run() {
+                                public void run() {
 
-                                if (mainCanvas != null && messages.length() > 0) {
-                                    mainCanvas.getMessageBox().addMessageAsLog(
-                                            "UG-Output:",
-                                            "<pre>" + messages + "</pre>",
-                                            MessageType.INFO);
-                                    clearMessages();
+                                    if (mainCanvas != null && messages.length() > 0) {
+                                        mainCanvas.getMessageBox().addMessageAsLog(
+                                                "UG-Output:",
+                                                "<pre>" + messages + "</pre>",
+                                                MessageType.INFO);
+                                        clearMessages();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }//if
+                    } catch (Exception ex) {
+                        // client Thread chrashed if local server is not available
+                        // ignore it and start a new one
+                        System.out.println(" . . . -> client Thread chrashed (ignoring)");
                     }
                 }//end while
             }//if ( ! remoteType.equals(RemoteType.SERVER)) 
