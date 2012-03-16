@@ -586,7 +586,7 @@ public class UG {
 //                                        "UG-Output:",
 //                                        /*"<pre>" +*/ messages.toString().replace("<br>", "\n") /*+ "</pre>"*/,
 //                                        MessageType.INFO);
-                                Messaging.getStream(Messaging.STD_OUT).print(
+                                Messaging.getStream(Messaging.MSG_OUT).print(
                                         messages.toString().replace("<br>", "\n"));
                                 clearMessages();
                             }
