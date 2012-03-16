@@ -4,14 +4,18 @@
  */
 package edu.gcsc.vrl.ug;
 
-import eu.mihosoft.vrl.io.ConfigurationFile;
-import eu.mihosoft.vrl.io.VArgUtil;
+import eu.mihosoft.vrl.io.*;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.*;
 import eu.mihosoft.vrl.visual.VDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
@@ -22,16 +26,246 @@ public class Configurator extends VPluginConfigurator {
 
     private static boolean serverConfiguration = false;
     private static ConfigurationFile pluginConfiguration = null;
+    private static String jarPath = null;
+    private static File serverFolder = null;
+    private static File serverUpdateFolder = null;
+    private static String serverJar = null;
+    private static final VPropertyFolderManager propertyFolderManager =
+            new VPropertyFolderManager();
 
     /**
-     * @return the serverJarPath
+     * @return the path to the folder where the jar file of this plugin is and
+     * adds /VRL-UG.jar
      */
-    public static String getJarPath() {
-        String jarPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
+    public static String getVrlUgJarPath() {
+        if (jarPath == null) {
+            jarPath = getVRLStudioDir().getAbsolutePath() + "/VRL-UG.jar";
+        }
 
-        System.out.println("jarPath = " + jarPath);
+        System.out.println("## Configurator : jarPath = " + jarPath);
 
         return jarPath;
+
+    }
+
+    /**
+     *
+     * @return the path to the folder of this plugin
+     */
+    public static File getVRLStudioDir() {
+        File studioDir = VRL.getPropertyFolderManager().getPropertyFolder();//.getAbsolutePath();
+
+        System.out.println("## Configurator : studioDir = " + studioDir);
+
+        return studioDir;
+
+    }
+
+    /**
+     * @return the folder where the local server should be run in and manage its
+     * config file and etc.
+     */
+    public static File getLocalServerFolder() {
+        if (serverFolder == null) {
+//            serverFolder = new File(getVRLStudioDir().getAbsolutePath() + "-server");
+            serverFolder = new File(VRL.getPropertyFolderManager().getPropertyFolder() + 
+                    Constants.SERVER_SUFFIX);
+        }
+        System.out.println("## Configurator : serverFolder = " + serverFolder);
+
+        return serverFolder;
+
+    }
+
+    /**
+     * @return the folder where the local server should be run in and manage its
+     * config file and etc.
+     */
+    public static File getLocalServerUpdateFolder() {
+        if (serverUpdateFolder == null) {
+            serverUpdateFolder = getPropertyFolderManager().getPluginUpdatesFolder();
+        }
+        System.out.println("## Configurator : serverUpdateFolder = " + serverUpdateFolder);
+
+        return serverUpdateFolder;
+
+    }
+
+    /**
+     * @return the folder where the local server should be run in and manage its
+     * config file and etc.
+     */
+    public static String getLocalServerJar() {
+        if (serverJar == null) {
+            serverJar = getPropertyFolderManager().
+                    getPluginFolder().getAbsoluteFile()
+                    + System.getProperty("file.separator")
+                    + VJarUtil.getClassLocation(UG.class).getName();
+        }
+        System.out.println("## Configurator : serverJar = " + serverJar);
+
+        return serverJar;
+
+    }
+
+    /**
+     * This method updates the local server folder and creates one if no one
+     * exists.
+     */
+    public static void updateLocalServerFolder() {
+        File serverFolder = getLocalServerFolder();
+        File studioDir = getVRLStudioDir();
+
+        if (!serverFolder.exists()) {
+            // create folders
+
+            getPropertyFolderManager().init(serverFolder.getName(), true);
+            try {
+
+                getPropertyFolderManager().create();
+
+            } catch (IOException ex) {
+                Logger.getLogger(Configurator.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+
+
+        try {
+            // check which jar to copy and do so to local server update folder
+
+            //
+            // VRL-UG.jar - - -
+            //
+            File jarToCopy = VJarUtil.getClassLocation(UG.class);
+            File jarTarget = new File(getPropertyFolderManager().getPluginUpdatesFolder(),
+                    VJarUtil.getClassLocation(UG.class).getName());
+
+            IOUtil.copyFile(jarToCopy, jarTarget);//copy VRL-UG.jar
+
+            // TODO copy
+            // UG4 plugin folder , subfolders and files - - -
+            //
+            File ug4PluginFolderToCopy = new File(VRL.getPropertyFolderManager().getPluginFolder()
+                    + System.getProperty("file.separator")
+                    + Constants.PLUGIN_IDENTIFIER.getName());
+            System.out.println("ug4PluginFolderToCopy = " + ug4PluginFolderToCopy);
+
+            File g4PluginFolderTarget = new File(getPropertyFolderManager().getPluginFolder()
+                    + System.getProperty("file.separator")
+                    + Constants.PLUGIN_IDENTIFIER.getName());
+            System.out.println("g4PluginFolderTarget = " + g4PluginFolderTarget);
+
+            IOUtil.copyDirectory(ug4PluginFolderToCopy, g4PluginFolderTarget);//copy UG4 folder
+
+//            //
+//            //confi.xml - - -
+//            //
+//            File configFileToCopy = new File(VRL.getPropertyFolderManager().getPluginFolder()
+//                    + System.getProperty("file.separator")
+//                    + Constants.PLUGIN_IDENTIFIER.getName()
+//                    + System.getProperty("file.separator")
+//                    + PluginDataController.CONFIG_FILENAME);
+//            System.out.println("configFileToCopy = " + configFileToCopy.getAbsoluteFile());
+//
+//
+//            File configFileTarget = new File(getPropertyFolderManager().getPluginFolder()
+//                    + System.getProperty("file.separator")
+//                    + Constants.PLUGIN_IDENTIFIER.getName()
+//                    + System.getProperty("file.separator")
+//                    + PluginDataController.CONFIG_FILENAME);
+//            System.out.println("configFileTarget = " + configFileTarget.getAbsoluteFile());
+//
+//            IOUtil.copyFile(configFileToCopy, configFileTarget);//copy config.xml
+            
+            
+            //
+            // change config.xml to server configuration
+            //
+            
+            File serverConfigFile = new File(getPropertyFolderManager().getPluginFolder()
+                    + System.getProperty("file.separator")
+                    + Constants.PLUGIN_IDENTIFIER.getName()
+                    + System.getProperty("file.separator")
+                    + PluginDataController.CONFIG
+                    + System.getProperty("file.separator")
+                    + PluginDataController.CONFIG_FILENAME);
+            System.out.println("serverConfigFile = "+serverConfigFile);
+            
+            System.out.println("serverConfigFile.delete() = "+serverConfigFile.delete());
+            serverConfigFile.delete();
+
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Configurator.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Configurator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //        //COPY ALL entriesand change after to server config
+        //        if ((studioDir.exists()) && (studioDir.isDirectory())) {
+        //            try {
+        //
+        //                IOUtil.copyDirectory(studioDir, serverFolder);
+        //
+        //            } catch (IOException ex) {
+        //                Logger.getLogger(Configurator.class.getName()).log(Level.SEVERE, null, ex);
+        //            }
+        //        }
+
+
+        //        File serverFolder = getLocalServerFolder();
+        ////        File updateFile = new File(getVrlUgJarPath());
+        //        File studioDir = getVRLStudioDir();
+        //
+        //        if (!serverFolder.exists()) {
+        //            serverFolder.mkdir();
+        ////        }else if (!updateFile.exists()) {
+        ////            System.out.println("NOTHING TO UPDATE: update File did NOT exists.");
+        //
+        //        } else if ((studioDir.exists()) && (studioDir.isDirectory())) {
+        ////            try {
+        ////                  // MAYBE PROBLEM WITH FILELOCKS THEREFORE NOT
+        ////                //change config file temporal with entries for server and switch
+        ////                //back to old config after copy
+        ////
+        ////                //BACKUPS and save changes
+        ////                String remoteTypeBackup = getConfigurationFile().
+        ////                        getProperty(Constants.REMOTETYPE_KEY);
+        ////
+        ////                getConfigurationFile().setProperty(
+        ////                        Constants.REMOTETYPE_KEY, RemoteType.SERVER.toString());
+        ////
+        ////                getConfigurationFile().save();
+        ////
+        ////                // COPY ALL with server config
+        ////                IOUtil.copyDirectory(studioDir, serverFolder);
+        ////
+        ////                // REVERT changes
+        ////                getConfigurationFile().setProperty(
+        ////                        Constants.REMOTETYPE_KEY, remoteTypeBackup);
+        ////
+        ////                getConfigurationFile().save();
+        //                
+        //                
+        //                
+        ////                //COPY ALL and change after to server config
+        ////                IOUtil.copyDirectory(studioDir, serverFolder);
+        ////                
+        ////                
+        ////                File configFile = new File(serverFolder.getAbsolutePath() + "/plugins/UG4/config/config.xml");
+        //                
+        //
+        ////            } catch (IOException ex) {
+        ////                Logger.getLogger(Configurator.class.getName()).log(Level.SEVERE, null, ex);
+        ////            }
+        //             
+        //                
+        ////                propertyFolderManager.setPropertyFolder(serverFolder);
+        //                getPropertyFolderManager().init(serverFolder.getName(),true);
+        //
+        //
+        //        }
 
     }
 
@@ -39,11 +273,25 @@ public class Configurator extends VPluginConfigurator {
      * @return the pluginConfiguration
      */
     public static ConfigurationFile getConfigurationFile() {
+        // check if it is possible to garanty there is always a config file
+        //      or to create one if no one exists -> if init(final InitPluginAPI iApi)
+        //      is called before this method there is a config file created
+        //  find place where config file is created ! -> VRL:PluginDataController
+        //
         if (pluginConfiguration == null) {
             System.err.println("ERROR Configurator: pluginConfiguration == null");
+            System.err.println("Calling Configurator.getConfigurationFile() before"
+                    + "init(InitPluginAPI iApi) of Plugin is NOT a good idea");
         }
 
         return pluginConfiguration;
+    }
+
+    /**
+     * @return the propertyFolderManager
+     */
+    public static VPropertyFolderManager getPropertyFolderManager() {
+        return propertyFolderManager;
     }
 
     public Configurator() {
@@ -88,11 +336,9 @@ public class Configurator extends VPluginConfigurator {
     public void init(final InitPluginAPI iApi) {
         System.out.println(" ****CONFIGURATOR.init( iAPI)");
 
-        //set pluginConfiguration if not done already
+        //set pluginConfiguration first possiblity here to set / get it
         //is needed for interaction with config file
-        if (getConfigurationFile() == null) {
-            pluginConfiguration = iApi.getConfiguration();
-        }
+        pluginConfiguration = iApi.getConfiguration();
 
         setConfigurationEntries();
 
@@ -100,7 +346,8 @@ public class Configurator extends VPluginConfigurator {
         UG.setNativeLibFolder(getNativeLibFolder());
 
 
-        // initialize ug instance with remotetype ->option
+        // initialize ug instance with remotetype
+        // starting UG the first time leads to run UG with remoteType NONE
         UG.getInstance(checkRemoteTypeOption());
 
 
@@ -173,7 +420,7 @@ public class Configurator extends VPluginConfigurator {
                 outerBox.add(remoteTypeChoise);
 
 //                //PATH TO VRL-UG JAR
-//                final JTextField path = new JTextField(getJarPath());
+//                final JTextField path = new JTextField(getVrlUgJarPath());
 //                path.setEditable(true);
 //                path.setEnabled(true);
 
@@ -245,48 +492,44 @@ public class Configurator extends VPluginConfigurator {
 
     /**
      * Here are the entries of the configuration file checked and if not
-     * available set.
+     * available set with default values.
      *
      */
     private void setConfigurationEntries() {
 
-//        System.out.println("Configurator.setConfigurationEntries()");
-//        System.out.println("isServerConfiguration() = " + isServerConfiguration());
+        //check if config file entry exists for remoteType
+        if (getConfigurationFile().getProperty(Constants.REMOTETYPE_KEY) == null) {
 
-//        if (isServerConfiguration()) {
-
-//        boolean isNull = getConfigurationFile().getProperty(Constants.REMOTETYPE_KEY) == null;
-//        boolean isNONE = false;
-//        
-//        if(!isNull){
-//         isNONE = getConfigurationFile().getProperty(Constants.REMOTETYPE_KEY).
-//                 equals(RemoteType.NONE);
-//        }
-//        
-//        if (isNull || isNONE) {
-
-        if (isServerConfiguration() && (getConfigurationFile().getProperty(
-                Constants.REMOTETYPE_KEY) == null)) {
-
+//            if (isServerConfiguration()) {
+//
+//                getConfigurationFile().setProperty(
+//                        Constants.REMOTETYPE_KEY,
+//                        RemoteType.SERVER.toString());
+//            } else {
+            //set/write default remoteType in config file
             getConfigurationFile().setProperty(
                     Constants.REMOTETYPE_KEY,
-                    RemoteType.SERVER.toString());
+                    RemoteType.NONE.toString());
+//            }
         }
 
-////            getConfigurationFile().setProperty(
-////                    Constants.REMOTETYPE_KEY,
-////                    RemoteType.NONE.toString());
-//        }
-
+        //check if config file entry exists for path to jar file
         if (getConfigurationFile().getProperty(Constants.JAR_PATH_KEY) == null) {
 
             getConfigurationFile().setProperty(
-                    Constants.JAR_PATH_KEY, getJarPath());
+                    Constants.JAR_PATH_KEY, getVrlUgJarPath());
+        }
+
+        //check if config file entry exists for path to local server folder
+        if (getConfigurationFile().getProperty(Constants.PATH_TO_LOCAL_SERVER_FOLDER_KEY) == null) {
+
+            getConfigurationFile().setProperty(
+                    Constants.PATH_TO_LOCAL_SERVER_FOLDER_KEY,
+                    getLocalServerFolder().getAbsolutePath());
         }
 
         getConfigurationFile().save();
 
-//        }
     }
 
     /**
@@ -331,17 +574,17 @@ public class Configurator extends VPluginConfigurator {
             option = tmp;
         }
 
-        System.out.println(" # # # after checking commandline and property file");
-        System.out.println(" # # # REMOTETYPE option = "+ option);
-        
-        
+//        System.out.println(" # # # after checking commandline and property file");
+//        System.out.println(" # # # REMOTETYPE option = " + option);
+
+
 //        //setting boolean for checking and setting serverConfigurationProperties
 //        //this should be only executed in server JVM
         if ((option != null)
-                && (option.toLowerCase().
-                equals(
+                && (option.toLowerCase().equals(
                 RemoteType.SERVER.toString().toLowerCase()))) {
-            System.out.println(" # # # if option!=null && SERVER.toLowerCase()");
+
+//            System.out.println(" # # # if option!=null && SERVER.toLowerCase()");
 
             setServerConfiguration(true);
         }

@@ -12,9 +12,11 @@ import eu.mihosoft.vrl.system.PluginIdentifier;
  */
 public class Constants {
     public static final PluginIdentifier PLUGIN_IDENTIFIER =
-            new PluginIdentifier("UG4", "0.1.1."+Math.abs((int)System.currentTimeMillis()));//"0.1.1."+System.currentTimeMillis() did not work
+            new PluginIdentifier("UG4", "0.1.1");//+"."+Math.abs((int)System.currentTimeMillis()));//"0.1.1."+System.currentTimeMillis() did not work
     
     
-    public static String JAR_PATH_KEY = "jarPath";
-    public static String REMOTETYPE_KEY = "remoteType";
+    public final static String JAR_PATH_KEY = "jarPath";
+    public final static String PATH_TO_LOCAL_SERVER_FOLDER_KEY = "localServerFolder";
+    public final static String REMOTETYPE_KEY = "remoteType";
+    public final static String SERVER_SUFFIX = "-server";
 }

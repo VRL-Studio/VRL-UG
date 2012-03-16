@@ -2,6 +2,7 @@ package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.ObjectInfo;
+import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.VRL;
 import eu.mihosoft.vrl.visual.Canvas;
@@ -40,10 +41,17 @@ public class JVMmanager implements Serializable {
     // String should have the form "ip:port"
     private static HashMap<String, XmlRpcClient> clientsForConnection =
             new HashMap<String, XmlRpcClient>();
-    // to solve references problems which could occur with handling ug objects and
-    // server client concept
+    /**
+     * to solve references problems which could occur with handling ug objects
+     * and server client concept
+     */
     private static ArrayList<WeakReference<UGObject>> weakReferencesOfUGObjects =
             new ArrayList<WeakReference<UGObject>>();
+    /**
+     * decide if by starting a local server the local server should be updated
+     * on the basis of the local client
+     */
+    static boolean updateLocalServer = true;
 
     /**
      * Starts another JVM and executes there the main method of the class which
@@ -52,16 +60,19 @@ public class JVMmanager implements Serializable {
      * @param clazz The class which should be started in a new JVM.
      *
      */
-    private static void startAnotherJVM(
-            final Class clazz //            ,
-            //            final String ip,
-            //            final Integer port
-            ) {
+    private static void startAnotherJVM(final Class clazz) {
 
         Thread t = new Thread(new Runnable() {
 
             @Override
             public void run() {
+
+                //update the local server folder
+                if (updateLocalServer) {
+                    System.out.println("JVMmanager.startAnotherJVM() :"
+                            + "updateLocalServer = true");
+                    Configurator.updateLocalServerFolder();
+                }
 
                 String separator = System.getProperty("file.separator");
                 String classpath = System.getProperty("java.class.path");
@@ -73,14 +84,37 @@ public class JVMmanager implements Serializable {
 //                String pluginPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
 //                classpath += ":" + pluginPath;
 
-                String ServerJarPath = Configurator.getJarPath();
+                // TODO the path to jar of plugin in server folder
+//                File localServerFolder = Configurator.getLocalServerFolder();
+                String localServerJar = Configurator.getLocalServerJar();
+                String localServerUpdateJar = Configurator.getLocalServerUpdateFolder()
+                        + separator + VJarUtil.getClassLocation(UG.class).getName();
 
-                if (ServerJarPath != null) {
-                    classpath += ":" + ServerJarPath;
-                    System.out.println("ServerJarPath = " + ServerJarPath);
+                if (localServerJar != null) {
+                    classpath += ":" + localServerJar;
+
+                    System.out.println("localServerJar = " + localServerJar);
+
+
+                    System.out.println("localServerJar.exists() = "
+                            + new File(localServerJar).exists());
+
+
+
                 } else {
                     System.out.println("ERROR in JVMmanager.startAnotherJVM():"
-                            + " ServerJarPath is NULL");
+                            + " localServerJar is NULL");
+                }
+
+                if (localServerUpdateJar != null) {
+                    classpath += ":" + localServerUpdateJar;
+                    System.out.println("localServerUpdateJar = " + localServerUpdateJar);
+
+                System.out.println("localServerJar.exists() = "
+                            + new File(localServerUpdateJar).exists());
+                }else {
+                    System.out.println("ERROR in JVMmanager.startAnotherJVM():"
+                            + " localServerUpdateJar is NULL");
                 }
 
 //                //DEBUG SOUT
@@ -98,7 +132,7 @@ public class JVMmanager implements Serializable {
 
                 String name = clazz.getName();
 
-//                String portString = port.toString();
+                String serverFolderName = Configurator.getLocalServerFolder().getName();
 
                 // to remove outOfMemoryError message: PermGen space
                 // or better said resize the PermGen space area in the heap
@@ -106,8 +140,8 @@ public class JVMmanager implements Serializable {
 
                 ProcessBuilder processBuilder = new ProcessBuilder(
                         path, commandLineCallOptions,
-                        "-cp", classpath, name //                        , portString, ip
-                        );
+                        "-cp", classpath, name,
+                        serverFolderName);
 
 
                 //NEEDED TO READ / VIEW OUTPUT OF 2nd JVM
@@ -465,7 +499,7 @@ public class JVMmanager implements Serializable {
      * @param aCurrentPort the currentPort to set
      */
     public static void setCurrentPort(Integer aCurrentPort) {
-        
+
         //releaseUGpointers if port has changed to make client possible to
         //react on server change
         if (currentPort != aCurrentPort) {
