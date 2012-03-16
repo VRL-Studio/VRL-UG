@@ -12,6 +12,7 @@ import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.io.vrlx.AbstractCode;
 import eu.mihosoft.vrl.lang.CodeBuilder;
 import eu.mihosoft.vrl.system.Constants;
+import eu.mihosoft.vrl.system.VRL;
 import groovy.lang.GroovyClassLoader;
 import java.beans.XMLEncoder;
 import java.io.BufferedWriter;
@@ -266,7 +267,7 @@ public class Compiler {
      * @throws IOException if there is an error creating the temporary directory
      */
     private static File createTempDir() throws IOException {
-        final File sysTempDir = VPropertyFolderManager.getTmpFolder();
+        final File sysTempDir = VRL.getPropertyFolderManager().getTmpFolder();
         
         File newTempDir;
         final int maxAttempts = 9;

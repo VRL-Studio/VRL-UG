@@ -204,10 +204,27 @@ public class UG {
     public static void main(String[] args) {
         System.out.println("UG.main() starts");
 
-        String[] params = {"-property-folder-suffix", "numerics-server",
+//        String[] params = {"-property-folder-suffix", "numerics-server",
+//            "-plugin-checksum-test", "yes",
+//            "-" + Constants.REMOTETYPE_KEY, RemoteType.SERVER.toString()};
+
+        
+        // TEST START
+        String serverFolder = "default";
+        
+        for (int i = 0; i < args.length; i++) {
+            System.out.println("args[" + i + "] = " + args[i]);
+
+            if(args[i].contains(Constants.SERVER_SUFFIX)){
+                serverFolder = args[i];
+            }
+        }
+
+        String[] params = {"-property-folder-suffix", serverFolder,
             "-plugin-checksum-test", "yes",
             "-" + Constants.REMOTETYPE_KEY, RemoteType.SERVER.toString()};
 
+        // TEST END
 
         System.out.println("UG.main() VRL.initAll(params)");
 
@@ -234,7 +251,7 @@ public class UG {
      * @return the messagingThread
      */
     public static MessageThread getMessagingThread() {
-        System.out.println(" +#+ #+# UG.getMessagingThread()");
+//        System.out.println(" +#+ #+# UG.getMessagingThread()");
         return messagingThread;
     }
 
@@ -242,7 +259,7 @@ public class UG {
      * @param aMessagingThread the messagingThread to set
      */
     public static void setMessagingThread(MessageThread aMessagingThread) {
-        System.out.println(" +#+ #+# UG.setMessagingThread( mT )");
+//        System.out.println(" +#+ #+# UG.setMessagingThread( mT )");
         messagingThread = aMessagingThread;
     }
     /**
@@ -403,8 +420,8 @@ public class UG {
      */
     public static void connectToNativeUG(boolean loadNativeLib) {
 
-//        System.out.println("-.-.-.-.-.-.-. UG.connectToNativeUG() "
-//                + "remoteType = " + remoteType);
+        System.out.println("-.-.-.-.-.-.-. UG.connectToNativeUG() "
+                + "remoteType = " + remoteType);
 
         if (remoteType.equals(RemoteType.CLIENT)) {
             System.err.println("Cannot connect to native UG in client mode!");
@@ -428,8 +445,8 @@ public class UG {
                     getNativeLibFolder() + "/eu/mihosoft/vrl/natives/"
                     + VSysUtil.getPlatformSpecificPath());
 
-//            System.out.println("-.-.-.-.-.-.-. UG.connectToNativeUG() "
-//                    + "libFolder.getPath() = " + libFolder.getPath());
+            System.out.println("-.-.-.-.-.-.-. UG.connectToNativeUG() "
+                    + "libFolder.getPath() = " + libFolder.getPath());
 
             loadNativeLibrariesInFolder(libFolder, false);
 
@@ -488,7 +505,7 @@ public class UG {
                     compiler.compile(
                             new edu.gcsc.vrl.ug.NativeAPICode(
                             nativeAPI).getAllCodes(),
-                            VPropertyFolderManager.getPluginUpdatesFolder().
+                            VRL.getPropertyFolderManager().getPluginUpdatesFolder().
                             getAbsolutePath());
 
                 } catch (Exception ex) {
@@ -541,14 +558,14 @@ public class UG {
                 Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            System.out.println(" # + # + #  is local server with default port running= " + isServerRunning);
+//            System.out.println(" # + # + #  is local server with default port running= " + isServerRunning);
 
             //UGServer not running
             if (!isServerRunning) {
                 try {
 
-                    System.out.println("# + # + #  UG( " + remoteType + " ) server not running...");
-                    System.out.println("# + # + #  JVMmanager.startLocalServer()");
+//                    System.out.println("# + # + #  UG( " + remoteType + " ) server not running...");
+//                    System.out.println("# + # + #  JVMmanager.startLocalServer()");
                     JVMmanager.startLocalServer();
 
 //                    System.out.println("# + # + #  UG.startWebServer() remoteType= "+ remoteType);
@@ -632,7 +649,7 @@ public class UG {
                         compiler.compile(
                                 new edu.gcsc.vrl.ug.NativeAPICode(
                                 nativeAPI).getAllCodes(),
-                                VPropertyFolderManager.getPluginUpdatesFolder().
+                                VRL.getPropertyFolderManager().getPluginUpdatesFolder().
                                 getAbsolutePath());
 
                     } catch (Exception ex) {
@@ -894,7 +911,8 @@ public class UG {
      * </p>
      */
     public static UG getInstance() {
-        return getInstance(null, RemoteType.NONE);
+//        return getInstance(null, RemoteType.NONE);
+        return getInstance(null, getRemoteType());
     }
 
     /**
@@ -955,15 +973,15 @@ public class UG {
      */
     static StringBuilder getMessages() {
 
-        if (remoteType.equals(RemoteType.CLIENT) && 
-                JVMmanager.isServerRunning(
+        if (remoteType.equals(RemoteType.CLIENT)
+                && JVMmanager.isServerRunning(
                 JVMmanager.getCurrentIP(),
                 JVMmanager.getCurrentPort())) {
-            
+
 //            System.out.println("UG.getMessages(): \n"
 //                    + "if(remoteType.equals(RemoteType.CLIENT) && "
 //                    + "JVMmanager.isServerRunning(currentIP, currentPort)");
-            
+
             Object o = null;
 
             try {
@@ -976,7 +994,7 @@ public class UG {
 //                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
                 System.out.println("UG.getMessages(): catch of -> \n"
                         + "xmlRpcClient.execute(RpcHandler.getMessages, voidElement)"
-                        + " = "+o);
+                        + " = " + o);
             }
 
             String base64 = (String) o;
