@@ -172,26 +172,6 @@ public class Configurator extends VPluginConfigurator {
 
             IOUtil.copyDirectory(ug4PluginFolderToCopy, ug4PluginFolderTarget);//copy UG4 folder
 
-//            //
-//            //config.xml - - -
-//            //
-//            File configFileToCopy = new File(VRL.getPropertyFolderManager().getPluginFolder()
-//                    + System.getProperty("file.separator")
-//                    + Constants.PLUGIN_IDENTIFIER.getName()
-//                    + System.getProperty("file.separator")
-//                    + PluginDataController.CONFIG_FILENAME);
-//            System.out.println("configFileToCopy = " + configFileToCopy.getAbsoluteFile());
-//
-//
-//            File configFileTarget = new File(getPropertyFolderManager().getPluginFolder()
-//                    + System.getProperty("file.separator")
-//                    + Constants.PLUGIN_IDENTIFIER.getName()
-//                    + System.getProperty("file.separator")
-//                    + PluginDataController.CONFIG_FILENAME);
-//            System.out.println("configFileTarget = " + configFileTarget.getAbsoluteFile());
-//
-//            IOUtil.copyFile(configFileToCopy, configFileTarget);//copy config.xml
-
 
             //
             // change config.xml to server configuration
@@ -219,71 +199,6 @@ public class Configurator extends VPluginConfigurator {
         } catch (IOException ex) {
             Logger.getLogger(Configurator.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        //        //COPY ALL entriesand change after to server config
-        //        if ((studioDir.exists()) && (studioDir.isDirectory())) {
-        //            try {
-        //
-        //                IOUtil.copyDirectory(studioDir, serverFolder);
-        //
-        //            } catch (IOException ex) {
-        //                Logger.getLogger(Configurator.class.getName()).log(Level.SEVERE, null, ex);
-        //            }
-        //        }
-
-
-        //        File serverFolder = getLocalServerFolder();
-        ////        File updateFile = new File(getVrlUgJarPath());
-        //        File studioDir = getVRLStudioDir();
-        //
-        //        if (!serverFolder.exists()) {
-        //            serverFolder.mkdir();
-        ////        }else if (!updateFile.exists()) {
-        ////            System.out.println("NOTHING TO UPDATE: update File did NOT exists.");
-        //
-        //        } else if ((studioDir.exists()) && (studioDir.isDirectory())) {
-        ////            try {
-        ////                  // MAYBE PROBLEM WITH FILELOCKS THEREFORE NOT
-        ////                //change config file temporal with entries for server and switch
-        ////                //back to old config after copy
-        ////
-        ////                //BACKUPS and save changes
-        ////                String remoteTypeBackup = getConfigurationFile().
-        ////                        getProperty(Constants.REMOTETYPE_KEY);
-        ////
-        ////                getConfigurationFile().setProperty(
-        ////                        Constants.REMOTETYPE_KEY, RemoteType.SERVER.toString());
-        ////
-        ////                getConfigurationFile().save();
-        ////
-        ////                // COPY ALL with server config
-        ////                IOUtil.copyDirectory(studioDir, serverFolder);
-        ////
-        ////                // REVERT changes
-        ////                getConfigurationFile().setProperty(
-        ////                        Constants.REMOTETYPE_KEY, remoteTypeBackup);
-        ////
-        ////                getConfigurationFile().save();
-        //                
-        //                
-        //                
-        ////                //COPY ALL and change after to server config
-        ////                IOUtil.copyDirectory(studioDir, serverFolder);
-        ////                
-        ////                
-        ////                File configFile = new File(serverFolder.getAbsolutePath() + "/plugins/UG4/config/config.xml");
-        //                
-        //
-        ////            } catch (IOException ex) {
-        ////                Logger.getLogger(Configurator.class.getName()).log(Level.SEVERE, null, ex);
-        ////            }
-        //             
-        //                
-        ////                propertyFolderManager.setPropertyFolder(serverFolder);
-        //                getPropertyFolderManager().init(serverFolder.getName(),true);
-        //
-        //
-        //        }
 
     }
 
