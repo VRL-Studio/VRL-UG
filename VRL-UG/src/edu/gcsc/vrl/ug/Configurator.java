@@ -68,8 +68,8 @@ public class Configurator extends VPluginConfigurator {
     public static File getLocalServerFolder() {
         if (serverFolder == null) {
 //            serverFolder = new File(getVRLStudioDir().getAbsolutePath() + "-server");
-            serverFolder = new File(VRL.getPropertyFolderManager().getPropertyFolder() + 
-                    Constants.SERVER_SUFFIX);
+            serverFolder = new File(VRL.getPropertyFolderManager().getPropertyFolder()
+                    + Constants.SERVER_SUFFIX);
         }
         System.out.println("## Configurator : serverFolder = " + serverFolder);
 
@@ -113,6 +113,8 @@ public class Configurator extends VPluginConfigurator {
      * exists.
      */
     public static void updateLocalServerFolder() {
+        System.out.println("Configurator.updateLocalServerFolder() : START");
+        
         File serverFolder = getLocalServerFolder();
         File studioDir = getVRLStudioDir();
 
@@ -138,8 +140,15 @@ public class Configurator extends VPluginConfigurator {
             // VRL-UG.jar - - -
             //
             File jarToCopy = VJarUtil.getClassLocation(UG.class);
-            File jarTarget = new File(getPropertyFolderManager().getPluginUpdatesFolder(),
+//            File jarTarget = new File(getPropertyFolderManager().getPluginUpdatesFolder(),    //PluginUpdate-Folder
+            File jarTarget = new File(getPropertyFolderManager().getPluginFolder(),             //Plugin-Folder
                     VJarUtil.getClassLocation(UG.class).getName());
+
+            
+            System.out.println("Configurator: UG.getRemoteType() = " + UG.getRemoteType());
+
+            System.out.println("Configurator: jarToCopy = " + jarToCopy);
+            System.out.println("Configurator: jarTarget = " + jarTarget);
 
             IOUtil.copyFile(jarToCopy, jarTarget);//copy VRL-UG.jar
 
@@ -149,17 +158,22 @@ public class Configurator extends VPluginConfigurator {
             File ug4PluginFolderToCopy = new File(VRL.getPropertyFolderManager().getPluginFolder()
                     + System.getProperty("file.separator")
                     + Constants.PLUGIN_IDENTIFIER.getName());
-            System.out.println("ug4PluginFolderToCopy = " + ug4PluginFolderToCopy);
+            System.out.println(" ug4PluginFolderToCopy = " + ug4PluginFolderToCopy);
 
-            File g4PluginFolderTarget = new File(getPropertyFolderManager().getPluginFolder()
+            System.out.println(" -- getPropertyFolderManager() = " + getPropertyFolderManager());
+
+            System.out.println(" !! -- getPluginFolder() = " + getPropertyFolderManager().getPluginFolder());
+
+            File ug4PluginFolderTarget = new File(getPropertyFolderManager().getPluginFolder()
                     + System.getProperty("file.separator")
                     + Constants.PLUGIN_IDENTIFIER.getName());
-            System.out.println("g4PluginFolderTarget = " + g4PluginFolderTarget);
+            
+            System.out.println(" ug4PluginFolderTarget = " + ug4PluginFolderTarget);
 
-            IOUtil.copyDirectory(ug4PluginFolderToCopy, g4PluginFolderTarget);//copy UG4 folder
+            IOUtil.copyDirectory(ug4PluginFolderToCopy, ug4PluginFolderTarget);//copy UG4 folder
 
 //            //
-//            //confi.xml - - -
+//            //config.xml - - -
 //            //
 //            File configFileToCopy = new File(VRL.getPropertyFolderManager().getPluginFolder()
 //                    + System.getProperty("file.separator")
@@ -177,12 +191,12 @@ public class Configurator extends VPluginConfigurator {
 //            System.out.println("configFileTarget = " + configFileTarget.getAbsoluteFile());
 //
 //            IOUtil.copyFile(configFileToCopy, configFileTarget);//copy config.xml
-            
-            
+
+
             //
             // change config.xml to server configuration
             //
-            
+
             File serverConfigFile = new File(getPropertyFolderManager().getPluginFolder()
                     + System.getProperty("file.separator")
                     + Constants.PLUGIN_IDENTIFIER.getName()
@@ -190,10 +204,14 @@ public class Configurator extends VPluginConfigurator {
                     + PluginDataController.CONFIG
                     + System.getProperty("file.separator")
                     + PluginDataController.CONFIG_FILENAME);
-            System.out.println("serverConfigFile = "+serverConfigFile);
+            System.out.println("serverConfigFile = " + serverConfigFile);
+
+//            System.out.println("serverConfigFile.delete() = " + serverConfigFile.delete());
+//            serverConfigFile.delete();
             
-            System.out.println("serverConfigFile.delete() = "+serverConfigFile.delete());
-            serverConfigFile.delete();
+             ConfigurationFile pConfig = IOUtil.newConfigurationFile(serverConfigFile);
+             pConfig.setProperty(Constants.REMOTETYPE_KEY, RemoteType.SERVER.toString());
+             pConfig.save();
 
 
         } catch (FileNotFoundException ex) {
@@ -334,7 +352,8 @@ public class Configurator extends VPluginConfigurator {
     }
 
     public void init(final InitPluginAPI iApi) {
-        System.out.println(" ****CONFIGURATOR.init( iAPI)");
+        System.out.println(" ****CONFIGURATOR.init( iAPI) UG.getRemoteType() = "
+                + UG.getRemoteType());
 
         //set pluginConfiguration first possiblity here to set / get it
         //is needed for interaction with config file
