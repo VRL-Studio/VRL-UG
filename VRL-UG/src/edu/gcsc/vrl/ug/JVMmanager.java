@@ -85,8 +85,14 @@ public class JVMmanager implements Serializable {
 //                classpath += ":" + pluginPath;
 
                 // TODO the path to jar of plugin in server folder
+                
+                System.out.println(" - JVMmanager.startAnotherJVM() :");
+                System.out.println(" - - new Thread().run : ");
+                System.out.println(" - - UG.getRemoteType() =" + UG.getRemoteType());
+                
 //                File localServerFolder = Configurator.getLocalServerFolder();
                 String localServerJar = Configurator.getLocalServerJar();
+                
                 String localServerUpdateJar = Configurator.getLocalServerUpdateFolder()
                         + separator + VJarUtil.getClassLocation(UG.class).getName();
 
@@ -106,16 +112,17 @@ public class JVMmanager implements Serializable {
                             + " localServerJar is NULL");
                 }
 
-                if (localServerUpdateJar != null) {
-                    classpath += ":" + localServerUpdateJar;
-                    System.out.println("localServerUpdateJar = " + localServerUpdateJar);
-
-                System.out.println("localServerJar.exists() = "
-                            + new File(localServerUpdateJar).exists());
-                }else {
-                    System.out.println("ERROR in JVMmanager.startAnotherJVM():"
-                            + " localServerUpdateJar is NULL");
-                }
+//                if (localServerUpdateJar != null) {
+//                    classpath += ":" + localServerUpdateJar;
+//                    
+//                    System.out.println("localServerUpdateJar = " + localServerUpdateJar);
+//
+//                    System.out.println("localServerJar.exists() = "
+//                            + new File(localServerUpdateJar).exists());
+//                }else {
+//                    System.out.println("ERROR in JVMmanager.startAnotherJVM():"
+//                            + " localServerUpdateJar is NULL");
+//                }
 
 //                //DEBUG SOUT
 //                System.out.println("-- --- JVMmanager.startAnotherJVM():ServerJarPath = "
