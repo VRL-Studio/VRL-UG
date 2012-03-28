@@ -4,19 +4,23 @@
  */
 package edu.gcsc.vrl.ug;
 
+
 import eu.mihosoft.vrl.io.*;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.*;
 import eu.mihosoft.vrl.visual.VDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+
 
 /**
  *
@@ -24,6 +28,8 @@ import javax.swing.*;
  */
 public class Configurator extends VPluginConfigurator {
 
+
+    private File templateProjectSrc;
     private static boolean serverConfiguration = false;
     private static ConfigurationFile pluginConfiguration = null;
     private static String jarPath = null;
@@ -242,6 +248,7 @@ public class Configurator extends VPluginConfigurator {
         exportPackage("edu.gcsc.vrl.ug");
     }
 
+    @Override
     public void register(PluginAPI api) {
         if (api instanceof VPluginAPI) {
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
@@ -250,12 +257,10 @@ public class Configurator extends VPluginConfigurator {
 
             //TEST: component for starting an UG on an other JVM
             vApi.addComponent(JVMmanager.class);
-
-//          
+         
             // request restart
             if (UG.getInstance().isRecompiled()) {
 
-//                System.err.println("Recompiled");
                 VDialog.showMessageDialog(vCanvas, "Restart neccessary:",
                         " UG-API had to be recompiled."
                         + " VRL-Studio will be closed now."
@@ -267,6 +272,7 @@ public class Configurator extends VPluginConfigurator {
     }
 
     public void unregister(PluginAPI api) {
+        shutdown();
 //        throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -280,6 +286,41 @@ public class Configurator extends VPluginConfigurator {
 
         setConfigurationEntries();
 
+        templateProjectSrc = new File(iApi.getResourceFolder(), "ug-template01.vrlp");
+
+        if (!templateProjectSrc.exists()) {
+            InputStream in = Configurator.class.getResourceAsStream(
+                    "/edu/gcsc/vrl/ug/resources/ug-template01.vrlp");
+            try {
+                IOUtil.saveStreamToFile(in, templateProjectSrc);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Configurator.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Configurator.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            }
+        }
+
+        iApi.addProjectTemplate(new ProjectTemplate() {
+
+            public String getName() {
+                return "UG - Project";
+            }
+
+            public File getSource() {
+                return templateProjectSrc;
+            }
+
+            public String getDescription() {
+                return "Basic UG Project";
+            }
+
+            public BufferedImage getIcon() {
+                return null;
+            }
+        });
+
         // define native lib location
         UG.setNativeLibFolder(getNativeLibFolder());
 
@@ -289,12 +330,12 @@ public class Configurator extends VPluginConfigurator {
         UG.getInstance(checkRemoteTypeOption());
 
 
+
         if (UG.isLibloaded()) {
             setDescription(UG.getInstance().getDescription()
                     + "<br><br><b>Authors:</b><br><br>"
                     + UG.getInstance().getAuthors().replace("\n", "<br>"));
         }
-
 
         setPreferencePane(new PreferencePane() {
 
@@ -428,6 +469,9 @@ public class Configurator extends VPluginConfigurator {
         return UG.getInstance().getDescriptionFromApi();
     }
 
+    public void shutdown() {
+        JVMmanager.stopLocalServer();
+    }
     /**
      * Here are the entries of the configuration file checked and if not
      * available set with default values.
@@ -545,4 +589,5 @@ public class Configurator extends VPluginConfigurator {
         System.out.println("configurator.setServerConfiguration(" + serverConfiguration + ")");
         Configurator.serverConfiguration = serverConfiguration;
     }
+
 }

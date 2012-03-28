@@ -4,12 +4,14 @@
  */
 package edu.gcsc.vrl.ug;
 
+
 import java.io.Serializable;
 
+
 /**
- * This class wrapps native UG smart pointers with additional type info
- * (class name) that can be used by UGs registry to call native
- * functions or methods.
+ * This class wrapps native UG smart pointers with additional type info (class
+ * name) that can be used by UGs registry to call native functions or methods.
+ *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 class SmartPointer extends Pointer implements Serializable{
@@ -27,7 +29,7 @@ class SmartPointer extends Pointer implements Serializable{
         super(address, readOnly);
 
         this.smartPointer = smartPtr;
-
+        
 //        System.out.println("[SMART Java]: " + getAddress() + ", cont=" + isConst());
     }
 
@@ -44,6 +46,7 @@ class SmartPointer extends Pointer implements Serializable{
     
     /**
      * Returns the memory that contains the native smart pointer.
+     *
      * @return the smartPointer
      */
     public byte[] getSmartPointer() {
@@ -54,13 +57,17 @@ class SmartPointer extends Pointer implements Serializable{
 
     /**
      * Invalidates native smart pointer.
+     *
      * @throws Throwable
      */
     @Override
     protected void finalize() throws Throwable {
         try {
 //            System.out.println("~[SMART Java]: " + getAddress() + ", cont=" + isConst());
-            UG.invalidate(this);
+//            UG.invalidate(this);
+
+            MemoryManager.invalidate(SmartPointer.this);
+
         } catch (Throwable ex) {
             //
         } finally {
