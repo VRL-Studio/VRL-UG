@@ -7,13 +7,13 @@ package edu.gcsc.vrl.ug;
 import eu.mihosoft.vrl.io.Base64;
 import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.io.VJarUtil;
-import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.*;
-import eu.mihosoft.vrl.visual.MessageType;
 import eu.mihosoft.vrl.visual.SplashScreenGenerator;
 import java.beans.XMLDecoder;
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -199,39 +199,27 @@ public class UG {
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     public static void main(String[] args) {
-        System.out.println("UG.main() starts");
+ 
+        
+        String serverFolderSuffix = "default";
 
-//        String[] params = {"-property-folder-suffix", "numerics-server",
-//            "-plugin-checksum-test", "yes",
-//            "-" + Constants.REMOTETYPE_KEY, RemoteType.SERVER.toString()};
-
-
-        // TEST START
-        String serverFolder = "default";
-
+        // check if there is a server 
         for (int i = 0; i < args.length; i++) {
-            System.out.println("args[" + i + "] = " + args[i]);
-
+            
             if (args[i].contains(Constants.SERVER_SUFFIX)) {
-                serverFolder = args[i];
+                serverFolderSuffix = args[i];
             }
         }
 
-        String[] params = {"-property-folder-suffix", serverFolder,
+        String[] params = {"-property-folder-suffix", serverFolderSuffix,
             "-plugin-checksum-test", "yes",
             "-" + Constants.REMOTETYPE_KEY, RemoteType.SERVER.toString()};
 
-        // TEST END
-
-        System.out.println("UG.main() VRL.initAll(params)");
-
         VRL.initAll(params);
 
-        System.out.println("UG.main(): RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER))");
 //        set in the server JVM the server ug object
         RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
 
-        System.out.println("UG.main() ends");
 
     }
     /**
@@ -312,16 +300,6 @@ public class UG {
         return result;
     }
 
-//    /**
-//     * Returns all native UG classes that are exported via the UG registry,
-//     * i.e., the equivalent Java wrapper classes.
-//     * @return the nativeClasses
-//     */
-//    public static Class<?>[] getNativeClasses() {
-//        
-//        return nativeClasses;
-//    }
-//
     /**
      * Loads all native librarties in the specified folder and optionally all of
      * its subfolders. Please ensure that all libraries in the folder are
@@ -402,23 +380,11 @@ public class UG {
         return loadedLibraries.size() == dynamicLibraries.size();
     }
 
-//    /**
-//     * Defines all native UG classes that are exported via the UG registry,
-//     * i.e., the equivalent Java wrapper classes.
-//     *
-//     * @param aNativeClasses the nativeClasses to set
-//     */
-//    static void setNativeClasses(Class<?>[] nativeClasses) {
-//        UG.nativeClasses = nativeClasses;
-//    }
     /**
      *
      * @param loadNativeLib
      */
     public static void connectToNativeUG(boolean loadNativeLib) {
-
-        System.out.println("-.-.-.-.-.-.-. UG.connectToNativeUG() "
-                + "remoteType = " + remoteType);
 
         if (remoteType.equals(RemoteType.CLIENT)) {
             System.err.println("Cannot connect to native UG in client mode!");
@@ -441,9 +407,6 @@ public class UG {
             File libFolder = new File(
                     getNativeLibFolder() + "/eu/mihosoft/vrl/natives/"
                     + VSysUtil.getPlatformSpecificPath());
-
-            System.out.println("-.-.-.-.-.-.-. UG.connectToNativeUG() "
-                    + "libFolder.getPath() = " + libFolder.getPath());
 
             loadNativeLibrariesInFolder(libFolder, false);
 
@@ -470,7 +433,7 @@ public class UG {
         // as we need the instance for searching a compiled UG-API.
         ugInstance = this;
 
-        System.out.println("-------- UG() --------");
+        System.out.println(" -- UG() -- ");
 
         // load api if compatible; rebuild otherwise
         try {
@@ -532,7 +495,7 @@ public class UG {
 
         setRemoteType(remoteType);
 
-        System.out.println("------ UG(RemoteType= " + getRemoteType() + ") --------");
+        System.out.println(" -- UG(" + getRemoteType() + ") -- ");
 
 
 //         // we must set the singleton instance to prevent
@@ -561,12 +524,8 @@ public class UG {
             if (!isServerRunning) {
                 try {
 
-//                    System.out.println("# + # + #  UG( " + remoteType + " ) server not running...");
-//                    System.out.println("# + # + #  JVMmanager.startLocalServer()");
+                    SplashScreenGenerator.printBootMessage(" --> starting local server (may take a while)");
                     JVMmanager.startLocalServer();
-
-//                    System.out.println("# + # + #  UG.startWebServer() remoteType= "+ remoteType);
-//                    UG.startWebServer();
 
 
                 } catch (Exception ex) {
@@ -578,7 +537,7 @@ public class UG {
                 int counter = 0;
                 int maxCounter = 13;
 
-                System.out.println("# + # + #  checking every " + wait
+                System.out.println(" . . checking every " + wait
                         + " secs for finishing start of server");
 
                 //wait until sever is booted and running
@@ -587,10 +546,8 @@ public class UG {
                     try {
 
                         TimeUnit.SECONDS.sleep(wait);
-                        System.out.println("waited " + counter + " times of maxCounter= " + maxCounter + ".");
-                        System.out.println("# + # + #  waiting another " + wait
-                                + " secs for finishing start of server ... "
-                                + Calendar.getInstance().getTime());
+                        System.out.println(" . . waited " + counter 
+                                + " times of maxCounter = " + maxCounter + ".");
 
                         isServerRunning = JVMmanager.isServerRunning(
                                 JVMmanager.getCurrentIP(), JVMmanager.getCurrentPort());
@@ -601,15 +558,15 @@ public class UG {
                 }
             }
 
-            System.out.println("3) # + # + #  isServerRunning=" + isServerRunning);
+            System.out.println(" . . isServerRunning=" + isServerRunning);
 
         }//END if (remoteType.equals(RemoteType.CLIENT)) 
 
         if ((isServerRunning) || (remoteType.equals(RemoteType.NONE))) {
 
-            System.out.println("if ((isServerRunning = " + isServerRunning + ") || "
-                    + "(remoteType.equals(RemoteType.NONE))) = "
-                    + remoteType.equals(RemoteType.NONE));
+//            System.out.println("if ((isServerRunning = " + isServerRunning + ") || "
+//                    + "(remoteType.equals(RemoteType.NONE))) = "
+//                    + remoteType.equals(RemoteType.NONE));
 
             // load api if compatible; rebuild otherwise
             try {
@@ -619,7 +576,7 @@ public class UG {
 
                 //if is needed because error message if client mode
                 if (remoteType.equals(RemoteType.NONE)) {
-                    System.out.println("if (remoteType.equals(RemoteType.NONE)) == true");
+//                    System.out.println("if (remoteType.equals(RemoteType.NONE)) == true");
 
                     // load native library and connect to ug lib to generate api
                     connectToNativeUG(true);
@@ -666,7 +623,7 @@ public class UG {
 
         if (remoteType.equals(RemoteType.SERVER)) {
 
-            System.out.println("# + # + #  UG(" + remoteType + ").startWebServer() ");
+//            System.out.println(" # # UG(" + remoteType + ").startWebServer() ");
             UG.startWebServer();
 
             // load native library and connect to ug lib to generate api
@@ -840,20 +797,20 @@ public class UG {
      */
     public static synchronized UG getInstance(String option) {
 
-        System.out.println("  synchronized UG.getInstance(String option) = " + option);
+//        System.out.println("  synchronized UG.getInstance(String option) = " + option);
 
         if (option != null) {
 
             if (option.toLowerCase().equals("server")) {
-                System.out.println("SERVER");
+//                System.out.println("SERVER");
                 return getInstance(null, RemoteType.SERVER);
 
             } else if (option.toLowerCase().equals("client")) {
-                System.out.println("CLIENT");
+//                System.out.println("CLIENT");
                 return getInstance(null, RemoteType.CLIENT);
 
             } else if (option.toLowerCase().equals("none")) {
-                System.out.println("NONE");
+//                System.out.println("NONE");
                 return getInstance(null, RemoteType.NONE);
             } else {
                 System.out.println("in UG.getInstance(String option),"
@@ -864,37 +821,7 @@ public class UG {
         return getInstance();
     }
 
-//    /**
-//     * <p>
-//     * Returns the instance of this singleton. If it does not exist it will be
-//     * created.
-//     * <p>
-//     * <p>
-//     * <b>Note:</b> this singleton must not be loaded by more than one
-//     * classloader per JVM! Although this is no problem for Java classes it
-//     * does not work for native libraries. Unfortunately we cannot provide an
-//     * acceptable workaround. Thus, it is recommended to use this method from
-//     * a valid VRL plugin only. The VRL plugin system is aware of this problem
-//     * and handles it correctly.
-//     * </p>
-//     * @param canvas VRL canvas that shall be used to visualize ug classes
-//     * @return the instance of this singleton
-//     */
-//    public static synchronized UG getInstance(VisualCanvas canvas) {
-//        if (ugInstance == null) {
-//
-//            ugInstance = new UG();
-//
-//            if (canvas != null) {
-//                ugInstance.setMainCanvas(canvas);
-//            }
-//
-//        } else if (canvas != null) {
-//            ugInstance.setMainCanvas(canvas);
-//        }
-//
-//        return ugInstance;
-//    }
+
     /**
      * <p> Returns the instance of this singleton. </p> <p> <b>Note:</b>If
      * message logging shall be used, please assign a visible canvas. For this
@@ -908,7 +835,6 @@ public class UG {
      * </p>
      */
     public static UG getInstance() {
-//        return getInstance(null, RemoteType.NONE);
         return getInstance(null, getRemoteType());
     }
 
@@ -938,7 +864,6 @@ public class UG {
      * Starts UG message logging.
      */
     public static void startLogging() {
-        System.out.println(" ++ ## UG.startLogging");
 
         stopLogging();
 
@@ -989,9 +914,9 @@ public class UG {
                 o = xmlRpcClient.execute("RpcHandler.getMessages", voidElement);
             } catch (XmlRpcException ex) {
 //                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
-                System.out.println("UG.getMessages(): catch of -> \n"
-                        + "xmlRpcClient.execute(RpcHandler.getMessages, voidElement)"
-                        + " = " + o);
+//                System.out.println("UG.getMessages(): catch of -> \n"
+//                        + "xmlRpcClient.execute(RpcHandler.getMessages, voidElement)"
+//                        + " = " + o);
             }
 
             String base64 = (String) o;
@@ -1244,7 +1169,7 @@ public class UG {
                         + ".convertRegistryInfo() got over XMLRPC an object"
                         + "which is not instance of NativeAPIInfo.");
             } else {
-                System.out.println(" - - - - ERROR o==null! - - - -");
+                System.out.println(" - - - - ERROR o==null - - - -");
                 throw new IllegalArgumentException(this.getClass()
                         + ".convertRegistryInfo() got over XMLRPC an object"
                         + "which is not instance of NativeAPIInfo.");
