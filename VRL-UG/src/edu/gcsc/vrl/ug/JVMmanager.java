@@ -30,7 +30,7 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 @ObjectInfo(name = "JVMmanager")
 @ComponentInfo(name = "JVMmanager", category = "VRL/VRL-UG")
 public class JVMmanager implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
     private static boolean stopJvmOutputRedirection = false;
     private static boolean isServerJVMrunning = false;
@@ -61,9 +61,9 @@ public class JVMmanager implements Serializable {
      *
      */
     private static void startAnotherJVM(final Class clazz) {
-
+        
         Thread t = new Thread(new Runnable() {
-
+            
             @Override
             public void run() {
 
@@ -73,7 +73,7 @@ public class JVMmanager implements Serializable {
                             + "updateLocalServer = true");
                     Configurator.updateLocalServerFolder();
                 }
-
+                
                 String separator = System.getProperty("file.separator");
                 String classpath = System.getProperty("java.class.path");
 
@@ -89,24 +89,24 @@ public class JVMmanager implements Serializable {
                 System.out.println(" - JVMmanager.startAnotherJVM() :");
                 System.out.println(" - - new Thread().run : ");
                 System.out.println(" - - UG.getRemoteType() =" + UG.getRemoteType());
-                
+
 //                File localServerFolder = Configurator.getLocalServerFolder();
                 String localServerJar = Configurator.getLocalServerJar();
                 
                 String localServerUpdateJar = Configurator.getLocalServerUpdateFolder()
                         + separator + VJarUtil.getClassLocation(UG.class).getName();
-
+                
                 if (localServerJar != null) {
                     classpath += ":" + localServerJar;
-
+                    
                     System.out.println("localServerJar = " + localServerJar);
-
-
+                    
+                    
                     System.out.println("localServerJar.exists() = "
                             + new File(localServerJar).exists());
-
-
-
+                    
+                    
+                    
                 } else {
                     System.out.println("ERROR in JVMmanager.startAnotherJVM():"
                             + " localServerJar is NULL");
@@ -133,18 +133,18 @@ public class JVMmanager implements Serializable {
 //                    System.out.println("-- --- classpath.split(:) = " + split);
 //                }
 
-
+                
                 String path = System.getProperty("java.home")
                         + separator + "bin" + separator + "java";
-
+                
                 String name = clazz.getName();
-
+                
                 String serverFolderName = Configurator.getLocalServerFolder().getName();
 
                 // to remove outOfMemoryError message: PermGen space
                 // or better said resize the PermGen space area in the heap
                 String commandLineCallOptions = "-XX:MaxPermSize=512m";
-
+                
                 ProcessBuilder processBuilder = new ProcessBuilder(
                         path, commandLineCallOptions,
                         "-cp", classpath, name,
@@ -158,18 +158,18 @@ public class JVMmanager implements Serializable {
 //                processBuilder.environment().put("APP_NAME", name);
 
                 Process process = null;
-
+                
                 try {
                     process = processBuilder.start();
-
+                    
                     displayJVMOutput(process);
-
+                    
                 } catch (IOException ex) {
                     Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
-
+        
         t.setDaemon(true);
         t.start();
     }
@@ -181,11 +181,11 @@ public class JVMmanager implements Serializable {
      * @param p the process which output should be redirected
      */
     public static void displayJVMOutput(final Process p) {
-
+        
         stopJvmOutputRedirection = false;
-
+        
         Thread thread = new Thread(new Runnable() {
-
+            
             @Override
             public void run() {
 
@@ -201,21 +201,21 @@ public class JVMmanager implements Serializable {
                     InputStream errStream = p.getErrorStream();
                     InputStreamReader errStreamRead = new InputStreamReader(errStream);
                     BufferedReader buffErrStreamRead = new BufferedReader(errStreamRead);
-
+                    
                     while (!stopJvmOutputRedirection) {
                         String lineOut = buffInStreamRead.readLine();
-
+                        
                         if (lineOut != null) {
                             System.out.println(lineOut);
                         }
-
+                        
                         String lineErr = buffErrStreamRead.readLine();
-
+                        
                         if (lineErr != null) {
                             System.err.println(lineErr);
                         }
                     }
-
+                    
                 } catch (Exception e) { // exception thrown
                     //System.out.println("Command failed!");
                 }
@@ -238,44 +238,47 @@ public class JVMmanager implements Serializable {
      * Calls remote the stopWebServer method.
      */
     public static void stopLocalServer() {
-
-        XmlRpcClient xmlRpcClient = getClient(getDefaultIP(), getCurrentPort());
-        Vector empty = new Vector();
-        Object o = null;
-        try {
-            o = xmlRpcClient.execute("RpcHandler.stopWebServer", empty);
-
-            System.out.println((Integer) o);
-
-        } catch (XmlRpcException ex) {
-            System.out.println("EXCEPTION: Server closed");
-
-            isServerJVMrunning = false;
+        
+        if (UG.getRemoteType().equals(RemoteType.CLIENT)) {
+            
+            XmlRpcClient xmlRpcClient = getClient(getDefaultIP(), getCurrentPort());
+            Vector empty = new Vector();
+            Object o = null;
+            try {
+                o = xmlRpcClient.execute("RpcHandler.stopWebServer", empty);
+                
+                System.out.println((Integer) o);
+                
+            } catch (XmlRpcException ex) {
+                System.out.println("EXCEPTION: Server closed");
+                
+                isServerJVMrunning = false;
 
 //            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-//        to be save that a server is not running
-        try {
-            o = xmlRpcClient.execute("RpcHandler.isServerRunning", empty);
-
-            if (o instanceof Boolean) {
-                System.out.println("webserver should be closed!");
-                isServerJVMrunning = ((Boolean) o).booleanValue();
-                System.out.println("isServerJVMrunning = " + isServerJVMrunning);
             }
 
-        } catch (XmlRpcException ex) {
+//        to be save that a server is not running
+            try {
+                o = xmlRpcClient.execute("RpcHandler.isServerRunning", empty);
+                
+                if (o instanceof Boolean) {
+                    System.out.println("webserver should be closed!");
+                    isServerJVMrunning = ((Boolean) o).booleanValue();
+                    System.out.println("isServerJVMrunning = " + isServerJVMrunning);
+                }
+                
+            } catch (XmlRpcException ex) {
 //            Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }
 
-        // MAKE SOME CLEANUP
+            // MAKE SOME CLEANUP
 
-        //remove the cached client from map
-        removeClient(getDefaultIP(), getCurrentPort());
-
-        releaseUGpointers();
-
+            //remove the cached client from map
+            removeClient(getDefaultIP(), getCurrentPort());
+            
+            releaseUGpointers();
+        }// END if (UG.getRemoteType().equals(RemoteType.CLIENT))
+        
     }
 
     /**
@@ -284,20 +287,20 @@ public class JVMmanager implements Serializable {
      */
     public static synchronized void startLocalServer() {
         System.out.println("startLocalServer() : isServerJVMrunning = " + isServerJVMrunning);
-
-
+        
+        
         if (!isServerJVMrunning) {
             isServerJVMrunning = true;
 
             //make sure nothing from last server run is cached ! ! !
             removeClient(getDefaultIP(), getCurrentPort());
             releaseUGpointers();
-
+            
             startAnotherJVM(UG.class);//, getDefaultIP(), getCurrentPort());
         }
-
+        
         System.out.println("startLocalServer() : UG.startLogging()");
-
+        
         UG.startLogging();
     }
 
@@ -312,23 +315,23 @@ public class JVMmanager implements Serializable {
      *
      */
     public static boolean isServerRunning(String ip, Integer port) {
-
+        
         XmlRpcClient xmlRpcClient = getClient(ip, port);
-
+        
         try {
             Object o = xmlRpcClient.execute("RpcHandler.isServerRunning", new Vector());
-
+            
             Boolean b = (Boolean) o;
 //            System.out.println(b);
 
             return b.booleanValue();
-
+            
         } catch (XmlRpcException ex) {
 //            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
 //            System.out.println("Connection ERROR");
             return false;
         }
-
+        
     }
 
     /**
@@ -348,22 +351,22 @@ public class JVMmanager implements Serializable {
      */
     private static XmlRpcClient createXmlRpcClient(String ip, int port) {
         boolean result = false;
-
+        
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-
+        
         try {
             config.setServerURL(new URL("http://" + ip + ":" + port));
-
+            
         } catch (MalformedURLException ex) {
             Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         //aktiviere erweiterungen
         config.setEnabledForExtensions(true);
-
+        
         XmlRpcClient xmlRpcClient = new XmlRpcClient();
         xmlRpcClient.setConfig(config);
-
+        
         return xmlRpcClient;
     }
 
@@ -376,7 +379,7 @@ public class JVMmanager implements Serializable {
      * @param client the client which should be used for the communication
      */
     private static void addClient(String ip, Integer port, XmlRpcClient client) {
-
+        
         clientsForConnection.put(ip + ":" + port, client);
     }
 
@@ -387,7 +390,7 @@ public class JVMmanager implements Serializable {
      * @param port the port at which communication is done with the server
      */
     private static void removeClient(String ip, Integer port) {
-
+        
         clientsForConnection.remove(ip + ":" + port);
     }
 
@@ -402,7 +405,7 @@ public class JVMmanager implements Serializable {
      * @return a client for the given ip-port-configuration
      */
     public static XmlRpcClient getClient(String ip, Integer port) {
-
+        
         XmlRpcClient client = clientsForConnection.get(ip + ":" + port);
 
 //        System.out.println("JVMmanager.getClient() :"
@@ -426,7 +429,7 @@ public class JVMmanager implements Serializable {
      * to do this by releasing their pointer.
      */
     private static void releaseUGpointers() {
-
+        
         System.out.println("JVMmanager.releaseUGpointers()");
 //        System.out.println("weakReferenceSetofUGObjects.size() = "
 //                +weakReferencesOfUGObjects.size());
@@ -513,7 +516,7 @@ public class JVMmanager implements Serializable {
             JVMmanager.releaseUGpointers();
             currentPort = aCurrentPort;
         }
-
+        
     }
 
     /**
