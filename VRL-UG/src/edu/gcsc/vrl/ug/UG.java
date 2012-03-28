@@ -9,10 +9,7 @@ import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
-import eu.mihosoft.vrl.system.VParamUtil;
-import eu.mihosoft.vrl.system.VRL;
-import eu.mihosoft.vrl.system.VSysUtil;
-import eu.mihosoft.vrl.system.VTerminalUtil;
+import eu.mihosoft.vrl.system.*;
 import eu.mihosoft.vrl.visual.MessageType;
 import eu.mihosoft.vrl.visual.SplashScreenGenerator;
 import java.beans.XMLDecoder;
@@ -208,14 +205,14 @@ public class UG {
 //            "-plugin-checksum-test", "yes",
 //            "-" + Constants.REMOTETYPE_KEY, RemoteType.SERVER.toString()};
 
-        
+
         // TEST START
         String serverFolder = "default";
-        
+
         for (int i = 0; i < args.length; i++) {
             System.out.println("args[" + i + "] = " + args[i]);
 
-            if(args[i].contains(Constants.SERVER_SUFFIX)){
+            if (args[i].contains(Constants.SERVER_SUFFIX)) {
                 serverFolder = args[i];
             }
         }
@@ -1081,16 +1078,17 @@ public class UG {
                     try {
                         final StringBuilder messages = getMessages();
 
-                        if ((messages != null) && (messages.length() > 0)) {
+                        if (getMessages().length() > 0) {
                             SwingUtilities.invokeLater(new Runnable() {
 
                                 public void run() {
-
                                     if (mainCanvas != null && messages.length() > 0) {
-                                        mainCanvas.getMessageBox().addMessageAsLog(
-                                                "UG-Output:",
-                                                "<pre>" + messages + "</pre>",
-                                                MessageType.INFO);
+//                                mainCanvas.getMessageBox().addMessageAsLog(
+//                                        "UG-Output:",
+//                                        /*"<pre>" +*/ messages.toString().replace("<br>", "\n") /*+ "</pre>"*/,
+//                                        MessageType.INFO);
+                                        Messaging.getStream(Messaging.MSG_OUT).print(
+                                                messages.toString().replace("<br>", "\n"));
                                         clearMessages();
                                     }
                                 }
