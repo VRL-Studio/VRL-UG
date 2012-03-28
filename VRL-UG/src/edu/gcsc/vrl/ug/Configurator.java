@@ -114,23 +114,27 @@ public class Configurator extends VPluginConfigurator {
      */
     public static void updateLocalServerFolder() {
         System.out.println("Configurator.updateLocalServerFolder() : START");
-        
+
         File serverFolder = getLocalServerFolder();
-        File studioDir = getVRLStudioDir();
+
+        System.out.println(" serverFolder = " + serverFolder.getAbsolutePath());
+
+
+        getPropertyFolderManager().init(serverFolder.getName(), true);
+
 
         if (!serverFolder.exists()) {
-            // create folders
-
-            getPropertyFolderManager().init(serverFolder.getName(), true);
             try {
-
+                // create folders
                 getPropertyFolderManager().create();
-
             } catch (IOException ex) {
                 Logger.getLogger(Configurator.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         }
+
+
+
+
 
 
         try {
@@ -141,10 +145,10 @@ public class Configurator extends VPluginConfigurator {
             //
             File jarToCopy = VJarUtil.getClassLocation(UG.class);
 //            File jarTarget = new File(getPropertyFolderManager().getPluginUpdatesFolder(),    //PluginUpdate-Folder
-            File jarTarget = new File(getPropertyFolderManager().getPluginFolder(),             //Plugin-Folder
+            File jarTarget = new File(getPropertyFolderManager().getPluginFolder(), //Plugin-Folder
                     VJarUtil.getClassLocation(UG.class).getName());
 
-            
+
             System.out.println("Configurator: UG.getRemoteType() = " + UG.getRemoteType());
 
             System.out.println("Configurator: jarToCopy = " + jarToCopy);
@@ -167,7 +171,7 @@ public class Configurator extends VPluginConfigurator {
             File ug4PluginFolderTarget = new File(getPropertyFolderManager().getPluginFolder()
                     + System.getProperty("file.separator")
                     + Constants.PLUGIN_IDENTIFIER.getName());
-            
+
             System.out.println(" ug4PluginFolderTarget = " + ug4PluginFolderTarget);
 
             IOUtil.copyDirectory(ug4PluginFolderToCopy, ug4PluginFolderTarget);//copy UG4 folder
@@ -188,10 +192,10 @@ public class Configurator extends VPluginConfigurator {
 
 //            System.out.println("serverConfigFile.delete() = " + serverConfigFile.delete());
 //            serverConfigFile.delete();
-            
-             ConfigurationFile pConfig = IOUtil.newConfigurationFile(serverConfigFile);
-             pConfig.setProperty(Constants.REMOTETYPE_KEY, RemoteType.SERVER.toString());
-             pConfig.save();
+
+            ConfigurationFile pConfig = IOUtil.newConfigurationFile(serverConfigFile);
+            pConfig.setProperty(Constants.REMOTETYPE_KEY, RemoteType.SERVER.toString());
+            pConfig.save();
 
 
         } catch (FileNotFoundException ex) {
@@ -447,20 +451,20 @@ public class Configurator extends VPluginConfigurator {
 //            }
         }
 
-        //check if config file entry exists for path to jar file
-        if (getConfigurationFile().getProperty(Constants.JAR_PATH_KEY) == null) {
-
-            getConfigurationFile().setProperty(
-                    Constants.JAR_PATH_KEY, getVrlUgJarPath());
-        }
-
-        //check if config file entry exists for path to local server folder
-        if (getConfigurationFile().getProperty(Constants.PATH_TO_LOCAL_SERVER_FOLDER_KEY) == null) {
-
-            getConfigurationFile().setProperty(
-                    Constants.PATH_TO_LOCAL_SERVER_FOLDER_KEY,
-                    getLocalServerFolder().getAbsolutePath());
-        }
+//        //check if config file entry exists for path to jar file
+//        if (getConfigurationFile().getProperty(Constants.JAR_PATH_KEY) == null) {
+//
+//            getConfigurationFile().setProperty(
+//                    Constants.JAR_PATH_KEY, getVrlUgJarPath());
+//        }
+//
+//        //check if config file entry exists for path to local server folder
+//        if (getConfigurationFile().getProperty(Constants.PATH_TO_LOCAL_SERVER_FOLDER_KEY) == null) {
+//
+//            getConfigurationFile().setProperty(
+//                    Constants.PATH_TO_LOCAL_SERVER_FOLDER_KEY,
+//                    getLocalServerFolder().getAbsolutePath());
+//        }
 
         getConfigurationFile().save();
 
