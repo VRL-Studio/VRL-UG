@@ -23,7 +23,7 @@ import javax.swing.*;
 
 
 /**
- *
+ * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class Configurator extends VPluginConfigurator {
@@ -48,7 +48,7 @@ public class Configurator extends VPluginConfigurator {
             jarPath = getVRLStudioDir().getAbsolutePath() + "/VRL-UG.jar";
         }
 
-        System.out.println("## Configurator : jarPath = " + jarPath);
+//        System.out.println("## Configurator : jarPath = " + jarPath);
 
         return jarPath;
 
@@ -61,7 +61,7 @@ public class Configurator extends VPluginConfigurator {
     public static File getVRLStudioDir() {
         File studioDir = VRL.getPropertyFolderManager().getPropertyFolder();//.getAbsolutePath();
 
-        System.out.println("## Configurator : studioDir = " + studioDir);
+//        System.out.println("## Configurator : studioDir = " + studioDir);
 
         return studioDir;
 
@@ -77,7 +77,7 @@ public class Configurator extends VPluginConfigurator {
             serverFolder = new File(VRL.getPropertyFolderManager().getPropertyFolder()
                     + Constants.SERVER_SUFFIX);
         }
-        System.out.println("## Configurator : serverFolder = " + serverFolder);
+//        System.out.println("## Configurator : serverFolder = " + serverFolder);
 
         return serverFolder;
 
@@ -91,7 +91,7 @@ public class Configurator extends VPluginConfigurator {
         if (serverUpdateFolder == null) {
             serverUpdateFolder = getPropertyFolderManager().getPluginUpdatesFolder();
         }
-        System.out.println("## Configurator : serverUpdateFolder = " + serverUpdateFolder);
+//        System.out.println("## Configurator : serverUpdateFolder = " + serverUpdateFolder);
 
         return serverUpdateFolder;
 
@@ -108,7 +108,7 @@ public class Configurator extends VPluginConfigurator {
                     + System.getProperty("file.separator")
                     + VJarUtil.getClassLocation(UG.class).getName();
         }
-        System.out.println("## Configurator : serverJar = " + serverJar);
+//        System.out.println("## Configurator : serverJar = " + serverJar);
 
         return serverJar;
 
@@ -119,11 +119,11 @@ public class Configurator extends VPluginConfigurator {
      * exists.
      */
     public static void updateLocalServerFolder() {
-        System.out.println("Configurator.updateLocalServerFolder() : START");
+//        System.out.println("Configurator.updateLocalServerFolder() : START");
 
         File serverFolder = getLocalServerFolder();
 
-        System.out.println(" serverFolder = " + serverFolder.getAbsolutePath());
+//        System.out.println(" serverFolder = " + serverFolder.getAbsolutePath());
 
 
         getPropertyFolderManager().init(serverFolder.getName(), true);
@@ -155,10 +155,10 @@ public class Configurator extends VPluginConfigurator {
                     VJarUtil.getClassLocation(UG.class).getName());
 
 
-            System.out.println("Configurator: UG.getRemoteType() = " + UG.getRemoteType());
-
-            System.out.println("Configurator: jarToCopy = " + jarToCopy);
-            System.out.println("Configurator: jarTarget = " + jarTarget);
+//            System.out.println("Configurator: UG.getRemoteType() = " + UG.getRemoteType());
+//
+//            System.out.println("Configurator: jarToCopy = " + jarToCopy);
+//            System.out.println("Configurator: jarTarget = " + jarTarget);
 
             IOUtil.copyFile(jarToCopy, jarTarget);//copy VRL-UG.jar
 
@@ -168,17 +168,18 @@ public class Configurator extends VPluginConfigurator {
             File ug4PluginFolderToCopy = new File(VRL.getPropertyFolderManager().getPluginFolder()
                     + System.getProperty("file.separator")
                     + Constants.PLUGIN_IDENTIFIER.getName());
-            System.out.println(" ug4PluginFolderToCopy = " + ug4PluginFolderToCopy);
-
-            System.out.println(" -- getPropertyFolderManager() = " + getPropertyFolderManager());
-
-            System.out.println(" !! -- getPluginFolder() = " + getPropertyFolderManager().getPluginFolder());
+            
+//            System.out.println(" ug4PluginFolderToCopy = " + ug4PluginFolderToCopy);
+//
+//            System.out.println(" -- getPropertyFolderManager() = " + getPropertyFolderManager());
+//
+//            System.out.println(" !! -- getPluginFolder() = " + getPropertyFolderManager().getPluginFolder());
 
             File ug4PluginFolderTarget = new File(getPropertyFolderManager().getPluginFolder()
                     + System.getProperty("file.separator")
                     + Constants.PLUGIN_IDENTIFIER.getName());
 
-            System.out.println(" ug4PluginFolderTarget = " + ug4PluginFolderTarget);
+//            System.out.println(" ug4PluginFolderTarget = " + ug4PluginFolderTarget);
 
             IOUtil.copyDirectory(ug4PluginFolderToCopy, ug4PluginFolderTarget);//copy UG4 folder
 
@@ -194,7 +195,8 @@ public class Configurator extends VPluginConfigurator {
                     + PluginDataController.CONFIG
                     + System.getProperty("file.separator")
                     + PluginDataController.CONFIG_FILENAME);
-            System.out.println("serverConfigFile = " + serverConfigFile);
+            
+//            System.out.println("serverConfigFile = " + serverConfigFile);
 
 //            System.out.println("serverConfigFile.delete() = " + serverConfigFile.delete());
 //            serverConfigFile.delete();
@@ -277,8 +279,8 @@ public class Configurator extends VPluginConfigurator {
     }
 
     public void init(final InitPluginAPI iApi) {
-        System.out.println(" ****CONFIGURATOR.init( iAPI) UG.getRemoteType() = "
-                + UG.getRemoteType());
+//        System.out.println(" ****CONFIGURATOR.init( iAPI) UG.getRemoteType() = "
+//                + UG.getRemoteType());
 
         //set pluginConfiguration first possiblity here to set / get it
         //is needed for interaction with config file
@@ -373,7 +375,7 @@ public class Configurator extends VPluginConfigurator {
                             RemoteType.NONE.toString().toLowerCase())) {
 
                         remoteTypeChoise.setSelectedItem(RemoteType.NONE);
-                        System.out.println("IF ComboBox RemoteType.NONE");
+//                        System.out.println("IF ComboBox RemoteType.NONE");
                     }
 
                     if (currentRTstr.toLowerCase().
@@ -381,7 +383,7 @@ public class Configurator extends VPluginConfigurator {
                             RemoteType.CLIENT.toString().toLowerCase())) {
 
                         remoteTypeChoise.setSelectedItem(RemoteType.CLIENT);
-                        System.out.println("IF ComboBox RemoteType.CLIENT");
+//                        System.out.println("IF ComboBox RemoteType.CLIENT");
                     }
 
 
@@ -393,7 +395,7 @@ public class Configurator extends VPluginConfigurator {
                 } else //if no remotetype is set use default type NONE
                 {
                     remoteTypeChoise.setSelectedItem(RemoteType.NONE);
-                    System.out.println("ELSE ComboBox RemoteType.NONE");
+//                    System.out.println("ELSE ComboBox RemoteType.NONE");
                 }
 
                 outerBox.add(remoteTypeChoise);
@@ -521,7 +523,7 @@ public class Configurator extends VPluginConfigurator {
      * @return the remoteType that should be used
      */
     private static String checkRemoteTypeOption() {
-        System.out.println("Configurator.checkRemoteTypeOption()");
+//        System.out.println("Configurator.checkRemoteTypeOption()");
 
         String tmp = null;
         String option = null;
@@ -531,8 +533,8 @@ public class Configurator extends VPluginConfigurator {
         tmp = VArgUtil.getArg(VRL.getCommandLineOptions(),
                 "-" + Constants.REMOTETYPE_KEY);
 
-        System.out.println("VRL.getCommandLineOptions("
-                + Constants.REMOTETYPE_KEY + ") = " + tmp);
+//        System.out.println("VRL.getCommandLineOptions("
+//                + Constants.REMOTETYPE_KEY + ") = " + tmp);
 
         if (tmp != null) {
             option = tmp;
@@ -547,8 +549,8 @@ public class Configurator extends VPluginConfigurator {
         //this should be the prefered way of getting informations
         tmp = pluginConfiguration.getProperty(Constants.REMOTETYPE_KEY);
 
-        System.out.println(" **** checkRemoteTypeOption( iAPI) OPTION: "
-                + Constants.REMOTETYPE_KEY + " = " + tmp);
+//        System.out.println(" **** checkRemoteTypeOption( iAPI) OPTION: "
+//                + Constants.REMOTETYPE_KEY + " = " + tmp);
 
 //        }
 
@@ -586,7 +588,7 @@ public class Configurator extends VPluginConfigurator {
      */
     public static void setServerConfiguration(boolean serverConfiguration) {
 
-        System.out.println("configurator.setServerConfiguration(" + serverConfiguration + ")");
+//        System.out.println("configurator.setServerConfiguration(" + serverConfiguration + ")");
         Configurator.serverConfiguration = serverConfiguration;
     }
 
