@@ -582,10 +582,12 @@ public class UG {
 
                         public void run() {
                             if (mainCanvas != null && messages.length() > 0) {
-                                mainCanvas.getMessageBox().addMessageAsLog(
-                                        "UG-Output:",
-                                        "<pre>" + messages + "</pre>",
-                                        MessageType.INFO);
+//                                mainCanvas.getMessageBox().addMessageAsLog(
+//                                        "UG-Output:",
+//                                        /*"<pre>" +*/ messages.toString().replace("<br>", "\n") /*+ "</pre>"*/,
+//                                        MessageType.INFO);
+                                Messaging.getStream(Messaging.MSG_OUT).print(
+                                        messages.toString().replace("<br>", "\n"));
                                 clearMessages();
                             }
                         }

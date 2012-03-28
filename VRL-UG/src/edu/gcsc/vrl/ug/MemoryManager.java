@@ -6,9 +6,12 @@ package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Memory manager for handling native memory allocation/deallocation.
+ *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class MemoryManager {
@@ -21,6 +24,7 @@ public class MemoryManager {
     /**
      * Releases native pointer instances of all UG objects that are visualized
      * with the specified VRL canvas.
+     *
      * @param canvas canvas
      */
     public static void releaseAll(VisualCanvas canvas) {
@@ -40,8 +44,9 @@ public class MemoryManager {
     }
 
     /**
-     * Deallocates specified memory. The destructor of the specified class
-     * will be called.
+     * Deallocates specified memory. The destructor of the specified class will
+     * be called.
+     *
      * @param objPtr object pointer
      * @param exportedClassPtr pointer of the exported class
      */
@@ -50,7 +55,9 @@ public class MemoryManager {
 
     /**
      * Invalidates the specified smart pointer.
+     *
      * @param p smart-pointer to invalidate
      */
-    native static void invalidate(SmartPointer p);
+    native synchronized static void invalidate(SmartPointer p);
+
 }
