@@ -1,5 +1,7 @@
+//package edu.gcsc.vrl.ug;
 
 import edu.gcsc.vrl.ug.*;
+import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.PluginAPI;
@@ -20,16 +22,21 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
+ * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-@ComponentInfo(ignore=true)
+@ComponentInfo(ignore = true)
 public class APIPluginConfiguratorImpl extends VPluginConfigurator {
 
-public static final PluginIdentifier API_PLUGIN_IDENTIFIER =
-            new PluginIdentifier("UG4-API", "0.1");//"0.1.1.x" did not work
-
-public static final PluginIdentifier PLUGIN_IDENTIFIER =
-            new PluginIdentifier("UG4", "0.1");//"0.1.1.x" did not work
+    
+    public final static String PLUGIN_NAME = "VRL-UG4";
+    public final static String PLUGIN_NAME_API = "VRL-UG4-API";
+    public final static String REMOTE_TYPE = "CLIENT";
+    
+    public static final PluginIdentifier API_PLUGIN_IDENTIFIER =
+            new PluginIdentifier(PLUGIN_NAME_API, "0.1.1");//"0.1.1.x" did not work
+    public static final PluginIdentifier PLUGIN_IDENTIFIER =
+            new PluginIdentifier(PLUGIN_NAME, "0.2");//"0.1.1.x" did not work
 
     public APIPluginConfiguratorImpl() {
 
@@ -40,7 +47,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
                 PLUGIN_IDENTIFIER.getVersion(),
                 PLUGIN_IDENTIFIER.getVersion()));
 
-        setDescription("UG-API");
+        setDescription(PLUGIN_NAME_API);
 
         // api classes must be fully available for all plugins that depend
         // on this api
@@ -54,7 +61,8 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
             VPluginAPI vApi = (VPluginAPI) api;
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
 
-            UG.getInstance("CLIENT").setMainCanvas(vCanvas);
+// TODO check if there need / can always stand CLIENT
+            UG.getInstance(REMOTE_TYPE).setMainCanvas(vCanvas);
 
             Class<?> apiCls = null;
             boolean matchingAPI = false;
@@ -69,7 +77,8 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
             }
 
             if (apiCls == null) {
-                System.err.println(">> VRL-UG: UG-API class not found!");
+                System.err.println(">> " + PLUGIN_NAME + " : "
+                        + PLUGIN_NAME_API + " class not found!");
             }
 
             try {
@@ -82,10 +91,13 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
                         "getCompileDate").
                         invoke(apiCls);
 
-                boolean revisionsAreEqual =
-                        apiSvn.equals(UG.getInstance("CLIENT").getSvnRevision());
-                boolean datesAreEqual =
-                        apiDate.equals(UG.getInstance("CLIENT").getCompileDate());
+// TODO check if there need / can always stand CLIENT
+                boolean revisionsAreEqual = apiSvn.equals(
+                        UG.getInstance(REMOTE_TYPE).getSvnRevision());
+                
+// TODO check if there need / can always stand CLIENT
+                boolean datesAreEqual = apiDate.equals(
+                        UG.getInstance(REMOTE_TYPE).getCompileDate());
 
                 matchingAPI = revisionsAreEqual && datesAreEqual;
 
@@ -96,7 +108,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
                 Logger.getLogger(APIPluginConfiguratorImpl.class.getName()).
                         log(Level.SEVERE, null, ex);
             } catch (InvocationTargetException ex) {
-                Logger.getLogger(APIPluginConfigurConstatorImpl.class.getName()).
+                Logger.getLogger(APIPluginConfiguratorImpl.class.getName()).
                         log(Level.SEVERE, null, ex);
 
             } catch (NoSuchMethodException ex) {
@@ -107,15 +119,15 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
                         log(Level.SEVERE, null, ex);
             }
 
-            /*if (!matchingAPI) {
-                VDialog.showMessageDialog(vCanvas,
-                        "UG-API not compatible to current UG version:",
-                        " UG-API has to be recompiled."
-                        + " To do so, delete the file VRL-UG-API.jar in the"
-                        + " Plugin directory and restart VRL-Studio.");
-
-                VRL.exit(0);
-            }*/
+            /*
+             * if (!matchingAPI) { VDialog.showMessageDialog(vCanvas, "UG-API
+             * not compatible to current UG version:", " UG-API has to be
+             * recompiled." + " To do so, delete the file VRL-UG-API.jar in the"
+             * + " Plugin directory and restart VRL-Studio.");
+             *
+             * VRL.exit(0);
+            }
+             */
 
 
             for (Class<?> cls : UG.getAPiClasses(apiCls)) {
@@ -127,7 +139,7 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
             vApi.addTypeRepresentation(new UserDataType());
             vApi.addTypeRepresentation(new BoundaryUserDataType());
 
-            vApi.addComponentSearchFilter(new HideComponentFilter());           
+            vApi.addComponentSearchFilter(new HideComponentFilter());
         }
     }
 
@@ -135,9 +147,8 @@ public static final PluginIdentifier PLUGIN_IDENTIFIER =
         //
     }
 
-
     public void init(InitPluginAPI iApi) {
-       // UG.connectToNativeUG(isLoadNativeLibraries());
+        // UG.connectToNativeUG(isLoadNativeLibraries());
     }
 }
 

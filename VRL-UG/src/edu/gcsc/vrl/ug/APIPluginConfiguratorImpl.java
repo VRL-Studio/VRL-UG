@@ -1,9 +1,7 @@
-///*
-// * To change this template, choose Tools | Templates
-// * and open the template in the editor.
-// */
-//package edu.gcsc.vrl.ug;
+////package edu.gcsc.vrl.ug;
 //
+//import edu.gcsc.vrl.ug.*;
+//import eu.mihosoft.vrl.annotation.ComponentInfo;
 //import eu.mihosoft.vrl.io.VPropertyFolderManager;
 //import eu.mihosoft.vrl.reflection.VisualCanvas;
 //import eu.mihosoft.vrl.system.PluginAPI;
@@ -11,6 +9,7 @@
 //import eu.mihosoft.vrl.system.PluginDependency;
 //import eu.mihosoft.vrl.system.PluginIdentifier;
 //import eu.mihosoft.vrl.system.VPluginAPI;
+//import eu.mihosoft.vrl.system.InitPluginAPI;
 //import eu.mihosoft.vrl.system.VPluginConfigurator;
 //import eu.mihosoft.vrl.system.VRL;
 //import eu.mihosoft.vrl.visual.VDialog;
@@ -23,20 +22,32 @@
 //
 ///**
 // *
+// * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
 // * @author Michael Hoffer <info@michaelhoffer.de>
 // */
-//public abstract class APIPluginConfiguratorImpl extends VPluginConfigurator {
+//@ComponentInfo(ignore = true)
+//public class APIPluginConfiguratorImpl extends VPluginConfigurator {
+//
+//    
+//    public final static String PLUGIN_NAME = "VRL-UG4";
+//    public final static String PLUGIN_NAME_API = "VRL-UG4-API";
+//    public final static String REMOTE_TYPE = "CLIENT";
+//    
+//    public static final PluginIdentifier API_PLUGIN_IDENTIFIER =
+//            new PluginIdentifier(PLUGIN_NAME_API, "0.1.1");//"0.1.1.x" did not work
+//    public static final PluginIdentifier PLUGIN_IDENTIFIER =
+//            new PluginIdentifier(PLUGIN_NAME, "0.2");//"0.1.1.x" did not work
 //
 //    public APIPluginConfiguratorImpl() {
 //
-//        setIdentifier(Constants.API_PLUGIN_IDENTIFIER);
+//        setIdentifier(API_PLUGIN_IDENTIFIER);
 //
 //        addDependency(new PluginDependency(
-//                Constants.PLUGIN_IDENTIFIER.getName(),
-//                Constants.PLUGIN_IDENTIFIER.getVersion(),
-//                Constants.PLUGIN_IDENTIFIER.getVersion()));
+//                PLUGIN_IDENTIFIER.getName(),
+//                PLUGIN_IDENTIFIER.getVersion(),
+//                PLUGIN_IDENTIFIER.getVersion()));
 //
-//        setDescription("UG-API");
+//        setDescription(PLUGIN_NAME_API);
 //
 //        // api classes must be fully available for all plugins that depend
 //        // on this api
@@ -44,18 +55,21 @@
 //    }
 //
 //    public void register(PluginAPI api) {
+//
 //        if (api instanceof VPluginAPI) {
+//
 //            VPluginAPI vApi = (VPluginAPI) api;
 //            VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
-//            UG.getInstance().setMainCanvas(vCanvas);
+//
+//// TODO check if there need / can always stand CLIENT
+//            UG.getInstance(REMOTE_TYPE).setMainCanvas(vCanvas);
 //
 //            Class<?> apiCls = null;
-//
 //            boolean matchingAPI = false;
 //
 //            try {
 //                apiCls = this.getClass().getClassLoader().
-//                        loadClass("edu.gcsc.vrl.ug.UGAPI");
+//                        loadClass("edu.gcsc.vrl.ug.api.UGAPI");
 //
 //            } catch (ClassNotFoundException ex) {
 //                Logger.getLogger(APIPluginConfiguratorImpl.class.getName()).
@@ -63,7 +77,8 @@
 //            }
 //
 //            if (apiCls == null) {
-//                System.err.println(">> VRL-UG: UG-API class not found!");
+//                System.err.println(">> " + PLUGIN_NAME + " : "
+//                        + PLUGIN_NAME_API + " class not found!");
 //            }
 //
 //            try {
@@ -76,10 +91,13 @@
 //                        "getCompileDate").
 //                        invoke(apiCls);
 //
-//                boolean revisionsAreEqual =
-//                        apiSvn.equals(UG.getInstance().getSvnRevision());
-//                boolean datesAreEqual =
-//                        apiDate.equals(UG.getInstance().getCompileDate());
+//// TODO check if there need / can always stand CLIENT
+//                boolean revisionsAreEqual = apiSvn.equals(
+//                        UG.getInstance(REMOTE_TYPE).getSvnRevision());
+//                
+//// TODO check if there need / can always stand CLIENT
+//                boolean datesAreEqual = apiDate.equals(
+//                        UG.getInstance(REMOTE_TYPE).getCompileDate());
 //
 //                matchingAPI = revisionsAreEqual && datesAreEqual;
 //
@@ -101,15 +119,15 @@
 //                        log(Level.SEVERE, null, ex);
 //            }
 //
-//            if (!matchingAPI) {
-//                VDialog.showMessageDialog(vCanvas,
-//                        "UG-API not compatible to current UG version:",
-//                        " UG-API has to be recompiled."
-//                        + " To do so, delete the file VRL-UG-API.jar in the"
-//                        + " Plugin directory and restart VRL-Studio.");
-//
-//                VRL.exit(0);
+//            /*
+//             * if (!matchingAPI) { VDialog.showMessageDialog(vCanvas, "UG-API
+//             * not compatible to current UG version:", " UG-API has to be
+//             * recompiled." + " To do so, delete the file VRL-UG-API.jar in the"
+//             * + " Plugin directory and restart VRL-Studio.");
+//             *
+//             * VRL.exit(0);
 //            }
+//             */
 //
 //
 //            for (Class<?> cls : UG.getAPiClasses(apiCls)) {
@@ -129,8 +147,8 @@
 //        //
 //    }
 //
-//    public void init() {
-//        UG.connectToNativeUG(isLoadNativeLibraries());
+//    public void init(InitPluginAPI iApi) {
+//        // UG.connectToNativeUG(isLoadNativeLibraries());
 //    }
 //}
 //
@@ -169,4 +187,3 @@
 //        return true;
 //    }
 //}
-
