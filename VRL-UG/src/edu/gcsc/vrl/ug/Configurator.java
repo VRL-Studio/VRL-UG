@@ -4,7 +4,6 @@
  */
 package edu.gcsc.vrl.ug;
 
-
 import eu.mihosoft.vrl.io.*;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.*;
@@ -21,13 +20,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 
-
 /**
  * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class Configurator extends VPluginConfigurator {
-
 
     private File templateProjectSrc;
     private static boolean serverConfiguration = false;
@@ -126,8 +123,10 @@ public class Configurator extends VPluginConfigurator {
 //        System.out.println(" serverFolder = " + serverFolder.getAbsolutePath());
 
 
-        getPropertyFolderManager().init(serverFolder.getName(), true);
+        if (!getPropertyFolderManager().isInitialized()) {
 
+            getPropertyFolderManager().init(serverFolder.getName(), true);
+        }
 
         if (!serverFolder.exists()) {
             try {
@@ -168,7 +167,7 @@ public class Configurator extends VPluginConfigurator {
             File ug4PluginFolderToCopy = new File(VRL.getPropertyFolderManager().getPluginFolder()
                     + System.getProperty("file.separator")
                     + Constants.PLUGIN_IDENTIFIER.getName());
-            
+
 //            System.out.println(" ug4PluginFolderToCopy = " + ug4PluginFolderToCopy);
 //
 //            System.out.println(" -- getPropertyFolderManager() = " + getPropertyFolderManager());
@@ -195,7 +194,7 @@ public class Configurator extends VPluginConfigurator {
                     + PluginDataController.CONFIG
                     + System.getProperty("file.separator")
                     + PluginDataController.CONFIG_FILENAME);
-            
+
 //            System.out.println("serverConfigFile = " + serverConfigFile);
 
 //            System.out.println("serverConfigFile.delete() = " + serverConfigFile.delete());
@@ -259,7 +258,7 @@ public class Configurator extends VPluginConfigurator {
 
             //TEST: component for starting an UG on an other JVM
             vApi.addComponent(JVMmanager.class);
-         
+
             // request restart
             if (UG.getInstance().isRecompiled()) {
 
@@ -474,6 +473,7 @@ public class Configurator extends VPluginConfigurator {
     public void shutdown() {
         JVMmanager.stopLocalServer();
     }
+
     /**
      * Here are the entries of the configuration file checked and if not
      * available set with default values.
@@ -591,5 +591,4 @@ public class Configurator extends VPluginConfigurator {
 //        System.out.println("configurator.setServerConfiguration(" + serverConfiguration + ")");
         Configurator.serverConfiguration = serverConfiguration;
     }
-
 }
