@@ -8,8 +8,8 @@ package edu.gcsc.vrl.ug;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class UGException extends Exception{
-
+public class UGException extends Exception {
+    
     public UGException(String message) {
         super(message);
     }
