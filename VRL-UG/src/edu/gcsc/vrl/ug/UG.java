@@ -533,21 +533,29 @@ public class UG {
                 }
 
 
-                int wait = 20;
+                int wait = 15;
                 int counter = 0;
-                int maxCounter = 13;
+                int maxWait = 7;
 
+                SplashScreenGenerator.printBootMessage(" . . checking every " + wait
+                        + " secs for finishing start of server");
+                    
                 System.out.println(" . . checking every " + wait
                         + " secs for finishing start of server");
 
                 //wait until sever is booted and running
-                while ((!isServerRunning) && (counter < maxCounter)) {
+                while ((!isServerRunning) && (counter < maxWait)) {
                     counter++;
                     try {
 
                         TimeUnit.SECONDS.sleep(wait);
-                        System.out.println(" . . waited " + counter 
-                                + " times of maxCounter = " + maxCounter + ".");
+                        
+                        String waitString =" . . waited " + counter 
+                                + " time"+( wait<2 ? "": "s")+
+                                " of max = " + maxWait + ".";
+                        
+                        SplashScreenGenerator.printBootMessage(waitString);
+                        System.out.println(waitString);
 
                         isServerRunning = JVMmanager.isServerRunning(
                                 JVMmanager.getCurrentIP(), JVMmanager.getCurrentPort());
