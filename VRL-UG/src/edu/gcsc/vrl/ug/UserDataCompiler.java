@@ -30,14 +30,17 @@ public class UserDataCompiler {
             ArrayList<String> paramNames, String returnType) {
         String paramString = "";
 
-        for (int i = 0; i < paramNames.size(); i++) {
-            paramString += "double " + paramNames.get(i) + " = p[" + i + "];";
+        for (int i = 0; i < paramNames.size()-1; i++) {
+            paramString += "double " + paramNames.get(i) + " = _p[" + i + "];";
         }
+        
+        // additional subset index parameter (always last param by definition)
+        paramString += "int " + paramNames.get(paramNames.size()-1) + " = _si;";
 
         String text = "package " + PACKAGE_NAME+";\n" 
                 +"class " + UserDataCompiler.CLASS_NAME
                 + " extends UserData {\n";
-        text += returnType + " run" + dim+ " (double[] p) {\n";
+        text += returnType + " run" + dim+ " (double[] _p, int _si) {\n";
 
         text += paramString;
         text += s + "\n}\n}\n";

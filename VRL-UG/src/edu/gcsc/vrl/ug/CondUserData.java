@@ -9,6 +9,6 @@ package edu.gcsc.vrl.ug;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class BoundaryUserData {
-    public Boundary run(double[] p) {return new Boundary();};
+public class CondUserData {
+    public Cond run(double[] _p, int _si) {return new Cond();};
 }
