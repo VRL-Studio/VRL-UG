@@ -137,7 +137,7 @@ public class APIPluginConfiguratorImpl extends VPluginConfigurator {
             vApi.addComponent(ReleaseInstances.class);
 
             vApi.addTypeRepresentation(new UserDataType());
-            vApi.addTypeRepresentation(new BoundaryUserDataType());
+            vApi.addTypeRepresentation(new CondUserDataType());
 
             vApi.addComponentSearchFilter(new HideComponentFilter());
         }

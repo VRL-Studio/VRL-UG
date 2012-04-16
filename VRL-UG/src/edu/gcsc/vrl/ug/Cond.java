@@ -12,21 +12,21 @@ import java.util.ArrayList;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class Boundary extends GroovyObjectSupport{
-    private boolean bndBool;
+public class Cond extends GroovyObjectSupport{
+    private boolean condBool;
     private double value;
 
-    public Boundary() {
-        bndBool = false;
+    public Cond() {
+        condBool = false;
         value = 0;
     }
 
-    public Boundary(boolean bndBool, double value) {
-        this.bndBool = bndBool;
+    public Cond(boolean bndBool, double value) {
+        this.condBool = bndBool;
         this.value = value;
     }
 
-    public Boundary(ArrayList<Object> data) {
+    public Cond(ArrayList<Object> data) {
         if (data==null) {
             throw new IllegalArgumentException(
                     "Argument \"null\" not supported!");
@@ -50,15 +50,15 @@ public class Boundary extends GroovyObjectSupport{
                     "Type mismatch: second entry must be a number!");
         }
 
-        bndBool = (Boolean) data.get(0);
+        condBool = (Boolean) data.get(0);
         value = (Double) data.get(1);
     }
 
     /**
      * @return the bndBool
      */
-    public boolean getBndBool() {
-        return bndBool;
+    public boolean getCondBool() {
+        return condBool;
     }
 
     /**
