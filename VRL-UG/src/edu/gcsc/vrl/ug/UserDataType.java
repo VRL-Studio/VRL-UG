@@ -6,6 +6,7 @@ package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.lang.groovy.GroovyCompiler;
+import eu.mihosoft.vrl.types.InputCodeType;
 import eu.mihosoft.vrl.types.InputTextType;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class UserDataType extends InputTextType {
+public class UserDataType extends InputCodeType {
 
     private ArrayList<String> paramNames;
     private int dim = 1;

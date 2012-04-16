@@ -6,6 +6,7 @@ package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.lang.groovy.GroovyCompiler;
+import eu.mihosoft.vrl.types.InputCodeType;
 import eu.mihosoft.vrl.types.InputTextType;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
@@ -16,13 +17,13 @@ import java.util.ArrayList;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class BoundaryUserDataType extends InputTextType {
+public class CondUserDataType extends InputCodeType {
 
     private ArrayList<String> paramNames;
 
-    public BoundaryUserDataType() {
+    public CondUserDataType() {
         setType(String.class);
-        setStyleName("boundary-user-data");
+        setStyleName("cond-user-data");
         setValueName(" ");
     }
 
@@ -39,7 +40,7 @@ public class BoundaryUserDataType extends InputTextType {
         } else {
             String originalInput = (String) super.getViewValue();
 
-            String text = BoundaryUserDataCompiler.getUserDataImplCode(
+            String text = CondUserDataCompiler.getUserDataImplCode(
                     originalInput, paramNames);
 
             // check if code compiles
@@ -47,7 +48,7 @@ public class BoundaryUserDataType extends InputTextType {
                 GroovyCompiler compiler = new GroovyCompiler(getMainCanvas());
                 compiler.addImport(
                         "import "
-                        + BoundaryUserDataCompiler.PACKAGE_NAME + ".*;");
+                        + CondUserDataCompiler.PACKAGE_NAME + ".*;");
                 compiler.compile(text, getEditor());
             }
 
@@ -77,7 +78,7 @@ public class BoundaryUserDataType extends InputTextType {
                 paramString += paramNames.get(i);
             }
 
-            paramString += " \n// valid return type: Boundary(boolean,number) ";
+            paramString += " \n// valid return type: Cond(boolean,number) ";
 
             if (getMainCanvas() != null && !getMainCanvas().isLoadingSession()) {
                 setViewValue(paramString + "\n\n");
