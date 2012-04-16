@@ -38,7 +38,8 @@ public class CondUserDataCompiler {
         // additional subset index parameter (always last param by definition)
         paramString += "int " + paramNames.get(paramNames.size()-1) + " = _si;";
 
-        String text = "package " + PACKAGE_NAME+";\n" 
+        String text = "package " + PACKAGE_NAME+";\n"
+                + "import static java.lang.Math.*;\n"
                 +"class " + CondUserDataCompiler.CLASS_NAME
                 + " extends CondUserData {\n";
         text += returnType + " run (double[] _p, int _si) {\n";
