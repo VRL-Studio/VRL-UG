@@ -5,6 +5,7 @@
 package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.lang.CodeBuilder;
+import eu.mihosoft.vrl.lang.VLangUtils;
 import java.util.ArrayList;
 
 /**
@@ -23,23 +24,30 @@ public class UGAPIClassCode implements CodeElement {
                 // get svn revision
                 addLine("public static java.lang.String getSvnRevision() {").
                 incIndentation().
-                addLine("return \"" + UG.getInstance().getSvnRevision() + "\";").
+                addLine("return \"" + VLangUtils.addEscapesToCode(UG.getInstance().getSvnRevision()) + "\";").
                 decIndentation().
                 addLine("}").
                 
                 // get compile date
                 addLine("public static java.lang.String getCompileDate() {").
                 incIndentation().
-                addLine("return \"" + UG.getInstance().getCompileDate() + "\";").
+                addLine("return \"" + VLangUtils.addEscapesToCode(UG.getInstance().getCompileDate()) + "\";").
                 decIndentation().
                 addLine("}").
                 
                 // get description
                 addLine("public static java.lang.String getDescription() {").
                 incIndentation().
-                addLine("return \"" + UG.getInstance().getDescription()
+                addLine("return \"" + VLangUtils.addEscapesToCode(UG.getInstance().getDescription())
                 + "<br><br><b>Authors:</b><br><br>"
-                + UG.getInstance().getAuthors().replace("\n", "<br>") + "\";").
+                + VLangUtils.addEscapesToCode(UG.getInstance().getAuthors()).replace("\n", "<br>") + "\";").
+                decIndentation().
+                addLine("}").
+        
+                // get ug version
+                addLine("public static java.lang.String getVersion() {").
+                incIndentation().
+                addLine("return \"" + getVersion() +"\";").
                 decIndentation().
                 addLine("}").
                 
@@ -50,5 +58,19 @@ public class UGAPIClassCode implements CodeElement {
 
         return builder;
 
+    }
+
+    private String getVersion() {
+        // TODO: remove this method if ug4.0.1 is released!
+        
+        String version = "4.0.0"; // fixme !
+        
+        try {
+            return VLangUtils.addEscapesToCode(UG.getInstance().getUGVersion());
+        }catch(Throwable tr) {
+            //
+        }
+        
+        return VLangUtils.addEscapesToCode(version);
     }
 }
