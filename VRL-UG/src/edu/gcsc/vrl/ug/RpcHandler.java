@@ -370,6 +370,23 @@ public class RpcHandler {
 //        System.out.println("result =" + result);
         return result;
     }
+    
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     */
+    public String getUGVersion() {
+        show("getUGVersion");
+
+        String result = getServer()._getUGVersion();
+
+//        System.out.println("result =" + result);
+        return result;
+    }
 
     /**
      * This method is wrapper for the same named method which is executed on the
