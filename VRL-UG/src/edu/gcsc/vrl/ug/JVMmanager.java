@@ -5,6 +5,7 @@ import eu.mihosoft.vrl.annotation.ObjectInfo;
 import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.VRL;
+import eu.mihosoft.vrl.system.VSysUtil;
 import eu.mihosoft.vrl.visual.Canvas;
 import java.io.*;
 import java.lang.ref.PhantomReference;
@@ -96,7 +97,13 @@ public class JVMmanager implements Serializable {
                 String localServerUpdateJar = Configurator.getLocalServerUpdateFolder()
                         + separator + VJarUtil.getClassLocation(UG.class).getName();
 
-                String split = File.separator;
+//                String split = File.separator;
+                String split = ":";
+                if(VSysUtil.isWindows()){
+                    System.out.println(" - > OS is a WINDOWS ");
+                    split=";";
+                }
+                
                 System.out.println(" --- split = "+ split);
                 
                 if (localServerJar != null) {
