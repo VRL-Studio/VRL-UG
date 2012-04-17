@@ -1072,6 +1072,8 @@ public class UG {
             boolean readOnly, Object[] params);
 
     native String _getSvnRevision();
+    
+    native String _getUGVersion();
 
     native String _getDescription();
 
@@ -1559,6 +1561,39 @@ public class UG {
         } else {
 
             return _getCompileDate();
+        }
+    }
+    
+    /**
+     * If UGs RemoteType is CLIENT a remote connection is etablished and the
+     * method call is redirected.
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
+     * method is called.
+     *
+     * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
+     */
+    String getUGVersion() {
+
+        if (remoteType.equals(RemoteType.CLIENT)) {
+
+            Object o = null;
+
+            try {
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
+
+                o = xmlRpcClient.execute("RpcHandler.getUGVersion", voidElement);
+            } catch (XmlRpcException ex) {
+                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            return (String) o;
+
+        } else {
+
+            return _getUGVersion();
         }
     }
 
