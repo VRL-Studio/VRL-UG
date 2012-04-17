@@ -96,8 +96,11 @@ public class JVMmanager implements Serializable {
                 String localServerUpdateJar = Configurator.getLocalServerUpdateFolder()
                         + separator + VJarUtil.getClassLocation(UG.class).getName();
 
+                String split = File.separator;
+                System.out.println(" --- split = "+ split);
+                
                 if (localServerJar != null) {
-                    classpath += ":" + localServerJar;
+                    classpath += split + localServerJar;
 
                     System.out.println("localServerJar = " + localServerJar);
 
@@ -136,7 +139,7 @@ public class JVMmanager implements Serializable {
                 System.out.println("separator = " + separator);
                 System.out.println("classpath :");
                 
-                String split =":";
+                
                 for (String s : classpath.split(split)) {
                     System.out.println(" " + s + split);
                 }
