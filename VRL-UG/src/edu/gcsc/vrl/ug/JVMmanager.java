@@ -70,8 +70,8 @@ public class JVMmanager implements Serializable {
 
                 //update the local server folder
                 if (updateLocalServer) {
-                    System.out.println("JVMmanager.startAnotherJVM() :"
-                            + "updateLocalServer = true");
+//                    System.out.println("JVMmanager.startAnotherJVM() :"
+//                            + "updateLocalServer = true");
                     Configurator.updateLocalServerFolder();
                 }
 
@@ -87,9 +87,9 @@ public class JVMmanager implements Serializable {
 
                 // TODO the path to jar of plugin in server folder
 
-                System.out.println(" - JVMmanager.startAnotherJVM() :");
-                System.out.println(" - - new Thread().run : ");
-                System.out.println(" - - UG.getRemoteType() =" + UG.getRemoteType());
+//                System.out.println(" - JVMmanager.startAnotherJVM() :");
+//                System.out.println(" - - new Thread().run : ");
+//                System.out.println(" - - UG.getRemoteType() =" + UG.getRemoteType());
 
 //                File localServerFolder = Configurator.getLocalServerFolder();
                 String localServerJar = Configurator.getLocalServerJar();
@@ -100,20 +100,20 @@ public class JVMmanager implements Serializable {
 //                String split = File.separator;
                 String split = ":";
                 if(VSysUtil.isWindows()){
-                    System.out.println(" - > OS is a WINDOWS ");
+//                    System.out.println("\n - > OS is a WINDOWS ");
                     split=";";
                 }
                 
-                System.out.println(" --- split = "+ split);
+//                System.out.println(" --- split = "+ split);
                 
                 if (localServerJar != null) {
                     classpath += split + localServerJar;
 
-                    System.out.println("localServerJar = " + localServerJar);
+//                    System.out.println("localServerJar = " + localServerJar);
 
 
-                    System.out.println("localServerJar.exists() = "
-                            + new File(localServerJar).exists());
+//                    System.out.println("localServerJar.exists() = "
+//                            + new File(localServerJar).exists());
 
 
 
@@ -142,22 +142,22 @@ public class JVMmanager implements Serializable {
                 String path = System.getProperty("java.home")
                         + separator + "bin" + separator + "java";
 
-                System.out.println("\n JVMmanager :");
-                System.out.println("separator = " + separator);
-                System.out.println("classpath :");
+//                System.out.println("\n JVMmanager :");
+//                System.out.println("separator = " + separator);
+//                System.out.println("classpath :");
                 
                 
-                for (String s : classpath.split(split)) {
-                    System.out.println(" " + s + split);
-                }
-                System.out.println("path = " + path + "\n");
+//                for (String s : classpath.split(split)) {
+//                    System.out.println(" " + s + split);
+//                }
+//                System.out.println("path = " + path + "\n");
 
-                String strClassPath = System.getProperty("java.class.path");
-                 
-                 System.out.println("Classpath is =" );
-                 for (String s : strClassPath.split(split)) {
-                    System.out.println(" " + s + split);
-                }
+//                String strClassPath = System.getProperty("java.class.path");
+//                 
+//                 System.out.println("Classpath is =" );
+//                 for (String s : strClassPath.split(split)) {
+//                    System.out.println(" " + s + split);
+//                }
                 
 //                //DEBUG SOUT END
 

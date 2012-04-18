@@ -535,7 +535,12 @@ public class UG {
 
                 int wait = 15;
                 int counter = 0;
-                int maxWait = 7;
+                int maxWait = 14;
+                
+//                System.out.println(" Server checking time variables set:");
+//                System.out.println(" wait = "+ wait);
+//                System.out.println(" counter = "+ counter);
+//                System.out.println(" maxWait = "+ maxWait);
 
                 SplashScreenGenerator.printBootMessage(" . . checking every " + wait
                         + " secs for finishing start of server");
