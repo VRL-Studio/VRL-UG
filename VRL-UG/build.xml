@@ -79,13 +79,13 @@
     </condition>
     
     <target name="-pre-compile" if="ug.copynatives">
-        <echo message="Copying ${ug.dir}/lib/libug4.${native.soname} to ${src.dir}/eu/mihosoft/vrl/natives/${native.os}"/>
+        <echo message="Copying ${ug.dir}/bin/libug4.${native.soname} to ${src.dir}/eu/mihosoft/vrl/natives/${native.os}"/>
          
        <!-- in copy -->
        <!-- WIN:  file="${ug.dir}/bin/libug4.${native.soname}" -->
        <!-- UNIX: file="${ug.dir}/lib/libug4.${native.soname}" -->
        <copy
-        file="${ug.dir}/lib/libug4.${native.soname}" 
+        file="${ug.dir}/bin/libug4.${native.soname}" 
         todir="${src.dir}/eu/mihosoft/vrl/natives/${native.os}"/>
         
         <echo message="Copying ${ug.dir}/bin/*.${native.soname} to ${src.dir}/eu/mihosoft/vrl/natives/${native.os}/plugins"/>
@@ -120,13 +120,9 @@ minus the .jar extension. It should not have spaces.
 
         <!--Copy all used .jar-files / libs into final VRL-UG.jar but NOT VRL.jar-->
         <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip">
-            <zipgroupfileset dir="dist"
-                includes="*.jar"
-                excludes="VRL.jar"/>
-            <zipgroupfileset dir="dist/lib"
-                includes="*.jar"
-                excludes="VRL.jar"/>
-
+            <zipgroupfileset dir="dist" includes="*.jar" excludes="VRL.jar"/>
+            <zipgroupfileset dir="dist/lib" includes="*.jar" excludes="VRL.jar"/>
+            
             <manifest>
                 <attribute name="Main-Class" value="${main.class}"/>
             </manifest>
