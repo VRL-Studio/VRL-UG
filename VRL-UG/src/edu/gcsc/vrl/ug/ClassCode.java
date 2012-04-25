@@ -67,7 +67,7 @@ class ClassCode implements CodeElement {
             classHeaderCode =
                     "public interface "
                     + CodeUtils.interfaceName(classInfo.getName(), isConst)
-                    + " extends UGObjectInterface ";
+                    + " extends edu.gcsc.vrl.ug.UGObjectInterface ";
 
             if (!isConst) {
                 // we extend the const interface
