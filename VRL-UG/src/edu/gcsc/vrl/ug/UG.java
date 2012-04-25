@@ -352,19 +352,19 @@ public class UG {
 
             for (File f : dynamicLibraries) {
 
-                String libName = f.getName();
+                String libName = f.getAbsolutePath();
 
-                if (!VSysUtil.isWindows()) {
-                    libName = libName.replaceFirst("lib", "");
-                }
-
-                libName = libName.substring(0,
-                        libName.length() - dylibEnding.length());
+//                if (!VSysUtil.isWindows()) {
+//                    libName = libName.replaceFirst("lib", "");
+//                }
+//
+//                libName = libName.substring(0,
+//                        libName.length() - dylibEnding.length());
 
                 if (!loadedLibraries.contains(libName)) {
                     System.out.print(" --> " + f.getName());
                     try {
-                        System.loadLibrary(libName);
+                        System.load(libName);
                         loadedLibraries.add(libName);
                         System.out.println(" [OK]");
                     } catch (Exception ex) {
@@ -393,7 +393,7 @@ public class UG {
         }
 
         // initialize native ug libraries
-
+        //@todo check whether path is correct (probably not)
         String pluginPath = getNativeLibFolder() + "/eu/mihosoft/vrl/natives/"
                 + VSysUtil.getPlatformSpecificPath() + "plugins".replace("/", File.separator);
 
@@ -404,9 +404,7 @@ public class UG {
 
         if (loadNativeLib) {
 
-            File libFolder = new File(
-                    getNativeLibFolder() + "/eu/mihosoft/vrl/natives/"
-                    + VSysUtil.getPlatformSpecificPath());
+            File libFolder = getNativeLibFolder();
 
             loadNativeLibrariesInFolder(libFolder, false);
 
