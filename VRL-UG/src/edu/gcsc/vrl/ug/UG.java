@@ -199,13 +199,13 @@ public class UG {
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
     public static void main(String[] args) {
- 
-        
+
+
         String serverFolderSuffix = "default";
 
         // check if there is a server 
         for (int i = 0; i < args.length; i++) {
-            
+
             if (args[i].contains(Constants.SERVER_SUFFIX)) {
                 serverFolderSuffix = args[i];
             }
@@ -534,7 +534,7 @@ public class UG {
                 int wait = 15;
                 int counter = 0;
                 int maxWait = 14;
-                
+
 //                System.out.println(" Server checking time variables set:");
 //                System.out.println(" wait = "+ wait);
 //                System.out.println(" counter = "+ counter);
@@ -542,7 +542,7 @@ public class UG {
 
                 SplashScreenGenerator.printBootMessage(" . . checking every " + wait
                         + " secs for finishing start of server");
-                    
+
                 System.out.println(" . . checking every " + wait
                         + " secs for finishing start of server");
 
@@ -552,11 +552,11 @@ public class UG {
                     try {
 
                         TimeUnit.SECONDS.sleep(wait);
-                        
-                        String waitString =" . . waited " + counter 
-                                + " time"+( wait<2 ? "": "s")+
-                                " of max = " + maxWait + ".";
-                        
+
+                        String waitString = " . . waited " + counter
+                                + " time" + (wait < 2 ? "" : "s")
+                                + " of max = " + maxWait + ".";
+
                         SplashScreenGenerator.printBootMessage(waitString);
                         System.out.println(waitString);
 
@@ -832,7 +832,6 @@ public class UG {
         return getInstance();
     }
 
-
     /**
      * <p> Returns the instance of this singleton. </p> <p> <b>Note:</b>If
      * message logging shall be used, please assign a visible canvas. For this
@@ -1075,7 +1074,7 @@ public class UG {
             boolean readOnly, Object[] params);
 
     native String _getSvnRevision();
-    
+
     native String _getUGVersion();
 
     native String _getDescription();
@@ -1253,9 +1252,22 @@ public class UG {
             return o;
 
         } else {
+            System.out.println("UG.invokeMethod() :");
+            System.out.println("  exportedClassName = " + exportedClassName);
+            System.out.println("  objPtr = " + objPtr);
+            System.out.println("  readOnly = " + readOnly);
+            System.out.println("  methodName = " + methodName);
+            System.out.println("  params = " + params);
 
+
+            for (int i = 0; i < params.length; i++) {
+                System.out.println("    params[" + i + "] = " + params[i]);
+
+            }
+            
             Object o = _invokeMethod(exportedClassName, objPtr, readOnly, methodName, params);
 
+            System.out.println(" -> Object o = _invokeMethod(...) = "+ o);
 //            if (o == null) {
 //                System.out.println("Object o = _invokeMethod() == NULL");
 //            } else {
@@ -1566,7 +1578,7 @@ public class UG {
             return _getCompileDate();
         }
     }
-    
+
     /**
      * If UGs RemoteType is CLIENT a remote connection is etablished and the
      * method call is redirected.
