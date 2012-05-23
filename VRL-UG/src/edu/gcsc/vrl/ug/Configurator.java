@@ -242,7 +242,7 @@ public class Configurator extends VPluginConfigurator {
 
         setIdentifier(Constants.PLUGIN_IDENTIFIER);
         
-        addDependency(new PluginDependency("VRL", "0.4.0", "0.4.x"));
+        addDependency(new PluginDependency("VRL", "0.4.1", "0.4.x"));
 
         // ug is only allowed to load the native ug lib if api plugin could
         // not be found. in this case this plugin will generate it.

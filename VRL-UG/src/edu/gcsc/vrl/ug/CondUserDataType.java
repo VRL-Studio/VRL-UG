@@ -4,12 +4,10 @@
  */
 package edu.gcsc.vrl.ug;
 
+import eu.mihosoft.vrl.annotation.TypeInfo;
 import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.lang.groovy.GroovyCompiler;
 import eu.mihosoft.vrl.types.InputCodeType;
-import eu.mihosoft.vrl.types.InputTextType;
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import java.util.ArrayList;
 
@@ -17,13 +15,14 @@ import java.util.ArrayList;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
+@TypeInfo(type=String.class, input=true, output=false, style="cond-user-data")
 public class CondUserDataType extends InputCodeType {
 
     private ArrayList<String> paramNames;
 
     public CondUserDataType() {
-        setType(String.class);
-        setStyleName("cond-user-data");
+//        setType(String.class);
+//        setStyleName("cond-user-data");
         setValueName(" ");
     }
 
