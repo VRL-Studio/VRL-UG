@@ -34,7 +34,7 @@
 //    public final static String REMOTE_TYPE = "CLIENT";
 //    
 //    public static final PluginIdentifier API_PLUGIN_IDENTIFIER =
-//            new PluginIdentifier(PLUGIN_NAME_API, "0.1.1");//"0.1.1.x" did not work
+//            new PluginIdentifier(PLUGIN_NAME_API, "0.2");//"0.1.1.x" did not work
 //    public static final PluginIdentifier PLUGIN_IDENTIFIER =
 //            new PluginIdentifier(PLUGIN_NAME, "0.2");//"0.1.1.x" did not work
 //
@@ -136,8 +136,8 @@
 //
 //            vApi.addComponent(ReleaseInstances.class);
 //
-//            vApi.addTypeRepresentation(new UserDataType());
-//            vApi.addTypeRepresentation(new BoundaryUserDataType());
+//            vApi.addTypeRepresentation( UserDataType.class);
+//            vApi.addTypeRepresentation( CondUserDataType.class);
 //
 //            vApi.addComponentSearchFilter(new HideComponentFilter());
 //        }
