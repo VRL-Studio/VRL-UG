@@ -37,15 +37,17 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 
 /**
  * A fast Groovy code compiler wrapper.
+ *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
 public class Compiler {
-    
+
     public static final String API_JAR_NAME = "VRL-UG-API.jar";
 
     /**
-     * Compiles classes defined as groovy source code and returns them
-     * as class objects.
+     * Compiles classes defined as groovy source code and returns them as class
+     * objects.
+     *
      * @param codes codes to compile
      * @return class objects of the compiled codes
      */
@@ -55,8 +57,9 @@ public class Compiler {
     }
 
     /**
-     * Compiles classes defined as groovy source code and returns them
-     * as class objects.
+     * Compiles classes defined as groovy source code and returns them as class
+     * objects.
+     *
      * @param codes codes to compile
      * @return class objects of the compiled codes
      */
@@ -198,7 +201,7 @@ public class Compiler {
                     + "/edu/gcsc/vrl/ug/api/");
 
             ugInfoPath.mkdirs();
-            
+
             Thread.currentThread().setContextClassLoader(cl);
 
             XMLEncoder encoder = new XMLEncoder(
@@ -224,8 +227,11 @@ public class Compiler {
 
         if (jarLocation != null) {
             try {
-                IOUtil.zipContentOfFolder(scriptPath.getAbsolutePath(),
-                        jarLocation + "/" + API_JAR_NAME);
+                File srcFolder = new File(scriptPath.getAbsolutePath());
+                File destZipFile = new File(jarLocation + "/" + API_JAR_NAME);
+
+                IOUtil.zipContentOfFolder(srcFolder, destZipFile);
+
             } catch (IOException ex) {
                 Logger.getLogger(Compiler.class.getName()).
                         log(Level.SEVERE, null, ex);
@@ -244,7 +250,7 @@ public class Compiler {
                 name.replace("I_", "").
                 replace("C_", "").
                 replace("Const__", ""));
-        
+
         return result;
     }
 
@@ -262,13 +268,15 @@ public class Compiler {
      * Create a new temporary directory. Use something like
      * {@link #deleteClassFiles(File)} to clean this directory up since it isn't
      * deleted automatically.
-     * @see http://stackoverflow.com/questions/617414/create-a-temporary-directory-in-java
-     * @return  the new directory
+     *
+     * @see
+     * http://stackoverflow.com/questions/617414/create-a-temporary-directory-in-java
+     * @return the new directory
      * @throws IOException if there is an error creating the temporary directory
      */
     private static File createTempDir() throws IOException {
         final File sysTempDir = VRL.getPropertyFolderManager().getTmpFolder();
-        
+
         File newTempDir;
         final int maxAttempts = 9;
         int attemptCount = 0;
@@ -296,6 +304,7 @@ public class Compiler {
 
     /**
      * Request deletion of class files or directory on exit
+     *
      * @param fileOrDir the dir to delete
      */
     private void deleteClassFiles(File fileOrDir) {
