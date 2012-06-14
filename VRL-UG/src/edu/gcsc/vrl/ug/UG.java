@@ -1252,27 +1252,23 @@ public class UG {
             return o;
 
         } else {
-            System.out.println("UG.invokeMethod() :");
-            System.out.println("  exportedClassName = " + exportedClassName);
-            System.out.println("  objPtr = " + objPtr);
-            System.out.println("  readOnly = " + readOnly);
-            System.out.println("  methodName = " + methodName);
-            System.out.println("  params = " + params);
-
-
-            for (int i = 0; i < params.length; i++) {
-                System.out.println("    params[" + i + "] = " + params[i]);
-
-            }
+//            System.out.println("UG.invokeMethod() :");
+//            System.out.println("  exportedClassName = " + exportedClassName);
+//            System.out.println("  objPtr = " + objPtr);
+//            System.out.println("  readOnly = " + readOnly);
+//            System.out.println("  methodName = " + methodName);
+//            System.out.println("  params = " + params);
+//
+//
+//            for (int i = 0; i < params.length; i++) {
+//                System.out.println("    params[" + i + "] = " + params[i]);
+//
+//            }
             
             Object o = _invokeMethod(exportedClassName, objPtr, readOnly, methodName, params);
 
-            System.out.println(" -> Object o = _invokeMethod(...) = "+ o);
-//            if (o == null) {
-//                System.out.println("Object o = _invokeMethod() == NULL");
-//            } else {
-//                System.out.println("o = " + o);
-//            }
+//            System.out.println(" -> Object o = _invokeMethod(...) = "+ o);
+//            
 
             return o;
         }

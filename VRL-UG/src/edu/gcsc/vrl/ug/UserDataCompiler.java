@@ -17,6 +17,16 @@ public class UserDataCompiler {
     public static final String CLASS_NAME = "UserDataImpl";
     public static final String PACKAGE_NAME = "edu.gcsc.vrl.ug";
 
+    /**
+     * 
+     * @param s
+     * @param dim the dimension of the used (User-)DataType (an Integer between 0 and 3)
+     * 0 = CondNumber or Number,
+     * 1 = Vector, 
+     * 2 = Matrix, 
+     * 3 = Tensor
+     * @return 
+     */
     public static Object compile(String s, int dim) {
         GroovyCompiler c = new GroovyCompiler();
         c.addImport("import " + UserDataCompiler.PACKAGE_NAME + ".*;");
@@ -26,6 +36,20 @@ public class UserDataCompiler {
         return result;
     }
 
+    /**
+     * 
+     * 
+     * @param s
+     * @param dim the dimension of the used (User-)DataType (an Integer between 0 and 3)
+     * 0 = CondNumber or Number,
+     * 1 = Vector, 
+     * 2 = Matrix, 
+     * 3 = Tensor
+     * 
+     * @param paramNames
+     * @param returnType
+     * @return 
+     */
     public static String getUserDataImplCode(String s, int dim,
             ArrayList<String> paramNames, String returnType) {
         String paramString = "";
