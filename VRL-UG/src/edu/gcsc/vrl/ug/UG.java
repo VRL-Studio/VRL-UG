@@ -394,9 +394,15 @@ public class UG {
 
         // initialize native ug libraries
         //@todo check whether path is correct (probably not)
-        String pluginPath = getNativeLibFolder() + "/eu/mihosoft/vrl/natives/"
-                + VSysUtil.getPlatformSpecificPath() + "plugins".replace("/", File.separator);
+        String pluginPath = getNativeLibFolder() 
+                //+ "/eu/mihosoft/vrl/natives/"
+//                + VSysUtil.getPlatformSpecificPath() 
+                + "/plugins".replace("/", File.separator);
 
+        System.out.println("UG.connectToNativeUG() : pluginPath = "+ pluginPath);
+        System.out.println("getNativeLibFolder = "+ getNativeLibFolder());
+        System.out.println("VSysUtil.getPlatformSpecificPath() = "+VSysUtil.getPlatformSpecificPath());
+        
         String[] args = {pluginPath};
 
         System.out.println(" --> UG: connecting to native ug.");
