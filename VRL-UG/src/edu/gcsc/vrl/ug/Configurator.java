@@ -249,6 +249,8 @@ public class Configurator extends VPluginConfigurator {
         setLoadNativeLibraries(false);
 
         exportPackage("edu.gcsc.vrl.ug");
+        
+        setCopyrightInfoAsPlainText(UG.getInstance().getBinaryLicense());
     }
 
     @Override

@@ -394,15 +394,15 @@ public class UG {
 
         // initialize native ug libraries
         //@todo check whether path is correct (probably not)
-        String pluginPath = getNativeLibFolder() 
+        String pluginPath = getNativeLibFolder()
                 //+ "/eu/mihosoft/vrl/natives/"
-//                + VSysUtil.getPlatformSpecificPath() 
+                //                + VSysUtil.getPlatformSpecificPath() 
                 + "/plugins".replace("/", File.separator);
 
-        System.out.println("UG.connectToNativeUG() : pluginPath = "+ pluginPath);
-        System.out.println("getNativeLibFolder = "+ getNativeLibFolder());
-        System.out.println("VSysUtil.getPlatformSpecificPath() = "+VSysUtil.getPlatformSpecificPath());
-        
+//        System.out.println("UG.connectToNativeUG() : pluginPath = " + pluginPath);
+//        System.out.println("getNativeLibFolder = " + getNativeLibFolder());
+//        System.out.println("VSysUtil.getPlatformSpecificPath() = " + VSysUtil.getPlatformSpecificPath());
+
         String[] args = {pluginPath};
 
         System.out.println(" --> UG: connecting to native ug.");
@@ -1089,6 +1089,8 @@ public class UG {
 
     native String _getCompileDate();
 
+    native String _getBinaryLicense();
+
     public static native int _ugInit(String[] args);
 
     /**
@@ -1270,7 +1272,7 @@ public class UG {
 //                System.out.println("    params[" + i + "] = " + params[i]);
 //
 //            }
-            
+
             Object o = _invokeMethod(exportedClassName, objPtr, readOnly, methodName, params);
 
 //            System.out.println(" -> Object o = _invokeMethod(...) = "+ o);
@@ -1611,6 +1613,39 @@ public class UG {
         } else {
 
             return _getUGVersion();
+        }
+    }
+
+    /**
+     * If UGs RemoteType is CLIENT a remote connection is etablished and the
+     * method call is redirected.
+     *
+     * Else if UGs RemoteType is NOT client ( means SERVER or NONE) the native
+     * method is called.
+     *
+     * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
+     */
+    String getBinaryLicense() {
+
+        if (remoteType.equals(RemoteType.CLIENT)) {
+
+            Object o = null;
+
+            try {
+                XmlRpcClient xmlRpcClient = JVMmanager.getClient(
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort());
+
+                o = xmlRpcClient.execute("RpcHandler.getBinaryLicense", voidElement);
+            } catch (XmlRpcException ex) {
+                Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            return (String) o;
+
+        } else {
+
+            return _getBinaryLicense();
         }
     }
 

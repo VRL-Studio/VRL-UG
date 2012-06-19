@@ -370,7 +370,7 @@ public class RpcHandler {
 //        System.out.println("result =" + result);
         return result;
     }
-    
+
     /**
      * This method is wrapper for the same named method which is executed on the
      * UG instance with RemoteType server.
@@ -383,6 +383,23 @@ public class RpcHandler {
         show("getUGVersion");
 
         String result = getServer()._getUGVersion();
+
+//        System.out.println("result =" + result);
+        return result;
+    }
+
+    /**
+     * This method is wrapper for the same named method which is executed on the
+     * UG instance with RemoteType server.
+     *
+     * The result is send remote packed as Base64-String to the calling client.
+     *
+     * @return the result of the on server executed method
+     */
+    public String getBinaryLicense() {
+        show("getBinaryLicense");
+
+        String result = getServer()._getBinaryLicense();
 
 //        System.out.println("result =" + result);
         return result;
@@ -524,24 +541,23 @@ public class RpcHandler {
         return base64;
 
     }
-    
+
     /**
      * This method is wrapper for the same named method which is executed on the
      * UG instance with RemoteType server.
-     * 
+     *
      * @return void : because of xmlrpc return type int
      */
-    public int clearMessages()
-    {
+    public int clearMessages() {
 //        show("clearMessages");
-        
+
         StringBuilder messages = getServer().getMessages();
-        
+
         if (messages.length() > 0) {
             messages.delete(0, messages.length());
             //messages = new StringBuilder();
         }
-        
+
         return 0;
     }
 }
