@@ -250,11 +250,11 @@ public class Configurator extends VPluginConfigurator {
 
         exportPackage("edu.gcsc.vrl.ug");
         
-        setCopyrightInfoAsPlainText(UG.getInstance().getBinaryLicense());
     }
 
     @Override
     public void register(PluginAPI api) {
+        
         if (api instanceof VPluginAPI) {
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
 
@@ -273,7 +273,7 @@ public class Configurator extends VPluginConfigurator {
 
                 VRL.exit(0);
             }
-        }
+        }   
     }
 
     public void unregister(PluginAPI api) {
@@ -342,6 +342,8 @@ public class Configurator extends VPluginConfigurator {
                     + UG.getInstance().getAuthors().replace("\n", "<br>"));
         }
 
+        setCopyrightInfoAsPlainText(UG.getInstance().getBinaryLicense());
+        
         setPreferencePane(new PreferencePane() {
 
             private PreferencePaneControl control;
