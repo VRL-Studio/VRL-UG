@@ -72,20 +72,23 @@
 
     -->
     
-    <property file="build.properties"/>
+<!-- VERSION BEFORE NATIVES.ZIP WAS USED !!!
+
+-->
+<!--     <property file="build.properties"/>
     
      <condition property="ug.copynatives">
         <equals arg1="${ug.copynatives.enabled}" arg2="true"/>
     </condition>
     
     <target name="-pre-compile" if="ug.copynatives">
-        <echo message="Copying ${ug.dir}/bin/libug4.${native.soname} to ${src.dir}/eu/mihosoft/vrl/natives/${native.os}"/>
+        <echo message="Copying ${ug.dir}/lib/libug4.${native.soname} to ${src.dir}/eu/mihosoft/vrl/natives/${native.os}"/>
          
-       <!-- in copy -->
-       <!-- WIN:  file="${ug.dir}/bin/libug4.${native.soname}" -->
-       <!-- UNIX: file="${ug.dir}/lib/libug4.${native.soname}" -->
+        in copy 
+        WIN:  file="${ug.dir}/bin/libug4.${native.soname}" 
+        UNIX: file="${ug.dir}/lib/libug4.${native.soname}" 
        <copy
-        file="${ug.dir}/bin/libug4.${native.soname}" 
+        file="${ug.dir}/lib/libug4.${native.soname}" 
         todir="${src.dir}/eu/mihosoft/vrl/natives/${native.os}"/>
         
         <echo message="Copying ${ug.dir}/bin/*.${native.soname} to ${src.dir}/eu/mihosoft/vrl/natives/${native.os}/plugins"/>
@@ -94,7 +97,78 @@
                 <include name="**/*.${native.soname}"/>
             </fileset>
         </copy>
+    </target>-->
+    
+<!-- 
+    Beginn of evaluating the informations of the build.properties file.
+    If ug.copynatives.enabled=true the native ug libs are automatically stored
+    in natives.zip.
+-->
+
+    <!--  Variables  -->
+    <property file="build.properties"/>
+    
+    <property name="folder-to-create" value="tmp-zip-folder" />
+    <property name="folder-to-copy" value="${ug.dir}/bin/plugins" />
+    
+    <property name="file-to-copy" value="${ug.dir}/lib/libug4.${native.lib.ending}" />
+    <property name="file-to-copy-windows" value="${ug.dir}/bin/libug4.${native.lib.ending}" />
+
+    <property name="zip-name" value="natives.zip" />
+    <property name="move-to-folder" value="src/eu/mihosoft/vrl/natives/${native.os}" />
+	
+        
+    <!--   Conditions     -->
+    <condition property="ug.copynatives">
+        <equals arg1="${ug.copynatives.enabled}" arg2="true"/>
+    </condition>
+    
+    <condition property="native.lib.windows">
+        <equals arg1="${native.lib.ending}" arg2="dll"/>
+    </condition>
+    
+    
+    <!-- Algo   -->
+    <target name="-pre-compile" if="ug.copynatives">
+            
+        <echo message="making tmp dir: ${folder-to-create}" />
+        <mkdir dir="${folder-to-create}"/>
+        <mkdir dir="${folder-to-create}/plugins"/>
+        
+        <antcall target="copy-native-files-windows"/>
+        <antcall target="copy-native-files"/>
+        
+        <echo message="zipping content of tmp dir: " />
+        <zip destfile="${zip-name}" basedir="${folder-to-create}" />
+            
+        <echo message="deleting tmp dir: ${folder-to-create}" />
+        <delete dir="${folder-to-create}"/>
+            
+        <echo message="moving ${zip-name} to ${move-to-folder}" />
+        <move file="${zip-name}" todir="${move-to-folder}"/>
+        
+    </target>  
+      
+    <target name="copy-native-files-windows" if="native.lib.windows">
+        
+        <echo message="lib.ending=dll: coping files to: ${folder-to-create}" />
+        <copydir src="${folder-to-copy}" dest="${folder-to-create}/plugins"/>
+        <copy file="${file-to-copy-windows}" todir="${folder-to-create}"/>
+        
     </target>
+       
+    <target name="copy-native-files" >
+        
+        <echo message="coping files to: ${folder-to-create}" />
+        <copydir src="${folder-to-copy}" dest="${folder-to-create}/plugins"/>
+        <copy file="${file-to-copy}" todir="${folder-to-create}"/>
+        
+    </target>
+<!-- 
+    End of evaluating the informations of the build.properties file.
+-->  
+    
+    
     
         
 <!--    <target name="create-single-jar" depends="jar">-->
@@ -147,8 +221,8 @@ minus the .jar extension. It should not have spaces.
         <echo message="Copying ${dist.jar} to ${vrl.dir}/plugin-updates"/>
 
         <copy 
-        file="${dist.jar}" 
-        todir="${vrl.dir}/plugin-updates"/>
+            file="${dist.jar}" 
+            todir="${vrl.dir}/plugin-updates"/>
         
         
     </target>
