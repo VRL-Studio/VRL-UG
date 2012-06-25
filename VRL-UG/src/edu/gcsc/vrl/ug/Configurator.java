@@ -27,6 +27,9 @@ import javax.swing.*;
 public class Configurator extends VPluginConfigurator {
 
     private File templateProjectSrc;
+    private File kineticProjectSrc;
+    private File emptyProjectSrc;
+    private File staticProjectSrc;
     private static boolean serverConfiguration = false;
     private static ConfigurationFile pluginConfiguration = null;
     private static String jarPath = null;
@@ -319,6 +322,111 @@ public class Configurator extends VPluginConfigurator {
 
             public String getDescription() {
                 return "Basic UG Project";
+            }
+
+            public BufferedImage getIcon() {
+                return null;
+            }
+        });
+        
+          kineticProjectSrc= new File(iApi.getResourceFolder(), "neuro_kinetics.vrlp");
+
+        if (!kineticProjectSrc.exists()) {
+            InputStream in = Configurator.class.getResourceAsStream(
+                    "/edu/gcsc/vrl/ug/resources/neuro_kinetics.vrlp");
+            try {
+                IOUtil.saveStreamToFile(in, kineticProjectSrc);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Configurator.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Configurator.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            }
+        }
+
+        iApi.addProjectTemplate(new ProjectTemplate() {
+
+            public String getName() {
+                return "UG - Project - kinetic";
+            }
+
+            public File getSource() {
+                return kineticProjectSrc;
+            }
+
+            public String getDescription() {
+                return "Basic UG kinetic Project";
+            }
+
+            public BufferedImage getIcon() {
+                return null;
+            }
+        });
+        
+      emptyProjectSrc= new File(iApi.getResourceFolder(), "neuro_empty.vrlp");
+
+        if (!emptyProjectSrc.exists()) {
+            InputStream in = Configurator.class.getResourceAsStream(
+                    "/edu/gcsc/vrl/ug/resources/neuro_empty.vrlp");
+            try {
+                IOUtil.saveStreamToFile(in, emptyProjectSrc);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Configurator.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Configurator.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            }
+        }
+
+        iApi.addProjectTemplate(new ProjectTemplate() {
+
+            public String getName() {
+                return "UG - Project - empty";
+            }
+
+            public File getSource() {
+                return emptyProjectSrc;
+            }
+
+            public String getDescription() {
+                return "Basic UG empty Project";
+            }
+
+            public BufferedImage getIcon() {
+                return null;
+            }
+        });
+        
+      staticProjectSrc= new File(iApi.getResourceFolder(), "neuro_statics.vrlp");
+
+        if (!staticProjectSrc.exists()) {
+            InputStream in = Configurator.class.getResourceAsStream(
+                    "/edu/gcsc/vrl/ug/resources/neuro_statics.vrlp");
+            try {
+                IOUtil.saveStreamToFile(in, staticProjectSrc);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Configurator.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Configurator.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            }
+        }
+
+        iApi.addProjectTemplate(new ProjectTemplate() {
+
+            public String getName() {
+                return "UG - Project - static";
+            }
+
+            public File getSource() {
+                return staticProjectSrc;
+            }
+
+            public String getDescription() {
+                return "Basic UG static Project";
             }
 
             public BufferedImage getIcon() {
