@@ -348,7 +348,7 @@ public class Configurator extends VPluginConfigurator {
         iApi.addProjectTemplate(new ProjectTemplate() {
 
             public String getName() {
-                return "UG - Project - kinetic";
+                return "UG - Neuro - Kinetic";
             }
 
             public File getSource() {
@@ -383,7 +383,7 @@ public class Configurator extends VPluginConfigurator {
         iApi.addProjectTemplate(new ProjectTemplate() {
 
             public String getName() {
-                return "UG - Project - empty";
+                return "UG - Neuro - Empty";
             }
 
             public File getSource() {
@@ -418,7 +418,7 @@ public class Configurator extends VPluginConfigurator {
         iApi.addProjectTemplate(new ProjectTemplate() {
 
             public String getName() {
-                return "UG - Project - static";
+                return "UG - Neuro - Static";
             }
 
             public File getSource() {
