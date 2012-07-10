@@ -329,11 +329,11 @@ public class Configurator extends VPluginConfigurator {
             }
         });
         
-          kineticProjectSrc= new File(iApi.getResourceFolder(), "neuro_kinetics.vrlp");
+          kineticProjectSrc= new File(iApi.getResourceFolder(), "advection-diffusion-kinetic.vrlp");
 
         if (!kineticProjectSrc.exists()) {
             InputStream in = Configurator.class.getResourceAsStream(
-                    "/edu/gcsc/vrl/ug/resources/neuro_kinetics.vrlp");
+                    "/edu/gcsc/vrl/ug/resources/advection-diffusion-kinetic.vrlp");
             try {
                 IOUtil.saveStreamToFile(in, kineticProjectSrc);
             } catch (FileNotFoundException ex) {
@@ -348,7 +348,7 @@ public class Configurator extends VPluginConfigurator {
         iApi.addProjectTemplate(new ProjectTemplate() {
 
             public String getName() {
-                return "UG - Neuro - Kinetic";
+                return "UG - Advection-Diffusion - Kinetic";
             }
 
             public File getSource() {
@@ -364,11 +364,11 @@ public class Configurator extends VPluginConfigurator {
             }
         });
         
-      emptyProjectSrc= new File(iApi.getResourceFolder(), "neuro_empty.vrlp");
+      emptyProjectSrc= new File(iApi.getResourceFolder(), "advection-diffusion-empty.vrlp");
 
         if (!emptyProjectSrc.exists()) {
             InputStream in = Configurator.class.getResourceAsStream(
-                    "/edu/gcsc/vrl/ug/resources/neuro_empty.vrlp");
+                    "/edu/gcsc/vrl/ug/resources/advection-diffusion-empty.vrlp");
             try {
                 IOUtil.saveStreamToFile(in, emptyProjectSrc);
             } catch (FileNotFoundException ex) {
@@ -383,7 +383,7 @@ public class Configurator extends VPluginConfigurator {
         iApi.addProjectTemplate(new ProjectTemplate() {
 
             public String getName() {
-                return "UG - Neuro - Empty";
+                return "UG - Advection-Diffusion - Empty";
             }
 
             public File getSource() {
@@ -399,11 +399,11 @@ public class Configurator extends VPluginConfigurator {
             }
         });
         
-      staticProjectSrc= new File(iApi.getResourceFolder(), "neuro_statics.vrlp");
+      staticProjectSrc= new File(iApi.getResourceFolder(), "advection-diffusion-static.vrlp");
 
         if (!staticProjectSrc.exists()) {
             InputStream in = Configurator.class.getResourceAsStream(
-                    "/edu/gcsc/vrl/ug/resources/neuro_statics.vrlp");
+                    "/edu/gcsc/vrl/ug/resources/advection-diffusion-static.vrlp");
             try {
                 IOUtil.saveStreamToFile(in, staticProjectSrc);
             } catch (FileNotFoundException ex) {
@@ -418,7 +418,7 @@ public class Configurator extends VPluginConfigurator {
         iApi.addProjectTemplate(new ProjectTemplate() {
 
             public String getName() {
-                return "UG - Neuro - Static";
+                return "UG - Advection-Diffusion - Static";
             }
 
             public File getSource() {
