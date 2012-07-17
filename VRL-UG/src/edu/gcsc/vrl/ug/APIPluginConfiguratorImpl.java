@@ -29,8 +29,8 @@
 //public class APIPluginConfiguratorImpl extends VPluginConfigurator {
 //
 //    
-//    public final static String PLUGIN_NAME = "VRL-UG4";
-//    public final static String PLUGIN_NAME_API = "VRL-UG4-API";
+//    public final static String PLUGIN_NAME = "VRL-UG";
+//    public final static String PLUGIN_NAME_API = "VRL-UG-API";
 //    public final static String REMOTE_TYPE = "CLIENT";
 //    
 //    public static final PluginIdentifier API_PLUGIN_IDENTIFIER =
