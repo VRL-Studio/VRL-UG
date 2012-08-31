@@ -244,7 +244,7 @@ public class Configurator extends VPluginConfigurator {
     public Configurator() {
 
         setIdentifier(Constants.PLUGIN_IDENTIFIER);
-        
+
         addDependency(new PluginDependency("VRL", "0.4.1", "0.4.x"));
 
         // ug is only allowed to load the native ug lib if api plugin could
@@ -252,12 +252,12 @@ public class Configurator extends VPluginConfigurator {
         setLoadNativeLibraries(false);
 
         exportPackage("edu.gcsc.vrl.ug");
-        
+
     }
 
     @Override
     public void register(PluginAPI api) {
-        
+
         if (api instanceof VPluginAPI) {
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
 
@@ -276,7 +276,7 @@ public class Configurator extends VPluginConfigurator {
 
                 VRL.exit(0);
             }
-        }   
+        }
     }
 
     public void unregister(PluginAPI api) {
@@ -328,8 +328,8 @@ public class Configurator extends VPluginConfigurator {
                 return null;
             }
         });
-        
-          kineticProjectSrc= new File(iApi.getResourceFolder(), "advection-diffusion-kinetic.vrlp");
+
+        kineticProjectSrc = new File(iApi.getResourceFolder(), "advection-diffusion-kinetic.vrlp");
 
         if (!kineticProjectSrc.exists()) {
             InputStream in = Configurator.class.getResourceAsStream(
@@ -363,8 +363,8 @@ public class Configurator extends VPluginConfigurator {
                 return null;
             }
         });
-        
-      emptyProjectSrc= new File(iApi.getResourceFolder(), "advection-diffusion-empty.vrlp");
+
+        emptyProjectSrc = new File(iApi.getResourceFolder(), "advection-diffusion-empty.vrlp");
 
         if (!emptyProjectSrc.exists()) {
             InputStream in = Configurator.class.getResourceAsStream(
@@ -398,8 +398,8 @@ public class Configurator extends VPluginConfigurator {
                 return null;
             }
         });
-        
-      staticProjectSrc= new File(iApi.getResourceFolder(), "advection-diffusion-static.vrlp");
+
+        staticProjectSrc = new File(iApi.getResourceFolder(), "advection-diffusion-static.vrlp");
 
         if (!staticProjectSrc.exists()) {
             InputStream in = Configurator.class.getResourceAsStream(
@@ -451,9 +451,10 @@ public class Configurator extends VPluginConfigurator {
         }
 
         setCopyrightInfoAsPlainText(UG.getInstance().getBinaryLicense());
-        
+
         setPreferencePane(new PreferencePane() {
 
+            private javax.swing.JCheckBox showDetailedExceptionBox = new javax.swing.JCheckBox();
             private PreferencePaneControl control;
 
             @Override
@@ -468,6 +469,28 @@ public class Configurator extends VPluginConfigurator {
                 p.add(outerBox);
 
                 outerBox.add(new JLabel("VRL-UG Preferences"));
+
+                showDetailedExceptionBox.setText("<html>Show detailed <b>UG-Exceptions</b></html>");
+                showDetailedExceptionBox.setToolTipText("Shows file and line traceback of error propagation");
+                showDetailedExceptionBox.addActionListener(new java.awt.event.ActionListener() {
+
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        getConfigurationFile().setProperty(
+                                Constants.DETAILED_EXCEPTION_KEY, "" + showDetailedExceptionBox.isSelected());
+                        getConfigurationFile().save();
+
+                        UGException.setShowDetailedException(showDetailedExceptionBox.isSelected());
+                    }
+                });
+
+                if (getConfigurationFile().containsProperty(Constants.DETAILED_EXCEPTION_KEY)) {
+                    boolean b = Boolean.parseBoolean(
+                            getConfigurationFile().getProperty(Constants.DETAILED_EXCEPTION_KEY));
+                    UGException.setShowDetailedException(b);
+                    showDetailedExceptionBox.setSelected(b);
+                }
+
+                outerBox.add(showDetailedExceptionBox);
 
                 //REMOTETYPE
                 Vector<RemoteType> remoteTypVec = new Vector<RemoteType>();

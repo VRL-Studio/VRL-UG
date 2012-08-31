@@ -24,4 +24,6 @@ public class Constants {
     public final static String PATH_TO_LOCAL_SERVER_FOLDER_KEY = "localServerFolder";
     public final static String REMOTETYPE_KEY = "remoteType";
     public final static String SERVER_SUFFIX = "-server";
+
+    public final static String DETAILED_EXCEPTION_KEY = "detailedException";
     }
