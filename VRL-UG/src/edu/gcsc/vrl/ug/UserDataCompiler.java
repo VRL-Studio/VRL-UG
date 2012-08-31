@@ -35,7 +35,6 @@ public class UserDataCompiler {
         GroovyCompiler c = new GroovyCompiler();
         c.addImport("import " + UserDataCompiler.PACKAGE_NAME + ".*;");
         c.setCatchCompileException(false);
-//        c.setMainCanvas(VRL.getCurrentProjectController().getCurrentCanvas());
         InstanceCreator creator = new InstanceCreator();
         
         Object result = null;
@@ -45,11 +44,6 @@ public class UserDataCompiler {
                 String msg = adaptErrorMessage(ex.getMessage());
                 
                 throw new RuntimeException(msg);
-                
-                
-//                VRL.getCurrentProjectController().getCurrentCanvas().getMessageBox().
-//                addMessage("Can't compile code:",
-//                msg, MessageType.ERROR);
         }
         
         return result;
@@ -119,8 +113,6 @@ public class UserDataCompiler {
      * @return adapted error message
      */
     public static String adaptErrorMessage(String message) {
-
-        System.out.println("Error MESSAGE IN: \n---\n"+message+"\n---\n");
         
         int line = getErrorLine(message);
         int column = getErrorColumn(message);
@@ -144,9 +136,6 @@ public class UserDataCompiler {
         message = message.replaceAll(
                 "\\d+ error",
                 "");
-
-
-        System.out.println("Error MESSAGE OUT: \n---\n"+message+"\n---\n");
 
         return "<br>@ line " + (line-5) + ", column " + column + ":<br>"
                 + "<pre><code>"
