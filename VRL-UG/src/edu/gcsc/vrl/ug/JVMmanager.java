@@ -64,7 +64,6 @@ public class JVMmanager implements Serializable {
     private static void startAnotherJVM(final Class clazz) {
 
         Thread t = new Thread(new Runnable() {
-
             @Override
             public void run() {
 
@@ -99,13 +98,13 @@ public class JVMmanager implements Serializable {
 
 //                String split = File.separator;
                 String split = ":";
-                if(VSysUtil.isWindows()){
+                if (VSysUtil.isWindows()) {
 //                    System.out.println("\n - > OS is a WINDOWS ");
-                    split=";";
+                    split = ";";
                 }
-                
+
 //                System.out.println(" --- split = "+ split);
-                
+
                 if (localServerJar != null) {
                     classpath += split + localServerJar;
 
@@ -145,8 +144,8 @@ public class JVMmanager implements Serializable {
 //                System.out.println("\n JVMmanager :");
 //                System.out.println("separator = " + separator);
 //                System.out.println("classpath :");
-                
-                
+
+
 //                for (String s : classpath.split(split)) {
 //                    System.out.println(" " + s + split);
 //                }
@@ -158,7 +157,7 @@ public class JVMmanager implements Serializable {
 //                 for (String s : strClassPath.split(split)) {
 //                    System.out.println(" " + s + split);
 //                }
-                
+
 //                //DEBUG SOUT END
 
                 String name = clazz.getName();
@@ -209,7 +208,6 @@ public class JVMmanager implements Serializable {
         stopJvmOutputRedirection = false;
 
         Thread thread = new Thread(new Runnable() {
-
             @Override
             public void run() {
 
@@ -312,20 +310,23 @@ public class JVMmanager implements Serializable {
     public static synchronized void startLocalServer() {
         System.out.println("startLocalServer() : isServerJVMrunning = " + isServerJVMrunning);
 
+        if (UG.getRemoteType().equals(RemoteType.CLIENT)) {
 
-        if (!isServerJVMrunning) {
-            isServerJVMrunning = true;
+            if (!isServerJVMrunning) {
 
-            //make sure nothing from last server run is cached ! ! !
-            removeClient(getDefaultIP(), getCurrentPort());
-            releaseUGpointers();
+                isServerJVMrunning = true;
 
-            startAnotherJVM(UG.class);//, getDefaultIP(), getCurrentPort());
+                //make sure nothing from last server run is cached ! ! !
+                removeClient(getDefaultIP(), getCurrentPort());
+                releaseUGpointers();
+
+                startAnotherJVM(UG.class);//, getDefaultIP(), getCurrentPort());
+            }
+
+            System.out.println("startLocalServer() : UG.startLogging()");
+
+            UG.startLogging();
         }
-
-        System.out.println("startLocalServer() : UG.startLogging()");
-
-        UG.startLogging();
     }
 
     /**

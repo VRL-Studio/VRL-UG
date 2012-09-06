@@ -332,7 +332,6 @@ public class UG {
                     IOUtil.listFiles(folder, new String[]{dylibEnding}));
         } else {
             File[] libFiles = folder.listFiles(new FilenameFilter() {
-
                 public boolean accept(File dir, String name) {
                     return name.endsWith(dylibEnding);
                 }
@@ -409,7 +408,7 @@ public class UG {
 
         try {
             // initialize native ug libraries with the native ug plugins
-            ugInit(args);  
+            ugInit(args);
 
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
@@ -1011,7 +1010,6 @@ public class UG {
 
                         if (getMessages().length() > 0) {
                             SwingUtilities.invokeLater(new Runnable() {
-
                                 public void run() {
                                     if (mainCanvas != null && messages.length() > 0) {
 //                                mainCanvas.getMessageBox().addMessageAsLog(
@@ -1106,20 +1104,22 @@ public class UG {
      *
      * ALL METHODS need to RETURN one of the following types:
      *
-     * XML-RPC type Simplest Java type More complex Java type
+     * XML-RPC type     Simplest Java type      More complex Java type
      *
-     * i4 int java.lang.Integer int int java.lang.Integer boolean boolean
-     * java.lang.Boolean string java.lang.String java.lang.String double double
-     * java.lang.Double
+     * i4               int                     java.lang.Integer 
+     * int              int                     java.lang.Integer 
+     * boolean          boolean                 java.lang.Boolean 
+     * string           java.lang.String        java.lang.String 
+     * double           double                  java.lang.Double
      *
-     * dateTime.iso8601 java.util.Date java.util.Date struct java.util.Hashtable
-     * java.util.Hashtable array java.util.Vector java.util.Vector base64 byte[]
-     * byte[]
+     * dateTime.iso8601 java.util.Date          java.util.Date 
+     * struct           java.util.Hashtable     java.util.Hashtable
+     * array            java.util.Vector        java.util.Vector
+     * base64           byte[]                  byte[]
      *
-     * nil (extension) null null
+     * nil (extension)  null                    null
      *
      * ATTENTION: void is NOT valid !!!
-     *
      */
     // ******************************************************
     // **************     WRAPPER  METHODS     **************
