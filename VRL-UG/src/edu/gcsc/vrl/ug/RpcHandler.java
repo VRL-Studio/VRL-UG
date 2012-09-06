@@ -8,22 +8,25 @@ import eu.mihosoft.vrl.io.Base64;
 import java.io.Serializable;
 import java.util.List;
 
-/*
+/* 
  * NOTICE:
  *
  * ALL METHODS need to RETURN one of the following types:
  *
- * XML-RPC type Simplest Java type More complex Java type
+ * XML-RPC type     Simplest Java type      More complex Java type
  *
- * i4 int java.lang.Integer int int java.lang.Integer boolean boolean
- * java.lang.Boolean string java.lang.String java.lang.String double double
- * java.lang.Double
+ * i4               int                     java.lang.Integer 
+ * int              int                     java.lang.Integer 
+ * boolean          boolean                 java.lang.Boolean 
+ * string           java.lang.String        java.lang.String 
+ * double           double                  java.lang.Double
  *
- * dateTime.iso8601 java.util.Date java.util.Date struct java.util.Hashtable
- * java.util.Hashtable array java.util.Vector java.util.Vector base64 byte[]
- * byte[]
+ * dateTime.iso8601 java.util.Date          java.util.Date 
+ * struct           java.util.Hashtable     java.util.Hashtable
+ * array            java.util.Vector        java.util.Vector
+ * base64           byte[]                  byte[]
  *
- * nil (extension) null null
+ * nil (extension)  null                    null
  *
  * ATTENTION: void is NOT valid !!!
  */
