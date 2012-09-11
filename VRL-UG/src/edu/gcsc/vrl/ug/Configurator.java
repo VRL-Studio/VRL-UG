@@ -5,9 +5,13 @@
 package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.io.*;
+import eu.mihosoft.vrl.reflection.ComponentTree;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.*;
+import eu.mihosoft.vrl.visual.AttributionDisplay;
+import eu.mihosoft.vrl.visual.ImageUtils;
 import eu.mihosoft.vrl.visual.VDialog;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -244,7 +248,7 @@ public class Configurator extends VPluginConfigurator {
     public Configurator() {
 
         setIdentifier(Constants.PLUGIN_IDENTIFIER);
-        
+
         addDependency(new PluginDependency("VRL", "0.4.1", "0.4.x"));
 
         // ug is only allowed to load the native ug lib if api plugin could
@@ -252,12 +256,12 @@ public class Configurator extends VPluginConfigurator {
         setLoadNativeLibraries(false);
 
         exportPackage("edu.gcsc.vrl.ug");
-        
+
     }
 
     @Override
     public void register(PluginAPI api) {
-        
+
         if (api instanceof VPluginAPI) {
             VisualCanvas vCanvas = (VisualCanvas) api.getCanvas();
 
@@ -276,9 +280,30 @@ public class Configurator extends VPluginConfigurator {
 
                 VRL.exit(0);
             }
-        }   
+
+            // Attribution:
+            // - will be shown if image is defined and plugin is selected in
+            //   project
+            // - insert custom image
+            //   (preferred attribution image size: 140x36px)
+            Image image = null;
+
+            addAttributionDisplay(vApi, image);
+        }
     }
 
+    private void addAttributionDisplay(VPluginAPI vApi, Image image) {
+        if (image != null) {
+            UGAttributionDisplay ugAttributionDisplay =
+                    new UGAttributionDisplay(vApi.getCanvas(),
+                    image);
+            vApi.getCanvas().add(ugAttributionDisplay);
+        } else {
+            System.out.println(">> VRL-UG: attribution icon missing!");
+        }
+    }
+
+    @Override
     public void unregister(PluginAPI api) {
         shutdown();
 //        throw new UnsupportedOperationException("Not supported yet.");
@@ -311,7 +336,6 @@ public class Configurator extends VPluginConfigurator {
         }
 
         iApi.addProjectTemplate(new ProjectTemplate() {
-
             public String getName() {
                 return "UG - Project";
             }
@@ -328,8 +352,8 @@ public class Configurator extends VPluginConfigurator {
                 return null;
             }
         });
-        
-          kineticProjectSrc= new File(iApi.getResourceFolder(), "advection-diffusion-kinetic.vrlp");
+
+        kineticProjectSrc = new File(iApi.getResourceFolder(), "advection-diffusion-kinetic.vrlp");
 
         if (!kineticProjectSrc.exists()) {
             InputStream in = Configurator.class.getResourceAsStream(
@@ -346,7 +370,6 @@ public class Configurator extends VPluginConfigurator {
         }
 
         iApi.addProjectTemplate(new ProjectTemplate() {
-
             public String getName() {
                 return "UG - Advection-Diffusion - Kinetic";
             }
@@ -363,8 +386,8 @@ public class Configurator extends VPluginConfigurator {
                 return null;
             }
         });
-        
-      emptyProjectSrc= new File(iApi.getResourceFolder(), "advection-diffusion-empty.vrlp");
+
+        emptyProjectSrc = new File(iApi.getResourceFolder(), "advection-diffusion-empty.vrlp");
 
         if (!emptyProjectSrc.exists()) {
             InputStream in = Configurator.class.getResourceAsStream(
@@ -381,7 +404,6 @@ public class Configurator extends VPluginConfigurator {
         }
 
         iApi.addProjectTemplate(new ProjectTemplate() {
-
             public String getName() {
                 return "UG - Advection-Diffusion - Empty";
             }
@@ -398,8 +420,8 @@ public class Configurator extends VPluginConfigurator {
                 return null;
             }
         });
-        
-      staticProjectSrc= new File(iApi.getResourceFolder(), "advection-diffusion-static.vrlp");
+
+        staticProjectSrc = new File(iApi.getResourceFolder(), "advection-diffusion-static.vrlp");
 
         if (!staticProjectSrc.exists()) {
             InputStream in = Configurator.class.getResourceAsStream(
@@ -416,7 +438,6 @@ public class Configurator extends VPluginConfigurator {
         }
 
         iApi.addProjectTemplate(new ProjectTemplate() {
-
             public String getName() {
                 return "UG - Advection-Diffusion - Static";
             }
@@ -451,9 +472,8 @@ public class Configurator extends VPluginConfigurator {
         }
 
         setCopyrightInfoAsPlainText(UG.getInstance().getBinaryLicense());
-        
-        setPreferencePane(new PreferencePane() {
 
+        setPreferencePane(new PreferencePane() {
             private PreferencePaneControl control;
 
             @Override
@@ -527,7 +547,6 @@ public class Configurator extends VPluginConfigurator {
 
                 JButton save = new JButton("Save");
                 save.addActionListener(new ActionListener() {
-
                     public void actionPerformed(ActionEvent e) {
 
                         // get info of ComboBox 
@@ -551,7 +570,6 @@ public class Configurator extends VPluginConfigurator {
 
                 JButton cancel = new JButton("Cancel");
                 cancel.addActionListener(new ActionListener() {
-
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         control.close();
