@@ -5,11 +5,8 @@
 package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.io.*;
-import eu.mihosoft.vrl.reflection.ComponentTree;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.*;
-import eu.mihosoft.vrl.visual.AttributionDisplay;
-import eu.mihosoft.vrl.visual.ImageUtils;
 import eu.mihosoft.vrl.visual.VDialog;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -280,7 +277,7 @@ public class Configurator extends VPluginConfigurator {
 
                 VRL.exit(0);
             }
-
+  
             // Attribution:
             // - will be shown if image is defined and plugin is selected in
             //   project
@@ -338,6 +335,7 @@ public class Configurator extends VPluginConfigurator {
         }
 
         iApi.addProjectTemplate(new ProjectTemplate() {
+
             public String getName() {
                 return "UG - Project";
             }
@@ -372,6 +370,7 @@ public class Configurator extends VPluginConfigurator {
         }
 
         iApi.addProjectTemplate(new ProjectTemplate() {
+
             public String getName() {
                 return "UG - Advection-Diffusion - Kinetic";
             }
@@ -406,6 +405,7 @@ public class Configurator extends VPluginConfigurator {
         }
 
         iApi.addProjectTemplate(new ProjectTemplate() {
+
             public String getName() {
                 return "UG - Advection-Diffusion - Empty";
             }
@@ -440,6 +440,7 @@ public class Configurator extends VPluginConfigurator {
         }
 
         iApi.addProjectTemplate(new ProjectTemplate() {
+
             public String getName() {
                 return "UG - Advection-Diffusion - Static";
             }
@@ -476,6 +477,8 @@ public class Configurator extends VPluginConfigurator {
         setCopyrightInfoAsPlainText(UG.getInstance().getBinaryLicense());
 
         setPreferencePane(new PreferencePane() {
+
+            private javax.swing.JCheckBox showDetailedExceptionBox = new javax.swing.JCheckBox();
             private PreferencePaneControl control;
 
             @Override
@@ -490,6 +493,28 @@ public class Configurator extends VPluginConfigurator {
                 p.add(outerBox);
 
                 outerBox.add(new JLabel("VRL-UG Preferences"));
+
+                showDetailedExceptionBox.setText("<html>Show detailed <b>UG-Exceptions</b></html>");
+                showDetailedExceptionBox.setToolTipText("Shows file and line traceback of error propagation");
+                showDetailedExceptionBox.addActionListener(new java.awt.event.ActionListener() {
+
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        getConfigurationFile().setProperty(
+                                Constants.DETAILED_EXCEPTION_KEY, "" + showDetailedExceptionBox.isSelected());
+                        getConfigurationFile().save();
+
+                        UGException.setShowDetailedException(showDetailedExceptionBox.isSelected());
+                    }
+                });
+
+                if (getConfigurationFile().containsProperty(Constants.DETAILED_EXCEPTION_KEY)) {
+                    boolean b = Boolean.parseBoolean(
+                            getConfigurationFile().getProperty(Constants.DETAILED_EXCEPTION_KEY));
+                    UGException.setShowDetailedException(b);
+                    showDetailedExceptionBox.setSelected(b);
+                }
+
+                outerBox.add(showDetailedExceptionBox);
 
                 //REMOTETYPE
                 Vector<RemoteType> remoteTypVec = new Vector<RemoteType>();
@@ -549,6 +574,7 @@ public class Configurator extends VPluginConfigurator {
 
                 JButton save = new JButton("Save");
                 save.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
 
                         // get info of ComboBox 
@@ -572,6 +598,7 @@ public class Configurator extends VPluginConfigurator {
 
                 JButton cancel = new JButton("Cancel");
                 cancel.addActionListener(new ActionListener() {
+
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         control.close();
