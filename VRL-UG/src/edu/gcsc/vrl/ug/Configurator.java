@@ -285,7 +285,9 @@ public class Configurator extends VPluginConfigurator {
             // - will be shown if image is defined and plugin is selected in
             //   project
             // - insert custom image
-            //   (preferred attribution image size: 140x36px)
+            //   (preferred attribution image size: 140x36px,
+            //    you may also change the implementation of UGAttributionDisplay) 
+            //   
             Image image = null;
 
             addAttributionDisplay(vApi, image);
