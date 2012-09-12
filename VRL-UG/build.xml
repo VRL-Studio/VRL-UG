@@ -115,8 +115,12 @@
     <property name="file-to-copy-windows" value="${ug.dir}/bin/libug4.${native.lib.ending}" />
 
     <property name="zip-name" value="natives.zip" />
-    <property name="move-to-folder" value="src/eu/mihosoft/vrl/natives/${native.os}" />
+    <property name="move-to-folder" value="src/eu/mihosoft/vrl/plugin/content/natives/${native.os}" />
+<!--    <property name="move-to-folder" value="src/eu/mihosoft/vrl/natives/${native.os}" />
 	
+     - old location: /eu/mihosoft/vrl/");
+     - new location: /eu/mihosoft/vrl/plugin/content/");-->
+
         
     <!--   Conditions     -->
     <condition property="ug.copynatives">
