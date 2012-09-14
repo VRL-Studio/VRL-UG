@@ -8,6 +8,7 @@ import eu.mihosoft.vrl.io.*;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.*;
 import eu.mihosoft.vrl.visual.VDialog;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -276,9 +277,32 @@ public class Configurator extends VPluginConfigurator {
 
                 VRL.exit(0);
             }
+  
+            // Attribution:
+            // - will be shown if image is defined and plugin is selected in
+            //   project
+            // - insert custom image
+            //   (preferred attribution image size: 140x36px,
+            //    you may also change the implementation of UGAttributionDisplay) 
+            //   
+            Image image = null;
+
+            addAttributionDisplay(vApi, image);
         }
     }
 
+    private void addAttributionDisplay(VPluginAPI vApi, Image image) {
+        if (image != null) {
+            UGAttributionDisplay ugAttributionDisplay =
+                    new UGAttributionDisplay(vApi.getCanvas(),
+                    image);
+            vApi.getCanvas().add(ugAttributionDisplay);
+        } else {
+            System.out.println(">> VRL-UG: attribution icon missing!");
+        }
+    }
+
+    @Override
     public void unregister(PluginAPI api) {
         shutdown();
 //        throw new UnsupportedOperationException("Not supported yet.");
