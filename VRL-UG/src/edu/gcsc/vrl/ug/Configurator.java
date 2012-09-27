@@ -29,8 +29,11 @@ public class Configurator extends VPluginConfigurator {
 
     
     private File kineticProjectSrc;
+    private String kineticTemplateName = "ug-advect-diff-kinetic.vrlp";
     private File d3fProjectSrc;
+    private String d3fTemplateName = "ug-d3f.vrlp";
     private File staticProjectSrc;
+    private String staticTemplateName = "ug-advect-diff-static.vrlp";
     private static boolean serverConfiguration = false;
     private static ConfigurationFile pluginConfiguration = null;
     private static String jarPath = null;
@@ -318,21 +321,12 @@ public class Configurator extends VPluginConfigurator {
 
         setConfigurationEntries();
 
-        String kineticTemplateName = "ug-advect-diff-kinetic.vrlp";
         kineticProjectSrc = new File(iApi.getResourceFolder(), kineticTemplateName);
 
         if (!kineticProjectSrc.exists()) {
-            InputStream in = Configurator.class.getResourceAsStream(
-                    "/edu/gcsc/vrl/ug/resources/"+kineticTemplateName);
-            try {
-                IOUtil.saveStreamToFile(in, kineticProjectSrc);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Configurator.class.getName()).
-                        log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(Configurator.class.getName()).
-                        log(Level.SEVERE, null, ex);
-            }
+            
+            installTemplate(kineticTemplateName, d3fProjectSrc);
+            
         }
 
         iApi.addProjectTemplate(new ProjectTemplate() {
@@ -354,27 +348,18 @@ public class Configurator extends VPluginConfigurator {
             }
         });
 
-        String d3fTemplateName = "ug-d3f";
+        
         d3fProjectSrc = new File(iApi.getResourceFolder(), d3fTemplateName);
 
         if (!d3fProjectSrc.exists()) {
-            InputStream in = Configurator.class.getResourceAsStream(
-                    "/edu/gcsc/vrl/ug/resources/"+d3fTemplateName);
-            try {
-                IOUtil.saveStreamToFile(in, d3fProjectSrc);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Configurator.class.getName()).
-                        log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(Configurator.class.getName()).
-                        log(Level.SEVERE, null, ex);
-            }
+            
+            installTemplate(d3fTemplateName, d3fProjectSrc);
         }
 
         iApi.addProjectTemplate(new ProjectTemplate() {
 
             public String getName() {
-                return "UG - Advection-Diffusion - d3f";
+                return "UG - Density-Driven-Flow";
             }
 
             public File getSource() {
@@ -382,7 +367,7 @@ public class Configurator extends VPluginConfigurator {
             }
 
             public String getDescription() {
-                return "Basic UG d3f Project";
+                return "UG Density-Driven-Flow Project";
             }
 
             public BufferedImage getIcon() {
@@ -390,21 +375,10 @@ public class Configurator extends VPluginConfigurator {
             }
         });
 
-        String staticTemplateName = "ug-advect-diff-static" ;
         staticProjectSrc = new File(iApi.getResourceFolder(), staticTemplateName);
 
         if (!staticProjectSrc.exists()) {
-            InputStream in = Configurator.class.getResourceAsStream(
-                    "/edu/gcsc/vrl/ug/resources/"+staticTemplateName);
-            try {
-                IOUtil.saveStreamToFile(in, staticProjectSrc);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Configurator.class.getName()).
-                        log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(Configurator.class.getName()).
-                        log(Level.SEVERE, null, ex);
-            }
+            installTemplate(staticTemplateName, staticProjectSrc);
         }
 
         iApi.addProjectTemplate(new ProjectTemplate() {
@@ -595,6 +569,18 @@ public class Configurator extends VPluginConfigurator {
     }
 
     @Override
+    public void install(InitPluginAPI iApi) {
+        super.install(iApi);
+        
+        installTemplate(d3fTemplateName, d3fProjectSrc);
+        installTemplate(staticTemplateName, staticProjectSrc);
+        installTemplate(kineticTemplateName, d3fProjectSrc);
+        
+    }
+    
+    
+
+    @Override
     public String getDescription() {
         return UG.getInstance().getDescriptionFromApi();
     }
@@ -719,5 +705,19 @@ public class Configurator extends VPluginConfigurator {
 
 //        System.out.println("configurator.setServerConfiguration(" + serverConfiguration + ")");
         Configurator.serverConfiguration = serverConfiguration;
+    }
+
+    private void installTemplate(String templateName, File projectSrc ) {
+        InputStream in = Configurator.class.getResourceAsStream(
+                "/edu/gcsc/vrl/ug/resources/"+templateName);
+        try {
+            IOUtil.saveStreamToFile(in, projectSrc);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Configurator.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Configurator.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        }
     }
 }
