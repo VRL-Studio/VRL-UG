@@ -320,15 +320,9 @@ public class Configurator extends VPluginConfigurator {
         pluginConfiguration = iApi.getConfiguration();
 
         setConfigurationEntries();
-
-        kineticProjectSrc = new File(iApi.getResourceFolder(), kineticTemplateName);
-
-        if (!kineticProjectSrc.exists()) {
-            
-            installTemplate(kineticTemplateName, d3fProjectSrc);
-            
-        }
-
+  
+        kineticProjectSrc = installTemplate(kineticTemplateName, iApi);
+        
         iApi.addProjectTemplate(new ProjectTemplate() {
 
             public String getName() {
@@ -349,12 +343,8 @@ public class Configurator extends VPluginConfigurator {
         });
 
         
-        d3fProjectSrc = new File(iApi.getResourceFolder(), d3fTemplateName);
-
-        if (!d3fProjectSrc.exists()) {
-            
-            installTemplate(d3fTemplateName, d3fProjectSrc);
-        }
+        d3fProjectSrc = installTemplate(d3fTemplateName, iApi);
+        
 
         iApi.addProjectTemplate(new ProjectTemplate() {
 
@@ -375,11 +365,8 @@ public class Configurator extends VPluginConfigurator {
             }
         });
 
-        staticProjectSrc = new File(iApi.getResourceFolder(), staticTemplateName);
-
-        if (!staticProjectSrc.exists()) {
-            installTemplate(staticTemplateName, staticProjectSrc);
-        }
+        staticProjectSrc = installTemplate(staticTemplateName, iApi);
+        
 
         iApi.addProjectTemplate(new ProjectTemplate() {
 
@@ -572,9 +559,9 @@ public class Configurator extends VPluginConfigurator {
     public void install(InitPluginAPI iApi) {
         super.install(iApi);
         
-        installTemplate(d3fTemplateName, d3fProjectSrc);
-        installTemplate(staticTemplateName, staticProjectSrc);
-        installTemplate(kineticTemplateName, d3fProjectSrc);
+        installTemplate(d3fTemplateName, iApi);
+        installTemplate(staticTemplateName, iApi);
+        installTemplate(kineticTemplateName, iApi);
         
     }
     
@@ -707,9 +694,12 @@ public class Configurator extends VPluginConfigurator {
         Configurator.serverConfiguration = serverConfiguration;
     }
 
-    private void installTemplate(String templateName, File projectSrc ) {
+    private File installTemplate(String templateName, InitPluginAPI iApi ) {
         InputStream in = Configurator.class.getResourceAsStream(
                 "/edu/gcsc/vrl/ug/resources/"+templateName);
+        
+        File projectSrc = new File(iApi.getResourceFolder(), templateName);
+        
         try {
             IOUtil.saveStreamToFile(in, projectSrc);
         } catch (FileNotFoundException ex) {
@@ -719,5 +709,7 @@ public class Configurator extends VPluginConfigurator {
             Logger.getLogger(Configurator.class.getName()).
                     log(Level.SEVERE, null, ex);
         }
+        
+        return projectSrc;
     }
 }
