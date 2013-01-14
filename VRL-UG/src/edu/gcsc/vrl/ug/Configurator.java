@@ -30,8 +30,8 @@ public class Configurator extends VPluginConfigurator {
     
     private File kineticProjectSrc;
     private String kineticTemplateName = "ug-advect-diff-kinetic.vrlp";
-    private File d3fProjectSrc;
-    private String d3fTemplateName = "ug-d3f.vrlp";
+//    private File d3fProjectSrc;
+//    private String d3fTemplateName = "ug-d3f.vrlp";
     private File staticProjectSrc;
     private String staticTemplateName = "ug-advect-diff-static.vrlp";
     private static boolean serverConfiguration = false;
@@ -321,6 +321,7 @@ public class Configurator extends VPluginConfigurator {
 
         setConfigurationEntries();
   
+
         kineticProjectSrc = installTemplate(kineticTemplateName, iApi);
         
         iApi.addProjectTemplate(new ProjectTemplate() {
@@ -343,27 +344,27 @@ public class Configurator extends VPluginConfigurator {
         });
 
         
-        d3fProjectSrc = installTemplate(d3fTemplateName, iApi);
-        
-
-        iApi.addProjectTemplate(new ProjectTemplate() {
-
-            public String getName() {
-                return "UG - Density-Driven-Flow";
-            }
-
-            public File getSource() {
-                return d3fProjectSrc;
-            }
-
-            public String getDescription() {
-                return "UG Density-Driven-Flow Project";
-            }
-
-            public BufferedImage getIcon() {
-                return null;
-            }
-        });
+//        d3fProjectSrc = installTemplate(d3fTemplateName, iApi);
+//        
+//
+//        iApi.addProjectTemplate(new ProjectTemplate() {
+//
+//            public String getName() {
+//                return "UG - Density-Driven-Flow";
+//            }
+//
+//            public File getSource() {
+//                return d3fProjectSrc;
+//            }
+//
+//            public String getDescription() {
+//                return "UG Density-Driven-Flow Project";
+//            }
+//
+//            public BufferedImage getIcon() {
+//                return null;
+//            }
+//        });
 
         staticProjectSrc = installTemplate(staticTemplateName, iApi);
         
@@ -559,7 +560,7 @@ public class Configurator extends VPluginConfigurator {
     public void install(InitPluginAPI iApi) {
         super.install(iApi);
         
-        installTemplate(d3fTemplateName, iApi);
+//        installTemplate(d3fTemplateName, iApi);
         installTemplate(staticTemplateName, iApi);
         installTemplate(kineticTemplateName, iApi);
         
