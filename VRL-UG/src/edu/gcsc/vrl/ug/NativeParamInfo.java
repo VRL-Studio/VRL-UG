@@ -12,10 +12,9 @@ import java.io.Serializable;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class NativeParamInfo implements Serializable{
-    
-    private static final long serialVersionUID = 1L;
+public class NativeParamInfo implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private NativeType type;
     private String className;
     private String[] classNames;
@@ -66,44 +65,140 @@ public class NativeParamInfo implements Serializable{
      * @param type the native parameter type to set
      */
     private void setType(int type) {
-        // convert type
+
+        /*
+         * how the old order (before 20130522) is represented by the new one
+         * the numbers/oder must match with the order in NativeType.java and
+         * that order must match with c++ code from ug project
+         * from file trunk/ugbase/common/util/variant.cpp
+         * 
+         * matched by christian poliwoda
+         * 
+         //      // OLD //          
+         //      PT_UNKNOWN = 0, -> INVALID  <- UNDEFINED
+         //	PT_BOOL = 1,
+         //	PT_INTEGER = 2,
+         //            PT_NUMBER = 3, -> 3,4,5
+         //	PT_CSTRING = 4, -> 6
+         //	PT_STD_STRING = 5, -> 7
+         //	PT_POINTER = 6, ->8
+         //	PT_CONST_POINTER = 7, -> 9
+         //	PT_SMART_POINTER = 8, -> 10
+         //	PT_CONST_SMART_POINTER = 9 -> 11
+        
+         //    // NEW //       
+         //    VT_INVALID = 0,
+         //    VT_BOOL = 1,
+         //    VT_INT = 2,
+         //        VT_SIZE_T = 3,
+         //        VT_FLOAT = 4,
+         //        VT_DOUBLE = 5,
+         //    VT_CSTRING = 6,
+         //    VT_STDSTRING = 7,
+         //    VT_POINTER = 8,
+         //    VT_CONST_POINTER = 9,
+         //    VT_SMART_POINTER = 10,
+         //    VT_CONST_SMART_POINTER = 11
+         */
+
         switch (type) {
             case -1:
                 setType(NativeType.VOID);
                 break;
             case 0:
-                setType(NativeType.UNDEFINED);
+                setType(NativeType.INVALID);
                 break;
             case 1:
                 setType(NativeType.BOOL);
                 break;
             case 2:
-                setType(NativeType.INTEGER);
+                setType(NativeType.INT);
                 break;
             case 3:
-                setType(NativeType.NUMBER);
+                setType(NativeType.SIZE_T);
                 break;
             case 4:
-                setType(NativeType.STRING);
+                setType(NativeType.FLOAT);
                 break;
             case 5:
-                setType(NativeType.STRING);
+                setType(NativeType.DOUBLE);
                 break;
             case 6:
-                setType(NativeType.POINTER);
+                setType(NativeType.CSTRING);
                 break;
             case 7:
-                setType(NativeType.CONST_POINTER);
+                setType(NativeType.STDSTRING);
                 break;
             case 8:
-                setType(NativeType.SMART_POINTER);
+                setType(NativeType.POINTER);
                 break;
             case 9:
+                setType(NativeType.CONST_POINTER);
+                break;
+            case 10:
+                setType(NativeType.SMART_POINTER);
+                break;
+            case 11:
                 setType(NativeType.CONST_SMART_POINTER);
                 break;
             default:
-                setType(NativeType.UNDEFINED);
+                setType(NativeType.INVALID);
         }
+
+
+        /* order/conversion before 20130522
+         * commented out and not deleted to have a backup
+         */
+        /* order before 20130522
+         BOOL,
+         INTEGER,
+         NUMBER,
+         STRING,
+         POINTER,
+         CONST_POINTER,
+         SMART_POINTER,
+         CONST_SMART_POINTER,
+         VOID,
+         UNDEFINED
+         */
+//        // convert type
+//        switch (type) {
+//            case -1:
+//                setType(NativeType.VOID);
+//                break;
+//            case 0:
+//                setType(NativeType.UNDEFINED);
+//                break;
+//            case 1:
+//                setType(NativeType.BOOL);
+//                break;
+//            case 2:
+//                setType(NativeType.INTEGER);
+//                break;
+//            case 3:
+//                setType(NativeType.NUMBER);
+//                break;
+//            case 4:
+//                setType(NativeType.STRING);
+//                break;
+//            case 5:
+//                setType(NativeType.STRING);
+//                break;
+//            case 6:
+//                setType(NativeType.POINTER);
+//                break;
+//            case 7:
+//                setType(NativeType.CONST_POINTER);
+//                break;
+//            case 8:
+//                setType(NativeType.SMART_POINTER);
+//                break;
+//            case 9:
+//                setType(NativeType.CONST_SMART_POINTER);
+//                break;
+//            default:
+//                setType(NativeType.UNDEFINED);
+//        }
     }
 
     /**
@@ -228,11 +323,17 @@ public class NativeParamInfo implements Serializable{
                 return "void";
             case BOOL:
                 return "java.lang.Boolean";
-            case INTEGER:
+            case INT:
                 return "java.lang.Integer";
-            case NUMBER:
+            case SIZE_T: //no unsigned type in java therefore cast to integer
+                return "java.lang.Integer";
+            case FLOAT:
+                return "java.lang.Float";
+            case DOUBLE:
                 return "java.lang.Double";
-            case STRING:
+            case CSTRING: //"C"STRING cast to normal string 
+                return "java.lang.String";
+            case STDSTRING: //"STD"STRING cast to normal string 
                 return "java.lang.String";
             case POINTER:
                 return CodeUtils.interfaceName(getClassName(), false);
@@ -244,7 +345,35 @@ public class NativeParamInfo implements Serializable{
                 return CodeUtils.interfaceName(getClassName(), true);
         }
 
-        return "/*ERROR!!! INVALID TYPE*/ void";
+        return "/*ERROR!!! INVALID TYPE [type=" + getType() + "] */ void";
+
+        /* order/conversion before 20130522
+         * commented out and not deleted to have a backup
+         * 
+         * see also setType(int) in this class
+         */
+//        switch (getType()) {
+//            case VOID:
+//                return "void";
+//            case BOOL:
+//                return "java.lang.Boolean";
+//            case INTEGER:
+//                return "java.lang.Integer";
+//            case NUMBER:
+//                return "java.lang.Double";
+//            case STRING:
+//                return "java.lang.String";
+//            case POINTER:
+//                return CodeUtils.interfaceName(getClassName(), false);
+//            case CONST_POINTER:
+//                return CodeUtils.interfaceName(getClassName(), true);
+//            case SMART_POINTER:
+//                return CodeUtils.interfaceName(getClassName(), false);
+//            case CONST_SMART_POINTER:
+//                return CodeUtils.interfaceName(getClassName(), true);
+//        }
+//
+//        return "/*ERROR!!! INVALID TYPE*/ void";
     }
 
     /**
