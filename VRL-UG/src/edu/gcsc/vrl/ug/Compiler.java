@@ -141,7 +141,14 @@ public class Compiler {
         CompilationUnit cu = new CompilationUnit(gcl);
         cu.configure(conf);
         cu.addSource("UG_Classes", code.toString());
-        cu.compile();
+        
+        try {
+            cu.compile();
+        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
+        }
+        
 
         // Load classes via URL classloader
         ClassLoader cl = Compiler.class.getClassLoader(); //Thread.currentThread().getContextClassLoader();

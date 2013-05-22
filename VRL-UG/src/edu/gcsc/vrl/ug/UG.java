@@ -591,8 +591,19 @@ public class UG {
 
                 if (api == null) {
 
-                    NativeAPIInfo nativeAPI = convertRegistryInfo();
+                    NativeAPIInfo nativeAPIInfo = convertRegistryInfo();
                     Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
+
+//                    // new added for test in 20130522
+//                    if (nativeAPIInfo == null) {
+//                        System.err.println(" ## Java: VRL-UG");
+//                        System.err.println(" ## package: edu.gcsc.vrl.ug");
+//                        System.err.println(" ## class: UG");
+//                        System.err.println(" ## method: UG(RemoteType)");
+//                        System.err.println(" ## nativeAPIinfo is null");
+//                    } else {
+//                        System.err.println(" ## nativeAPIinfo NOT null");
+//                    }
 
                     try {
                         recompiled = true;
@@ -605,12 +616,36 @@ public class UG {
                         SplashScreenGenerator.printBootMessage(
                                 ">> UG: recompiling API (this may take a while) ...");
 
+                        edu.gcsc.vrl.ug.NativeAPICode nativeAPICode =
+                                new edu.gcsc.vrl.ug.NativeAPICode(nativeAPIInfo);
+
+//                        // new added for test in 20130522
+//                        if (nativeAPICode == null) {
+//                            System.err.println(" ## Java: VRL-UG");
+//                            System.err.println(" ## package: edu.gcsc.vrl.ug");
+//                            System.err.println(" ## class: UG");
+//                            System.err.println(" ## method: UG(RemoteType)");
+//                            System.err.println(" ## nativeAPICode is null");
+//                        } else {
+//                            System.err.println(" ## nativeAPICode NOT null");
+//                        }
+
+                        String[] allCodes = nativeAPICode.getAllCodes();
+
+//                        // new added for test in 20130522
+//                        if (nativeAPIInfo == null) {
+//                            System.err.println(" ## Java: VRL-UG");
+//                            System.err.println(" ## package: edu.gcsc.vrl.ug");
+//                            System.err.println(" ## class: UG");
+//                            System.err.println(" ## method: UG(RemoteType)");
+//                            System.err.println(" ## String[] allCodes is null");
+//                        } else {
+//                            System.err.println(" ## String[] allCodes NOT null");
+//                        }
+
                         // generates jar file in plugin path
-                        compiler.compile(
-                                new edu.gcsc.vrl.ug.NativeAPICode(
-                                nativeAPI).getAllCodes(),
-                                VRL.getPropertyFolderManager().getPluginUpdatesFolder().
-                                getAbsolutePath());
+                        compiler.compile(allCodes,
+                                VRL.getPropertyFolderManager().getPluginUpdatesFolder().getAbsolutePath());
 
                     } catch (Exception ex) {
                         Logger.getLogger(UG.class.getName()).
@@ -652,7 +687,7 @@ public class UG {
             try {
                 cl = new URLClassLoader(
                         new URL[]{new File(eu.mihosoft.vrl.system.Constants.PLUGIN_DIR
-                            + "/" + Compiler.API_JAR_NAME).toURI().toURL()});
+                    + "/" + Compiler.API_JAR_NAME).toURI().toURL()});
             } catch (MalformedURLException ex) {
                 Logger.getLogger(VRL.class.getName()).
                         log(Level.SEVERE, null, ex);
