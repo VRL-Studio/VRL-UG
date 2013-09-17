@@ -1084,7 +1084,16 @@ public class UG {
      * have for better readability of the source code the following name
      * convencien:
      * <code>_methodName</code>
-     *
+     * If you change a native method you need to rebuild first this class and
+     * second the binding header file (bindings_vrl_native.h), which is needed
+     * for native inplementation of UG.
+     * Changing means:
+     * - add / remove a methode
+     * - rename a method
+     * - change the parameter list of a method
+     * You can generate "bindings_vrl_native.h" automatically by executing
+     * "create-header.sh" which should be checked out with this project and be 
+     * stored in the parent folder of this project.
      */
     final native NativeAPIInfo _convertRegistryInfo();
 
@@ -1115,7 +1124,7 @@ public class UG {
     native String _getBinaryLicense();
 
     public static native int _ugInit(String[] args);
-
+    
     /**
      * Deallocates specified memory. The destructor of the specified class will
      * be called.
@@ -1132,6 +1141,13 @@ public class UG {
      * @param p smart-pointer to invalidate
      */
     native static void _invalidate(SmartPointer p);
+    
+    
+    
+    // this method is only for debug issues and should NOT be used later
+    native static Object _test_debug(String name, Object[] params);
+
+    
     //
     //
     /**
@@ -1804,4 +1820,22 @@ public class UG {
         }
 
     }
+    
+    // this method is only for debug issues and should NOT be used later
+    public static Object test_debug(String name, Object[] params){
+        
+        if (remoteType.equals(RemoteType.CLIENT)) {
+
+            System.err.println(" NOT implemented yet test_debug() for RemoteType.CLIENT !!!");
+
+        } else {
+
+            System.out.println("UG.java in test_debug() !RemoteType.CLIENT");
+            System.out.println("calling native _test_debug()");
+           return _test_debug(name, params);
+        }
+        
+        return null;
+    }
+
 }

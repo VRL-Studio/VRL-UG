@@ -8,9 +8,6 @@ import eu.mihosoft.vrl.system.VRL;
 import eu.mihosoft.vrl.system.VSysUtil;
 import eu.mihosoft.vrl.visual.Canvas;
 import java.io.*;
-import java.lang.ref.PhantomReference;
-import java.lang.ref.Reference;
-import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,6 +27,8 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
  */
 @ObjectInfo(name = "JVMmanager")
 @ComponentInfo(name = "JVMmanager", category = "VRL/VRL-UG")
+// do not forget to add the class in Configurator.register() via
+// vApi.addComponent("THE_CLASSFILE_OF_THIS_CLASS")
 public class JVMmanager implements Serializable {
 
     private static final long serialVersionUID = 1L;
