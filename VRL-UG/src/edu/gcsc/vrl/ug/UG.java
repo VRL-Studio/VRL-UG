@@ -1831,7 +1831,7 @@ public class UG {
         } else {
 
             System.out.println("UG.java in test_debug() !RemoteType.CLIENT");
-            System.out.println("calling native _test_debug()");
+            System.out.println("calling native _test_debug(name= "+name+", params[] )");
            return _test_debug(name, params);
         }
         
