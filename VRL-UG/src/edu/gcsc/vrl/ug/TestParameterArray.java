@@ -57,8 +57,39 @@ public class TestParameterArray implements Serializable {
             }
         }
 
+        Object[] array;
+        array = arrayOfBooleanArrays.toArray();
+
         System.out.println("Java sout() -> UG.test_debug() called by TestParameterArray.testArrayOFBooleanArrays()");
-        UG.test_debug("Java -> UG.test_debug()", arrayOfBooleanArrays.toArray());
+//        UG.test_debug("Java -> UG.test_debug()", array);
+
+        System.out.println("java side: PART 2 !! ");
+
+
+        //mist FALSCH ... studio schmiert ab
+//        System.out.println("Java sout() -> UG.getInstance().invokeFunction() called by TestParameterArray.testArrayOFBooleanArrays()");
+//        UG.getInstance().invokeFunction("jobjectArray2ParamStack", true, array);
+
+
+//        UG.test_debug("F_ChrisPoliTest.invoke()", array);// DONT WORK
+//        UG.getInstance().invokeFunction("F_ChrisPoliTest.invoke()",true, null);// DONT WORK
+//        UG.getInstance().invokeFunction("ChrisPoliTest",true, null);// DONT WORK
+//        UG.getInstance().invokeFunction("ChrisPoliTest",true, void);// DONT WORK
+//        
+
+//        //changing function-parameterlist from "()" to "(int)"
+//        int numberOfFunctionParameters = 1;
+//        Object[] params = new Object[numberOfFunctionParameters];
+//        params[0] = new Integer(2);
+////        UG.getInstance().invokeFunction("F_ChrisPoliTest.invoke()",true, params);// DONT WORK
+//        UG.getInstance().invokeFunction("ChrisPoliTest",true, params);
+
+        
+        //method ChrisPoliTest() registered in "trunk/ugbase/bridge/misc_bridges/test_bridge.cpp"
+        int numberOfFunctionParameters = 0;
+        Object[] params = new Object[numberOfFunctionParameters];
+        UG.getInstance().invokeFunction("ChrisPoliTest",true, params);
+
 
         System.out.println("java side: end");
     }
