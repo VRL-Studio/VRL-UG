@@ -22,7 +22,8 @@ public class NativeParamInfo implements Serializable {
     private String help;
     private String tooltip;
     private String[] paramInfo;
-
+    private Boolean paramAVector = false;
+    
     public NativeParamInfo() {
     }
 
@@ -37,6 +38,8 @@ public class NativeParamInfo implements Serializable {
         this.help = p.help;
         this.tooltip = p.tooltip;
         this.paramInfo = p.paramInfo;
+        
+        this.paramAVector = p.isParamAVector();
     }
 
     /**
@@ -318,50 +321,90 @@ public class NativeParamInfo implements Serializable {
      */
     public String getTypeClassName() {
 
+        // christian poliwoda modifications. original method below commented out
+//        System.out.println(getClass().getSimpleName()+".getTypeClassName()");
+//        System.out.println(" type = "+ getType());
+//        System.out.println(" isVector() = "+ isParamAVector());
+        
+        String result = "NO_TYPE";
+        
         switch (getType()) {
             case VOID:
-                return "void";
+                result = "void";
+                break;
             case BOOL:
-                return "java.lang.Boolean";
+                result = "java.lang.Boolean";
+                break;
             case INT:
-                return "java.lang.Integer";
+                result = "java.lang.Integer";
+                break;
             case SIZE_T: //no unsigned type in java therefore cast to integer
-                return "java.lang.Integer";
+                result = "java.lang.Integer";
+                break;
             case FLOAT:
-                return "java.lang.Float";
+                result = "java.lang.Float";
+                break;
             case DOUBLE:
-                return "java.lang.Double";
+                result = "java.lang.Double";
+                break;
             case CSTRING: //"C"STRING cast to normal string 
-                return "java.lang.String";
+                result = "java.lang.String";
+                break;
             case STDSTRING: //"STD"STRING cast to normal string 
-                return "java.lang.String";
+                result = "java.lang.String";
+                break;
             case POINTER:
-                return CodeUtils.interfaceName(getClassName(), false);
+                result = CodeUtils.interfaceName(getClassName(), false);
+                break;
             case CONST_POINTER:
-                return CodeUtils.interfaceName(getClassName(), true);
+                result = CodeUtils.interfaceName(getClassName(), true);
+                break;
             case SMART_POINTER:
-                return CodeUtils.interfaceName(getClassName(), false);
+                result = CodeUtils.interfaceName(getClassName(), false);
+                break;
             case CONST_SMART_POINTER:
-                return CodeUtils.interfaceName(getClassName(), true);
+                result = CodeUtils.interfaceName(getClassName(), true);
+                break;
+            default:
+                System.err.println("/*ERROR!!! INVALID TYPE [type=" + getType() + "] */ void."
+                        + " result = "+ result);
         }
 
-        return "/*ERROR!!! INVALID TYPE [type=" + getType() + "] */ void";
+        //
+        // check now if there are lists / vectors / arrays
+        //
 
-        /* order/conversion before 20130522
-         * commented out and not deleted to have a backup
-         * 
-         * see also setType(int) in this class
-         */
+        if(isParamAVector())
+        {
+            result = "java.util.List<"+result+">";
+        }
+        
+        return result;
+    }
+    
+//    /**
+//     * Returns the Java class name of this parameter type.
+//     *
+//     * @return the Java class name of this parameter type
+//     */
+//    public String getTypeClassName() {
+//  
 //        switch (getType()) {
 //            case VOID:
 //                return "void";
 //            case BOOL:
 //                return "java.lang.Boolean";
-//            case INTEGER:
+//            case INT:
 //                return "java.lang.Integer";
-//            case NUMBER:
+//            case SIZE_T: //no unsigned type in java therefore cast to integer
+//                return "java.lang.Integer";
+//            case FLOAT:
+//                return "java.lang.Float";
+//            case DOUBLE:
 //                return "java.lang.Double";
-//            case STRING:
+//            case CSTRING: //"C"STRING cast to normal string 
+//                return "java.lang.String";
+//            case STDSTRING: //"STD"STRING cast to normal string 
 //                return "java.lang.String";
 //            case POINTER:
 //                return CodeUtils.interfaceName(getClassName(), false);
@@ -373,9 +416,37 @@ public class NativeParamInfo implements Serializable {
 //                return CodeUtils.interfaceName(getClassName(), true);
 //        }
 //
-//        return "/*ERROR!!! INVALID TYPE*/ void";
-    }
-
+//        return "/*ERROR!!! INVALID TYPE [type=" + getType() + "] */ void";
+//
+//        /* order/conversion before 20130522
+//         * commented out and not deleted to have a backup
+//         * 
+//         * see also setType(int) in this class
+//         */
+////        switch (getType()) {
+////            case VOID:
+////                return "void";
+////            case BOOL:
+////                return "java.lang.Boolean";
+////            case INTEGER:
+////                return "java.lang.Integer";
+////            case NUMBER:
+////                return "java.lang.Double";
+////            case STRING:
+////                return "java.lang.String";
+////            case POINTER:
+////                return CodeUtils.interfaceName(getClassName(), false);
+////            case CONST_POINTER:
+////                return CodeUtils.interfaceName(getClassName(), true);
+////            case SMART_POINTER:
+////                return CodeUtils.interfaceName(getClassName(), false);
+////            case CONST_SMART_POINTER:
+////                return CodeUtils.interfaceName(getClassName(), true);
+////        }
+////
+////        return "/*ERROR!!! INVALID TYPE*/ void";
+//    }
+    
     /**
      * Indicates whether this parameter is const.
      *
@@ -402,5 +473,25 @@ public class NativeParamInfo implements Serializable {
                 || getType() == NativeType.POINTER
                 || getType() == NativeType.CONST_SMART_POINTER
                 || getType() == NativeType.SMART_POINTER;
+    }
+
+  /**
+     * Indicates whether this parameter is a list / vector.
+     * This method should be aquilavent to the isVector method on c++
+     * side in native ug for lua-binding.
+     *
+     * @return
+     * <code>true</code> if this parameter is a vector;
+     * <code>false</code> otherwise
+     */
+    public Boolean isParamAVector() {
+        return paramAVector;
+    }
+
+    /**
+     * @param paramIsVector the paramAVector to set
+     */
+    public void setParamAVector(Boolean paramIsVector) {
+        this.paramAVector = paramIsVector;
     }
 }
