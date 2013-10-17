@@ -11,8 +11,8 @@ import java.io.Serializable;
  * necessary to generate code for wrapper methods.
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public class NativeMethodInfo implements Serializable{
-    
+public class NativeMethodInfo implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     private String name;
@@ -29,6 +29,18 @@ public class NativeMethodInfo implements Serializable{
     }
 
     public NativeMethodInfo(NativeMethodInfo m) {
+        //christian poliwoda start
+        System.out.println(getClass().getSimpleName() + " NativeMethodInfo(NativeMethodInfo m)");
+
+        System.out.println(" name = " + name);
+        if (parameters != null) {
+            int parametersLength = parameters.length;
+            for (int i = 0; i < parametersLength; i++) {
+                System.out.println(" parameters[" + i + "] = " + parameters[i]);
+            }
+        }
+
+        //christian poliwoda end
         this.name = m.name;
         this.options = m.options;
         this.returnValue = new NativeParamInfo(m.returnValue);

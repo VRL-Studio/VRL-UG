@@ -28,11 +28,19 @@ public class TestParameterArray implements Serializable {
 
         Boolean[] boolArray1 = {Boolean.TRUE, Boolean.TRUE, Boolean.FALSE};
 
-        UG.test_debug("TestParameterArray.testBooleanArray()", boolArray1);
+        UG.test_debug("Java TestParameterArray.testBooleanArray() -> UG.test_debug()", boolArray1);
 
         System.out.println("java side: end");
     }
 
+    /**
+     * Here we call a native (test/debug) method [JAVA: test_debug() -> _test_debug() :CPP]
+     * which calls other cpp-methods VIA an instance of ug.
+     * 
+     * Bootle-Neck problem:
+     * all java test call need to go through [JAVA: test_debug() -> _test_debug() :CPP]
+     * and can than be an cpp side redirected to other test-/debug-calls.
+     */
     public static void testArrayOFBooleanArrays() {
 
         System.out.println("java side: start");
@@ -60,37 +68,73 @@ public class TestParameterArray implements Serializable {
         Object[] array;
         array = arrayOfBooleanArrays.toArray();
 
-        System.out.println("Java sout() -> UG.test_debug() called by TestParameterArray.testArrayOFBooleanArrays()");
-//        UG.test_debug("Java -> UG.test_debug()", array);
+        System.out.println("Java sout() -> UG.test_debug() with array of 3 Boolean[]");
 
-        System.out.println("java side: PART 2 !! ");
-
-
-        //mist FALSCH ... studio schmiert ab
-//        System.out.println("Java sout() -> UG.getInstance().invokeFunction() called by TestParameterArray.testArrayOFBooleanArrays()");
-//        UG.getInstance().invokeFunction("jobjectArray2ParamStack", true, array);
-
-
-//        UG.test_debug("F_ChrisPoliTest.invoke()", array);// DONT WORK
-//        UG.getInstance().invokeFunction("F_ChrisPoliTest.invoke()",true, null);// DONT WORK
-//        UG.getInstance().invokeFunction("ChrisPoliTest",true, null);// DONT WORK
-//        UG.getInstance().invokeFunction("ChrisPoliTest",true, void);// DONT WORK
-//        
-
-//        //changing function-parameterlist from "()" to "(int)"
-//        int numberOfFunctionParameters = 1;
-//        Object[] params = new Object[numberOfFunctionParameters];
-//        params[0] = new Integer(2);
-////        UG.getInstance().invokeFunction("F_ChrisPoliTest.invoke()",true, params);// DONT WORK
-//        UG.getInstance().invokeFunction("ChrisPoliTest",true, params);
-
-        
-        //method ChrisPoliTest() registered in "trunk/ugbase/bridge/misc_bridges/test_bridge.cpp"
-        int numberOfFunctionParameters = 0;
-        Object[] params = new Object[numberOfFunctionParameters];
-        UG.getInstance().invokeFunction("ChrisPoliTest",true, params);
-
+        UG.test_debug("Java TestParameterArray.testArrayOFBooleanArrays() -> UG.test_debug()", array);
 
         System.out.println("java side: end");
+    }
+
+    /**
+     * Here we call methods which are registered in the registry of native UG
+     * WITHOUT using/needing an instance of ug.
+     *
+     * Direct Call:
+     * call all cpp-registered test-/debug-methods directly without a bootle-neck like
+     * [JAVA: test_debug() -> _test_debug() :CPP].
+     */
+    public static void callingDirectCppMethods() {
+        System.out.println("java side: callingDirectCppMethods() ");
+
+//        
+//        System.out.println("JAVA: ChrisPoliTest 1");
+//        //method ChrisPoliTest() registered in "trunk/ugbase/bridge/misc_bridges/test_bridge.cpp"
+//        int numberOfFunctionParameters = 0;
+//        Object[] params = new Object[numberOfFunctionParameters];
+//        UG.getInstance().invokeFunction("ChrisPoliTest",true, params);
+//
+//        System.out.println("JAVA: ChrisPoliTest 2");
+//        //method ChrisPoliTest(int i) registered in "trunk/ugbase/bridge/misc_bridges/test_bridge.cpp"
+//        int numberOfFunctionParameters1 = 1;
+//        Object[] params1 = new Object[numberOfFunctionParameters1];
+//        params1[0] = new Integer(2);
+//        UG.getInstance().invokeFunction("ChrisPoliTest",true, params1);
+//
+
+//        System.out.println("JAVA: ChrisPoliTest 3");
+//        //method ChrisPoliTest(bool array[]) registered in "trunk/ugbase/bridge/misc_bridges/test_bridge.cpp"
+//        int numberOfFunctionParameters2 = 2;
+//        Object[] params2 = new Object[numberOfFunctionParameters2];
+//        //FIRST START
+////        params2[0] = new ArrayList<Boolean>();
+////        ((ArrayList<Boolean>)params2[0]).add(Boolean.TRUE);
+////        ((ArrayList<Boolean>)params2[0]).add(Boolean.FALSE);
+//        //FIRST END
+//        //SECOND START
+//        params2[0] = Boolean.TRUE;
+//        params2[1] = Boolean.FALSE;
+//        //SECOND END
+//        UG.getInstance().invokeFunction("ChrisPoliTest",true, params2);
+
+        System.out.println("JAVA: ChrisPoliTest 4");
+        //method ChrisPoliTest(bool array[]) registered in "trunk/ugbase/bridge/misc_bridges/test_bridge.cpp"
+        int numberOfFunctionParameters2 = 1;
+        Object[] params2 = new Object[numberOfFunctionParameters2];
+//       
+//        // Versuch 1 start
+//        params2[0] = new ArrayList<Boolean>();
+//        ((ArrayList<Boolean>)params2[0]).add(Boolean.TRUE);
+//        ((ArrayList<Boolean>)params2[0]).add(Boolean.FALSE);
+//        // Versuch 1 ende
+//        
+        // Versuch 2 start
+        ArrayList<Boolean> array = new ArrayList<Boolean>();
+        array.add(Boolean.TRUE);
+        array.add(Boolean.FALSE);
+        params2[0] = array;
+        // Versuch 2 ende
+
+        UG.getInstance().invokeFunction("ChrisPoliTest", true, params2);
+
     }
 }
