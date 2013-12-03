@@ -10,6 +10,12 @@ import eu.mihosoft.vrl.annotation.ObjectInfo;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/*
+To cpoliwoda@quadruped.gcsc.uni-frankfurt.de:/home/gitrepos/VRL-UG
+ * [new branch]      variant -> variant
+Branch variant set up to track remote branch variant from quadruped.
+*/
+
 /**
  *
  * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
