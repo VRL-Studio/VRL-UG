@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/Users/miho/EigeneApps/VRL-UG4/VRL-UG4/src/edu/gcsc/vrl/ug4/UG4.java</file>
-        <file>file:/Users/miho/EigeneApps/VRL-UG4/VRL-UG4/src/edu/gcsc/vrl/ug4/BoundaryUserDataCompiler.java</file>
-        <file>file:/Users/miho/EigeneApps/VRL-UG4/VRL-UG4/src/edu/gcsc/vrl/ug4/BoundaryUserDataType.java</file>
-        <file>file:/Users/miho/EigeneApps/VRL-UG4/VRL-UG4/src/edu/gcsc/vrl/ug4/UserDataCompiler.java</file>
-        <file>file:/Users/miho/EigeneApps/VRL-UG4/VRL-UG4/src/edu/gcsc/vrl/ug4/UserDataType.java</file>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/Users/christianpoliwoda/Apps/VRL-UG4/VRL-UG/build.properties</file>
+            <file>file:/Users/christianpoliwoda/Apps/VRL-UG4/VRL-UG/src/edu/gcsc/vrl/ug/UG.java</file>
+        </group>
     </open-files>
 </project-private>
