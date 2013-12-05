@@ -23,3 +23,5 @@ tmp
 /VRL-UG/src/eu/mihosoft/vrl/natives/osx/
 /VRL-UG/src/eu/mihosoft/vrl/natives/windows/x64/
 /VRL-UG/src/eu/mihosoft/vrl/natives/windows/x86/
+/VRL-UGUtil/nbproject/private/
+/VRL-UGUtil/build/
