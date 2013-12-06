@@ -30,9 +30,8 @@ public class NativeMethodInfo implements Serializable {
 
     public NativeMethodInfo(NativeMethodInfo m) {
         //christian poliwoda start
-        System.out.println(getClass().getSimpleName() + " NativeMethodInfo(NativeMethodInfo m)");
-
-        System.out.println(" name = " + name);
+//        System.out.println(getClass().getSimpleName() + " NativeMethodInfo(NativeMethodInfo m)");
+//        System.out.println(" name = " + name);
         if (parameters != null) {
             int parametersLength = parameters.length;
             for (int i = 0; i < parametersLength; i++) {
