@@ -215,6 +215,12 @@ public class UG {
             "-plugin-checksum-test", "yes",
             "-" + Constants.REMOTETYPE_KEY, RemoteType.SERVER.toString()};
 
+//        //debug
+//        for (int i = 0; i < params.length; i++) {
+//            System.out.println("params[ "+i+" ] = "+params[i]);
+//            
+//        }
+        
         VRL.initAll(params);
 
 //        set in the server JVM the server ug object
