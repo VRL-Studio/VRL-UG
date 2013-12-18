@@ -169,6 +169,7 @@ public class JVMmanager implements Serializable {
 
                 ProcessBuilder processBuilder = new ProcessBuilder(
                         path, commandLineCallOptions,
+                         "-Xmx1024m",//setting max heap size
                         "-cp", classpath, name,
                         serverFolderName);
 
