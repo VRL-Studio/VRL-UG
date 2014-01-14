@@ -5,8 +5,17 @@ package edu.gcsc.vrl.ug;
  * the editor.
  */
 import eu.mihosoft.vrl.io.Base64;
+import eu.mihosoft.vrl.io.IOUtil;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /* 
  * NOTICE:
@@ -56,7 +65,6 @@ public class RpcHandler {
      */
     public static UG getServer() {
 
-
 //        System.out.println("CLS RemoteType of UG =" + UG.getRemoteType());
 //        
 //        System.out.println("RpcHandler.getServer(): CLS.RpcHandler:="
@@ -70,8 +78,6 @@ public class RpcHandler {
 //        
 //        System.out.println("RpcHandler.getServer(): CLS.System:="
 //                + ClassLoader.getSystemClassLoader());
-
-
         if (server == null) {
             System.out.println("RpcHandler.getServer()==null");
 
@@ -94,7 +100,6 @@ public class RpcHandler {
 //            System.out.print("NOT ");
 //        }
 //        System.out.println("NULL.");
-
         return server;
     }
 
@@ -126,7 +131,6 @@ public class RpcHandler {
 
         show("convertRegistryInfo");
 
-
 //        System.out.println("RpcHandler.convertRegistryInfo(): CLS.RpcHandler:="
 //                + RpcHandler.class.getClassLoader());
 //        
@@ -148,7 +152,6 @@ public class RpcHandler {
 //        
 //        System.out.println("RpcHandler.convertRegistryInfo(): CLS.NativeClassGroupInfo:="
 //                + NativeClassGroupInfo.class.getClassLoader());
-
 //            System.out.println("RpcHandler.convertRegistryInfo() :::: -> ");
 //            System.out.println("o = Base64.decodeToObject(base64);");
 //            System.out.println("leads to -> ");
@@ -158,11 +161,6 @@ public class RpcHandler {
 //            System.out.println("o = Base64.decodeToObject(base64, UG.class.getClassLoader());");
 //            System.out.println("leads to -> ");
 //            System.out.println("java.lang.ClassNotFoundException: [Ledu.gcsc.vrl.ug.NativeClassGroupInfo;");
-
-
-
-
-
         NativeAPIInfo napiInfo = getServer()._convertRegistryInfo();
 
         if (napiInfo == null) {
@@ -174,7 +172,6 @@ public class RpcHandler {
         String base64 = Base64.encodeObject(napiInfo);
 
 //        System.out.println("base64.substring(0,11): " + base64.substring(0, 11));
-
         return base64;
     }
 
@@ -191,20 +188,15 @@ public class RpcHandler {
             String methodName, String params) {
         show("invokeMethod");
 
-
 //        System.out.println("RpcHandler.invokeMethod() paramas values are:");
 //        System.out.println("exportedClassName = " + exportedClassName);
 //        System.out.println("objPtr = " + objPtr);
 //        System.out.println("readOnly = " + readOnly);
 //        System.out.println("methodName = " + methodName);
 //        System.out.println("params = " + params);
-
-
-
         Object o = Base64.decodeToObject(params, UG.class.getClassLoader());
 
 //        Object o = UGBase64.decodeToObject(params);
-
         Object[] objArray = (Object[]) o;
 
 //        //DEBUG LOOP
@@ -212,8 +204,6 @@ public class RpcHandler {
 //            System.out.println("params[" + i + "] = " + objArray[i]);
 //
 //        }
-
-
         o = getServer()._invokeMethod(
                 exportedClassName, new Long(objPtr), readOnly, methodName, objArray);
 
@@ -238,7 +228,6 @@ public class RpcHandler {
         Object o = Base64.decodeToObject(parameters, UG.class.getClassLoader());
 
 //        Object o = UGBase64.decodeToObject(parameters);
-
         Object[] objArray = (Object[]) o;
 
         Pointer p = getServer()._newInstance(new Long(exportedClassPtr), objArray);
@@ -301,7 +290,6 @@ public class RpcHandler {
 
 //        System.out.println("RESULT: " + base64);
         return base64;
-
 
     }
 
@@ -468,7 +456,6 @@ public class RpcHandler {
         Object o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
 //        Object o = UGBase64.decodeToObject(base64);
-
         if (o instanceof SmartPointer) {
             SmartPointer p = (SmartPointer) o;
 
@@ -515,7 +502,6 @@ public class RpcHandler {
         Boolean b = UG.isServerRunning();
 
 //        System.out.println("UG.isServerRunning() = " + b);
-
         if (b != null && b.booleanValue()) {
             return true;
         }
@@ -562,5 +548,44 @@ public class RpcHandler {
         }
 
         return 0;
+    }
+
+    /**    
+    @param pathOnServer the file to be saved
+    @return true if file could be written, else false
+    */
+    public Boolean saveFile(String pathOnServer, File file) {
+        show("saveFile");
+
+//        Object o = Base64.decodeToObject(file, UG.class.getClassLoader());
+File o = file;
+        
+        if (o instanceof File) {
+            System.out.println(" if (o instanceof File) ");
+            BufferedWriter bufWritter = null;
+            try {
+                System.out.println("in try");
+                System.out.println("String pathOnServer = "+ pathOnServer);
+                System.out.println("File file = "+file);
+                System.out.println("file.getName() = "+file.getName());
+                
+                File decodedFile = (File) o;
+                //create file on server
+                bufWritter = new BufferedWriter(new FileWriter(pathOnServer+"/"+decodedFile.getName()));
+                //read content of client file
+                FileInputStream inStream = new FileInputStream(decodedFile);
+                // write the content client file into server file
+                bufWritter.write(IOUtil.convertStreamToString(inStream));
+                //close all before opened streams
+                bufWritter.close();
+                inStream.close();
+                
+            } catch (IOException ex) {
+                Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return true;
+        }
+
+        return false;
     }
 }
