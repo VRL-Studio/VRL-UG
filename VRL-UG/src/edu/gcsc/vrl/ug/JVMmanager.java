@@ -41,6 +41,7 @@ public class JVMmanager implements Serializable {
     // String should have the form "ip:port"
     private static HashMap<String, XmlRpcClient> clientsForConnection =
             new HashMap<String, XmlRpcClient>();
+    private static String serverFolderName = null;
     /**
      * to solve references problems which could occur with handling ug objects
      * and server client concept
@@ -113,8 +114,6 @@ public class JVMmanager implements Serializable {
 //                    System.out.println("localServerJar.exists() = "
 //                            + new File(localServerJar).exists());
 
-
-
                 } else {
                     System.out.println("ERROR in JVMmanager.startAnotherJVM():"
                             + " localServerJar is NULL");
@@ -161,7 +160,7 @@ public class JVMmanager implements Serializable {
 
                 String name = clazz.getName();
 
-                String serverFolderName = Configurator.getLocalServerFolder().getName();
+                 serverFolderName = Configurator.getLocalServerFolder().getName();
 
                 // to remove outOfMemoryError message: PermGen space
                 // or better said resize the PermGen space area in the heap
@@ -170,8 +169,7 @@ public class JVMmanager implements Serializable {
                 ProcessBuilder processBuilder = new ProcessBuilder(
                         path, commandLineCallOptions,
                          "-Xmx1024m",//setting max heap size
-                        "-cp", classpath, name,
-                        serverFolderName);
+                        "-cp", classpath, name, getServerFolderName());
 
 
                 //NEEDED TO READ / VIEW OUTPUT OF 2nd JVM
@@ -504,6 +502,39 @@ public class JVMmanager implements Serializable {
         return weakReferencesOfUGObjects.add(
                 new WeakReference<UGObject>(ugObject));
     }
+    
+    public static Boolean transferFileToServer(String pathOnServer, File file){
+        System.out.println("JVMmanager.transferFileToServer("
+                + "String pathOnServer = "+ pathOnServer
+                + " , File file.getName() = "+ file.getName() +")");
+        
+        if (UG.getRemoteType().equals(RemoteType.CLIENT)) {
+            
+            System.out.println("if CLIENT");
+            
+            
+            XmlRpcClient client = getClient(getCurrentIP(), getCurrentPort());
+            
+            Vector xmlRpcParams = new Vector();
+            xmlRpcParams.addElement(pathOnServer);
+            xmlRpcParams.addElement(file);
+            
+             try {
+              Object  o = client.execute("RpcHandler.saveFile", xmlRpcParams);
+
+                if (o instanceof Boolean) {
+                    System.out.println("file transfered");
+                    return ((Boolean) o).booleanValue();
+                }
+
+            } catch (XmlRpcException ex) {
+//            Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        return false;
+    }
+    
 
     /**
      * Default is: defaultIP = "localhost" = "127.0.0.1"
@@ -562,5 +593,12 @@ public class JVMmanager implements Serializable {
             JVMmanager.releaseUGpointers();
             currentIP = aCurrentIP;
         }
+    }
+
+    /**
+     * @return the serverFolderName
+     */
+    public static String getServerFolderName() {
+        return serverFolderName;
     }
 }
