@@ -554,38 +554,58 @@ public class RpcHandler {
     @param pathOnServer the file to be saved
     @return true if file could be written, else false
     */
-    public Boolean saveFile(String pathOnServer, File file) {
+    public Boolean saveFile(String pathOnServer, String data) {
         show("saveFile");
 
-//        Object o = Base64.decodeToObject(file, UG.class.getClassLoader());
-File o = file;
+//       Object o = Base64.decodeToObject(file, UG.class.getClassLoader());
         
-        if (o instanceof File) {
-            System.out.println(" if (o instanceof File) ");
-            BufferedWriter bufWritter = null;
-            try {
-                System.out.println("in try");
-                System.out.println("String pathOnServer = "+ pathOnServer);
-                System.out.println("File file = "+file);
-                System.out.println("file.getName() = "+file.getName());
-                
-                File decodedFile = (File) o;
-                //create file on server
-                bufWritter = new BufferedWriter(new FileWriter(pathOnServer+"/"+decodedFile.getName()));
-                //read content of client file
-                FileInputStream inStream = new FileInputStream(decodedFile);
-                // write the content client file into server file
-                bufWritter.write(IOUtil.convertStreamToString(inStream));
-                //close all before opened streams
-                bufWritter.close();
-                inStream.close();
-                
-            } catch (IOException ex) {
-                Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            return true;
-        }
+        File defaultFile = new File("./");
+        
+        System.out.println("default-file: " + defaultFile.getAbsolutePath());
+        
+        System.out.println("root-file: " + new File("/").getAbsolutePath());
 
-        return false;
+       File convertedFile = new File(pathOnServer);
+       
+        System.out.println("pathOnServer = "+pathOnServer);
+        
+        System.out.println(" exists on server: " + convertedFile.getAbsoluteFile().getParentFile().exists());
+       
+        System.out.println("UG.getRemoteType() = "+ UG.getRemoteType());
+       
+        try {
+            IOUtil.base64ToFile(data, convertedFile);
+        } catch (IOException ex) {
+            Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
+//        if (o instanceof File) {
+//            System.out.println(" if (o instanceof File) ");
+//            BufferedWriter bufWritter = null;
+//            try {
+//                System.out.println("in try");
+//                System.out.println("String pathOnServer = "+ pathOnServer);
+//                System.out.println("File file = "+file);
+//                System.out.println("file.getName() = "+file.getName());
+//                
+//                File decodedFile = (File) o;
+//                //create file on server
+//                bufWritter = new BufferedWriter(new FileWriter(pathOnServer+"/"+decodedFile.getName()));
+//                //read content of client file
+//                FileInputStream inStream = new FileInputStream(decodedFile);
+//                // write the content client file into server file
+//                bufWritter.write(IOUtil.convertStreamToString(inStream));
+//                //close all before opened streams
+//                bufWritter.close();
+//                inStream.close();
+//                
+//            } catch (IOException ex) {
+//                Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            return true;
+//        }
+
+        return true;
     }
 }

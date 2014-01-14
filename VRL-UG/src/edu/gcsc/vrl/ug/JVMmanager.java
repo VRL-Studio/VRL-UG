@@ -2,6 +2,7 @@ package edu.gcsc.vrl.ug;
 
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.ObjectInfo;
+import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.VRL;
@@ -517,7 +518,11 @@ public class JVMmanager implements Serializable {
             
             Vector xmlRpcParams = new Vector();
             xmlRpcParams.addElement(pathOnServer);
-            xmlRpcParams.addElement(file);
+            try {
+                xmlRpcParams.addElement(IOUtil.fileToBase64(file));
+            } catch (IOException ex) {
+                Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
              try {
               Object  o = client.execute("RpcHandler.saveFile", xmlRpcParams);
