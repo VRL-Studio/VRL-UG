@@ -550,62 +550,54 @@ public class RpcHandler {
         return 0;
     }
 
-    /**    
-    @param pathOnServer the file to be saved
-    @return true if file could be written, else false
-    */
+    /**
+     This method operates on the VRL-UG server side and stores the file which is in the data string
+     at the exact position on the server.
+     @param pathOnServer place on server including path, file name and typ where the data should be stored.
+     @param data the data that should be stored on this server.
+     @return true if data could be stored, else false.
+     */
     public Boolean saveFile(String pathOnServer, String data) {
         show("saveFile");
 
-//       Object o = Base64.decodeToObject(file, UG.class.getClassLoader());
-        
-        File defaultFile = new File("./");
-        
-        System.out.println("default-file: " + defaultFile.getAbsolutePath());
-        
-        System.out.println("root-file: " + new File("/").getAbsolutePath());
+        File fileOnServer = new File(pathOnServer);
 
-       File convertedFile = new File(pathOnServer);
-       
-        System.out.println("pathOnServer = "+pathOnServer);
-        
-        System.out.println(" exists on server: " + convertedFile.getAbsoluteFile().getParentFile().exists());
-       
-        System.out.println("UG.getRemoteType() = "+ UG.getRemoteType());
-       
         try {
-            IOUtil.base64ToFile(data, convertedFile);
+            IOUtil.base64ToFile(data, fileOnServer);
         } catch (IOException ex) {
             Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
-        
-//        if (o instanceof File) {
-//            System.out.println(" if (o instanceof File) ");
-//            BufferedWriter bufWritter = null;
-//            try {
-//                System.out.println("in try");
-//                System.out.println("String pathOnServer = "+ pathOnServer);
-//                System.out.println("File file = "+file);
-//                System.out.println("file.getName() = "+file.getName());
-//                
-//                File decodedFile = (File) o;
-//                //create file on server
-//                bufWritter = new BufferedWriter(new FileWriter(pathOnServer+"/"+decodedFile.getName()));
-//                //read content of client file
-//                FileInputStream inStream = new FileInputStream(decodedFile);
-//                // write the content client file into server file
-//                bufWritter.write(IOUtil.convertStreamToString(inStream));
-//                //close all before opened streams
-//                bufWritter.close();
-//                inStream.close();
-//                
-//            } catch (IOException ex) {
-//                Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//            return true;
-//        }
 
         return true;
     }
+
+    /**
+     This method operates on the VRL-UG server side and returns the file which is specified via the
+     parameter pathOnServer.
+     @param pathOnServer the path were the file could be found including path, file name and typ.
+     @return the converted file if possible, else null.
+     */
+    public String getFile(String pathOnServer) {
+        show("getFile");
+
+        File fileOnServer = new File(pathOnServer);
+
+        String convertedFile = null;
+
+        if (fileOnServer.exists()) {
+            System.out.println("file exists");
+
+            try {
+                convertedFile = IOUtil.fileToBase64(fileOnServer);
+            } catch (IOException ex) {
+                Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            System.err.println("RpcHandler.getFile() : the specified path do NOT leed to an existing file.");
+        }
+
+        return convertedFile;
+    }
+
 }

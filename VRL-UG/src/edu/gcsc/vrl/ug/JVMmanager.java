@@ -40,15 +40,15 @@ public class JVMmanager implements Serializable {
     private static Integer currentPort = 1099;
     private static String currentIP = "127.0.0.1"; //"localhost"
     // String should have the form "ip:port"
-    private static HashMap<String, XmlRpcClient> clientsForConnection =
-            new HashMap<String, XmlRpcClient>();
+    private static HashMap<String, XmlRpcClient> clientsForConnection
+            = new HashMap<String, XmlRpcClient>();
     private static String serverFolderName = null;
     /**
      * to solve references problems which could occur with handling ug objects
      * and server client concept
      */
-    private static ArrayList<WeakReference<UGObject>> weakReferencesOfUGObjects =
-            new ArrayList<WeakReference<UGObject>>();
+    private static ArrayList<WeakReference<UGObject>> weakReferencesOfUGObjects
+            = new ArrayList<WeakReference<UGObject>>();
     /**
      * decide if by starting a local server the local server should be updated
      * on the basis of the local client
@@ -84,13 +84,10 @@ public class JVMmanager implements Serializable {
                 // This is the wrong path (client-folder) , server path is needed
 //                String pluginPath = eu.mihosoft.vrl.system.Constants.PLUGIN_DIR + "/VRL-UG.jar";
 //                classpath += ":" + pluginPath;
-
                 // TODO the path to jar of plugin in server folder
-
 //                System.out.println(" - JVMmanager.startAnotherJVM() :");
 //                System.out.println(" - - new Thread().run : ");
 //                System.out.println(" - - UG.getRemoteType() =" + UG.getRemoteType());
-
 //                File localServerFolder = Configurator.getLocalServerFolder();
                 String localServerJar = Configurator.getLocalServerJar();
 
@@ -105,16 +102,12 @@ public class JVMmanager implements Serializable {
                 }
 
 //                System.out.println(" --- split = "+ split);
-
                 if (localServerJar != null) {
                     classpath += split + localServerJar;
 
 //                    System.out.println("localServerJar = " + localServerJar);
-
-
 //                    System.out.println("localServerJar.exists() = "
 //                            + new File(localServerJar).exists());
-
                 } else {
                     System.out.println("ERROR in JVMmanager.startAnotherJVM():"
                             + " localServerJar is NULL");
@@ -131,37 +124,29 @@ public class JVMmanager implements Serializable {
 //                    System.out.println("ERROR in JVMmanager.startAnotherJVM():"
 //                            + " localServerUpdateJar is NULL");
 //                }
-
 //                //DEBUG SOUT SART
 //                System.out.println("-- --- JVMmanager.startAnotherJVM():ServerJarPath = "
 //                        + ServerJarPath);
-
-
                 String path = System.getProperty("java.home")
                         + separator + "bin" + separator + "java";
 
 //                System.out.println("\n JVMmanager :");
 //                System.out.println("separator = " + separator);
 //                System.out.println("classpath :");
-
-
 //                for (String s : classpath.split(split)) {
 //                    System.out.println(" " + s + split);
 //                }
 //                System.out.println("path = " + path + "\n");
-
 //                String strClassPath = System.getProperty("java.class.path");
 //                 
 //                 System.out.println("Classpath is =" );
 //                 for (String s : strClassPath.split(split)) {
 //                    System.out.println(" " + s + split);
 //                }
-
 //                //DEBUG SOUT END
-
                 String name = clazz.getName();
 
-                 serverFolderName = Configurator.getLocalServerFolder().getName();
+                serverFolderName = Configurator.getLocalServerFolder().getName();
 
                 // to remove outOfMemoryError message: PermGen space
                 // or better said resize the PermGen space area in the heap
@@ -169,16 +154,14 @@ public class JVMmanager implements Serializable {
 
                 ProcessBuilder processBuilder = new ProcessBuilder(
                         path, commandLineCallOptions,
-                         "-Xmx1024m",//setting max heap size
+                        "-Xmx1024m",//setting max heap size
                         "-cp", classpath, name, getServerFolderName());
-
 
                 //NEEDED TO READ / VIEW OUTPUT OF 2nd JVM
                 processBuilder.redirectErrorStream(true);
 
 //                //set selfdefined variable in new JVM
 //                processBuilder.environment().put("APP_NAME", name);
-
                 Process process = null;
 
                 try {
@@ -293,7 +276,6 @@ public class JVMmanager implements Serializable {
             }
 
             // MAKE SOME CLEANUP
-
             //remove the cached client from map
             removeClient(getDefaultIP(), getCurrentPort());
 
@@ -434,7 +416,6 @@ public class JVMmanager implements Serializable {
 
 //        System.out.println("JVMmanager.getClient() :"
 //                + "clientsForConnection.get(" + ip + ":" + port + ") = " + client);
-
         if (client == null) {
 //            System.out.println("if (client == null)");
             client = createXmlRpcClient(ip, port);
@@ -442,7 +423,6 @@ public class JVMmanager implements Serializable {
         }
 
 //        System.out.println("return of getClient(" + ip + ":" + port + ") = " + client);
-
         return client;
     }
 
@@ -469,7 +449,6 @@ public class JVMmanager implements Serializable {
         // TODO get releaseUGpointers() working with weak references :-)
         //did not work ! still an invalid memory acess error occur
         //to allow groovy code to interact with UGObjects after server crash
-
 //        for (WeakReference<UGObject> weakReference : weakReferencesOfUGObjects) {
 //            UGObject obj = weakReference.get();
 //            
@@ -482,14 +461,12 @@ public class JVMmanager implements Serializable {
 //        }
 //        System.out.println(count +" UGObjects are NULL in weakReferencesOfUGObjects");
 //        System.out.println(UGObject.counter +" UGObjects were created");
-
 //        for (UGObject obj : weakReferenceSetofUGObjects.) {
 //            
 //            if(obj!=null){
 //                obj.releaseThis();
 //            }
 //        }
-
     }
 
     /**
@@ -503,43 +480,114 @@ public class JVMmanager implements Serializable {
         return weakReferencesOfUGObjects.add(
                 new WeakReference<UGObject>(ugObject));
     }
+
+    /**
+     This method transfers a file from a VRL-UG client to VRL-UG server via XMLrpc.
     
-    public static Boolean transferFileToServer(String pathOnServer, File file){
-        System.out.println("JVMmanager.transferFileToServer("
-                + "String pathOnServer = "+ pathOnServer
-                + " , File file.getName() = "+ file.getName() +")");
-        
+     @param pathOnServer the path including filename and filetyp ending on the server, 
+     were the file should be stored. 
+     Notice: 
+     1) the path at the server side need to exists.
+     2) if a file at these path exist it will be overriden.
+     @param file the file on client side that should be transfered
+     @return tue if file could be transfered, else false.
+     */
+    public static Boolean transferFileToServer(String pathOnServer, File file) {
+//        System.out.println("JVMmanager.transferFileToServer("
+//                + "String pathOnServer = "+ pathOnServer
+//                + " , File file.getName() = "+ file.getName() +")");
+//        
         if (UG.getRemoteType().equals(RemoteType.CLIENT)) {
-            
-            System.out.println("if CLIENT");
-            
-            
+
+            //get the client to communicte with the current server
             XmlRpcClient client = getClient(getCurrentIP(), getCurrentPort());
-            
+
+            // addind all needed parameters into parameter vector in a XMLrpc usable state
             Vector xmlRpcParams = new Vector();
             xmlRpcParams.addElement(pathOnServer);
+
             try {
+                //convert the file into a string
+                //and add it to the parameter vector
                 xmlRpcParams.addElement(IOUtil.fileToBase64(file));
+
             } catch (IOException ex) {
                 Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
-            
-             try {
-              Object  o = client.execute("RpcHandler.saveFile", xmlRpcParams);
+
+            try {
+                //call remote the server method
+                Object o = client.execute("RpcHandler.saveFile", xmlRpcParams);
 
                 if (o instanceof Boolean) {
-                    System.out.println("file transfered");
+
                     return ((Boolean) o).booleanValue();
+                }
+
+            } catch (XmlRpcException ex) {
+                Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    public static File getFileFromServer(String pathOnServer, String pathWhereToStore) {
+        System.out.println("JVMmanager.getFileFromServer("
+                + "String pathOnServer = " + pathOnServer + ")");
+
+        File result = null;
+
+        if (UG.getRemoteType().equals(RemoteType.CLIENT)) {
+
+            System.out.println("if CLIENT");
+            String[] splits = pathOnServer.split("\\.");
+
+//            for (int i = 0; i < splits.length; i++) {
+//                System.out.println(" splits[" + i + "] = " + splits[i]);
+//            }
+//            System.out.println(" splits.length = "  +splits.length);
+            
+            XmlRpcClient client = getClient(getCurrentIP(), getCurrentPort());
+
+            Vector xmlRpcParams = new Vector();
+            xmlRpcParams.addElement(pathOnServer);
+
+            try {
+                System.out.println("calling getFile() on server");
+
+                Object o = client.execute("RpcHandler.getFile", xmlRpcParams);
+
+                if (o instanceof String) {
+                    String data = (String) o;
+                    System.out.println("converting file ...");
+                    try {
+//                        //get the data which are stored in "data"
+//                        //store them in the temp file with the right data typ ending (splits[...])
+//                        //let result point to this temp file
+//                        result = IOUtil.base64ToFile(data, new File(
+//                                VRL.getPropertyFolderManager().getTmpFolder().getAbsolutePath()
+//                                + "/tmpFile." + splits[splits.length-1]));
+                        
+                        //no temp file storing directly into result
+                        //result will be created where pathWhereToStore points to inculuding file name and ending
+                        result = new File(pathWhereToStore);
+                        IOUtil.base64ToFile(data,result);
+                        
+                    } catch (IOException ex) {
+                        Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
 
             } catch (XmlRpcException ex) {
 //            Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        return false;
+
+        return result;
     }
-    
 
     /**
      * Default is: defaultIP = "localhost" = "127.0.0.1"
