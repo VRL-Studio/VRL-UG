@@ -1,7 +1,9 @@
 package edu.gcsc.vrl.ug;
 
+import edu.gcsc.vrl.ug.types.RemoteType;
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.ObjectInfo;
+import eu.mihosoft.vrl.annotation.ParamInfo;
 import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
@@ -484,15 +486,17 @@ public class JVMmanager implements Serializable {
     /**
      This method transfers a file from a VRL-UG client to VRL-UG server via XMLrpc.
     
-     @param pathOnServer the path including filename and filetyp ending on the server, 
+     @param pathOnServer the path including file name and file typ ending on the server, 
      were the file should be stored. 
      Notice: 
      1) the path at the server side need to exists.
      2) if a file at these path exist it will be overriden.
      @param file the file on client side that should be transfered
-     @return tue if file could be transfered, else false.
+     @return true if file could be transfered, else false.
      */
-    public static Boolean transferFileToServer(String pathOnServer, File file) {
+    public static Boolean transferFileToServer(
+            @ParamInfo(name ="pathOnServer" ) String pathOnServer,
+            @ParamInfo(name ="fileToTransfer" ) File file) {
 //        System.out.println("JVMmanager.transferFileToServer("
 //                + "String pathOnServer = "+ pathOnServer
 //                + " , File file.getName() = "+ file.getName() +")");
@@ -534,15 +538,43 @@ public class JVMmanager implements Serializable {
         return false;
     }
 
-    public static File getFileFromServer(String pathOnServer, String pathWhereToStore) {
-        System.out.println("JVMmanager.getFileFromServer("
-                + "String pathOnServer = " + pathOnServer + ")");
+    /**
+    This method transfers a file from a VRL-UG server  to VRL-UG client via XMLrpc.
+    It uses the method public static File getFileFromServer(String pathOnServer, String pathWhereToStore).
+    @see getFileFromServer( String pathOnServer, String pathWhereToStore)
+    
+     @param pathOnServer the path including file name and file typ ending on the server.
+     Notice: the path and the file at the server side need to exists.
+     @param pathWhereToStore  the path of the file on client side were it should be stored
+     @return the transfered file if possible, else null.
+    */
+    public static File getFileFromServer(
+            @ParamInfo(name ="pathOnServer" )File pathOnServer,
+            @ParamInfo(name ="pathWhereToStore" )File pathWhereToStore) {
+        
+        return getFileFromServer(pathOnServer.getAbsolutePath(), pathWhereToStore.getAbsolutePath());
+    }
+    
+    /**
+    This method transfers a file from a VRL-UG server  to VRL-UG client via XMLrpc.
+    
+     @param pathOnServer the path including file name and file typ ending on the server.
+     Notice: the path and the file at the server side need to exists.
+     @param pathWhereToStore  the path of the file on client side were it should be stored
+     @return the transfered file if possible, else null.
+    */
+    public static File getFileFromServer(
+            @ParamInfo(name ="pathOnServer" )  String pathOnServer, 
+            @ParamInfo(name ="pathWhereToStore" )  String pathWhereToStore) {
+        
+//        System.out.println("JVMmanager.getFileFromServer("
+//                + "String pathOnServer = " + pathOnServer + ")");
 
         File result = null;
 
         if (UG.getRemoteType().equals(RemoteType.CLIENT)) {
 
-            System.out.println("if CLIENT");
+//            System.out.println("if CLIENT");
             String[] splits = pathOnServer.split("\\.");
 
 //            for (int i = 0; i < splits.length; i++) {

@@ -4,6 +4,8 @@
  */
 package edu.gcsc.vrl.ug;
 
+import edu.gcsc.vrl.ug.types.NativeType;
+import edu.gcsc.vrl.ug.types.CodeType;
 import eu.mihosoft.vrl.lang.CodeBuilder;
 
 /**
