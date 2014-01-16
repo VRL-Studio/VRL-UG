@@ -4,6 +4,7 @@ package edu.gcsc.vrl.ug;
  * To change this template, choose Tools | Templates and open the template in
  * the editor.
  */
+import edu.gcsc.vrl.ug.types.RemoteType;
 import eu.mihosoft.vrl.io.Base64;
 import eu.mihosoft.vrl.io.IOUtil;
 import java.io.BufferedWriter;

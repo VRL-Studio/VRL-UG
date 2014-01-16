@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import edu.gcsc.vrl.ug.types.RemoteType;
 import eu.mihosoft.vrl.io.*;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.*;

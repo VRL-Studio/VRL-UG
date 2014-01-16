@@ -1,4 +1,4 @@
-package edu.gcsc.vrl.ug;
+package edu.gcsc.vrl.ug.types;
 
 ///*
 // * To change this template, choose Tools | Templates

@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import edu.gcsc.vrl.ug.types.CodeType;
 import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.lang.CodeBuilder;
 import java.security.NoSuchAlgorithmException;
