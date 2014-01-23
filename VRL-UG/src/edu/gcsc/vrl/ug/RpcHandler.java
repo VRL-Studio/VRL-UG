@@ -7,6 +7,7 @@ package edu.gcsc.vrl.ug;
 import edu.gcsc.vrl.ug.types.RemoteType;
 import eu.mihosoft.vrl.io.Base64;
 import eu.mihosoft.vrl.io.IOUtil;
+import eu.mihosoft.vrl.system.VRL;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -594,11 +595,82 @@ public class RpcHandler {
             } catch (IOException ex) {
                 Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }else{
+        } else {
             System.err.println("RpcHandler.getFile() : the specified path do NOT leed to an existing file.");
         }
 
         return convertedFile;
+    }
+
+    /**
+    This method cares about were a client file should be on server side stored.
+    
+    @param pathOnClient the path of the file on client side
+    @param fileData the file which should be stored
+    @param checksumme the checksumme which was generated on client side
+    @return true if file was transfered and the server checksumme equals the client checksumme, else false.
+    */
+    public Boolean saveFileWithChecksumme(String pathOnClient, String fileData, String checksumme) {
+        show("saveFileWithChecksumme");
+
+        File fileOnClient = new File(pathOnClient);
+        File fileOnServer = VRL.getPropertyFolderManager().toLocalPathInTmpFolder(fileOnClient);
+
+        boolean parentFoldersExist = fileOnServer.getParentFile().mkdirs();
+
+        if (parentFoldersExist) {
+            try {
+                IOUtil.base64ToFile(fileData, fileOnServer);
+
+            } catch (IOException ex) {
+                Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+
+            Boolean checksummeOK = IOUtil.verifyFileMD5(fileOnServer, checksumme);
+
+//        return true;
+            return checksummeOK;
+        }//if (parentFoldersExist) 
+        else {
+            System.err.println("Could not create client folder structure on server side.");
+            return false;
+        }
+
+    }
+
+    /**
+    This method should be used to get the outputs file from components which are executed on 
+    server side. 
+    @param pathOnClient the path of the wanted file on client side
+    @return a string array consisting of the wanted file and the corresponding checksumme
+    */
+    public String[] getFileWithChecksumme(String pathOnClient) {
+        show("getFileWithChecksumme");
+
+        File fileOnClient = new File(pathOnClient);
+        File fileOnServer = VRL.getPropertyFolderManager().toLocalPathInTmpFolder(fileOnClient);
+
+        String[] convertedFileAndCecksumme = null;
+
+            if (fileOnServer.exists()) {
+                System.out.println("file exists");
+                
+                convertedFileAndCecksumme = new String[2];
+
+                try {
+                    convertedFileAndCecksumme[0] = IOUtil.fileToBase64(fileOnServer);
+                } catch (IOException ex) {
+                    Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                convertedFileAndCecksumme[1] = IOUtil.generateMD5Sum(fileOnServer);
+            }//fileOnServer.exists
+            else {
+                System.err.println("RpcHandler.getFile() : the specified path do NOT leed to an existing file.");
+            }
+        
+        return convertedFileAndCecksumme;
     }
 
 }

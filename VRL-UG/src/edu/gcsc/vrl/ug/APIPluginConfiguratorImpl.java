@@ -1,20 +1,21 @@
 ////package edu.gcsc.vrl.ug;
 //
-//import edu.gcsc.vrl.ug.*;
+//import edu.gcsc.vrl.ug.types.CondUserDataType;
+//import edu.gcsc.vrl.ug.types.RemoteFileType;
+//import edu.gcsc.vrl.ug.types.RemoteLoadFileStringType;
+//import edu.gcsc.vrl.ug.types.RemoteLoadFileType;
+//import edu.gcsc.vrl.ug.types.RemoteSaveFileStringType;
+//import edu.gcsc.vrl.ug.types.RemoteSaveFileType;
+//import edu.gcsc.vrl.ug.types.UserDataType;
 //import eu.mihosoft.vrl.annotation.ComponentInfo;
-//import eu.mihosoft.vrl.io.VPropertyFolderManager;
 //import eu.mihosoft.vrl.reflection.VisualCanvas;
 //import eu.mihosoft.vrl.system.PluginAPI;
-//import eu.mihosoft.vrl.system.PluginConfigurator;
 //import eu.mihosoft.vrl.system.PluginDependency;
 //import eu.mihosoft.vrl.system.PluginIdentifier;
 //import eu.mihosoft.vrl.system.VPluginAPI;
 //import eu.mihosoft.vrl.system.InitPluginAPI;
 //import eu.mihosoft.vrl.system.VPluginConfigurator;
-//import eu.mihosoft.vrl.system.VRL;
-//import eu.mihosoft.vrl.visual.VDialog;
 //import eu.mihosoft.vrl.visual.VFilter;
-//import java.awt.image.BufferedImage;
 //import java.lang.reflect.InvocationTargetException;
 //import java.util.logging.Level;
 //import java.util.logging.Logger;
@@ -138,6 +139,12 @@
 //
 //            vApi.addTypeRepresentation( UserDataType.class);
 //            vApi.addTypeRepresentation( CondUserDataType.class);
+//            
+//            vApi.addTypeRepresentation( RemoteFileType.class);
+//            vApi.addTypeRepresentation( RemoteLoadFileType.class);
+//            vApi.addTypeRepresentation( RemoteSaveFileType.class);
+//            vApi.addTypeRepresentation( RemoteLoadFileStringType.class);
+//            vApi.addTypeRepresentation( RemoteSaveFileStringType.class);
 //
 //            vApi.addComponentSearchFilter(new HideComponentFilter());
 //        }

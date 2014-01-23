@@ -57,6 +57,27 @@ public class JVMmanager implements Serializable {
      */
     static boolean updateLocalServer = true;
 
+    private static JVMmanager instance = null;
+
+    //no instance should be created ("pseudo-singleton" / static class)
+    private JVMmanager() {
+    }
+
+    /**
+    
+    @return the singleton / instance of JVMmanger
+    */
+    public static JVMmanager getInstance() {
+        if (instance == null) {
+            //Threadsafe generation of the instance
+            synchronized (JVMmanager.class) {
+                instance = new JVMmanager();
+            }
+        }
+
+        return instance;
+    }
+
     /**
      * Starts another JVM and executes there the main method of the class which
      * is the parameter of this method.
@@ -427,6 +448,13 @@ public class JVMmanager implements Serializable {
 //        System.out.println("return of getClient(" + ip + ":" + port + ") = " + client);
         return client;
     }
+    
+    /**
+    @return the client which is spezified via currentIP and currentPort
+    */
+    public static XmlRpcClient getCurrentClient() {
+        return getClient(getCurrentIP(), getCurrentPort());
+    }
 
     /**
      * Releases all Pointer of UGObjects. This is needed if we want to connect
@@ -483,6 +511,23 @@ public class JVMmanager implements Serializable {
                 new WeakReference<UGObject>(ugObject));
     }
 
+//    /**
+//     This method transfers a file from a VRL-UG client to VRL-UG server via XMLrpc.
+//    
+//     @param pathOnServer the path including file name and file typ ending on the server, 
+//     were the file should be stored. 
+//     Notice: 
+//     1) the path at the server side need to exists.
+//     2) if a file at these path exist it will be overriden.
+//     @param file the file on client side that should be transfered
+//     @return true if file could be transfered, else false.
+//     */
+//    public static Boolean transferFileToServer(
+//            @ParamInfo(name = "pathOnServer", style = "remote") File pathOnServer,
+//            @ParamInfo(name = "fileToTransfer", style = "remote") File file) {
+//        
+//        return transferFileToServer(pathOnServer.getAbsolutePath(), file);
+//    }
     /**
      This method transfers a file from a VRL-UG client to VRL-UG server via XMLrpc.
     
@@ -495,8 +540,8 @@ public class JVMmanager implements Serializable {
      @return true if file could be transfered, else false.
      */
     public static Boolean transferFileToServer(
-            @ParamInfo(name ="pathOnServer" ) String pathOnServer,
-            @ParamInfo(name ="fileToTransfer" ) File file) {
+            @ParamInfo(name = "pathOnServer") String pathOnServer,
+            @ParamInfo(name = "fileToTransfer", style = "remote") File file) {
 //        System.out.println("JVMmanager.transferFileToServer("
 //                + "String pathOnServer = "+ pathOnServer
 //                + " , File file.getName() = "+ file.getName() +")");
@@ -539,37 +584,37 @@ public class JVMmanager implements Serializable {
     }
 
     /**
-    This method transfers a file from a VRL-UG server  to VRL-UG client via XMLrpc.
-    It uses the method public static File getFileFromServer(String pathOnServer, String pathWhereToStore).
-    @see getFileFromServer( String pathOnServer, String pathWhereToStore)
+     This method transfers a file from a VRL-UG server  to VRL-UG client via XMLrpc.
+     It uses the method public static File getFileFromServer(String pathOnServer, String pathWhereToStore).
+     @see getFileFromServer( String pathOnServer, String pathWhereToStore)
     
      @param pathOnServer the path including file name and file typ ending on the server.
      Notice: the path and the file at the server side need to exists.
      @param pathWhereToStore  the path of the file on client side were it should be stored
      @return the transfered file if possible, else null.
-    */
+     */
     public static File getFileFromServer(
-            @ParamInfo(name ="pathOnServer" )File pathOnServer,
-            @ParamInfo(name ="pathWhereToStore" )File pathWhereToStore) {
-        
+//            @ParamInfo(name = "pathOnServer", style = "remote-load-dialog") File pathOnServer,
+            @ParamInfo(name = "pathOnServer", style = "remote") File pathOnServer,
+            @ParamInfo(name = "pathWhereToStore", style = "remote") File pathWhereToStore) {
+
         return getFileFromServer(pathOnServer.getAbsolutePath(), pathWhereToStore.getAbsolutePath());
     }
-    
+
     /**
-    This method transfers a file from a VRL-UG server  to VRL-UG client via XMLrpc.
+     This method transfers a file from a VRL-UG server  to VRL-UG client via XMLrpc.
     
      @param pathOnServer the path including file name and file typ ending on the server.
      Notice: the path and the file at the server side need to exists.
      @param pathWhereToStore  the path of the file on client side were it should be stored
      @return the transfered file if possible, else null.
-    */
+     */
     public static File getFileFromServer(
-            @ParamInfo(name ="pathOnServer" )  String pathOnServer, 
-            @ParamInfo(name ="pathWhereToStore" )  String pathWhereToStore) {
-        
+            @ParamInfo(name = "pathOnServer") String pathOnServer,
+            @ParamInfo(name = "pathWhereToStore") String pathWhereToStore) {
+
 //        System.out.println("JVMmanager.getFileFromServer("
 //                + "String pathOnServer = " + pathOnServer + ")");
-
         File result = null;
 
         if (UG.getRemoteType().equals(RemoteType.CLIENT)) {
@@ -581,7 +626,6 @@ public class JVMmanager implements Serializable {
 //                System.out.println(" splits[" + i + "] = " + splits[i]);
 //            }
 //            System.out.println(" splits.length = "  +splits.length);
-            
             XmlRpcClient client = getClient(getCurrentIP(), getCurrentPort());
 
             Vector xmlRpcParams = new Vector();
@@ -602,12 +646,12 @@ public class JVMmanager implements Serializable {
 //                        result = IOUtil.base64ToFile(data, new File(
 //                                VRL.getPropertyFolderManager().getTmpFolder().getAbsolutePath()
 //                                + "/tmpFile." + splits[splits.length-1]));
-                        
+
                         //no temp file storing directly into result
                         //result will be created where pathWhereToStore points to inculuding file name and ending
                         result = new File(pathWhereToStore);
-                        IOUtil.base64ToFile(data,result);
-                        
+                        IOUtil.base64ToFile(data, result);
+
                     } catch (IOException ex) {
                         Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
                     }

@@ -97,7 +97,7 @@ public class UG {
      *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
-    static RemoteType getRemoteType() {
+    public static RemoteType getRemoteType() {
 
         return UG.remoteType;
     }
