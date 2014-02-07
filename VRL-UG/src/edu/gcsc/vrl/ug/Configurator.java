@@ -270,7 +270,9 @@ public class Configurator extends VPluginConfigurator {
 
             //TEST: component for starting an UG on an other JVM
             vApi.addComponent(JVMmanager.class);
-            vApi.addComponent(TestParameterArray.class);
+//            // test classes
+//            vApi.addComponent(TestParameterArray.class);
+//            vApi.addComponent(TestRemoteFile.class);
 
             // request restart
             if (UG.getInstance().isRecompiled()) {

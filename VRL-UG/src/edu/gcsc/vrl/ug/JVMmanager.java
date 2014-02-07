@@ -55,28 +55,34 @@ public class JVMmanager implements Serializable {
      * decide if by starting a local server the local server should be updated
      * on the basis of the local client
      */
-    static boolean updateLocalServer = true;
+     static boolean updateLocalServer = true;
 
-    private static JVMmanager instance = null;
-
-    //no instance should be created ("pseudo-singleton" / static class)
-    private JVMmanager() {
-    }
-
-    /**
+    // ATTENTION:
+    // If you want a visualization in vrl-studio JVMmanager is not allowed
+    // to have a private constructor because of serialization.
+    //
+//    private static JVMmanager instance = null;
+//
+//    //no instance should be created ("pseudo-singleton" / static class)
+//    private JVMmanager() {
+//    }
+//
+//    /**
+//    
+//    @return the singleton / instance of JVMmanger
+//    */
+//    public static JVMmanager getInstance() {
+//        if (instance == null) {
+//            //Threadsafe generation of the instance
+//            synchronized (JVMmanager.class) {
+//                instance = new JVMmanager();
+//            }
+//        }
+//
+//        return instance;
+//    }
     
-    @return the singleton / instance of JVMmanger
-    */
-    public static JVMmanager getInstance() {
-        if (instance == null) {
-            //Threadsafe generation of the instance
-            synchronized (JVMmanager.class) {
-                instance = new JVMmanager();
-            }
-        }
-
-        return instance;
-    }
+    
 
     /**
      * Starts another JVM and executes there the main method of the class which
@@ -613,8 +619,8 @@ public class JVMmanager implements Serializable {
             @ParamInfo(name = "pathOnServer") String pathOnServer,
             @ParamInfo(name = "pathWhereToStore") String pathWhereToStore) {
 
-//        System.out.println("JVMmanager.getFileFromServer("
-//                + "String pathOnServer = " + pathOnServer + ")");
+        System.out.println("JVMmanager.getFileFromServer("
+                + "String pathOnServer = " + pathOnServer + ")");
         File result = null;
 
         if (UG.getRemoteType().equals(RemoteType.CLIENT)) {
