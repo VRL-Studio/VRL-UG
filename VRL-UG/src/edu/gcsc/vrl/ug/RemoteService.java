@@ -28,14 +28,16 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 public class RemoteService {
 
     /**
-    With this method the user do not need to know / care about were the file should be store
-    on server side.
+     With this method the user do not need to know / care about were the file should be store
+     on server side.
     
-    @param file that should be transfered to server
-    @return true is transfer worked, else false
-    */
+     @param file that should be transfered to server
+     @return true is transfer worked, else false
+     */
     public static Boolean transferFileToServer(File file) {
-        
+
+        System.out.println("RemoteService.transferFileToServer()");
+
         if (UG.getRemoteType().equals(RemoteType.CLIENT)) {
 
             //get the client to communicte with the current server
@@ -80,15 +82,18 @@ public class RemoteService {
     }
 
     /**
-    With this method the user do not need to know / care about were the output file is stored
-    on server side, he only need to know were it should be on client side. This method will get the 
-    corresponding server file and return it if possible.
+     With this method the user do not need to know / care about were the output file is stored
+     on server side, he only need to know were it should be on client side. This method will get the 
+     corresponding server file and return it if possible.
     
-    @param fileOnClientSide the file on client side
-    @return the file on client side with the data from server if all was succesful, else null.
-    */
+     @param fileOnClientSide the file on client side
+     @return the file on client side with the data from server if all was succesful, else null.
+     */
     public static File getFileFromServer(/*TypeRepresentation typeRep,*/File fileOnClientSide) {
         File result = null;
+
+        System.out.println("RemoteService.getFileFromServer()");
+        System.out.println("UG.getRemoteType() = " + UG.getRemoteType());
 
         if (UG.getRemoteType().equals(RemoteType.CLIENT)) {
 
@@ -133,6 +138,176 @@ public class RemoteService {
             }
         }
         return result;
+    }
+
+    /**
+     With this method the user can dicede which path he want to use the client or server path to get 
+     the wanted file from the server. This method will get the  corresponding server file and return it if possible.
+    
+     @param path of the wanted file 
+     @param serverPath true if the path variable is already a server path, 
+     false if the path varibale contains a client path that need to be converted into a server path
+     @return the file on client side with the data from server if all was succesful, else null.
+     */
+    public static File getFileFromServer(String path, Boolean serverPath) {
+        File result = null;
+
+        System.out.println("RemoteService.getFileFromServer()");
+        System.out.println("path = " + path);
+        System.out.println("serverPath = " + serverPath);
+        System.out.println("UG.getRemoteType() = " + UG.getRemoteType());
+
+        if (UG.getRemoteType().equals(RemoteType.CLIENT)) {
+            System.out.println("RemoteService.getFileFromServer() if CLIENT");
+
+            //get the client to communicte with the current server
+            XmlRpcClient client = JVMmanager.getCurrentClient();
+
+            // addind all needed parameters into parameter vector in a XMLrpc usable state
+            Vector xmlRpcParams = new Vector();
+            xmlRpcParams.addElement(path);
+            xmlRpcParams.addElement(serverPath);
+
+            try {
+
+                System.out.println("RemoteService.getFileFromServer() BEFORE calling RpcHandler.getFileWithChecksumme");
+
+                //call remote the server method
+                Object o = client.execute("RpcHandler.getFileWithChecksumme", xmlRpcParams);
+
+                System.out.println("RemoteService.getFileFromServer() AFTER calling RpcHandler.getFileWithChecksumme");
+
+                System.out.println("o.getClass().getName() = " + o.getClass().getName());
+                if (o instanceof Object[]) {
+                    Object[] objArray = (Object[]) o;
+
+                    String[] convertedFileAndCecksumme = new String[objArray.length];
+
+                    for (int i = 0; i < objArray.length; i++) {
+
+                        if (objArray[i] instanceof String) {
+                            convertedFileAndCecksumme[i] = (String) objArray[i];
+                            System.out.println("convertedFileAndCecksumme[" + i + "] = " + convertedFileAndCecksumme[i]);
+                        }
+                    }
+
+                    File fileOnClientSide = null;
+
+                    if (serverPath) {
+                        fileOnClientSide = new File(translateServerPathToClientPath(path));
+                    } else {
+                        fileOnClientSide = new File(path);
+                    }
+
+                    System.out.println("fileOnClientSide = " + fileOnClientSide);
+
+                    try {
+                        //writte data from server file into client file
+                        IOUtil.base64ToFile(convertedFileAndCecksumme[0], fileOnClientSide);
+
+                    } catch (IOException ex) {
+                        Logger.getLogger(RemoteService.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    String checksumme = IOUtil.generateMD5Sum(fileOnClientSide);
+
+                    //check if data is correct transfered
+                    if (checksumme.equals(convertedFileAndCecksumme[1])) {
+
+                        System.out.println("if (checksumme.equals(convertedFileAndCecksumme[1]");
+
+                        // data is correct so set result
+                        result = fileOnClientSide;
+                    } else {
+                        System.out.println("RemoteService.getFileFromServer() received checksumme or file is wrong.");
+                    }
+                }// if (o instanceof String[])
+
+            } catch (XmlRpcException ex) {
+                Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
+
+            }
+        }
+
+        System.out.println("result = " + result);
+
+        return result;
+    }
+
+    /**
+     Calling the server and asking for the corresponding path of a client file on the server side.
+    
+     @param clientPath the path of a file on client side
+     @return the path of the file on server side
+     */
+    public static String translateClientPathToServerPath(String clientPath) {
+        String serverPath = clientPath;
+        System.out.println("RemoteService.translateClientPathToServerPath()");
+        System.out.println("clientPath = " + clientPath);
+
+        if (UG.getRemoteType().equals(RemoteType.CLIENT)) {
+
+            //get the client to communicte with the current server
+            XmlRpcClient client = JVMmanager.getCurrentClient();
+
+            // addind all needed parameters into parameter vector in a XMLrpc usable state
+            Vector xmlRpcParams = new Vector();
+            xmlRpcParams.addElement(clientPath);
+            try {
+                //call remote the server method
+                Object o = client.execute("RpcHandler.getServerPath", xmlRpcParams);
+
+                if (o instanceof String) {
+                    serverPath = (String) o;
+                }
+            } catch (XmlRpcException ex) {
+                Logger.getLogger(RemoteService.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        System.out.println("serverPath = " + serverPath);
+        return serverPath;
+    }
+
+    /**
+    
+     @param serverPath  the path of a file on server side
+     @return the path of the file on client side
+     */
+    public static String translateServerPathToClientPath(String serverPath) {
+        String serverPrefixPath = null;
+        String clientPath = null;
+
+        System.out.println("RemoteService.translateServerPathToClientPath()");
+        System.out.println("serverPath = " + serverPath);
+
+        if (UG.getRemoteType().equals(RemoteType.CLIENT)) {
+
+            //get the client to communicte with the current server
+            XmlRpcClient client = JVMmanager.getCurrentClient();
+
+            // addind all needed parameters into parameter vector in a XMLrpc usable state
+            Vector xmlRpcParams = new Vector();
+            xmlRpcParams.addElement("/");
+            try {
+                //call remote the server method
+                Object o = client.execute("RpcHandler.getServerPath", xmlRpcParams);
+
+                if (o instanceof String) {
+                    serverPrefixPath = (String) o;
+                    System.out.println("serverPrefixPath = " + serverPrefixPath);
+                }
+            } catch (XmlRpcException ex) {
+                Logger.getLogger(RemoteService.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        int index = serverPrefixPath.length();
+//        clientPath = serverPath.substring(0, index);
+        clientPath = serverPath.substring(index, serverPath.length());
+
+        System.out.println("clientPath = " + clientPath);
+
+        return clientPath;
     }
 
 }
