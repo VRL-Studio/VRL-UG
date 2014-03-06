@@ -1,8 +1,10 @@
-package edu.gcsc.vrl.ug;
+package edu.gcsc.vrl.ug.remote;
 
-import static edu.gcsc.vrl.ug.JVMmanager.getClient;
-import static edu.gcsc.vrl.ug.JVMmanager.getCurrentIP;
-import static edu.gcsc.vrl.ug.JVMmanager.getCurrentPort;
+import edu.gcsc.vrl.ug.UG;
+import edu.gcsc.vrl.ug.remote.JVMmanager;
+import static edu.gcsc.vrl.ug.remote.JVMmanager.getClient;
+import static edu.gcsc.vrl.ug.remote.JVMmanager.getCurrentIP;
+import static edu.gcsc.vrl.ug.remote.JVMmanager.getCurrentPort;
 import edu.gcsc.vrl.ug.types.RemoteLoadFileType;
 import edu.gcsc.vrl.ug.types.RemoteType;
 import eu.mihosoft.vrl.annotation.ParamInfo;
@@ -227,9 +229,11 @@ public class RemoteService {
                 Logger.getLogger(JVMmanager.class.getName()).log(Level.SEVERE, null, ex);
 
             }
+        } else if (UG.getRemoteType().equals(RemoteType.NONE)) {
+            result = new File(path);
         }
 
-        System.out.println("result = " + result);
+        System.out.println("RemoteService.getFileFromServer() result = " + result);
 
         return result;
     }
