@@ -5,7 +5,7 @@
  */
 package edu.gcsc.vrl.ug.types;
 
-import edu.gcsc.vrl.ug.RemoteService;
+import edu.gcsc.vrl.ug.remote.RemoteService;
 import edu.gcsc.vrl.ug.UG;
 import eu.mihosoft.vrl.annotation.TypeInfo;
 import eu.mihosoft.vrl.types.SaveFileType;

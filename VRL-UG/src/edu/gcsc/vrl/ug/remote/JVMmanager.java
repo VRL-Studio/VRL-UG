@@ -1,5 +1,9 @@
-package edu.gcsc.vrl.ug;
+package edu.gcsc.vrl.ug.remote;
 
+import edu.gcsc.vrl.ug.Configurator;
+import edu.gcsc.vrl.ug.MemoryManager;
+import edu.gcsc.vrl.ug.UG;
+import edu.gcsc.vrl.ug.UGObject;
 import edu.gcsc.vrl.ug.types.RemoteType;
 import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.annotation.ObjectInfo;

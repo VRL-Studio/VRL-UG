@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import edu.gcsc.vrl.ug.remote.JVMmanager;
 import edu.gcsc.vrl.ug.types.RemoteType;
 import eu.mihosoft.vrl.io.Base64;
 import eu.mihosoft.vrl.io.IOUtil;
