@@ -25,8 +25,11 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
@@ -82,7 +85,7 @@ public class Compiler {
                 new CodeBuilder()).toString());
 
         for (String c : codes) {
-            code.append(c).append("\n\n");
+
             AbstractCode aCode = new AbstractCode();
             aCode.setCode(c);
 
@@ -92,8 +95,17 @@ public class Compiler {
                 className = VLangUtils.interfaceNameFromCode(aCode);
             }
 
-            if (!isUGPrimitive(className)) {
-                classNames.add(className);
+            // TODO: fix this workaround for duplicate class names in final code (26.03.2014)
+            // by cpoliwoda 
+            //remove if() head after checking c++ side that no duplicate code is added
+            if (!classNames.contains(className)) {
+                code.append(c).append("\n\n");
+
+                if (!isUGPrimitive(className)) {
+                    classNames.add(className);
+                }
+            } else {
+                System.err.println(">> WARNING: duplicate class " + className);
             }
         }
 
@@ -115,14 +127,13 @@ public class Compiler {
         }
 
         try {
-            BufferedWriter writer =
-                    new BufferedWriter(new FileWriter(
-                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
+            BufferedWriter writer
+                    = new BufferedWriter(new FileWriter(
+                                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
 
 //            BufferedWriter writer =
 //                    new BufferedWriter(new FileWriter(
 //                    new File("/home/miho/UG_Classes.groovy")));
-
             writer.append(code);
             writer.flush();
             writer.close();
@@ -130,7 +141,6 @@ public class Compiler {
             Logger.getLogger(Compiler.class.getName()).
                     log(Level.SEVERE, null, ex);
         }
-
 
         // Configure
         CompilerConfiguration conf = new CompilerConfiguration();
@@ -141,14 +151,32 @@ public class Compiler {
         CompilationUnit cu = new CompilationUnit(gcl);
         cu.configure(conf);
         cu.addSource("UG_Classes", code.toString());
-        
+
         try {
+
+            //cpoliwoda debug start
+            System.out.println("Compiler.java::compile() BEFORE  cu.compile(); ");
+            String cuContent = cu.getPhaseDescription();
+            System.out.println("cuContent = " + cuContent);
+            File ugClasses = new File(scriptPath.getPath() + "/UG_Classes.groovy");
+
+            System.out.println("ugClasses = " + ugClasses);
+
+//            List<String> readAllLines = Files.readAllLines(ugClasses.toPath(), Charset.defaultCharset());
+//            System.out.println("ugClasses: readAllLines");
+//            for (String string : readAllLines) {
+//                System.out.println(string);
+//            }
+            //cpoliwoda end
             cu.compile();
         } catch (Exception e) {
 //            System.out.println(e.getMessage());
             System.err.println(e.getMessage());
+
+            System.out.println(getClass().getName() + " cu.compile() -> catch (Exception e)");
+//            System.out.println("System.exit(1);//cpoliwoda debug");
+//            System.exit(1);//cpoliwoda debug
         }
-        
 
         // Load classes via URL classloader
         ClassLoader cl = Compiler.class.getClassLoader(); //Thread.currentThread().getContextClassLoader();
@@ -201,9 +229,7 @@ public class Compiler {
             manifest.write(new FileOutputStream(
                     new File(meta_inf.getAbsolutePath() + "/MANIFEST.MF")));
 
-
             // write ug classes
-
             File ugInfoPath = new File(scriptPath.getAbsolutePath()
                     + "/edu/gcsc/vrl/ug/api/");
 
@@ -213,7 +239,7 @@ public class Compiler {
 
             XMLEncoder encoder = new XMLEncoder(
                     new FileOutputStream(
-                    ugInfoPath.getAbsolutePath() + "/UG_INFO.XML"));
+                            ugInfoPath.getAbsolutePath() + "/UG_INFO.XML"));
 
             encoder.writeObject(new AbstractUGAPIInfo(classNames));
 
@@ -231,7 +257,6 @@ public class Compiler {
 //            Logger.getLogger(Compiler.class.getName()).
 //                    log(Level.SEVERE, null, ex);
 //        }
-
         if (jarLocation != null) {
             try {
                 File srcFolder = new File(scriptPath.getAbsolutePath());
@@ -248,7 +273,6 @@ public class Compiler {
         deleteClassFiles(scriptPath);
 
 //        UG.setNativeClasses(result);
-
         return result;
     }
 
