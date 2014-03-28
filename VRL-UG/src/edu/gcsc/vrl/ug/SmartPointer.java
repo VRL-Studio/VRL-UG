@@ -66,7 +66,7 @@ class SmartPointer extends Pointer implements Serializable{
 //            System.out.println("~[SMART Java]: " + getAddress() + ", cont=" + isConst());
 //            UG.invalidate(this);
 
-            MemoryManager.invalidate(SmartPointer.this);
+            UG.invalidate(SmartPointer.this);
 
         } catch (Throwable ex) {
             //
