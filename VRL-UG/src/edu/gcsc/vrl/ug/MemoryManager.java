@@ -58,5 +58,6 @@ public class MemoryManager {
      *
      * @param p smart-pointer to invalidate
      */
+     @Deprecated
     native synchronized static void invalidate(SmartPointer p);
 }
