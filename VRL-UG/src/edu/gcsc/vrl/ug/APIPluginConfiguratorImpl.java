@@ -32,7 +32,7 @@
 //    
 //    public final static String PLUGIN_NAME = "VRL-UG";
 //    public final static String PLUGIN_NAME_API = "VRL-UG-API";
-//    public final static String REMOTE_TYPE = "CLIENT";
+//    public final static String REMOTE_TYPE = "NONE";//"CLIENT";
 //    
 //    public static final PluginIdentifier API_PLUGIN_IDENTIFIER =
 //            new PluginIdentifier(PLUGIN_NAME_API, "0.2");//"0.1.1.x" did not work
