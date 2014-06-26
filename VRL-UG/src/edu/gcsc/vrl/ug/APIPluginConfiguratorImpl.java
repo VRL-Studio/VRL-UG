@@ -35,9 +35,9 @@
 //    public final static String REMOTE_TYPE = "NONE";//"CLIENT";
 //    
 //    public static final PluginIdentifier API_PLUGIN_IDENTIFIER =
-//            new PluginIdentifier(PLUGIN_NAME_API, "0.2");//"0.1.1.x" did not work
+//            new PluginIdentifier(PLUGIN_NAME_API, "0.2.1");//"0.1.1.x" did not work
 //    public static final PluginIdentifier PLUGIN_IDENTIFIER =
-//            new PluginIdentifier(PLUGIN_NAME, "0.2");//"0.1.1.x" did not work
+//            new PluginIdentifier(PLUGIN_NAME, "0.2.1");//"0.1.1.x" did not work
 //
 //    public APIPluginConfiguratorImpl() {
 //

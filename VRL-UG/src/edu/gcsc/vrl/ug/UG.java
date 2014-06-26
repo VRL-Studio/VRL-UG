@@ -9,6 +9,7 @@ import edu.gcsc.vrl.ug.types.RemoteType;
 import eu.mihosoft.vrl.io.Base64;
 import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.io.VJarUtil;
+import eu.mihosoft.vrl.io.VProjectController;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.*;
 import eu.mihosoft.vrl.visual.SplashScreenGenerator;
@@ -326,6 +327,8 @@ public class UG {
         VParamUtil.throwIfNotValid(
                 VParamUtil.VALIDATOR_EXISTING_FOLDER, folder);
 
+//        System.out.println("UG.loadNativeLibrariesInFolder() folder = " + folder);
+
         final String dylibEnding = "." + VSysUtil.getPlatformSpecificLibraryEnding();
 
         Collection<File> dynamicLibraries = new ArrayList<File>();
@@ -418,62 +421,61 @@ public class UG {
 
     }
 
-    /**
-     * instanciation only allowed in this class
-     */
-    private UG() {
-        // we must set the singleton instance to prevent
-        // calling multiple constructors.
-        // doing this in the corresponding getter methods does not work anymore
-        // as we need the instance for searching a compiled UG-API.
-        ugInstance = this;
-
-        System.out.println(" -- UG() -- ");
-
-        // load api if compatible; rebuild otherwise
-        try {
-            Class<?> cls = findCompatibleAPI(ugInstance);
-
-            api = cls;
-
-            if (cls == null) {
-
-                // load native library and connect to ug lib to generate api
-                connectToNativeUG(true);
-
-                NativeAPIInfo nativeAPI = convertRegistryInfo();
-                Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
-
-                try {
-
-                    recompiled = true;
-
-                    System.err.println(VTerminalUtil.red(
-                            " --> VRL-UG-API missing.\n"
-                            + " --> Recompiling API..."));
-
-                    SplashScreenGenerator.printBootMessage(
-                            ">> UG: recompiling API (this may take a while) ...");
-
-                    // generates jar file in plugin path
-                    compiler.compile(new edu.gcsc.vrl.ug.NativeAPICode(nativeAPI).getAllCodes(),
-                            VRL.getPropertyFolderManager().getPluginUpdatesFolder().
-                            getAbsolutePath());
-
-                } catch (Exception ex) {
-                    Logger.getLogger(UG.class.getName()).
-                            log(Level.SEVERE, null, ex);
-                }
-            }
-
-        } catch (Exception ex) {
-            Logger.getLogger(UG.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        }
-
-        initialized = libLoaded;
-    }
-
+//    /**
+//     * instanciation only allowed in this class
+//     */
+//    private UG() {
+//        // we must set the singleton instance to prevent
+//        // calling multiple constructors.
+//        // doing this in the corresponding getter methods does not work anymore
+//        // as we need the instance for searching a compiled UG-API.
+//        ugInstance = this;
+//
+//        System.out.println(" -- UG() -- ");
+//
+//        // load api if compatible; rebuild otherwise
+//        try {
+//            Class<?> cls = findCompatibleAPI(ugInstance);
+//
+//            api = cls;
+//
+//            if (cls == null) {
+//
+//                // load native library and connect to ug lib to generate api
+//                connectToNativeUG(true);
+//
+//                NativeAPIInfo nativeAPI = convertRegistryInfo();
+//                Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
+//
+//                try {
+//
+//                    recompiled = true;
+//
+//                    System.err.println(VTerminalUtil.red(
+//                            " --> VRL-UG-API missing.\n"
+//                            + " --> Recompiling API..."));
+//
+//                    SplashScreenGenerator.printBootMessage(
+//                            ">> UG: recompiling API (this may take a while) ...");
+//
+//                    // generates jar file in plugin path
+//                    compiler.compile(new edu.gcsc.vrl.ug.NativeAPICode(nativeAPI).getAllCodes(),
+//                            VRL.getPropertyFolderManager().getPluginUpdatesFolder().
+//                            getAbsolutePath());
+//
+//                } catch (Exception ex) {
+//                    Logger.getLogger(UG.class.getName()).
+//                            log(Level.SEVERE, null, ex);
+//                }
+//            }
+//
+//        } catch (Exception ex) {
+//            Logger.getLogger(UG.class.getName()).
+//                    log(Level.SEVERE, null, ex);
+//        }
+//
+//        initialized = libLoaded;
+//    }
     // TODO remove UG() resp. redirect to UG(RemoteType.NONE) 
     // DONE handle the RemoteType case NONE in UG(remoteType)
     /**
@@ -489,6 +491,27 @@ public class UG {
 
         System.out.println(" -- UG(" + getRemoteType() + ") -- ");
 
+//        debug 20140409
+//        System.out.println("UG getClass().getClassLoader() = " + getClass().getClassLoader());
+//
+//        VProjectController currentProjectController = VRL.getCurrentProjectController();
+//        System.out.println("currentProjectController = " + currentProjectController);
+//        if (currentProjectController != null) {
+//            
+//            String currentSession = currentProjectController.getCurrentSession();
+//            System.out.println("currentSession = " + currentSession);
+//            if (currentSession != null) {
+//  
+//                Class<?> currentClass = currentSession.getClass();
+//                System.out.println("currentClass = " + currentClass);
+//                if (currentClass != null) {
+//                   
+//                    ClassLoader classLoader = currentClass.getClassLoader();
+//                    System.out.println("classLoader = " + classLoader);
+//                }
+//            }
+//        }
+        
 //         // we must set the singleton instance to prevent
 //        // calling multiple constructors.
 //        // doing this in the corresponding getter methods does not work anymore
@@ -577,7 +600,6 @@ public class UG {
                 if (remoteType.equals(RemoteType.NONE)) {
 //                    System.out.println("if (remoteType.equals(RemoteType.NONE)) == true");
 
-                    // load native library and connect to ug lib to generate api
                     connectToNativeUG(true);
                 }
 
@@ -633,13 +655,7 @@ public class UG {
 //                        } else {
 //                            System.err.println(" ## String[] allCodes NOT null"); // nativeAPIInfo NOT null cpoliwoda 20140324
 //                        }
-//                        //debug christian poliwoda start
-//                        for (int i = 0; i < allCodes.length; i++) {
-//                            String string = allCodes[i];
-//                            System.out.println("allCodes["+i+"]  = " + allCodes[i]);
-//                        }//debug christian poliwoda end
-                        System.out.println("UG(RemoteType): BEFORE   compiler.compile(allCodes,");
-
+                        
                         // generates jar file in plugin path
                         compiler.compile(allCodes,
                                 VRL.getPropertyFolderManager().getPluginUpdatesFolder().getAbsolutePath());
@@ -1245,10 +1261,10 @@ public class UG {
 
             NativeAPIInfo napiInfo = _convertRegistryInfo();
 
-//             //debug
-            checkForDublicationsClasses(napiInfo);
-            checkForDublicationsClassGroups(napiInfo);
-            checkForDublicationsFunctions(napiInfo);
+//             //debug 20140328
+//            checkForDublicationsClasses(napiInfo);
+//            checkForDublicationsClassGroups(napiInfo);
+//            checkForDublicationsFunctions(napiInfo);
 //             System.exit(0);
 //             //debug end
 
@@ -1256,7 +1272,7 @@ public class UG {
         }
     }
 
-    // debuging helper methode
+    // debuging helper methode 20140328
     private void checkForDublicationsClasses(NativeAPIInfo napiInfo) {
 
         NativeClassInfo[] classes = napiInfo.getClasses();
@@ -1264,7 +1280,7 @@ public class UG {
         HashMap<String, Integer> occurenceOfClasses = new HashMap<String, Integer>();
 
         System.out.println("number of classes in nativeClassInfo = " + classes.length);
-        
+
 //        String name = null;
         for (int i = 0; i < classes.length; i++) {
 
@@ -1279,26 +1295,26 @@ public class UG {
 //                Integer numOfDuplis = occurenceOfClasses.get(name);
             Integer numOfDuplis = occurenceOfClasses.get(nativeClassInfoName);
 
-                // check if there is already an entry with this name
-                // if not create one
-                // if is add one as mark for at least one duplication of the same name
-                if (numOfDuplis == null) {
-                    occurenceOfClasses.put(nativeClassInfoName, 1);
-                } else {
-                    occurenceOfClasses.put(nativeClassInfoName, numOfDuplis + 1);
-                }
+            // check if there is already an entry with this name
+            // if not create one
+            // if is add one as mark for at least one duplication of the same name
+            if (numOfDuplis == null) {
+                occurenceOfClasses.put(nativeClassInfoName, 1);
+            } else {
+                occurenceOfClasses.put(nativeClassInfoName, numOfDuplis + 1);
+            }
 
 //            }
         }
 
         for (String className : occurenceOfClasses.keySet()) {
-            System.out.println(" numOfDuplis = " + occurenceOfClasses.get(className) 
+            System.out.println(" numOfDuplis = " + occurenceOfClasses.get(className)
                     + " className = " + className);
         }
 
     }
 
-    // debuging helper methode
+    // debuging helper methode 20140328
     private void checkForDublicationsClassGroups(NativeAPIInfo napiInfo) {
 
         HashMap<String, Integer> occurenceOfGroups = new HashMap<String, Integer>();
@@ -1312,7 +1328,7 @@ public class UG {
 
             Integer numOfDuplis = occurenceOfGroups.get(classGroupsName);
 
-               // check if there is already an entry with this name
+            // check if there is already an entry with this name
             // if not create one
             // if is add one as mark for at least one duplication of the same name
             if (numOfDuplis == null) {
@@ -1329,7 +1345,7 @@ public class UG {
 
     }
 
-    // debuging helper methode
+    // debuging helper methode 20140328
     private void checkForDublicationsFunctions(NativeAPIInfo napiInfo) {
 
         NativeFunctionGroupInfo[] functions = napiInfo.getFunctions();
@@ -1337,7 +1353,7 @@ public class UG {
         HashMap<String, Integer> occurenceOfFunctions = new HashMap<String, Integer>();
 
         System.out.println("number of functions in nativeClassInfo = " + functions.length);
-        
+
         String name = null;
         for (int i = 0; i < functions.length; i++) {
 
@@ -1346,7 +1362,6 @@ public class UG {
 
 //            System.out.println("number of nativeFunctionInfo.getOverloads = " + overloads.length);
 //            System.out.println("nativeFunctionInfo = " + nativeFunctionInfo.getName());
-            
             for (int j = 0; j < overloads.length; j++) {
 
                 name = overloads[j].getName();
@@ -1365,7 +1380,7 @@ public class UG {
         }
 
         for (String overloadName : occurenceOfFunctions.keySet()) {
-            System.out.println(" numOfDuplis = " + occurenceOfFunctions.get(overloadName) 
+            System.out.println(" numOfDuplis = " + occurenceOfFunctions.get(overloadName)
                     + " overloadName = " + overloadName);
         }
     }

@@ -7,12 +7,15 @@ import static edu.gcsc.vrl.ug.remote.JVMmanager.getCurrentIP;
 import static edu.gcsc.vrl.ug.remote.JVMmanager.getCurrentPort;
 import edu.gcsc.vrl.ug.types.RemoteLoadFileType;
 import edu.gcsc.vrl.ug.types.RemoteType;
+import eu.mihosoft.vrl.annotation.ComponentInfo;
+import eu.mihosoft.vrl.annotation.ObjectInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
 import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.reflection.TypeRepresentation;
 import eu.mihosoft.vrl.system.VRL;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,13 +25,17 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 /*
  * This class should hide the complexity of remote interaction between client and server file transfer
  * for the user.
- */
-/**
  *
  * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
  */
-public class RemoteService {
+@ObjectInfo(name = "RemoteService")
+@ComponentInfo(name = "RemoteService", category = "VRL/VRL-UG")
+// do not forget to add the class in Configurator.register() via
+// vApi.addComponent("THE_CLASSFILE_OF_THIS_CLASS")
+public class RemoteService implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     /**
      With this method the user do not need to know / care about were the file should be store
      on server side.

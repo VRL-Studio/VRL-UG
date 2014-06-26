@@ -8,9 +8,9 @@ import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.io.VPropertyFolderManager;
-import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.io.vrlx.AbstractCode;
 import eu.mihosoft.vrl.lang.CodeBuilder;
+import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.system.Constants;
 import eu.mihosoft.vrl.system.VRL;
 import groovy.lang.GroovyClassLoader;
@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -84,6 +85,23 @@ public class Compiler {
         code.append("\n").append(new UGAPIClassCode().build(
                 new CodeBuilder()).toString());
 
+//        File scriptPath = null;
+//        File scriptPathWithPackage = null;
+//        try {
+//            scriptPath = createTempDir();
+//            scriptPath.mkdir();
+//
+//            //new stuff into multiple files start
+//            scriptPathWithPackage = new File(scriptPath.getAbsolutePath() + packageName.replace(".", "/"));
+//            scriptPathWithPackage.mkdirs();
+//            //new stuff into multiple files end
+//
+//            System.out.println(">> UG-Build-Location: " + scriptPath.getAbsolutePath());
+//        } catch (IOException ex) {
+//            Logger.getLogger(
+//                    Compiler.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
         for (String c : codes) {
 
             AbstractCode aCode = new AbstractCode();
@@ -95,22 +113,30 @@ public class Compiler {
                 className = VLangUtils.interfaceNameFromCode(aCode);
             }
 
-            // TODO: fix this workaround for duplicate class names in final code (26.03.2014)
-            // by cpoliwoda 
-            //remove if() head after checking c++ side that no duplicate code is added
-            if (!classNames.contains(className)) {
-                code.append(c).append("\n\n");
+//            //new stuff into multiple files start
+//            File javaSrcFile = new File(scriptPathWithPackage, className + ".java");
+//            Writer p = null;
+//            try {
+//                p = new FileWriter(javaSrcFile);
+//                p.write(c);
+//                p.close();
+//            } catch (IOException ex) {
+//                Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            //new stuff into multiple files end
 
-                if (!isUGPrimitive(className)) {
-                    classNames.add(className);
-                }
-            } else {
-                System.err.println(">> WARNING: duplicate class " + className);
+            //old stuff into one file
+            code.append(c).append("\n\n");
+
+            if (!isUGPrimitive(className)) {
+                classNames.add(className);
             }
+
         }
 
         Collections.sort(classNames);
 
+        //old stuff into one file start
         File scriptPath = null;
         try {
             scriptPath = createTempDir();
@@ -121,7 +147,8 @@ public class Compiler {
             Logger.getLogger(
                     Compiler.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        //old stuff into one file end 
+        
         if (scriptPath.isFile()) {
             scriptPath = scriptPath.getParentFile();
         }
@@ -153,28 +180,12 @@ public class Compiler {
         cu.addSource("UG_Classes", code.toString());
 
         try {
-
-            //cpoliwoda debug start
-            System.out.println("Compiler.java::compile() BEFORE  cu.compile(); ");
-            String cuContent = cu.getPhaseDescription();
-            System.out.println("cuContent = " + cuContent);
-            File ugClasses = new File(scriptPath.getPath() + "/UG_Classes.groovy");
-
-            System.out.println("ugClasses = " + ugClasses);
-
-//            List<String> readAllLines = Files.readAllLines(ugClasses.toPath(), Charset.defaultCharset());
-//            System.out.println("ugClasses: readAllLines");
-//            for (String string : readAllLines) {
-//                System.out.println(string);
-//            }
-            //cpoliwoda end
             cu.compile();
         } catch (Exception e) {
-//            System.out.println(e.getMessage());
             System.err.println(e.getMessage());
 
-            System.out.println(getClass().getName() + " cu.compile() -> catch (Exception e)");
-//            System.out.println("System.exit(1);//cpoliwoda debug");
+            System.err.println(getClass().getName() + " cu.compile() -> catch (Exception e)");
+//            System.err.println("System.exit(1);//cpoliwoda debug");
 //            System.exit(1);//cpoliwoda debug
         }
 
