@@ -5,6 +5,7 @@
 package edu.gcsc.vrl.ug;
 
 import edu.gcsc.vrl.ug.remote.JVMmanager;
+import edu.gcsc.vrl.ug.remote.RemoteService;
 import edu.gcsc.vrl.ug.types.RemoteType;
 import eu.mihosoft.vrl.io.*;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
@@ -271,6 +272,7 @@ public class Configurator extends VPluginConfigurator {
 
             //TEST: component for starting an UG on an other JVM
             vApi.addComponent(JVMmanager.class);
+            vApi.addComponent(RemoteService.class);
 //            // test classes
 //            vApi.addComponent(TestParameterArray.class);
 //            vApi.addComponent(TestRemoteFile.class);
