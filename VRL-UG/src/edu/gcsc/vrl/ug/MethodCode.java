@@ -188,7 +188,7 @@ public class MethodCode implements CodeElement {
             if (returnsPointer) {
                 String returnTypeClassName =
                         CodeUtils.className(
-                        method.getReturnValue().getClassName(), method.isConst());
+                        method.getReturnValue().getClassName(), method.getReturnValue().isConst());
 
                 builder.append("edu.gcsc.vrl.ug.api.").append(returnTypeClassName).
                         append(" convertedResult = new ").
