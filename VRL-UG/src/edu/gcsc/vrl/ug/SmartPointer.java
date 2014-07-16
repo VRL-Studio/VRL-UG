@@ -4,9 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
-
 import java.io.Serializable;
-
 
 /**
  * This class wrapps native UG smart pointers with additional type info (class
@@ -14,12 +12,14 @@ import java.io.Serializable;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-class SmartPointer extends Pointer implements Serializable{
+final class SmartPointer extends Pointer implements Serializable {
 
     /**
      * Memory the native smart pointer object is stored
      */
     private byte[] smartPointer;
+
+    private boolean invalidated = false;
 
     /*
      * No public instanciation allowed. This constructor is only accessible from
@@ -29,8 +29,61 @@ class SmartPointer extends Pointer implements Serializable{
         super(address, readOnly);
 
         this.smartPointer = smartPtr;
-        
+
 //        System.out.println("[SMART Java]: " + getAddress() + ", cont=" + isConst());
+    }
+
+    /*
+     * No public instanciation allowed. This constructor is only accessible from
+     * within this class or native methods.
+     */
+    private SmartPointer(String className, long address, byte[] smartPtr, boolean readOnly) {
+        super(className, address, readOnly);
+
+        this.smartPointer = smartPtr;
+
+//        System.out.println("[SMART Java]: " + getAddress() + ", cont=" + isConst());
+    }
+
+    /**
+     * Casts the specified smartpointer to a smart pointer of the specified
+     * type.
+     *
+     * <b>Note:</b> use with care! This performs a native cast that may lead to
+     * memory errors that cannot be handled by the JVM. Both objects share the
+     * same native smartpointer instance.
+     *
+     * @param newClassName new type
+     * @return smartpointer
+     */
+    @Override
+    public SmartPointer cast(String newClassName) {
+        return cast(newClassName, isConst());
+    }
+
+    /**
+     * Casts the specified smartpointer to a smart pointer of the specified
+     * type.
+     *
+     * <b>Note:</b> use with care! This performs a native cast that may lead to
+     * memory errors that cannot be handled by the JVM. Both objects share the
+     * same native smartpointer instance. Also note that casting from const to
+     * non-const is not supported. In this case the resulting pointer will be
+     * const.
+     *
+     * @param newClassName new type
+     * @param asConst defines whether to cast to const
+     * @return smartpointer
+     */
+    @Override
+    public SmartPointer cast(String newClassName, boolean asConst) {
+        SmartPointer sp = new SmartPointer(newClassName,
+                this.getAddress(), this.getSmartPointer(),
+                this.isConst() || asConst);
+
+        sp.invalidated = true;
+
+        return sp;
     }
 
 //    /**
@@ -43,7 +96,6 @@ class SmartPointer extends Pointer implements Serializable{
 //    public void setSmartPointer(byte[] smartPointer) {
 //        this.smartPointer = smartPointer;
 //    }
-    
     /**
      * Returns the memory that contains the native smart pointer.
      *
@@ -66,7 +118,9 @@ class SmartPointer extends Pointer implements Serializable{
 //            System.out.println("~[SMART Java]: " + getAddress() + ", cont=" + isConst());
 //            UG.invalidate(this);
 
-            UG.invalidate(SmartPointer.this);
+            if (!invalidated) {
+                UG.invalidate(SmartPointer.this);
+            }
 
         } catch (Throwable ex) {
             //
@@ -75,5 +129,11 @@ class SmartPointer extends Pointer implements Serializable{
         }
     }
 
-    
+    @Override
+    public String toString() {
+        return "SmartPointer: class=" + getClassName()
+                + ", address=" + getAddress()
+                + ", const=" + isConst();
+    }
+
 }
