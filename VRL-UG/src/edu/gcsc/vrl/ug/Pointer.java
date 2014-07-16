@@ -48,6 +48,39 @@ public class Pointer implements Serializable{
 
         init();
     }
+    
+    /**
+     * Casts the specified pointer to a smart pointer of the specified type.
+     * 
+     * <b>Note:</b> use with care! This performs a native cast that may lead to
+     * memory errors that cannot be handled by the JVM. Both objects share the
+     * same native pointer instance.
+     *
+     * @param newClassName new type
+     * @return smartpointer
+     */
+    Pointer cast(String newClassName) {
+        return cast(newClassName, isConst());
+    }
+    
+    /**
+     * Casts the specified pointer to a smart pointer of the specified type.
+     * 
+     * <b>Note:</b> use with care! This performs a native cast that may lead to
+     * memory errors that cannot be handled by the JVM. Both objects share the
+     * same native pointer instance. Also note that casting from const to
+     * non-const is not supported. In this case the resulting pointer will be
+     * const.
+     * 
+     *
+     * @param newClassName new type
+     * @param asConst defines whether to cast to const
+     * @return smartpointer
+     */
+    public Pointer cast(String newClassName, boolean asConst) {
+        return new Pointer(newClassName,
+                this.getAddress(), this.isConst() || asConst);
+    }
 
     /**
      * Initializes this pointer.
