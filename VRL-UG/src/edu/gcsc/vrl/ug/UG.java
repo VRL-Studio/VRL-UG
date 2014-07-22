@@ -4,9 +4,12 @@
  */
 package edu.gcsc.vrl.ug;
 
+import edu.gcsc.vrl.ug.remote.JVMmanager;
+import edu.gcsc.vrl.ug.types.RemoteType;
 import eu.mihosoft.vrl.io.Base64;
 import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.io.VJarUtil;
+import eu.mihosoft.vrl.io.VProjectController;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.*;
 import eu.mihosoft.vrl.visual.SplashScreenGenerator;
@@ -96,7 +99,7 @@ public class UG {
      *
      * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
      */
-    static RemoteType getRemoteType() {
+    public static RemoteType getRemoteType() {
 
         return UG.remoteType;
     }
@@ -170,14 +173,12 @@ public class UG {
 //        webserver.acceptClient("141.2.38.37");
 //        webserver.acceptClient("141.2.38.91");
 //        //end allow list
-
             XmlRpcServerConfigImpl config = new XmlRpcServerConfigImpl();
 
             //aktiviere erweiterungen
             config.setEnabledForExtensions(true);
 
             XmlRpcServer xmlRpcServer = webServer.getXmlRpcServer();
-
 
             xmlRpcServer.setConfig(config);
             xmlRpcServer.setHandlerMapping(mapping);
@@ -200,7 +201,6 @@ public class UG {
      */
     public static void main(String[] args) {
 
-
         String serverFolderSuffix = "default";
 
         // check if there is a server 
@@ -220,12 +220,10 @@ public class UG {
 //            System.out.println("params[ "+i+" ] = "+params[i]);
 //            
 //        }
-        
         VRL.initAll(params);
 
 //        set in the server JVM the server ug object
         RpcHandler.setServer(UG.getInstance(null, RemoteType.SERVER));
-
 
     }
     /**
@@ -329,6 +327,8 @@ public class UG {
         VParamUtil.throwIfNotValid(
                 VParamUtil.VALIDATOR_EXISTING_FOLDER, folder);
 
+//        System.out.println("UG.loadNativeLibrariesInFolder() folder = " + folder);
+
         final String dylibEnding = "." + VSysUtil.getPlatformSpecificLibraryEnding();
 
         Collection<File> dynamicLibraries = new ArrayList<File>();
@@ -365,7 +365,6 @@ public class UG {
 //
 //                libName = libName.substring(0,
 //                        libName.length() - dylibEnding.length());
-
                 if (!loadedLibraries.contains(libName)) {
                     System.out.print(" --> " + f.getName());
                     try {
@@ -422,65 +421,61 @@ public class UG {
 
     }
 
-    /**
-     * instanciation only allowed in this class
-     */
-    private UG() {
-        // we must set the singleton instance to prevent
-        // calling multiple constructors.
-        // doing this in the corresponding getter methods does not work anymore
-        // as we need the instance for searching a compiled UG-API.
-        ugInstance = this;
-
-        System.out.println(" -- UG() -- ");
-
-        // load api if compatible; rebuild otherwise
-        try {
-            Class<?> cls = findCompatibleAPI(ugInstance);
-
-            api = cls;
-
-            if (cls == null) {
-
-                // load native library and connect to ug lib to generate api
-                connectToNativeUG(true);
-
-                NativeAPIInfo nativeAPI = convertRegistryInfo();
-                Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
-
-                try {
-
-                    recompiled = true;
-
-                    System.err.println(
-                            VTerminalUtil.red(
-                            " --> VRL-UG-API missing.\n"
-                            + " --> Recompiling API..."));
-
-                    SplashScreenGenerator.printBootMessage(
-                            ">> UG: recompiling API (this may take a while) ...");
-
-                    // generates jar file in plugin path
-                    compiler.compile(
-                            new edu.gcsc.vrl.ug.NativeAPICode(
-                            nativeAPI).getAllCodes(),
-                            VRL.getPropertyFolderManager().getPluginUpdatesFolder().
-                            getAbsolutePath());
-
-                } catch (Exception ex) {
-                    Logger.getLogger(UG.class.getName()).
-                            log(Level.SEVERE, null, ex);
-                }
-            }
-
-        } catch (Exception ex) {
-            Logger.getLogger(UG.class.getName()).
-                    log(Level.SEVERE, null, ex);
-        }
-
-        initialized = libLoaded;
-    }
-
+//    /**
+//     * instanciation only allowed in this class
+//     */
+//    private UG() {
+//        // we must set the singleton instance to prevent
+//        // calling multiple constructors.
+//        // doing this in the corresponding getter methods does not work anymore
+//        // as we need the instance for searching a compiled UG-API.
+//        ugInstance = this;
+//
+//        System.out.println(" -- UG() -- ");
+//
+//        // load api if compatible; rebuild otherwise
+//        try {
+//            Class<?> cls = findCompatibleAPI(ugInstance);
+//
+//            api = cls;
+//
+//            if (cls == null) {
+//
+//                // load native library and connect to ug lib to generate api
+//                connectToNativeUG(true);
+//
+//                NativeAPIInfo nativeAPI = convertRegistryInfo();
+//                Compiler compiler = new edu.gcsc.vrl.ug.Compiler();
+//
+//                try {
+//
+//                    recompiled = true;
+//
+//                    System.err.println(VTerminalUtil.red(
+//                            " --> VRL-UG-API missing.\n"
+//                            + " --> Recompiling API..."));
+//
+//                    SplashScreenGenerator.printBootMessage(
+//                            ">> UG: recompiling API (this may take a while) ...");
+//
+//                    // generates jar file in plugin path
+//                    compiler.compile(new edu.gcsc.vrl.ug.NativeAPICode(nativeAPI).getAllCodes(),
+//                            VRL.getPropertyFolderManager().getPluginUpdatesFolder().
+//                            getAbsolutePath());
+//
+//                } catch (Exception ex) {
+//                    Logger.getLogger(UG.class.getName()).
+//                            log(Level.SEVERE, null, ex);
+//                }
+//            }
+//
+//        } catch (Exception ex) {
+//            Logger.getLogger(UG.class.getName()).
+//                    log(Level.SEVERE, null, ex);
+//        }
+//
+//        initialized = libLoaded;
+//    }
     // TODO remove UG() resp. redirect to UG(RemoteType.NONE) 
     // DONE handle the RemoteType case NONE in UG(remoteType)
     /**
@@ -496,7 +491,27 @@ public class UG {
 
         System.out.println(" -- UG(" + getRemoteType() + ") -- ");
 
-
+//        debug 20140409
+//        System.out.println("UG getClass().getClassLoader() = " + getClass().getClassLoader());
+//
+//        VProjectController currentProjectController = VRL.getCurrentProjectController();
+//        System.out.println("currentProjectController = " + currentProjectController);
+//        if (currentProjectController != null) {
+//            
+//            String currentSession = currentProjectController.getCurrentSession();
+//            System.out.println("currentSession = " + currentSession);
+//            if (currentSession != null) {
+//  
+//                Class<?> currentClass = currentSession.getClass();
+//                System.out.println("currentClass = " + currentClass);
+//                if (currentClass != null) {
+//                   
+//                    ClassLoader classLoader = currentClass.getClassLoader();
+//                    System.out.println("classLoader = " + classLoader);
+//                }
+//            }
+//        }
+        
 //         // we must set the singleton instance to prevent
 //        // calling multiple constructors.
 //        // doing this in the corresponding getter methods does not work anymore
@@ -518,7 +533,6 @@ public class UG {
             }
 
 //            System.out.println(" # + # + #  is local server with default port running= " + isServerRunning);
-
             //UGServer not running
             if (!isServerRunning) {
                 try {
@@ -526,11 +540,9 @@ public class UG {
                     SplashScreenGenerator.printBootMessage(" --> starting local server (may take a while)");
                     JVMmanager.startLocalServer();
 
-
                 } catch (Exception ex) {
                     Logger.getLogger(UG.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
 
                 int wait = 15;
                 int counter = 0;
@@ -540,7 +552,6 @@ public class UG {
 //                System.out.println(" wait = "+ wait);
 //                System.out.println(" counter = "+ counter);
 //                System.out.println(" maxWait = "+ maxWait);
-
                 SplashScreenGenerator.printBootMessage(" . . checking every " + wait
                         + " secs for finishing start of server");
 
@@ -579,7 +590,6 @@ public class UG {
 //            System.out.println("if ((isServerRunning = " + isServerRunning + ") || "
 //                    + "(remoteType.equals(RemoteType.NONE))) = "
 //                    + remoteType.equals(RemoteType.NONE));
-
             // load api if compatible; rebuild otherwise
             try {
                 Class<?> cls = findCompatibleAPI(ugInstance);
@@ -590,10 +600,8 @@ public class UG {
                 if (remoteType.equals(RemoteType.NONE)) {
 //                    System.out.println("if (remoteType.equals(RemoteType.NONE)) == true");
 
-                    // load native library and connect to ug lib to generate api
                     connectToNativeUG(true);
                 }
-
 
                 if (api == null) {
 
@@ -610,20 +618,19 @@ public class UG {
 //                    } else {
 //                        System.err.println(" ## nativeAPIinfo NOT null");
 //                    }
-
                     try {
                         recompiled = true;
 
                         System.err.println(
                                 VTerminalUtil.red(
-                                " --> VRL-UG-API missing.\n"
-                                + " --> Recompiling API..."));
+                                        " --> VRL-UG-API missing.\n"
+                                        + " --> Recompiling API..."));
 
                         SplashScreenGenerator.printBootMessage(
                                 ">> UG: recompiling API (this may take a while) ...");
 
-                        edu.gcsc.vrl.ug.NativeAPICode nativeAPICode =
-                                new edu.gcsc.vrl.ug.NativeAPICode(nativeAPIInfo);
+                        edu.gcsc.vrl.ug.NativeAPICode nativeAPICode
+                                = new edu.gcsc.vrl.ug.NativeAPICode(nativeAPIInfo);
 
 //                        // new added for test in 20130522
 //                        if (nativeAPICode == null) {
@@ -635,7 +642,6 @@ public class UG {
 //                        } else {
 //                            System.err.println(" ## nativeAPICode NOT null");
 //                        }
-
                         String[] allCodes = nativeAPICode.getAllCodes();
 
 //                        // new added for test in 20130522
@@ -645,10 +651,11 @@ public class UG {
 //                            System.err.println(" ## class: UG");
 //                            System.err.println(" ## method: UG(RemoteType)");
 //                            System.err.println(" ## String[] allCodes is null");
+//                            System.err.println(" ## nativeAPIInfo == null");
 //                        } else {
-//                            System.err.println(" ## String[] allCodes NOT null");
+//                            System.err.println(" ## String[] allCodes NOT null"); // nativeAPIInfo NOT null cpoliwoda 20140324
 //                        }
-
+                        
                         // generates jar file in plugin path
                         compiler.compile(allCodes,
                                 VRL.getPropertyFolderManager().getPluginUpdatesFolder().getAbsolutePath());
@@ -693,7 +700,7 @@ public class UG {
             try {
                 cl = new URLClassLoader(
                         new URL[]{new File(eu.mihosoft.vrl.system.Constants.PLUGIN_DIR
-                    + "/" + Compiler.API_JAR_NAME).toURI().toURL()});
+                                    + "/" + Compiler.API_JAR_NAME).toURI().toURL()});
             } catch (MalformedURLException ex) {
                 Logger.getLogger(VRL.class.getName()).
                         log(Level.SEVERE, null, ex);
@@ -719,14 +726,13 @@ public class UG {
 
 //            boolean revisionsAreEqual = apiSvn.equals(ug.getSvnRevision());
 //            boolean datesAreEqual = apiDate.equals(ug.getCompileDate());
-
 //            if (revisionsAreEqual && datesAreEqual) {
             System.out.println(
                     VTerminalUtil.green(" --> VRL-UG: "
-                    + "API found\n"
-                    + " --> svn: present=" + apiSvn + "\n"
-                    + " --> date: present=" + apiDate + "\n"
-                    + " --> location: " + VJarUtil.getClassLocation(cls)));
+                            + "API found\n"
+                            + " --> svn: present=" + apiSvn + "\n"
+                            + " --> date: present=" + apiDate + "\n"
+                            + " --> location: " + VJarUtil.getClassLocation(cls)));
 
             SplashScreenGenerator.printBootMessage(">> UG: API found");
 
@@ -749,7 +755,6 @@ public class UG {
 //        System.err.println("FAILED");
 //
 //        System.exit(18);
-
         return null;
     }
 
@@ -775,13 +780,11 @@ public class UG {
 
             XMLDecoder decoder = new XMLDecoder(url.openStream());
 
-            AbstractUGAPIInfo apiInfo =
-                    (AbstractUGAPIInfo) decoder.readObject();
+            AbstractUGAPIInfo apiInfo = (AbstractUGAPIInfo) decoder.readObject();
 
             decoder.close();
 
-            Class<?>[] result =
-                    new Class<?>[apiInfo.getClassNames().size()];
+            Class<?>[] result = new Class<?>[apiInfo.getClassNames().size()];
 
             for (int i = 0; i < apiInfo.getClassNames().size(); i++) {
 
@@ -845,7 +848,6 @@ public class UG {
     public static synchronized UG getInstance(String option) {
 
 //        System.out.println("  synchronized UG.getInstance(String option) = " + option);
-
         if (option != null) {
 
             if (option.toLowerCase().equals("server")) {
@@ -943,13 +945,12 @@ public class UG {
 
         if (remoteType.equals(RemoteType.CLIENT)
                 && JVMmanager.isServerRunning(
-                JVMmanager.getCurrentIP(),
-                JVMmanager.getCurrentPort())) {
+                        JVMmanager.getCurrentIP(),
+                        JVMmanager.getCurrentPort())) {
 
 //            System.out.println("UG.getMessages(): \n"
 //                    + "if(remoteType.equals(RemoteType.CLIENT) && "
 //                    + "JVMmanager.isServerRunning(currentIP, currentPort)");
-
             Object o = null;
 
             try {
@@ -1130,7 +1131,7 @@ public class UG {
     native String _getBinaryLicense();
 
     public static native int _ugInit(String[] args);
-    
+
     /**
      * Deallocates specified memory. The destructor of the specified class will
      * be called.
@@ -1147,15 +1148,14 @@ public class UG {
      * @param p smart-pointer to invalidate
      */
     native static void _invalidate(SmartPointer p);
-    
-    
+
     // christian poliwoda
     // this method is only for debug issues and should NOT be used later
     native static Object _test_debug(String name, Object[] params);
 
     // this method is only for debug issues and should NOT be used later
-    public static Object test_debug(String name, Object[] params){
-        
+    public static Object test_debug(String name, Object[] params) {
+
         if (remoteType.equals(RemoteType.CLIENT)) {
 
             System.err.println(" NOT implemented yet test_debug() for RemoteType.CLIENT !!!");
@@ -1163,13 +1163,13 @@ public class UG {
         } else {
 
             System.out.println("UG.java in test_debug() !RemoteType.CLIENT");
-            System.out.println("calling native _test_debug(name= "+name+", params[] )");
-           return _test_debug(name, params);
+            System.out.println("calling native _test_debug(name= " + name + ", params[] )");
+            return _test_debug(name, params);
         }
-        
+
         return null;
     }
-    
+
     //
     //
     /**
@@ -1259,7 +1259,129 @@ public class UG {
             }
         } else {//if not RemoteType==CLIENT
 
-            return _convertRegistryInfo();
+            NativeAPIInfo napiInfo = _convertRegistryInfo();
+
+//             //debug 20140328
+//            checkForDublicationsClasses(napiInfo);
+//            checkForDublicationsClassGroups(napiInfo);
+//            checkForDublicationsFunctions(napiInfo);
+//             System.exit(0);
+//             //debug end
+
+            return napiInfo;
+        }
+    }
+
+    // debuging helper methode 20140328
+    private void checkForDublicationsClasses(NativeAPIInfo napiInfo) {
+
+        NativeClassInfo[] classes = napiInfo.getClasses();
+
+        HashMap<String, Integer> occurenceOfClasses = new HashMap<String, Integer>();
+
+        System.out.println("number of classes in nativeClassInfo = " + classes.length);
+
+//        String name = null;
+        for (int i = 0; i < classes.length; i++) {
+
+            NativeClassInfo nativeClassInfo = classes[i];
+//            String[] baseClassNames = nativeClassInfo.getBaseClassNames();
+            String nativeClassInfoName = nativeClassInfo.getName();
+
+////            System.out.println("number of names in baseClassNames = " + baseClassNames.length);
+//            for (int j = 0; j < baseClassNames.length; j++) {
+//
+//                name = baseClassNames[j];
+//                Integer numOfDuplis = occurenceOfClasses.get(name);
+            Integer numOfDuplis = occurenceOfClasses.get(nativeClassInfoName);
+
+            // check if there is already an entry with this name
+            // if not create one
+            // if is add one as mark for at least one duplication of the same name
+            if (numOfDuplis == null) {
+                occurenceOfClasses.put(nativeClassInfoName, 1);
+            } else {
+                occurenceOfClasses.put(nativeClassInfoName, numOfDuplis + 1);
+            }
+
+//            }
+        }
+
+        for (String className : occurenceOfClasses.keySet()) {
+            System.out.println(" numOfDuplis = " + occurenceOfClasses.get(className)
+                    + " className = " + className);
+        }
+
+    }
+
+    // debuging helper methode 20140328
+    private void checkForDublicationsClassGroups(NativeAPIInfo napiInfo) {
+
+        HashMap<String, Integer> occurenceOfGroups = new HashMap<String, Integer>();
+        NativeClassGroupInfo[] classGroups = napiInfo.getClassGroups();
+
+        System.out.println("number of classGroups = " + classGroups.length);
+
+        for (int i = 0; i < classGroups.length; i++) {
+
+            String classGroupsName = classGroups[i].getName();
+
+            Integer numOfDuplis = occurenceOfGroups.get(classGroupsName);
+
+            // check if there is already an entry with this name
+            // if not create one
+            // if is add one as mark for at least one duplication of the same name
+            if (numOfDuplis == null) {
+                occurenceOfGroups.put(classGroupsName, 1);
+            } else {
+                occurenceOfGroups.put(classGroupsName, numOfDuplis + 1);
+            }
+        }
+
+        for (String classGroupsName : occurenceOfGroups.keySet()) {
+            System.out.println(" numOfDuplis = " + occurenceOfGroups.get(classGroupsName)
+                    + " classGroupsName = " + classGroupsName);
+        }
+
+    }
+
+    // debuging helper methode 20140328
+    private void checkForDublicationsFunctions(NativeAPIInfo napiInfo) {
+
+        NativeFunctionGroupInfo[] functions = napiInfo.getFunctions();
+
+        HashMap<String, Integer> occurenceOfFunctions = new HashMap<String, Integer>();
+
+        System.out.println("number of functions in nativeClassInfo = " + functions.length);
+
+        String name = null;
+        for (int i = 0; i < functions.length; i++) {
+
+            NativeFunctionGroupInfo nativeFunctionInfo = functions[i];
+            NativeFunctionInfo[] overloads = nativeFunctionInfo.getOverloads();
+
+//            System.out.println("number of nativeFunctionInfo.getOverloads = " + overloads.length);
+//            System.out.println("nativeFunctionInfo = " + nativeFunctionInfo.getName());
+            for (int j = 0; j < overloads.length; j++) {
+
+                name = overloads[j].getName();
+                Integer numOfDuplis = occurenceOfFunctions.get(name);
+
+                // check if there is already an entry with this name
+                // if not create one
+                // if is add one as mark for at least one duplication of the same name
+                if (numOfDuplis == null) {
+                    occurenceOfFunctions.put(name, 1);
+                } else {
+                    occurenceOfFunctions.put(name, numOfDuplis + 1);
+                }
+
+            }
+        }
+
+        for (String overloadName : occurenceOfFunctions.keySet()) {
+            System.out.println(" numOfDuplis = " + occurenceOfFunctions.get(overloadName)
+                    + " overloadName = " + overloadName);
         }
     }
 
@@ -1285,8 +1407,6 @@ public class UG {
 //        for (int i = 0; i < params.length; i++) {
 //            System.out.println("    params[" + i + "] = " + params[i]);
 //        }
-
-
         if (remoteType.equals(RemoteType.CLIENT)) {
 
             Object o = null;
@@ -1310,7 +1430,6 @@ public class UG {
                 o = xmlRpcClient.execute("RpcHandler.invokeMethod", xmlRpcParams);
 
 //                System.out.println("o = xmlRpcClient.execute(RpcHandler.invokeMethod, xmlRpcParams) = " + o);
-
                 base64 = (String) o;
 //                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
@@ -1340,7 +1459,6 @@ public class UG {
 
 //            System.out.println(" -> Object o = _invokeMethod(...) = "+ o);
 //            
-
             return o;
         }
     }
@@ -1414,7 +1532,6 @@ public class UG {
             Vector xmlRpcParams = new Vector();
             xmlRpcParams.addElement(name);
             xmlRpcParams.addElement(classGrp);
-
 
             try {
                 XmlRpcClient xmlRpcClient = JVMmanager.getClient(
@@ -1499,7 +1616,6 @@ public class UG {
                 String base64 = (String) o;
 
 //                o = Base64.decodeToObject(base64, UG.class.getClassLoader());
-
                 o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
             } catch (XmlRpcException ex) {

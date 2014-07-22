@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import edu.gcsc.vrl.ug.remote.JVMmanager;
 import eu.mihosoft.vrl.annotation.MethodInfo;
 import eu.mihosoft.vrl.annotation.ParamInfo;
 import eu.mihosoft.vrl.reflection.VisualCanvas;

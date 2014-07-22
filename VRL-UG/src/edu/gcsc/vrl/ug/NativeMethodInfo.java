@@ -4,6 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
+import edu.gcsc.vrl.ug.types.NativeType;
 import java.io.Serializable;
 
 /**

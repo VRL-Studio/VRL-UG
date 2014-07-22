@@ -4,9 +4,20 @@ package edu.gcsc.vrl.ug;
  * To change this template, choose Tools | Templates and open the template in
  * the editor.
  */
+import edu.gcsc.vrl.ug.types.RemoteType;
 import eu.mihosoft.vrl.io.Base64;
+import eu.mihosoft.vrl.io.IOUtil;
+import eu.mihosoft.vrl.system.VRL;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /* 
  * NOTICE:
@@ -56,7 +67,6 @@ public class RpcHandler {
      */
     public static UG getServer() {
 
-
 //        System.out.println("CLS RemoteType of UG =" + UG.getRemoteType());
 //        
 //        System.out.println("RpcHandler.getServer(): CLS.RpcHandler:="
@@ -70,8 +80,6 @@ public class RpcHandler {
 //        
 //        System.out.println("RpcHandler.getServer(): CLS.System:="
 //                + ClassLoader.getSystemClassLoader());
-
-
         if (server == null) {
             System.out.println("RpcHandler.getServer()==null");
 
@@ -94,7 +102,6 @@ public class RpcHandler {
 //            System.out.print("NOT ");
 //        }
 //        System.out.println("NULL.");
-
         return server;
     }
 
@@ -126,7 +133,6 @@ public class RpcHandler {
 
         show("convertRegistryInfo");
 
-
 //        System.out.println("RpcHandler.convertRegistryInfo(): CLS.RpcHandler:="
 //                + RpcHandler.class.getClassLoader());
 //        
@@ -148,7 +154,6 @@ public class RpcHandler {
 //        
 //        System.out.println("RpcHandler.convertRegistryInfo(): CLS.NativeClassGroupInfo:="
 //                + NativeClassGroupInfo.class.getClassLoader());
-
 //            System.out.println("RpcHandler.convertRegistryInfo() :::: -> ");
 //            System.out.println("o = Base64.decodeToObject(base64);");
 //            System.out.println("leads to -> ");
@@ -158,11 +163,6 @@ public class RpcHandler {
 //            System.out.println("o = Base64.decodeToObject(base64, UG.class.getClassLoader());");
 //            System.out.println("leads to -> ");
 //            System.out.println("java.lang.ClassNotFoundException: [Ledu.gcsc.vrl.ug.NativeClassGroupInfo;");
-
-
-
-
-
         NativeAPIInfo napiInfo = getServer()._convertRegistryInfo();
 
         if (napiInfo == null) {
@@ -174,7 +174,6 @@ public class RpcHandler {
         String base64 = Base64.encodeObject(napiInfo);
 
 //        System.out.println("base64.substring(0,11): " + base64.substring(0, 11));
-
         return base64;
     }
 
@@ -191,20 +190,15 @@ public class RpcHandler {
             String methodName, String params) {
         show("invokeMethod");
 
-
 //        System.out.println("RpcHandler.invokeMethod() paramas values are:");
 //        System.out.println("exportedClassName = " + exportedClassName);
 //        System.out.println("objPtr = " + objPtr);
 //        System.out.println("readOnly = " + readOnly);
 //        System.out.println("methodName = " + methodName);
 //        System.out.println("params = " + params);
-
-
-
         Object o = Base64.decodeToObject(params, UG.class.getClassLoader());
 
 //        Object o = UGBase64.decodeToObject(params);
-
         Object[] objArray = (Object[]) o;
 
 //        //DEBUG LOOP
@@ -212,8 +206,6 @@ public class RpcHandler {
 //            System.out.println("params[" + i + "] = " + objArray[i]);
 //
 //        }
-
-
         o = getServer()._invokeMethod(
                 exportedClassName, new Long(objPtr), readOnly, methodName, objArray);
 
@@ -238,7 +230,6 @@ public class RpcHandler {
         Object o = Base64.decodeToObject(parameters, UG.class.getClassLoader());
 
 //        Object o = UGBase64.decodeToObject(parameters);
-
         Object[] objArray = (Object[]) o;
 
         Pointer p = getServer()._newInstance(new Long(exportedClassPtr), objArray);
@@ -301,7 +292,6 @@ public class RpcHandler {
 
 //        System.out.println("RESULT: " + base64);
         return base64;
-
 
     }
 
@@ -468,7 +458,6 @@ public class RpcHandler {
         Object o = Base64.decodeToObject(base64, UG.class.getClassLoader());
 
 //        Object o = UGBase64.decodeToObject(base64);
-
         if (o instanceof SmartPointer) {
             SmartPointer p = (SmartPointer) o;
 
@@ -515,7 +504,6 @@ public class RpcHandler {
         Boolean b = UG.isServerRunning();
 
 //        System.out.println("UG.isServerRunning() = " + b);
-
         if (b != null && b.booleanValue()) {
             return true;
         }
@@ -563,4 +551,246 @@ public class RpcHandler {
 
         return 0;
     }
+
+    /**
+     This method operates on the VRL-UG server side and stores the file which is in the data string
+     at the exact position on the server.
+     @param pathOnServer place on server including path, file name and typ where the data should be stored.
+     @param data the data that should be stored on this server.
+     @return true if data could be stored, else false.
+     */
+    public Boolean saveFile(String pathOnServer, String data) {
+        show("saveFile");
+
+        File fileOnServer = new File(pathOnServer);
+
+        try {
+            IOUtil.base64ToFile(data, fileOnServer);
+        } catch (IOException ex) {
+            Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     This method operates on the VRL-UG server side and returns the file which is specified via the
+     parameter pathOnServer.
+     @param pathOnServer the path were the file could be found including path, file name and typ.
+     @return the converted file if possible, else null.
+     */
+    public String getFile(String pathOnServer) throws IOException {
+        show("getFile");
+        System.err.println("UG.getInstance().getRemoteType() = " + UG.getInstance().getRemoteType());
+
+        File fileOnServer = new File(pathOnServer);
+
+        String convertedFile = null;
+
+        if (fileOnServer.exists()) {
+            System.out.println("file exists");
+
+            try {
+                convertedFile = IOUtil.fileToBase64(fileOnServer);
+            } catch (IOException ex) {
+                Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            String msg = "RpcHandler.getFile() : the specified path do NOT leed to an existing file."
+                    + "path path of file: " + fileOnServer.getAbsolutePath();
+            System.err.println(msg);
+
+            throw new IOException(msg);
+        }
+
+        return convertedFile;
+    }
+
+    /**
+     This method cares about were a client file should be on server side stored.
+    
+     @param pathOnClient the path of the file on client side
+     @param fileData the file which should be stored
+     @param checksumme the checksumme which was generated on client side
+     @return true if file was transfered and the server checksumme equals the client checksumme, else false.
+     */
+    public Boolean saveFileWithChecksumme(String pathOnClient, String fileData, String checksumme) throws IOException {
+        show("saveFileWithChecksumme");
+
+        File fileOnClient = new File(pathOnClient);
+        File fileOnServer = VRL.getPropertyFolderManager().toLocalPathInTmpFolder(fileOnClient);
+
+        fileOnServer.getParentFile().mkdirs();
+        boolean parentFoldersExist = fileOnServer.getParentFile().exists();
+
+        if (parentFoldersExist) {
+            fileOnServer.createNewFile();
+
+            try {
+                IOUtil.base64ToFile(fileData, fileOnServer);
+
+            } catch (IOException ex) {
+                Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+
+            Boolean checksummeOK = IOUtil.verifyFileMD5(fileOnServer, checksumme);
+
+//        return true;
+            return checksummeOK;
+        }//if (parentFoldersExist) 
+        else {
+            String msg = "Could not create client folder structure on server side."
+                    + "path that shoulded be created: " + fileOnServer.getAbsolutePath();
+            System.err.println(msg);
+            throw new IOException(msg);
+        }
+
+    }
+
+    /**
+     This method should be used to get the outputs file from components which are executed on 
+     server side. 
+     @param pathOnClient the path of the wanted file on client side
+     @return a string array consisting of the wanted file and the corresponding checksumme
+     */
+    public String[] getFileWithChecksumme(String pathOnClient) throws IOException {
+        show("getFileWithChecksumme");
+
+//        File fileOnClient = new File(pathOnClient);
+//        File fileOnServer = VRL.getPropertyFolderManager().toLocalPathInTmpFolder(fileOnClient);
+//        
+//        fileOnServer.getParentFile().mkdirs();
+        File fileOnServer = createFileOnServer(pathOnClient);
+
+        boolean parentFoldersExist = fileOnServer.getParentFile().exists();
+
+        String[] convertedFileAndCecksumme = null;
+
+        System.out.println("UG.getRemoteType() = " + UG.getRemoteType());
+//        System.out.println("fileOnClient.exists() = "+fileOnClient.exists()+",fileOnClient = "+ fileOnClient);
+        System.out.println("fileOnServer.exists() = " + fileOnServer.exists() + ", fileOnServer = " + fileOnServer);
+        System.out.println("parentFoldersExist = " + parentFoldersExist);
+
+        if (fileOnServer.exists()) {
+//        if (parentFoldersExist) {
+            fileOnServer.createNewFile();
+
+            System.out.println("fileOnServer.exists() = " + fileOnServer.exists() + ", fileOnServer = " + fileOnServer);
+
+            convertedFileAndCecksumme = new String[2];
+
+            try {
+                convertedFileAndCecksumme[0] = IOUtil.fileToBase64(fileOnServer);
+            } catch (IOException ex) {
+                Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            convertedFileAndCecksumme[1] = IOUtil.generateMD5Sum(fileOnServer);
+        }//fileOnServer.exists
+        else {
+
+            String msg = "RpcHandler.getFileWithChecksumme() : the specified path do NOT leed to an existing file."
+                    + "path path of file: " + fileOnServer.getAbsolutePath();
+            System.err.println(msg);
+            throw new IOException(msg);
+        }
+
+        return convertedFileAndCecksumme;
+    }
+
+    /**
+     This method should be used to get the outputs file from components which are executed on 
+     server side. 
+     @param path of the wanted file 
+     @param serverPath true if the path variable is already a server path, 
+     false if the path varibale contains a client path that need to be converted into a server path
+     @return a string array consisting of the wanted file and the corresponding checksumme
+     */
+    public String[] getFileWithChecksumme(String path, Boolean serverPath) throws IOException {
+        show("getFileWithChecksumme");
+
+        System.out.println("path = " +path);
+        System.out.println("serverPath = " +serverPath);
+        
+        File fileOnServer = null;
+        if (serverPath) {
+            fileOnServer = new File(path);
+        } else {
+            fileOnServer = createFileOnServer(path);
+        }
+
+        String[] convertedFileAndCecksumme = null;
+
+        System.out.println("UG.getRemoteType() = " + UG.getRemoteType());
+        System.out.println("fileOnServer.exists() = " + fileOnServer.exists() + ", fileOnServer = " + fileOnServer);
+
+        if (fileOnServer.exists()) {
+
+            convertedFileAndCecksumme = new String[2];
+
+            try {
+                convertedFileAndCecksumme[0] = IOUtil.fileToBase64(fileOnServer);
+            } catch (IOException ex) {
+                Logger.getLogger(RpcHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            convertedFileAndCecksumme[1] = IOUtil.generateMD5Sum(fileOnServer);
+        }//fileOnServer.exists
+        else {
+
+            String msg = "RpcHandler.getFileWithChecksumme() : the specified path do NOT leed to an existing file."
+                    + "path path of file: " + fileOnServer.getAbsolutePath();
+            System.err.println(msg);
+            throw new IOException(msg);
+        }
+
+        return convertedFileAndCecksumme;
+    }
+
+    /**
+     Creates the corresponding path of a client file on the server side.
+    
+     @param clientPath the path of a file on client side
+     @return the path of the file on server side
+     */
+    public String getServerPath(String clientPath) {
+        show("getServerPath");
+        System.out.println("clientPath = " +clientPath);
+        
+        File fileOnClient = new File(clientPath);
+        File fileOnServer = VRL.getPropertyFolderManager().toLocalPathInTmpFolder(fileOnClient);
+        System.out.println("fileOnServer = "+ fileOnServer);
+        
+        return fileOnServer.getAbsolutePath();
+    }
+
+    /**
+     Creates a file on the server side depending on the client path of a file, 
+     but with a corresponding path server.
+    
+     @param clientPath the path of a file on client side
+     @return the created file on server side with server path
+     @throws IOException if file could not be created
+     */
+    public File createFileOnServer(String clientPath) throws IOException {
+        show("createFileOnServer");
+        System.out.println("clientPath = " +clientPath);
+        
+        String pathOnServer = getServerPath(clientPath);
+        File fileOnServer = new File(pathOnServer);
+        fileOnServer.getParentFile().mkdirs();
+
+        boolean parentFoldersExist = fileOnServer.getParentFile().exists();
+
+        if (parentFoldersExist) {
+            fileOnServer.createNewFile();
+        }
+
+        System.out.println("fileOnServer = " +fileOnServer);
+        
+        return fileOnServer;
+    }
+
 }

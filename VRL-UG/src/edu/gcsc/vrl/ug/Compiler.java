@@ -8,9 +8,9 @@ import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.io.IOUtil;
 import eu.mihosoft.vrl.io.VJarUtil;
 import eu.mihosoft.vrl.io.VPropertyFolderManager;
-import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.io.vrlx.AbstractCode;
 import eu.mihosoft.vrl.lang.CodeBuilder;
+import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.system.Constants;
 import eu.mihosoft.vrl.system.VRL;
 import groovy.lang.GroovyClassLoader;
@@ -22,11 +22,15 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
@@ -81,8 +85,25 @@ public class Compiler {
         code.append("\n").append(new UGAPIClassCode().build(
                 new CodeBuilder()).toString());
 
+//        File scriptPath = null;
+//        File scriptPathWithPackage = null;
+//        try {
+//            scriptPath = createTempDir();
+//            scriptPath.mkdir();
+//
+//            //new stuff into multiple files start
+//            scriptPathWithPackage = new File(scriptPath.getAbsolutePath() + packageName.replace(".", "/"));
+//            scriptPathWithPackage.mkdirs();
+//            //new stuff into multiple files end
+//
+//            System.out.println(">> UG-Build-Location: " + scriptPath.getAbsolutePath());
+//        } catch (IOException ex) {
+//            Logger.getLogger(
+//                    Compiler.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
         for (String c : codes) {
-            code.append(c).append("\n\n");
+
             AbstractCode aCode = new AbstractCode();
             aCode.setCode(c);
 
@@ -92,13 +113,30 @@ public class Compiler {
                 className = VLangUtils.interfaceNameFromCode(aCode);
             }
 
+//            //new stuff into multiple files start
+//            File javaSrcFile = new File(scriptPathWithPackage, className + ".java");
+//            Writer p = null;
+//            try {
+//                p = new FileWriter(javaSrcFile);
+//                p.write(c);
+//                p.close();
+//            } catch (IOException ex) {
+//                Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            //new stuff into multiple files end
+
+            //old stuff into one file
+            code.append(c).append("\n\n");
+
             if (!isUGPrimitive(className)) {
                 classNames.add(className);
             }
+
         }
 
         Collections.sort(classNames);
 
+        //old stuff into one file start
         File scriptPath = null;
         try {
             scriptPath = createTempDir();
@@ -109,20 +147,20 @@ public class Compiler {
             Logger.getLogger(
                     Compiler.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        //old stuff into one file end 
+        
         if (scriptPath.isFile()) {
             scriptPath = scriptPath.getParentFile();
         }
 
         try {
-            BufferedWriter writer =
-                    new BufferedWriter(new FileWriter(
-                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
+            BufferedWriter writer
+                    = new BufferedWriter(new FileWriter(
+                                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
 
 //            BufferedWriter writer =
 //                    new BufferedWriter(new FileWriter(
 //                    new File("/home/miho/UG_Classes.groovy")));
-
             writer.append(code);
             writer.flush();
             writer.close();
@@ -130,7 +168,6 @@ public class Compiler {
             Logger.getLogger(Compiler.class.getName()).
                     log(Level.SEVERE, null, ex);
         }
-
 
         // Configure
         CompilerConfiguration conf = new CompilerConfiguration();
@@ -141,14 +178,16 @@ public class Compiler {
         CompilationUnit cu = new CompilationUnit(gcl);
         cu.configure(conf);
         cu.addSource("UG_Classes", code.toString());
-        
+
         try {
             cu.compile();
         } catch (Exception e) {
-//            System.out.println(e.getMessage());
             System.err.println(e.getMessage());
+
+            System.err.println(getClass().getName() + " cu.compile() -> catch (Exception e)");
+//            System.err.println("System.exit(1);//cpoliwoda debug");
+//            System.exit(1);//cpoliwoda debug
         }
-        
 
         // Load classes via URL classloader
         ClassLoader cl = Compiler.class.getClassLoader(); //Thread.currentThread().getContextClassLoader();
@@ -201,9 +240,7 @@ public class Compiler {
             manifest.write(new FileOutputStream(
                     new File(meta_inf.getAbsolutePath() + "/MANIFEST.MF")));
 
-
             // write ug classes
-
             File ugInfoPath = new File(scriptPath.getAbsolutePath()
                     + "/edu/gcsc/vrl/ug/api/");
 
@@ -213,7 +250,7 @@ public class Compiler {
 
             XMLEncoder encoder = new XMLEncoder(
                     new FileOutputStream(
-                    ugInfoPath.getAbsolutePath() + "/UG_INFO.XML"));
+                            ugInfoPath.getAbsolutePath() + "/UG_INFO.XML"));
 
             encoder.writeObject(new AbstractUGAPIInfo(classNames));
 
@@ -231,7 +268,6 @@ public class Compiler {
 //            Logger.getLogger(Compiler.class.getName()).
 //                    log(Level.SEVERE, null, ex);
 //        }
-
         if (jarLocation != null) {
             try {
                 File srcFolder = new File(scriptPath.getAbsolutePath());
@@ -248,7 +284,6 @@ public class Compiler {
         deleteClassFiles(scriptPath);
 
 //        UG.setNativeClasses(result);
-
         return result;
     }
 
