@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.gcsc.vrl.ug;
+package edu.gcsc.vrl.ug.types;
 
+import edu.gcsc.vrl.ug.CondUserDataCompiler;
 import eu.mihosoft.vrl.annotation.TypeInfo;
 import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.lang.groovy.GroovyCompiler;

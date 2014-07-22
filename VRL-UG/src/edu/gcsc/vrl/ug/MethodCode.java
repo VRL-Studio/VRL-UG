@@ -4,6 +4,8 @@
  */
 package edu.gcsc.vrl.ug;
 
+import edu.gcsc.vrl.ug.types.NativeType;
+import edu.gcsc.vrl.ug.types.CodeType;
 import eu.mihosoft.vrl.lang.CodeBuilder;
 
 /**
@@ -186,7 +188,7 @@ public class MethodCode implements CodeElement {
             if (returnsPointer) {
                 String returnTypeClassName =
                         CodeUtils.className(
-                        method.getReturnValue().getClassName(), method.isConst());
+                        method.getReturnValue().getClassName(), method.getReturnValue().isConst());
 
                 builder.append("edu.gcsc.vrl.ug.api.").append(returnTypeClassName).
                         append(" convertedResult = new ").
