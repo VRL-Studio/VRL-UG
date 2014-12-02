@@ -32,6 +32,15 @@ public class UGObject implements Serializable, UGObjectInterface {
     //
     //DEBUG
     public static long counter = 0;
+    private static boolean DEBUG;
+
+    public static void enableDebug() {
+        DEBUG = true;
+    }
+
+    public static void disableDebug() {
+        DEBUG = false;
+    }
 
     public UGObject() {
 //
@@ -54,25 +63,30 @@ public class UGObject implements Serializable, UGObjectInterface {
 
     private void updateClassNameIfClassGroupObject() {
         if (isClassGroupObject()) {
-//            System.out.println(">>> class-group-name: " + getClassGroupName());
+            if (DEBUG) {
+                System.out.println(">>> class-group-name: " + getClassGroupName());
+            }
             long exportedClsPtr = Pointer.NULL;
             exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
                     getExportedClassPtrByName(getClassGroupName(),
-                    isClassGroupObject());
-
+                            isClassGroupObject());
 
             if (exportedClsPtr != Pointer.NULL) {
                 setClassName(edu.gcsc.vrl.ug.UG.getInstance().
                         getDefaultClassNameFromGroup(getClassGroupName()));
             }
-
-//            System.out.println(">>> class-name: " + getClassName());
-
+            if (DEBUG) {
+                System.out.println(">>> class-name: " + getClassName());
+            }
             if (getClassGroupName().equals(getClassName())) {
-                throw new IllegalStateException("class name equals group name");
+                throw new IllegalStateException(
+                        "class name '" + getClassName() + "'"
+                        + " equals group name '" + getClassGroupName() + "'");
             }
         } else {
-//            System.out.println(">>> no class-group: " + getClassName());
+            if (DEBUG) {
+                System.out.println(">>> no class-group: " + getClassName());
+            }
         }
     }
 
@@ -90,11 +104,11 @@ public class UGObject implements Serializable, UGObjectInterface {
 
                 exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
                         getExportedClassPtrByName(getClassGroupName(),
-                        isClassGroupObject());
+                                isClassGroupObject());
             } else {
                 exportedClsPtr = edu.gcsc.vrl.ug.UG.getInstance().
                         getExportedClassPtrByName(getClassName(),
-                        isClassGroupObject());
+                                isClassGroupObject());
             }
 
             if (isClassGroupObject() && exportedClsPtr != Pointer.NULL) {
@@ -104,7 +118,6 @@ public class UGObject implements Serializable, UGObjectInterface {
             }
 
 //            System.out.println("ClassName=" + getClassName());
-
             if (isInstantiable()) {
                 if (exportedClsPtr == Pointer.NULL) {
 //                    System.err.println(
@@ -116,7 +129,6 @@ public class UGObject implements Serializable, UGObjectInterface {
 //                            "Class \"" + getClassName()
 //                            + "\" is not instantiable!",
 //                            MessageType.ERROR);
-
                     String msg = "Class \"" + getClassName()
                             + "\" is not instantiable!";
 
@@ -136,10 +148,8 @@ public class UGObject implements Serializable, UGObjectInterface {
 //                    
 //                    setPointer(new edu.gcsc.vrl.ug.Pointer(
 //                            getClassName(), address, false));
-
 //                    System.out.println(getClassName() + " >> New Instance: "
 //                            + getClassName() + " [" + address + "]");
-
                     Pointer p = edu.gcsc.vrl.ug.UG.getInstance().
                             newInstance(exportedClsPtr, constructorParameters);
 
@@ -297,7 +307,6 @@ public class UGObject implements Serializable, UGObjectInterface {
 //            System.out.println("**CONST:" + isConst);asFullClass
 //            System.out.println("**M:" + methodName);
 //            System.out.println("**P:" + convertedParams);
-
             result = edu.gcsc.vrl.ug.UG.getInstance().invokeMethod(
                     getClassName(),
                     getPointer().getAddress(), isConst,
@@ -357,8 +366,7 @@ public class UGObject implements Serializable, UGObjectInterface {
      * Indicates whether the specified object is an ug object.
      *
      * @param o object to check
-     * @return
-     * <code>true</code> if the specified object is an ug object;
+     * @return <code>true</code> if the specified object is an ug object;
      * <code>false</code> otherwise
      */
     public static boolean isInstance(Object o) {
