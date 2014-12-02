@@ -14,8 +14,7 @@ VRL-UG4/dist
 .DS_Store
 
 tmp
-/VRL-UG4/nbproject/private/
-/VRL-UG/nbproject/private/
+/VRL-UG/nbproject/private
 /VRL-UG/dist/
 /VRL-UG/build/
 /VRL-UG/src/eu/mihosoft/vrl/natives/linux/x64/
@@ -23,5 +22,3 @@ tmp
 /VRL-UG/src/eu/mihosoft/vrl/natives/osx/
 /VRL-UG/src/eu/mihosoft/vrl/natives/windows/x64/
 /VRL-UG/src/eu/mihosoft/vrl/natives/windows/x86/
-/VRL-UGUtil/nbproject/private/
-/VRL-UGUtil/build/
