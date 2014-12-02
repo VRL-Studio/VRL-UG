@@ -4,10 +4,7 @@
  */
 package edu.gcsc.vrl.ug;
 
-import eu.mihosoft.vrl.annotation.ComponentInfo;
 import eu.mihosoft.vrl.io.IOUtil;
-import eu.mihosoft.vrl.io.VJarUtil;
-import eu.mihosoft.vrl.io.VPropertyFolderManager;
 import eu.mihosoft.vrl.io.vrlx.AbstractCode;
 import eu.mihosoft.vrl.lang.CodeBuilder;
 import eu.mihosoft.vrl.lang.VLangUtils;
@@ -22,15 +19,11 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
