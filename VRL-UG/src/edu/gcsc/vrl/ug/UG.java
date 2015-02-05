@@ -1149,27 +1149,6 @@ public class UG {
      */
     native static void _invalidate(SmartPointer p);
 
-    // christian poliwoda
-    // this method is only for debug issues and should NOT be used later
-    native static Object _test_debug(String name, Object[] params);
-
-    // this method is only for debug issues and should NOT be used later
-    public static Object test_debug(String name, Object[] params) {
-
-        if (remoteType.equals(RemoteType.CLIENT)) {
-
-            System.err.println(" NOT implemented yet test_debug() for RemoteType.CLIENT !!!");
-
-        } else {
-
-            System.out.println("UG.java in test_debug() !RemoteType.CLIENT");
-            System.out.println("calling native _test_debug(name= " + name + ", params[] )");
-            return _test_debug(name, params);
-        }
-
-        return null;
-    }
-
     //
     //
     /**

@@ -23,7 +23,7 @@ public class NativeParamInfo implements Serializable {
     private String help;
     private String tooltip;
     private String[] paramInfo;
-    private Boolean paramAVector = false;
+    private boolean isAVector = false;
     
     public NativeParamInfo() {
     }
@@ -40,7 +40,7 @@ public class NativeParamInfo implements Serializable {
         this.tooltip = p.tooltip;
         this.paramInfo = p.paramInfo;
         
-        this.paramAVector = p.isParamAVector();
+        this.isAVector = p.isVector();
     }
 
     /**
@@ -375,9 +375,10 @@ public class NativeParamInfo implements Serializable {
         // check now if there are lists / vectors / arrays
         //
 
-        if(isParamAVector())
+        if (isAVector)
         {
-            result = "java.util.List<"+result+">";
+            result = result+"[]";
+            //result = "java.util.List<"+result+">";
         }
         
         return result;
@@ -478,21 +479,21 @@ public class NativeParamInfo implements Serializable {
 
   /**
      * Indicates whether this parameter is a list / vector.
-     * This method should be aquilavent to the isVector method on c++
+     * This method should be equivalent to the isVector method on c++
      * side in native ug for lua-binding.
      *
      * @return
      * <code>true</code> if this parameter is a vector;
      * <code>false</code> otherwise
      */
-    public Boolean isParamAVector() {
-        return paramAVector;
+    public boolean isVector() {
+        return isAVector;
     }
 
     /**
-     * @param paramIsVector the paramAVector to set
+     * @param _isVector whether or not to set the isAVector flag
      */
-    public void setParamAVector(Boolean paramIsVector) {
-        this.paramAVector = paramIsVector;
+    public void setVectorFlag(boolean _isVector) {
+        this.isAVector = _isVector;
     }
 }
