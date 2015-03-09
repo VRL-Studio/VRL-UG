@@ -231,8 +231,6 @@ public class UGObject implements Serializable, UGObjectInterface {
     /**
      * Invokes a native function.
      *
-     * @param isFunction defines whether to invoke a function
-     * @param isConst defines whether to call a const method
      * @param function function name
      * @param params method parameters
      * @return return value
@@ -277,7 +275,15 @@ public class UGObject implements Serializable, UGObjectInterface {
             if (p instanceof UGObject) {
                 UGObject o = (UGObject) p;
                 convertedParams[i] = o.getPointer();
-            } else {
+            }
+            else if (p instanceof UGObject[]) {
+                UGObject[] o = (UGObject[]) p;
+                Pointer[] pa = new Pointer[o.length];
+                for (int j = 0; j < o.length; ++j)
+                    pa[j] = o[j].getPointer();
+                convertedParams[i] = pa;
+            }
+            else {
                 convertedParams[i] = p;
             }
         }
@@ -319,31 +325,16 @@ public class UGObject implements Serializable, UGObjectInterface {
     }
 
     /**
-     * Invokes a native constructor.
+     * This method will save the constructor parameters.
+     * The actual construction is not performed until any method of this object
+     * is called (then construction takes place in getPointer()).
      *
-     * @param isFunction defines whether to invoke a function
-     * @param isConst defines whether to call a const method
-     * @param methodName method name
      * @param params method parameters
-     * @return return value
      */
     protected void invokeConstructor(Object[] params) {
+        constructorParameters = convertParams(this, params, "constructor");
 
-        Object[] convertedParams = new Object[params.length];
-
-        for (int i = 0; i < convertedParams.length; i++) {
-            Object p = params[i];
-            if (p instanceof UGObject) {
-                UGObject o = (UGObject) p;
-                convertedParams[i] = o.getPointer();
-            } else {
-                convertedParams[i] = p;
-            }
-        }
-
-        // request new constructor call
-        constructorParameters = convertedParams;
-        releaseThis();
+        releaseThis();   
     }
 
     /**

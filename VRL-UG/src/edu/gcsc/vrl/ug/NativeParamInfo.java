@@ -321,11 +321,6 @@ public class NativeParamInfo implements Serializable {
      * @return the Java class name of this parameter type
      */
     public String getTypeClassName() {
-
-        // christian poliwoda modifications. original method below commented out
-//        System.out.println(getClass().getSimpleName()+".getTypeClassName()");
-//        System.out.println(" type = "+ getType());
-//        System.out.println(" isVector() = "+ isParamAVector());
         
         String result = "NO_TYPE";
         
@@ -384,70 +379,6 @@ public class NativeParamInfo implements Serializable {
         return result;
     }
     
-//    /**
-//     * Returns the Java class name of this parameter type.
-//     *
-//     * @return the Java class name of this parameter type
-//     */
-//    public String getTypeClassName() {
-//  
-//        switch (getType()) {
-//            case VOID:
-//                return "void";
-//            case BOOL:
-//                return "java.lang.Boolean";
-//            case INT:
-//                return "java.lang.Integer";
-//            case SIZE_T: //no unsigned type in java therefore cast to integer
-//                return "java.lang.Integer";
-//            case FLOAT:
-//                return "java.lang.Float";
-//            case DOUBLE:
-//                return "java.lang.Double";
-//            case CSTRING: //"C"STRING cast to normal string 
-//                return "java.lang.String";
-//            case STDSTRING: //"STD"STRING cast to normal string 
-//                return "java.lang.String";
-//            case POINTER:
-//                return CodeUtils.interfaceName(getClassName(), false);
-//            case CONST_POINTER:
-//                return CodeUtils.interfaceName(getClassName(), true);
-//            case SMART_POINTER:
-//                return CodeUtils.interfaceName(getClassName(), false);
-//            case CONST_SMART_POINTER:
-//                return CodeUtils.interfaceName(getClassName(), true);
-//        }
-//
-//        return "/*ERROR!!! INVALID TYPE [type=" + getType() + "] */ void";
-//
-//        /* order/conversion before 20130522
-//         * commented out and not deleted to have a backup
-//         * 
-//         * see also setType(int) in this class
-//         */
-////        switch (getType()) {
-////            case VOID:
-////                return "void";
-////            case BOOL:
-////                return "java.lang.Boolean";
-////            case INTEGER:
-////                return "java.lang.Integer";
-////            case NUMBER:
-////                return "java.lang.Double";
-////            case STRING:
-////                return "java.lang.String";
-////            case POINTER:
-////                return CodeUtils.interfaceName(getClassName(), false);
-////            case CONST_POINTER:
-////                return CodeUtils.interfaceName(getClassName(), true);
-////            case SMART_POINTER:
-////                return CodeUtils.interfaceName(getClassName(), false);
-////            case CONST_SMART_POINTER:
-////                return CodeUtils.interfaceName(getClassName(), true);
-////        }
-////
-////        return "/*ERROR!!! INVALID TYPE*/ void";
-//    }
     
     /**
      * Indicates whether this parameter is const.
