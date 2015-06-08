@@ -240,7 +240,7 @@ public class NativeClassGroupInfo implements Serializable {
         result.setClassNames(convertToClassGroup(api, cls.getClassNames()));
         result.setConstructors(convertToClassGroup(api, cls.getConstructors()));
         result.setMethods(convertToClassGroup(api, cls.getMethods()));
-        result.setConstMethods(cls.getConstMethods());
+        result.setConstMethods(convertToClassGroup(api, cls.getConstMethods()));
         
         result.setGroupClass(true);
         
