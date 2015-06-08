@@ -134,7 +134,7 @@ public class NativeAPIInfo implements Serializable{
      */
     public NativeClassGroupInfo getGroupByClassName(String className) {
 
-        // we cannot do anything as no information about grous is available
+        // we cannot do anything as no information about groups is available
         if (classGroups == null) {
             return null;
         }
