@@ -78,11 +78,11 @@ public class NativeParamInfo implements Serializable {
          * 
          * matched by christian poliwoda
          * 
-         //      // OLD //          
-         //      PT_UNKNOWN = 0, -> INVALID  <- UNDEFINED
+         //     // OLD //          
+         //     PT_UNKNOWN = 0, -> INVALID  <- UNDEFINED
          //	PT_BOOL = 1,
          //	PT_INTEGER = 2,
-         //            PT_NUMBER = 3, -> 3,4,5
+         //     PT_NUMBER = 3, -> 3,4,5
          //	PT_CSTRING = 4, -> 6
          //	PT_STD_STRING = 5, -> 7
          //	PT_POINTER = 6, ->8
@@ -94,9 +94,9 @@ public class NativeParamInfo implements Serializable {
          //    VT_INVALID = 0,
          //    VT_BOOL = 1,
          //    VT_INT = 2,
-         //        VT_SIZE_T = 3,
-         //        VT_FLOAT = 4,
-         //        VT_DOUBLE = 5,
+         //    VT_SIZE_T = 3,
+         //    VT_FLOAT = 4,
+         //    VT_DOUBLE = 5,
          //    VT_CSTRING = 6,
          //    VT_STDSTRING = 7,
          //    VT_POINTER = 8,
@@ -322,7 +322,7 @@ public class NativeParamInfo implements Serializable {
      */
     public String getTypeClassName() {
         
-        String result = "NO_TYPE";
+        String result = "/*ERROR!!! INVALID TYPE [type=" + getType() + "]*/ edu.gcsc.vrl.ug.INVALID_TYPE";
         
         switch (getType()) {
             case VOID:
@@ -362,8 +362,7 @@ public class NativeParamInfo implements Serializable {
                 result = CodeUtils.interfaceName(getClassName(), true);
                 break;
             default:
-                System.err.println("/*ERROR!!! INVALID TYPE [type=" + getType() + "] */ void."
-                        + " result = "+ result);
+                System.err.println(result);
         }
 
         //
