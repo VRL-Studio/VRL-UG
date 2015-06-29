@@ -252,10 +252,10 @@
         <delete dir="dist-single"/>
         <delete dir="dist/lib"/>
 
-        <echo message="Copying ${ug.plugin.jar.name}.jar to ${vrl.dir}/plugin-updates"/>
+        <echo message="Copying dist/${ug.plugin.jar.name}.jar to ${vrl.dir}/plugin-updates"/>
 
         <copy 
-            file="${ug.plugin.jar.name}.jar" 
+            file="dist/${ug.plugin.jar.name}.jar" 
             todir="${vrl.dir}/plugin-updates"/>
         
         
