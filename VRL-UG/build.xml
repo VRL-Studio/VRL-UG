@@ -177,6 +177,10 @@
                        replace="/\*\&lt;VRL_UG_PLUGIN_API_VERSION\&gt;\*/&quot;${ug.plugin.api.version}&quot;/\*\&lt;/VRL_UG_PLUGIN_API_VERSION\&gt;\*/"
                        byline="false"/>
 
+        <replaceregexp file="${basedir}/${src.dir}/edu/gcsc/vrl/ug/Constants.java"
+                       match="/\*\&lt;VRL_UG_PLUGIN_API_JAR_NAME\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_API_JAR_NAME\&gt;\*/"
+                       replace="/\*\&lt;VRL_UG_PLUGIN_API_JAR_NAME\&gt;\*/&quot;${ug.plugin.api.jar.name}&quot;/\*\&lt;/VRL_UG_PLUGIN_API_JAR_NAME\&gt;\*/"
+                       byline="false"/>
         
     </target>  
       
@@ -210,7 +214,7 @@
         minus the .jar extension. It should not have spaces.
         <property name="store.jar.name" value="MyJarName"/>
         -->
-        <property name="store.jar.name" value="VRL-UG"/>
+        <property name="store.jar.name" value="${ug.plugin.jar.name}"/>
 
 
         <!-- don't edit below this line -->
@@ -247,13 +251,13 @@
 
         <delete dir="dist-single"/>
         <delete dir="dist/lib"/>
-        
 
-        <echo message="Copying ${dist.jar} to ${vrl.dir}/plugin-updates"/>
+        <echo message="Copying ${ug.plugin.jar.name}.jar to ${vrl.dir}/plugin-updates"/>
 
         <copy 
-            file="${dist.jar}" 
+            file="${ug.plugin.jar.name}.jar" 
             todir="${vrl.dir}/plugin-updates"/>
+        
         
         
     </target>

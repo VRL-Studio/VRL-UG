@@ -39,7 +39,8 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException;
  */
 public class Compiler {
 
-    public static final String API_JAR_NAME = "VRL-UG-API.jar";
+    public static final String API_JAR_NAME =
+            edu.gcsc.vrl.ug.Constants.API_JAR_NAME;
 
     /**
      * Compiles classes defined as groovy source code and returns them as class
