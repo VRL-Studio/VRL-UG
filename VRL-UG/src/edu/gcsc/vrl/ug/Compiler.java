@@ -39,8 +39,8 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException;
  */
 public class Compiler {
 
-    public static final String API_JAR_NAME =
-            edu.gcsc.vrl.ug.Constants.API_JAR_NAME;
+    public static final String API_JAR_NAME
+            = edu.gcsc.vrl.ug.Constants.API_JAR_NAME;
 
     /**
      * Compiles classes defined as groovy source code and returns them as class
@@ -59,6 +59,7 @@ public class Compiler {
      * objects.
      *
      * @param codes codes to compile
+     * @param jarLocation jar file location (parent directory)
      * @return class objects of the compiled codes
      */
     public Class<?>[] compile(String[] codes, String jarLocation)
@@ -95,7 +96,6 @@ public class Compiler {
 //            Logger.getLogger(
 //                    Compiler.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-
         for (String c : codes) {
 
             AbstractCode aCode = new AbstractCode();
@@ -118,7 +118,7 @@ public class Compiler {
 //                Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
 //            }
 //            //new stuff into multiple files end
-
+            
             //old stuff into one file
             code.append(c).append("\n\n");
 
@@ -142,19 +142,15 @@ public class Compiler {
                     Compiler.class.getName()).log(Level.SEVERE, null, ex);
         }
         //old stuff into one file end 
-        
+
         if (scriptPath.isFile()) {
             scriptPath = scriptPath.getParentFile();
         }
 
         try {
-            BufferedWriter writer
-                    = new BufferedWriter(new FileWriter(
-                                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(
+                    new File(scriptPath.getPath() + "/UG_Classes.groovy")));
 
-//            BufferedWriter writer =
-//                    new BufferedWriter(new FileWriter(
-//                    new File("/home/miho/UG_Classes.groovy")));
             writer.append(code);
             writer.flush();
             writer.close();
@@ -168,7 +164,8 @@ public class Compiler {
         conf.setTargetDirectory(scriptPath.getPath());
 
         // Compile…
-        GroovyClassLoader gcl = new GroovyClassLoader(Compiler.class.getClassLoader());
+        GroovyClassLoader gcl = new GroovyClassLoader(
+                Compiler.class.getClassLoader());
         CompilationUnit cu = new CompilationUnit(gcl);
         cu.configure(conf);
         cu.addSource("UG_Classes", code.toString());
@@ -177,14 +174,12 @@ public class Compiler {
             cu.compile();
         } catch (Exception e) {
             System.err.println(e.getMessage());
-
             System.err.println(getClass().getName() + " cu.compile() -> catch (Exception e)");
-//            System.err.println("System.exit(1);//cpoliwoda debug");
-//            System.exit(1);//cpoliwoda debug
         }
 
         // Load classes via URL classloader
-        ClassLoader cl = Compiler.class.getClassLoader(); //Thread.currentThread().getContextClassLoader();
+        ClassLoader cl = Compiler.class.getClassLoader();
+            //Thread.currentThread().getContextClassLoader();
         URL[] urls = null;
         try {
             urls = new URL[]{scriptPath.toURI().toURL()};
@@ -202,10 +197,8 @@ public class Compiler {
                 Class<?> clazz = gcl.loadClass(packageName + "." + className);
                 if (clazz != null) {
                     classes.add(clazz);
-//                    System.out.println("ClassName[after, ok]: " + className);
                 }
             } catch (ClassNotFoundException ex) {
-//                System.out.println("ClassName[after, failed]: " + className);
                 Logger.getLogger(
                         Compiler.class.getName()).log(Level.SEVERE, null, ex);
             }
