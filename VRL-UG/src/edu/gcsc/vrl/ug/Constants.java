@@ -16,7 +16,9 @@ public class Constants {
     public final static String PLUGIN_NAME_API = /*<VRL_UG_PLUGIN_API_NAME>*/"VRL-UG-API"/*</VRL_UG_PLUGIN_API_NAME>*/;
     public final static String PLUGIN_VERSION = /*<VRL_UG_PLUGIN_VERSION>*/"0.2.1"/*</VRL_UG_PLUGIN_VERSION>*/;
     public final static String PLUGIN_VERSION_API = /*<VRL_UG_PLUGIN_API_VERSION>*/"0.2.1"/*</VRL_UG_PLUGIN_API_VERSION>*/;
-
+    public final static String API_JAR_NAME = /*<VRL_UG_PLUGIN_API_JAR_NAME>*/"VRL-UG-API"/*</VRL_UG_PLUGIN_API_JAR_NAME>*/+".jar";
+    
+    
     public static final PluginIdentifier PLUGIN_IDENTIFIER
             = new PluginIdentifier(PLUGIN_NAME, PLUGIN_VERSION);
     public static final PluginIdentifier API_PLUGIN_IDENTIFIER
