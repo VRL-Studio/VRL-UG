@@ -157,30 +157,55 @@
 
         <echo message="Updating ${basedir}/${src.dir}/edu/gcsc/vrl/ug/Constants.java"/>
         
-        <replaceregexp file="${basedir}/${src.dir}/edu/gcsc/vrl/ug/Constants.java"
-                       match="/\*\&lt;VRL_UG_PLUGIN_NAME\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_NAME\&gt;\*/"
-                       replace="/\*\&lt;VRL_UG_PLUGIN_NAME\&gt;\*/&quot;${ug.plugin.name}&quot;/\*\&lt;/VRL_UG_PLUGIN_NAME\&gt;\*/"
-                       byline="false"/>
+        <replaceregexp
+            match="/\*\&lt;VRL_UG_PLUGIN_NAME\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_NAME\&gt;\*/"
+            replace="/\*\&lt;VRL_UG_PLUGIN_NAME\&gt;\*/&quot;${ug.plugin.name}&quot;/\*\&lt;/VRL_UG_PLUGIN_NAME\&gt;\*/"
+            byline="false">
+            <fileset dir="${basedir}/${src.dir}">
+                <include name="edu/gcsc/vrl/ug/Constants.java"/>
+                <include name="edu/gcsc/vrl/ug/APIPluginConfiguratorImpl.txt"/>
+            </fileset>
+        </replaceregexp>
         
-        <replaceregexp file="${basedir}/${src.dir}/edu/gcsc/vrl/ug/Constants.java"
-                       match="/\*\&lt;VRL_UG_PLUGIN_VERSION\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_VERSION\&gt;\*/"
-                       replace="/\*\&lt;VRL_UG_PLUGIN_VERSION\&gt;\*/&quot;${ug.plugin.version}&quot;/\*\&lt;/VRL_UG_PLUGIN_VERSION\&gt;\*/"
-                       byline="false"/>
+        <replaceregexp
+            match="/\*\&lt;VRL_UG_PLUGIN_VERSION\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_VERSION\&gt;\*/"
+            replace="/\*\&lt;VRL_UG_PLUGIN_VERSION\&gt;\*/&quot;${ug.plugin.version}&quot;/\*\&lt;/VRL_UG_PLUGIN_VERSION\&gt;\*/"
+            byline="false">
+            <fileset dir="${basedir}/${src.dir}">
+                <include name="edu/gcsc/vrl/ug/Constants.java"/>
+                <include name="edu/gcsc/vrl/ug/APIPluginConfiguratorImpl.txt"/>
+            </fileset>
+        </replaceregexp>
                                
-        <replaceregexp file="${basedir}/${src.dir}/edu/gcsc/vrl/ug/Constants.java"
-                       match="/\*\&lt;VRL_UG_PLUGIN_API_NAME\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_API_NAME\&gt;\*/"
-                       replace="/\*\&lt;VRL_UG_PLUGIN_API_NAME\&gt;\*/&quot;${ug.plugin.api.name}&quot;/\*\&lt;/VRL_UG_PLUGIN_API_NAME\&gt;\*/"
-                       byline="false"/>
+        <replaceregexp
+            match="/\*\&lt;VRL_UG_PLUGIN_API_NAME\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_API_NAME\&gt;\*/"
+            replace="/\*\&lt;VRL_UG_PLUGIN_API_NAME\&gt;\*/&quot;${ug.plugin.api.name}&quot;/\*\&lt;/VRL_UG_PLUGIN_API_NAME\&gt;\*/"
+            byline="false">
+            <fileset dir="${basedir}/${src.dir}">
+                <include name="edu/gcsc/vrl/ug/Constants.java"/>
+                <include name="edu/gcsc/vrl/ug/APIPluginConfiguratorImpl.txt"/>
+            </fileset>
+        </replaceregexp>
         
-        <replaceregexp file="${basedir}/${src.dir}/edu/gcsc/vrl/ug/Constants.java"
-                       match="/\*\&lt;VRL_UG_PLUGIN_API_VERSION\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_API_VERSION\&gt;\*/"
-                       replace="/\*\&lt;VRL_UG_PLUGIN_API_VERSION\&gt;\*/&quot;${ug.plugin.api.version}&quot;/\*\&lt;/VRL_UG_PLUGIN_API_VERSION\&gt;\*/"
-                       byline="false"/>
+        <replaceregexp
+            match="/\*\&lt;VRL_UG_PLUGIN_API_VERSION\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_API_VERSION\&gt;\*/"
+            replace="/\*\&lt;VRL_UG_PLUGIN_API_VERSION\&gt;\*/&quot;${ug.plugin.api.version}&quot;/\*\&lt;/VRL_UG_PLUGIN_API_VERSION\&gt;\*/"
+            byline="false">
+            <fileset dir="${basedir}/${src.dir}">
+                <include name="edu/gcsc/vrl/ug/Constants.java"/>
+                <include name="edu/gcsc/vrl/ug/APIPluginConfiguratorImpl.txt"/>
+            </fileset>
+        </replaceregexp>
 
-        <replaceregexp file="${basedir}/${src.dir}/edu/gcsc/vrl/ug/Constants.java"
-                       match="/\*\&lt;VRL_UG_PLUGIN_API_JAR_NAME\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_API_JAR_NAME\&gt;\*/"
-                       replace="/\*\&lt;VRL_UG_PLUGIN_API_JAR_NAME\&gt;\*/&quot;${ug.plugin.api.jar.name}&quot;/\*\&lt;/VRL_UG_PLUGIN_API_JAR_NAME\&gt;\*/"
-                       byline="false"/>
+        <replaceregexp
+            match="/\*\&lt;VRL_UG_PLUGIN_API_JAR_NAME\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_API_JAR_NAME\&gt;\*/"
+            replace="/\*\&lt;VRL_UG_PLUGIN_API_JAR_NAME\&gt;\*/&quot;${ug.plugin.api.jar.name}&quot;/\*\&lt;/VRL_UG_PLUGIN_API_JAR_NAME\&gt;\*/"
+            byline="false">
+            <fileset dir="${basedir}/${src.dir}">
+                <include name="edu/gcsc/vrl/ug/Constants.java"/>
+                <include name="edu/gcsc/vrl/ug/APIPluginConfiguratorImpl.txt"/>
+            </fileset>
+        </replaceregexp>
         
     </target>  
       
