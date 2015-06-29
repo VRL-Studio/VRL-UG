@@ -99,11 +99,11 @@
         </copy>
     </target>-->
     
-<!-- 
-    Beginn of evaluating the informations of the build.properties file.
-    If ug.copynatives.enabled=true the native ug libs are automatically stored
-    in natives.zip.
--->
+    <!-- 
+        Beginn of evaluating the informations of the build.properties file.
+        If ug.copynatives.enabled=true the native ug libs are automatically stored
+        in natives.zip.
+    -->
 
     <!--  Variables  -->
     <property file="build.properties"/>
@@ -118,8 +118,8 @@
     <property name="move-to-folder" value="src/eu/mihosoft/vrl/plugin/content/natives/${native.os}" />
     <!--<property name="move-to-folder" value="src/eu/mihosoft/vrl/natives/${native.os}" />-->
 	
-<!--     - old location: /eu/mihosoft/vrl/");
-     - new location: /eu/mihosoft/vrl/plugin/content/");-->
+    <!--     - old location: /eu/mihosoft/vrl/");
+    - new location: /eu/mihosoft/vrl/plugin/content/");-->
 
         
     <!--   Conditions     -->
@@ -131,10 +131,7 @@
         <equals arg1="${native.lib.ending}" arg2="dll"/>
     </condition>
     
-    
-    <!-- Algo   -->
-    <target name="-pre-compile" if="ug.copynatives">
-            
+    <target name="copy-native-files-all" if="ug.copynatives">
         <echo message="making tmp dir: ${folder-to-create}" />
         <mkdir dir="${folder-to-create}"/>
         <mkdir dir="${folder-to-create}/plugins"/>
@@ -150,6 +147,36 @@
             
         <echo message="moving ${zip-name} to ${move-to-folder}" />
         <move file="${zip-name}" todir="${move-to-folder}"/>
+    </target>
+    
+    <!-- Algo   -->
+    <target name="-pre-compile">
+            
+
+        <antcall target="copy-native-files-all"/>
+
+        <echo message="Updating ${basedir}/${src.dir}/edu/gcsc/vrl/ug/Constants.java"/>
+        
+        <replaceregexp file="${basedir}/${src.dir}/edu/gcsc/vrl/ug/Constants.java"
+                       match="/\*\&lt;VRL_UG_PLUGIN_NAME\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_NAME\&gt;\*/"
+                       replace="/\*\&lt;VRL_UG_PLUGIN_NAME\&gt;\*/&quot;${ug.plugin.name}&quot;/\*\&lt;/VRL_UG_PLUGIN_NAME\&gt;\*/"
+                       byline="false"/>
+        
+        <replaceregexp file="${basedir}/${src.dir}/edu/gcsc/vrl/ug/Constants.java"
+                       match="/\*\&lt;VRL_UG_PLUGIN_VERSION\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_VERSION\&gt;\*/"
+                       replace="/\*\&lt;VRL_UG_PLUGIN_VERSION\&gt;\*/&quot;${ug.plugin.version}&quot;/\*\&lt;/VRL_UG_PLUGIN_VERSION\&gt;\*/"
+                       byline="false"/>
+                               
+        <replaceregexp file="${basedir}/${src.dir}/edu/gcsc/vrl/ug/Constants.java"
+                       match="/\*\&lt;VRL_UG_PLUGIN_API_NAME\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_API_NAME\&gt;\*/"
+                       replace="/\*\&lt;VRL_UG_PLUGIN_API_NAME\&gt;\*/&quot;${ug.plugin.api.name}&quot;/\*\&lt;/VRL_UG_PLUGIN_API_NAME\&gt;\*/"
+                       byline="false"/>
+        
+        <replaceregexp file="${basedir}/${src.dir}/edu/gcsc/vrl/ug/Constants.java"
+                       match="/\*\&lt;VRL_UG_PLUGIN_API_VERSION\&gt;\*/.*/\*\&lt;/VRL_UG_PLUGIN_API_VERSION\&gt;\*/"
+                       replace="/\*\&lt;VRL_UG_PLUGIN_API_VERSION\&gt;\*/&quot;${ug.plugin.api.version}&quot;/\*\&lt;/VRL_UG_PLUGIN_API_VERSION\&gt;\*/"
+                       byline="false"/>
+
         
     </target>  
       
@@ -168,25 +195,25 @@
         <copy file="${file-to-copy}" todir="${folder-to-create}"/>
         
     </target>
-<!-- 
-    End of evaluating the informations of the build.properties file.
--->  
+    <!-- 
+        End of evaluating the informations of the build.properties file.
+    -->  
     
     
     
         
-<!--    <target name="create-single-jar" depends="jar">-->
+    <!--    <target name="create-single-jar" depends="jar">-->
     
     <target name="-post-jar">
 
-<!-- Change the value of this property to be the name of your JAR,
-minus the .jar extension. It should not have spaces.
-<property name="store.jar.name" value="MyJarName"/>
--->
+        <!-- Change the value of this property to be the name of your JAR,
+        minus the .jar extension. It should not have spaces.
+        <property name="store.jar.name" value="MyJarName"/>
+        -->
         <property name="store.jar.name" value="VRL-UG"/>
 
 
-<!-- don't edit below this line -->
+        <!-- don't edit below this line -->
 
         <property name="store.dir" value="dist-single"/>
         <property name="store.jar" value="${store.dir}/${store.jar.name}.jar"/>
@@ -213,7 +240,7 @@ minus the .jar extension. It should not have spaces.
 
         <delete file="${store.dir}/temp_final.jar"/>
 
-<!--Copy VRL.jar to dist and delete lib folder-->
+        <!--Copy VRL.jar to dist and delete lib folder-->
         <copy todir="dist">
             <fileset dir="dist-single" includes="**/*"/>
         </copy>
