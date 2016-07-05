@@ -72,6 +72,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import org.apache.commons.io.FileUtils;
 
 /**
  * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
@@ -94,6 +95,7 @@ public class Configurator extends VPluginConfigurator {
     private static String serverJar = null;
     private static final VPropertyFolderManager propertyFolderManager =
             new VPropertyFolderManager();
+    private final static String UG_LICENSE = "license.txt";
 
     /**
      * @return the path to the folder where the jar file of this plugin is and
@@ -460,7 +462,8 @@ public class Configurator extends VPluginConfigurator {
                     + UG.getInstance().getAuthors().replace("\n", "<br>"));
         }
 
-        setCopyrightInfoAsPlainText(UG.getInstance().getBinaryLicense());
+        File copyRightSrc = new File(iApi.getResourceFolder(), UG_LICENSE);
+        setCopyrightInfoAsPlainText(FileUtils.readFileToString(copyRightSrc));
 
         setPreferencePane(new PreferencePane() {
 
