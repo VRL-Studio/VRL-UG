@@ -1,0 +1,8 @@
+before_script: 
+  - git clone https://www.github.com/UG4/ughub
+  - ughub/ughub init
+  - ughub/ughub install ugcore
+  - mkdir build && cd build && cmake ../ -DTARGET=ugshell -DDIM=1 -DBLAS=OFF -DLAPACK=OFF -DCOMPILE_INFO=OFF  
+  - travis_wait 640 make
+
+language: java
