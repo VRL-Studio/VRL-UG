@@ -95,7 +95,7 @@ public class Configurator extends VPluginConfigurator {
     private static String serverJar = null;
     private static final VPropertyFolderManager propertyFolderManager =
             new VPropertyFolderManager();
-    private final static String UG_LICENSE = "license.txt";
+    private final static String UG_LICENSE = "ug-license.txt";
 
     /**
      * @return the path to the folder where the jar file of this plugin is and
