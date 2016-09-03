@@ -249,8 +249,8 @@
 
         <echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
 
-        <delete dir="${store.dir}"/>
         <mkdir dir="${store.dir}"/>
+        <mkdir dir="/home/travis/build/NeuroBox3D/VRL-NeuroBox-Plugin/lib/VRL-UG/VRL-UG/dist/lib"
 
         <!--Copy all used .jar-files / libs into final VRL-UG.jar but NOT VRL.jar-->
         <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip">
