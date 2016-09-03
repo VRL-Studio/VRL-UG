@@ -254,6 +254,7 @@
 
         <!--Copy all used .jar-files / libs into final VRL-UG.jar but NOT VRL.jar-->
         <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip">
+            <zipgroupfileset dir="jars" includes="*.jar" excludes="VRL.jar"/>
             <zipgroupfileset dir="dist" includes="*.jar" excludes="VRL.jar"/>
             <zipgroupfileset dir="dist/lib" includes="*.jar" excludes="VRL.jar"/>
             
