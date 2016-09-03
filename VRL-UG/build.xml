@@ -250,7 +250,6 @@
         <echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
 
         <mkdir dir="${store.dir}"/>
-        <mkdir dir="/home/travis/build/NeuroBox3D/VRL-NeuroBox-Plugin/lib/VRL-UG/VRL-UG/dist/lib"/>
 
         <!--Copy all used .jar-files / libs into final VRL-UG.jar but NOT VRL.jar-->
         <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip">
@@ -261,7 +260,7 @@
                 <attribute name="Main-Class" value="${main.class}"/>
             </manifest>
         </jar>
-
+       
         <zip destfile="${store.jar}">
             <zipfileset src="${store.dir}/temp_final.jar"
                         excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA"/>
@@ -274,8 +273,10 @@
             <fileset dir="dist-single" includes="**/*"/>
         </copy>
 
+        <!--
         <delete dir="dist-single"/>
         <delete dir="dist/lib"/>
+        -->
 
         <echo message="Copying dist/${ug.plugin.jar.name}.jar to ${vrl.dir}/plugin-updates"/>
 
