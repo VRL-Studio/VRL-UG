@@ -250,6 +250,7 @@
         <echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
 
         <mkdir dir="${store.dir}"/>
+        <mkdir dir="dist/lib/"/>
 
         <!--Copy all used .jar-files / libs into final VRL-UG.jar but NOT VRL.jar-->
         <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip">
@@ -282,7 +283,7 @@
 
         <copy 
             file="dist/${ug.plugin.jar.name}.jar" 
-            todir="${vrl.dir}/plugin-updates"/>
+  
         
         
         
