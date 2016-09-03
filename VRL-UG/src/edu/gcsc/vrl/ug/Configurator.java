@@ -72,7 +72,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-import org.apache.commons.io.FileUtils;
+/// import org.apache.commons.io.FileUtils;
 
 /**
  * @author Christian Poliwoda <christian.poliwoda@gcsc.uni-frankfurt.de>
@@ -462,8 +462,8 @@ public class Configurator extends VPluginConfigurator {
                     + UG.getInstance().getAuthors().replace("\n", "<br>"));
         }
 
-        File copyRightSrc = new File(iApi.getResourceFolder(), UG_LICENSE);
-        setCopyrightInfoAsPlainText(FileUtils.readFileToString(copyRightSrc));
+        /// File copyRightSrc = new File(iApi.getResourceFolder(), UG_LICENSE);
+        /// setCopyrightInfoAsPlainText(FileUtils.readFileToString(copyRightSrc));
         setPreferencePane(new PreferencePane() {
 
             private javax.swing.JCheckBox showDetailedExceptionBox = new javax.swing.JCheckBox();
