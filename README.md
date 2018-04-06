@@ -26,9 +26,9 @@ Otherwise, the plugin will be installed to the default location (depends on VRL 
 UG4 binaries should be placed in the resource folder as follows
 
 ```
-/src/main/resources/eu/mihosoft/vrl/plugin/content/natives/osx/natives.zip
-/src/main/resources/eu/mihosoft/vrl/plugin/content/natives/linux/x64/natives.zip
-/src/main/resources/eu/mihosoft/vrl/plugin/content/natives/windows/x64/natives.zip
+VRL-UG/src/main/resources/eu/mihosoft/vrl/plugin/content/natives/osx/natives.zip
+VRL-UG/src/main/resources/eu/mihosoft/vrl/plugin/content/natives/linux/x64/natives.zip
+VRL-UG/src/main/resources/eu/mihosoft/vrl/plugin/content/natives/windows/x64/natives.zip
 ```
 The natives.zip contains the ug library:
 
