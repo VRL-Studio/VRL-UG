@@ -30,7 +30,7 @@ VRL-UG/src/main/resources/eu/mihosoft/vrl/plugin/content/natives/osx/natives.zip
 VRL-UG/src/main/resources/eu/mihosoft/vrl/plugin/content/natives/linux/x64/natives.zip
 VRL-UG/src/main/resources/eu/mihosoft/vrl/plugin/content/natives/windows/x64/natives.zip
 ```
-The natives.zip contains the ug library:
+The `natives.zip` contains the ug library:
 
 ##### macOS:
 
