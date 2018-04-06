@@ -71,21 +71,15 @@ public class PluginConfiguratorCode implements CodeElement {
 
     public CodeBuilder build(CodeBuilder builder) {
 
-
-
 //                    return builder.addLine(
 //                            "@ComponentInfo(ignore=true)\n"
 //                            + "public class APIPluginConfigurator extends APIPluginConfiguratorImpl"
 //                            + " implements eu.mihosoft.vrl.system.PluginConfigurator {}");
 
 
-        try {
-
-            InputStream input = getClass().getResourceAsStream(
-                    "/edu/gcsc/vrl/ug/APIPluginConfiguratorImpl.txt");
-
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(input));
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(getClass().getResourceAsStream(
+                        "/edu/gcsc/vrl/ug/APIPluginConfiguratorImpl.java")))) {
 
             while (reader.ready()) {
                 builder.addLine(reader.readLine());
