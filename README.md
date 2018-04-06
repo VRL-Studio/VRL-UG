@@ -5,6 +5,7 @@
 ### 1. Dependencies
 
 - JDK >= 1.8
+- UG4 binaries
 - Internet Connection (other dependencies will be downloaded automatically)
 - Optional: IDE with [Gradle](http://www.gradle.org/) support
 
@@ -19,6 +20,43 @@ If the plugin shall be installed to a custom destination, specify the path in `b
 Otherwise, the plugin will be installed to the default location (depends on VRL version that is specified in the gradle dependencies).
 
 ### 3. Build & Install
+
+#### Adding UG4 Binaries 
+
+UG4 binaries should be placed in the resource folder as follows
+
+```
+/src/main/resources/eu/mihosoft/vrl/plugin/content/natives/osx/natives.zip
+/src/main/resources/eu/mihosoft/vrl/plugin/content/natives/linux/x64/natives.zip
+/src/main/resources/eu/mihosoft/vrl/plugin/content/natives/windows/x64/natives.zip
+```
+The natives.zip contains the ug library:
+
+##### macOS:
+
+```
+libug4.dylib
+```
+
+##### Linux:
+
+```
+libug4.so
+```
+
+##### Windows:
+
+```
+ug4.dll
+```
+
+In addition to the `ug4.dll` the windows archive should contain the redistributable dlls, e.g.:
+
+```
+vcruntime140.dll
+msvcp140.dll
+*.dll
+``` 
 
 #### IDE
 
