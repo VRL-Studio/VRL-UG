@@ -8,17 +8,11 @@
 ## Ignore objects and archives.
 # *.[oa]
 
-VRL-UG4/build
-VRL-UG4/dist
-
+.gradle/
+.idea/
+build
 .DS_Store
+out
+VRL-UG.iml
+/src/main/resources/eu/mihosoft/vrl/plugin/content/natives/
 
-tmp
-/VRL-UG/nbproject/private
-/VRL-UG/dist/
-/VRL-UG/build/
-/VRL-UG/src/eu/mihosoft/vrl/natives/linux/x64/
-/VRL-UG/src/eu/mihosoft/vrl/natives/linux/x86/
-/VRL-UG/src/eu/mihosoft/vrl/natives/osx/
-/VRL-UG/src/eu/mihosoft/vrl/natives/windows/x64/
-/VRL-UG/src/eu/mihosoft/vrl/natives/windows/x86/
