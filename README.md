@@ -1,4 +1,4 @@
-# VRL UG Project
+# VRL-UG Plugin
 
 ## How To Build This Project
 
