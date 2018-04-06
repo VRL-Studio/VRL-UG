@@ -63,8 +63,8 @@ public class Constants {
 
     public final static String PLUGIN_NAME = /*<VRL_UG_PLUGIN_NAME>*/"VRL-UG"/*</VRL_UG_PLUGIN_NAME>*/;
     public final static String PLUGIN_NAME_API = /*<VRL_UG_PLUGIN_API_NAME>*/"VRL-UG-API"/*</VRL_UG_PLUGIN_API_NAME>*/;
-    public final static String PLUGIN_VERSION = /*<VRL_UG_PLUGIN_VERSION>*/"0.2.1"/*</VRL_UG_PLUGIN_VERSION>*/;
-    public final static String PLUGIN_VERSION_API = /*<VRL_UG_PLUGIN_API_VERSION>*/"0.2.1"/*</VRL_UG_PLUGIN_API_VERSION>*/;
+    public final static String PLUGIN_VERSION = /*<VRL_UG_PLUGIN_VERSION>*/"0.2.2"/*</VRL_UG_PLUGIN_VERSION>*/;
+    public final static String PLUGIN_VERSION_API = /*<VRL_UG_PLUGIN_API_VERSION>*/"0.2.2"/*</VRL_UG_PLUGIN_API_VERSION>*/;
     public final static String API_JAR_NAME = /*<VRL_UG_PLUGIN_API_JAR_NAME>*/"VRL-UG-API"/*</VRL_UG_PLUGIN_API_JAR_NAME>*/+".jar";
     
     
