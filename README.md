@@ -58,7 +58,9 @@ msvcp140.dll
 *.dll
 ``` 
 
-> To be used as VRL plugin UG should be compiled with the CMake options `-DTARGET=vrl`and `-DEMBEDDED_PLUGINS=ON`.
+##### Hints for building UG:
+
+To be used as VRL plugin UG should be compiled with the CMake options `-DTARGET=vrl`and `-DEMBEDDED_PLUGINS=ON`.
 
 #### IDE
 
