@@ -50,7 +50,7 @@ libug4.so
 ug4.dll
 ```
 
-In addition to the `ug4.dll` the windows archive should contain the redistributable dlls, e.g.:
+In addition to the `ug4.dll` the windows archive should contain the redistributable dlls (see Visual Studio documentation), e.g.:
 
 ```
 vcruntime140.dll
