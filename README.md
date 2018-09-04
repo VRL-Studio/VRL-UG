@@ -88,3 +88,7 @@ task to build and install the plugin.
     gradlew installVRLPlugin
 
 Finally, restart VRL-Studio
+
+### Generating Java API for UG4
+
+After installing and restarting VRL-Studio the VRL-UG plugin will automatically initiate the code generation and compilation of the Java binding which shows up as separate plugin (VRL-UG-API). If the compilation of the binding API fails, it is most likely an error related to class groups which don't have a common base class. 
