@@ -71,6 +71,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.UUID;
@@ -118,6 +120,15 @@ public class Compiler {
 
         ArrayList<String> classNames = new ArrayList<String>();
 
+        String packageAndImportCode = "package " + packageName+"\n"
+          +"import eu.mihosoft.vrl.reflection.*;\n"
+          +"import eu.mihosoft.vrl.types.*;\n"
+          +"import eu.mihosoft.vrl.annotation.*;\n"
+          +"import edu.gcsc.vrl.ug.*;\n";
+
+        String ugAPIClassCode = new UGAPIClassCode().build(
+            new CodeBuilder()).toString();
+
         StringBuilder code = new StringBuilder();
 
         code.append("package ").append(packageName).append("\n").
@@ -129,23 +140,38 @@ public class Compiler {
         code.append("\n").append(new UGAPIClassCode().build(
                 new CodeBuilder()).toString());
 
-//        File scriptPath = null;
-//        File scriptPathWithPackage = null;
-//        try {
-//            scriptPath = createTempDir();
-//            scriptPath.mkdir();
-//
-//            //new stuff into multiple files start
-//            scriptPathWithPackage = new File(scriptPath.getAbsolutePath() + packageName.replace(".", "/"));
-//            scriptPathWithPackage.mkdirs();
-//            //new stuff into multiple files end
-//
-//            System.out.println(">> UG-Build-Location: " + scriptPath.getAbsolutePath());
-//        } catch (IOException ex) {
-//            Logger.getLogger(
-//                    Compiler.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+       File scriptPath = null;
+       File scriptPathWithPackage = null;
+       try {
+           scriptPath = createTempDir();
+           scriptPath.mkdir();
+
+           //new stuff into multiple files start
+           scriptPathWithPackage = new File(scriptPath.getAbsolutePath() +"/"+ packageName.replace(".", "/"));
+           scriptPathWithPackage.mkdirs();
+           //new stuff into multiple files end
+
+           System.out.println(">> UG-Build-Location: " + scriptPath.getAbsolutePath());
+       } catch (IOException ex) {
+           Logger.getLogger(
+                   Compiler.class.getName()).log(Level.SEVERE, null, ex);
+       }
+
+        // Configure
+        CompilerConfiguration conf = new CompilerConfiguration();
+        conf.setTargetDirectory(scriptPath.getPath());
+        // Compile…
+        GroovyClassLoader gcl = new GroovyClassLoader(
+                Compiler.class.getClassLoader());
+        CompilationUnit cu = new CompilationUnit(gcl);
+        cu.configure(conf);
+
+        cu.addSource(packageName+".UGAPI", packageAndImportCode+ugAPIClassCode);
+        
         for (String c : codes) {
+
+            // add package header
+            String cWithImports = packageAndImportCode + c;
 
             AbstractCode aCode = new AbstractCode();
             aCode.setCode(c);
@@ -157,15 +183,14 @@ public class Compiler {
             }
 
 //            //new stuff into multiple files start
-//            File javaSrcFile = new File(scriptPathWithPackage, className + ".java");
-//            Writer p = null;
-//            try {
-//                p = new FileWriter(javaSrcFile);
-//                p.write(c);
-//                p.close();
-//            } catch (IOException ex) {
-//                Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+            File javaSrcFile = new File(scriptPathWithPackage, className + ".groovy");
+
+            try {
+                Files.write(javaSrcFile.toPath(), cWithImports.getBytes(Charset.forName("UTF-8")));
+            } catch (IOException ex) {
+                Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
 //            //new stuff into multiple files end
             
             //old stuff into one file
@@ -175,22 +200,12 @@ public class Compiler {
                 classNames.add(className);
             }
 
-        }
+            // add source
+            cu.addSource(className, cWithImports);
+
+        } // end for each code 'c'
 
         Collections.sort(classNames);
-
-        //old stuff into one file start
-        File scriptPath = null;
-        try {
-            scriptPath = createTempDir();
-            scriptPath.mkdir();
-
-            System.out.println(">> UG-Build-Location: " + scriptPath.getAbsolutePath());
-        } catch (IOException ex) {
-            Logger.getLogger(
-                    Compiler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        //old stuff into one file end 
 
         if (scriptPath.isFile()) {
             scriptPath = scriptPath.getParentFile();
@@ -207,17 +222,6 @@ public class Compiler {
             Logger.getLogger(Compiler.class.getName()).
                     log(Level.SEVERE, null, ex);
         }
-
-        // Configure
-        CompilerConfiguration conf = new CompilerConfiguration();
-        conf.setTargetDirectory(scriptPath.getPath());
-
-        // Compile…
-        GroovyClassLoader gcl = new GroovyClassLoader(
-                Compiler.class.getClassLoader());
-        CompilationUnit cu = new CompilationUnit(gcl);
-        cu.configure(conf);
-        cu.addSource("UG_Classes", code.toString());
 
         try {
             cu.compile();
