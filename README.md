@@ -50,13 +50,17 @@ libug4.so
 ug4.dll
 ```
 
-In addition to the `ug4.dll` the windows archive should contain the redistributable dlls, e.g.:
+In addition to the `ug4.dll` the windows archive should contain the redistributable dlls (see Visual Studio documentation), e.g.:
 
 ```
 vcruntime140.dll
 msvcp140.dll
 *.dll
 ``` 
+
+##### Hints for building UG:
+
+To be used as VRL plugin UG should be compiled with the CMake options `-DTARGET=vrl`and `-DEMBEDDED_PLUGINS=ON`.
 
 #### IDE
 
@@ -84,3 +88,7 @@ task to build and install the plugin.
     gradlew installVRLPlugin
 
 Finally, restart VRL-Studio
+
+### Generating Java API for UG4
+
+After installing and restarting VRL-Studio the VRL-UG plugin will automatically initiate the code generation and compilation of the Java binding which shows up as separate plugin (VRL-UG-API). If the compilation of the binding API fails, it is most likely an error related to class groups which don't have a common base class. 
