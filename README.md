@@ -100,7 +100,7 @@ As an alternative to the automatic build process, one can manually compile the g
 - run `gradle installVRLPlugin`
 - start VRL-Studio
 
-Here's an example output from the code generator during VRL-Studio start:
+Here's an example output from the code generator during VRL-Studio start (start VRL-Studio from terminal to see the output):
 
 ```
 >> UG-Build-Location (Automatic Compilation): /Users/myname/.vrl/0.4.3/default/tmp/0/4a2b6216-1b1b-4675-a458-c5d4a78b4f3c
