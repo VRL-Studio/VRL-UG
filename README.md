@@ -109,7 +109,11 @@ Here's an example output from the code generator during VRL-Studio start (start 
 >> API code generation done.
 ```
 
-If you keep VRL-Studio running, automatic compilation will continue. As soon as the output shows `>> API code generation done.` you can quit VRL-Studio if you'd prefer to compile the code manually.
+If you keep VRL-Studio running, automatic compilation will continue. As soon as the output shows 
+
+  `>> API code generation done.`
+  
+you can quit VRL-Studio if you'd prefer to compile the code manually.
 
 Compiling the project:
 
