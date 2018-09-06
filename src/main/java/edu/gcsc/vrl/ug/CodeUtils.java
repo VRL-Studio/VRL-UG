@@ -79,7 +79,8 @@ public class CodeUtils {
     public static String methodName(String name) {
 
         if (name.isEmpty()) {
-            throw new IllegalArgumentException("Empty methodnames not supported!");
+            name = "UNKNOWN_METHOD__POTENTIALLY_UNREGISTERED_TYPES";
+ //           throw new IllegalArgumentException("Empty method names not supported!");
         }
 
         String result = name;
@@ -103,7 +104,8 @@ public class CodeUtils {
     public static String constMethodName(String name) {
 
         if (name.isEmpty()) {
-            throw new IllegalArgumentException("Empty methodnames not supported!");
+            name = "UNKNOWN_CONST_METHOD__POTENTIALLY_UNREGISTERED_TYPES";
+ //           throw new IllegalArgumentException("Empty method names not supported!");
         }
 
         String result = "const__";
@@ -132,7 +134,8 @@ public class CodeUtils {
     public static String className(String name, boolean isConst) {
 
         if (name.isEmpty()) {
-            throw new IllegalArgumentException("Empty classnames not supported!");
+            name = "UNKNOWN_CLS__POTENTIALLY_UNREGISTERED_TYPES";
+ //           throw new IllegalArgumentException("Empty classnames not supported!");
         }
 
 //        String result = "C_";
@@ -164,7 +167,8 @@ public class CodeUtils {
     public static String classNameForParamInfo(String name, boolean isConst) {
 
         if (name.isEmpty()) {
-            throw new IllegalArgumentException("Empty classnames not supported!");
+            name = "UNKNOWN_CLS_FOR_PARAM_INFO__POTENTIALLY_UNREGISTERED_TYPES";
+ //           throw new IllegalArgumentException("Empty class names not supported!");
         }
 
         String result = "";
@@ -195,7 +199,8 @@ public class CodeUtils {
     public static String interfaceName(String name, boolean isConst) {
 
         if (name.isEmpty()) {
-            throw new IllegalArgumentException("Empty interfacenames not supported!");
+            name = "UNKNOWN_IFACE__POTENTIALLY_UNREGISTERED_TYPES";
+//            throw new IllegalArgumentException("Empty interface names not supported!");
         }
 
         String result = "";
@@ -228,7 +233,8 @@ public class CodeUtils {
     public static String functionName(String name) {
 
         if (name.isEmpty()) {
-            throw new IllegalArgumentException("Empty functionname not supported!");
+            name = "UNKNOWN_FUNC__POTENTIALLY_UNREGISTERED_TYPES";
+ //           throw new IllegalArgumentException("Empty function name not supported!");
         }
 
         String result = "";
