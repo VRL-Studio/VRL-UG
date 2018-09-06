@@ -1,15 +1,15 @@
-/* 
+/*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 2010–2012 Steinbeis Forschungszentrum (STZ Ölbronn),
  * Copyright (c) 2012–2018 Goethe Universität Frankfurt am Main, Germany
- * 
+ *
  * This file is part of Visual Reflection Library (VRL).
  *
  * VRL is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
  * as published by the Free Software Foundation.
- * 
+ *
  * see: http://opensource.org/licenses/LGPL-3.0
  *      file://path/to/VRL/src/eu/mihosoft/vrl/resources/license/lgplv3.txt
  *
@@ -30,14 +30,14 @@
  *
  * First, the following text must be displayed on the Canvas:
  * "based on VRL source code". In this case the VRL canvas icon must be removed.
- * 
+ *
  * Second, the copyright notice must remain. It must be reproduced in any
  * program that uses VRL.
  *
  * Third, add an additional notice, stating that you modified VRL. In addition
  * you must cite the publications listed below. A suitable notice might read
  * "VRL source code modified by YourName 2012".
- * 
+ *
  * Note, that these requirements are in full accordance with the LGPL v3
  * (see 7. Additional Terms, b).
  *
@@ -59,15 +59,11 @@ import eu.mihosoft.vrl.lang.CodeBuilder;
 import eu.mihosoft.vrl.lang.VLangUtils;
 import eu.mihosoft.vrl.system.Constants;
 import eu.mihosoft.vrl.system.VRL;
+import eu.mihosoft.vrl.system.VSysUtil;
 import groovy.lang.GroovyClassLoader;
+
 import java.beans.XMLEncoder;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -79,6 +75,7 @@ import java.util.UUID;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
@@ -109,7 +106,7 @@ public class Compiler {
      * Compiles classes defined as groovy source code and returns them as class
      * objects.
      *
-     * @param codes codes to compile
+     * @param codes       codes to compile
      * @param jarLocation jar file location (parent directory)
      * @return class objects of the compiled codes
      */
@@ -120,14 +117,14 @@ public class Compiler {
 
         ArrayList<String> classNames = new ArrayList<String>();
 
-        String packageAndImportCode = "package " + packageName+"\n"
-          +"import eu.mihosoft.vrl.reflection.*;\n"
-          +"import eu.mihosoft.vrl.types.*;\n"
-          +"import eu.mihosoft.vrl.annotation.*;\n"
-          +"import edu.gcsc.vrl.ug.*;\n";
+        String packageAndImportCode = "package " + packageName + "\n"
+                + "import eu.mihosoft.vrl.reflection.*;\n"
+                + "import eu.mihosoft.vrl.types.*;\n"
+                + "import eu.mihosoft.vrl.annotation.*;\n"
+                + "import edu.gcsc.vrl.ug.*;\n";
 
         String ugAPIClassCode = new UGAPIClassCode().build(
-            new CodeBuilder()).toString();
+                new CodeBuilder()).toString();
 
         StringBuilder code = new StringBuilder();
 
@@ -140,22 +137,67 @@ public class Compiler {
         code.append("\n").append(new UGAPIClassCode().build(
                 new CodeBuilder()).toString());
 
-       File scriptPath = null;
-       File scriptPathWithPackage = null;
-       try {
-           scriptPath = createTempDir();
-           scriptPath.mkdir();
+        File gradleProjectPath = null;
+        File gradleProjectPathSrcMain = null;
+        File scriptPath = null;
+        File scriptPathWithPackage = null;
+        try {
+            scriptPath = createTempDir();
+            scriptPath.mkdir();
 
-           //new stuff into multiple files start
-           scriptPathWithPackage = new File(scriptPath.getAbsolutePath() +"/"+ packageName.replace(".", "/"));
-           scriptPathWithPackage.mkdirs();
-           //new stuff into multiple files end
+            gradleProjectPath = new File(createTempDir(),"VRL-UG-API");
+            gradleProjectPath.mkdir();
 
-           System.out.println(">> UG-Build-Location: " + scriptPath.getAbsolutePath());
-       } catch (IOException ex) {
-           Logger.getLogger(
-                   Compiler.class.getName()).log(Level.SEVERE, null, ex);
-       }
+            //new stuff into multiple files start
+            scriptPathWithPackage = new File(scriptPath.getAbsolutePath() + "/" + packageName.replace(".", "/"));
+            scriptPathWithPackage.mkdirs();
+
+            gradleProjectPathSrcMain = new File(gradleProjectPath.getAbsolutePath() + "/src/main/groovy/" + packageName.replace(".", "/"));
+            gradleProjectPathSrcMain.mkdirs();
+            //new stuff into multiple files end
+
+            System.out.println(">> UG-Build-Location (Automatic Compilation): " + scriptPath.getAbsolutePath());
+            System.out.println(">> UG-Build-Location (Gradle Project):        " + gradleProjectPath.getAbsolutePath());
+
+
+
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(getClass().getResourceAsStream(
+                            "/edu/gcsc/vrl/ug/build.gradle")))) {
+
+                StringBuilder sb = new StringBuilder();
+
+                while (reader.ready()) {
+                    sb.append(reader.readLine()).append('\n');
+                }
+
+                String buildDotGradle  = sb.toString();
+
+                Files.write(new File(gradleProjectPath,"build.gradle").toPath(), buildDotGradle.getBytes(Charset.forName("UTF-8")));
+
+            }
+
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(getClass().getResourceAsStream(
+                            "/edu/gcsc/vrl/ug/build.properties")))) {
+
+                StringBuilder sb = new StringBuilder();
+
+                while (reader.ready()) {
+                    sb.append(reader.readLine()).append('\n');
+                }
+
+                String buildDotGradle  = sb.toString();
+
+                Files.write(new File(gradleProjectPath,"build.properties").toPath(), buildDotGradle.getBytes(Charset.forName("UTF-8")));
+
+            }
+
+
+        } catch (IOException ex) {
+            Logger.getLogger(
+                    Compiler.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         // Configure
         CompilerConfiguration conf = new CompilerConfiguration();
@@ -166,8 +208,8 @@ public class Compiler {
         CompilationUnit cu = new CompilationUnit(gcl);
         cu.configure(conf);
 
-        cu.addSource(packageName+".UGAPI", packageAndImportCode+ugAPIClassCode);
-        
+        cu.addSource(packageName + ".UGAPI", packageAndImportCode + ugAPIClassCode);
+
         for (String c : codes) {
 
             // add package header
@@ -191,8 +233,16 @@ public class Compiler {
                 Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+            File javaSrcFileForGradle = new File(gradleProjectPathSrcMain, className + ".groovy");
+
+            try {
+                Files.write(javaSrcFileForGradle.toPath(), cWithImports.getBytes(Charset.forName("UTF-8")));
+            } catch (IOException ex) {
+                Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
 //            //new stuff into multiple files end
-            
+
             //old stuff into one file
             code.append(c).append("\n\n");
 
@@ -223,6 +273,8 @@ public class Compiler {
                     log(Level.SEVERE, null, ex);
         }
 
+        System.out.println(" >> API code generation done.");
+
         try {
             cu.compile();
         } catch (Exception e) {
@@ -232,7 +284,7 @@ public class Compiler {
 
         // Load classes via URL classloader
         ClassLoader cl = Compiler.class.getClassLoader();
-            //Thread.currentThread().getContextClassLoader();
+        //Thread.currentThread().getContextClassLoader();
         URL[] urls = null;
         try {
             urls = new URL[]{scriptPath.toURI().toURL()};
@@ -330,8 +382,8 @@ public class Compiler {
     private static boolean isUGPrimitive(String name) {
         boolean result = _isUGPrimitive(
                 name.replace("I_", "").
-                replace("C_", "").
-                replace("Const__", ""));
+                        replace("C_", "").
+                        replace("Const__", ""));
 
         return result;
     }
@@ -351,10 +403,9 @@ public class Compiler {
      * {@link #deleteClassFiles(File)} to clean this directory up since it isn't
      * deleted automatically.
      *
-     * @see
-     * http://stackoverflow.com/questions/617414/create-a-temporary-directory-in-java
      * @return the new directory
      * @throws IOException if there is an error creating the temporary directory
+     * @see http://stackoverflow.com/questions/617414/create-a-temporary-directory-in-java
      */
     private static File createTempDir() throws IOException {
         final File sysTempDir = VRL.getPropertyFolderManager().getTmpFolder();
@@ -367,8 +418,8 @@ public class Compiler {
             if (attemptCount > maxAttempts) {
                 throw new IOException(
                         "The highly improbable has occurred! Failed to "
-                        + "create a unique temporary directory after "
-                        + maxAttempts + " attempts.");
+                                + "create a unique temporary directory after "
+                                + maxAttempts + " attempts.");
             }
             String dirName = UUID.randomUUID().toString();
             newTempDir = new File(sysTempDir, dirName);
@@ -380,7 +431,7 @@ public class Compiler {
         } else {
             throw new IOException(
                     "Failed to create temp dir named "
-                    + newTempDir.getAbsolutePath());
+                            + newTempDir.getAbsolutePath());
         }
     }
 
