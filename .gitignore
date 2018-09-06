@@ -16,3 +16,8 @@ out
 VRL-UG.iml
 /src/main/resources/eu/mihosoft/vrl/plugin/content/natives/
 
+.classpath
+.project
+.settings/
+.vscode/
+/bin/
