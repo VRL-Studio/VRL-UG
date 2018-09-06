@@ -115,7 +115,7 @@ If you keep VRL-Studio running, automatic compilation will continue. As soon as 
   
 you can quit VRL-Studio if you'd prefer to compile the code manually.
 
-Compiling the project:
+Compiling the project (example):
 
 ```
 cd /Users/myname/.vrl/0.4.3/default/tmp/0/e555b170-54de-45d8-ac46-eb40b6602ad5/VRL-UG-API
