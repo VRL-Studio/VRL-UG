@@ -69,9 +69,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -117,7 +115,7 @@ public class Compiler {
 
         ArrayList<String> classNames = new ArrayList<String>();
 
-        String packageAndImportCode = "package " + packageName + "\n"
+        String packageAndImportCode = "package " + packageName + ";\n"
                 + "import eu.mihosoft.vrl.reflection.*;\n"
                 + "import eu.mihosoft.vrl.types.*;\n"
                 + "import eu.mihosoft.vrl.annotation.*;\n"
@@ -128,7 +126,7 @@ public class Compiler {
 
         StringBuilder code = new StringBuilder();
 
-        code.append("package ").append(packageName).append("\n").
+        code.append("package ").append(packageName).append(";\n").
                 append("import eu.mihosoft.vrl.reflection.*;\n").
                 append("import eu.mihosoft.vrl.types.*;\n").
                 append("import eu.mihosoft.vrl.annotation.*;\n").
@@ -139,6 +137,7 @@ public class Compiler {
 
         File gradleProjectPath = null;
         File gradleProjectPathSrcMain = null;
+        File gradleProjectPathResMain = null;
         File scriptPath = null;
         File scriptPathWithPackage = null;
         try {
@@ -154,6 +153,9 @@ public class Compiler {
 
             gradleProjectPathSrcMain = new File(gradleProjectPath.getAbsolutePath() + "/src/main/groovy/" + packageName.replace(".", "/"));
             gradleProjectPathSrcMain.mkdirs();
+            gradleProjectPathResMain = new File(gradleProjectPath.getAbsolutePath() + "/src/main/resources/" + packageName.replace(".", "/"));
+            gradleProjectPathResMain.mkdirs();
+
             //new stuff into multiple files end
 
             System.out.println(">> UG-Build-Location (Automatic Compilation): " + scriptPath.getAbsolutePath());
@@ -208,9 +210,12 @@ public class Compiler {
         CompilationUnit cu = new CompilationUnit(gcl);
         cu.configure(conf);
 
-        cu.addSource(packageName + ".UGAPI", packageAndImportCode + ugAPIClassCode);
 
-        for (String c : codes) {
+        List<String> codeList = new ArrayList<>(codes.length+1);
+        codeList.addAll(Arrays.asList(codes));
+        codeList.add(ugAPIClassCode);
+
+        for (String c : codeList) {
 
             // add package header
             String cWithImports = packageAndImportCode + c;
@@ -273,7 +278,7 @@ public class Compiler {
                     log(Level.SEVERE, null, ex);
         }
 
-        System.out.println(" >> API code generation done.");
+        System.out.println(">> API code generation done.");
 
         try {
             cu.compile();
@@ -335,18 +340,24 @@ public class Compiler {
             // write ug classes
             File ugInfoPath = new File(scriptPath.getAbsolutePath()
                     + "/edu/gcsc/vrl/ug/api/");
+            File ugInfoPathGradle = new File(gradleProjectPath.getAbsolutePath()
+                    + "/edu/gcsc/vrl/ug/api/");
 
             ugInfoPath.mkdirs();
 
             Thread.currentThread().setContextClassLoader(cl);
 
-            XMLEncoder encoder = new XMLEncoder(
+            AbstractUGAPIInfo abstractUGAPIInfo = new AbstractUGAPIInfo(classNames);
+            try(XMLEncoder encoder = new XMLEncoder(
                     new FileOutputStream(
-                            ugInfoPath.getAbsolutePath() + "/UG_INFO.XML"));
-
-            encoder.writeObject(new AbstractUGAPIInfo(classNames));
-
-            encoder.close();
+                            ugInfoPath.getAbsolutePath() + "/UG_INFO.XML"))) {
+                encoder.writeObject(abstractUGAPIInfo);
+            }
+            try(XMLEncoder encoder = new XMLEncoder(
+                    new FileOutputStream(
+                            gradleProjectPathResMain.getAbsolutePath() + "/UG_INFO.XML"))) {
+                encoder.writeObject(abstractUGAPIInfo);
+            }
 
         } catch (IOException ex) {
             Logger.getLogger(
