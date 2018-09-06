@@ -96,9 +96,10 @@ After installing and restarting VRL-Studio the VRL-UG plugin will automatically 
 As an alternative to the automatic build process, one can manually compile the generated gradle project. To do so, follow these steps:
 
 - install Gradle, e.g. via `brew install gradle`.
+- start VRL-Studio after installing `VRL-UG` plugin
 - navigate to the generated gradle project inside the tmp folder
 - run `gradle installVRLPlugin`
-- start VRL-Studio
+- start VRL-Studio to use the plugin
 
 Here's an example output from the code generator during VRL-Studio start (start VRL-Studio from terminal to see the output):
 
