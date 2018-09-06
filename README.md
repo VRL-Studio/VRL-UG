@@ -92,3 +92,36 @@ Finally, restart VRL-Studio
 ### Generating Java API for UG4
 
 After installing and restarting VRL-Studio the VRL-UG plugin will automatically initiate the code generation and compilation of the Java binding which shows up as separate plugin (VRL-UG-API). If the compilation of the binding API fails, it is most likely an error related to class groups which don't have a common base class. 
+
+As an alternative to the automatic build process, one can manually compile the generated gradle project. To do so, follow these steps:
+
+- install Gradle, e.g. via `brew install gradle`.
+- start VRL-Studio after installing `VRL-UG` plugin
+- navigate to the generated gradle project inside the tmp folder
+- run `gradle installVRLPlugin`
+- start VRL-Studio to use the plugin
+
+Here's an example output from the code generator during VRL-Studio start (start VRL-Studio from terminal to see the output):
+
+```
+>> UG-Build-Location (Automatic Compilation): /Users/myname/.vrl/0.4.3/default/tmp/0/4a2b6216-1b1b-4675-a458-c5d4a78b4f3c
+>> UG-Build-Location (Gradle Project):        /Users/myname/.vrl/0.4.3/default/tmp/0/e555b170-54de-45d8-ac46-eb40b6602ad5/VRL-UG-API
+>> API code generation done.
+```
+
+If you keep VRL-Studio running, automatic compilation will continue. As soon as the output shows 
+
+  `>> API code generation done.`
+  
+you can quit VRL-Studio if you'd prefer to compile the code manually.
+
+Compiling the project (example):
+
+```
+cd /Users/myname/.vrl/0.4.3/default/tmp/0/e555b170-54de-45d8-ac46-eb40b6602ad5/VRL-UG-API
+gradle installVRLPlugin
+```
+
+
+  
+
