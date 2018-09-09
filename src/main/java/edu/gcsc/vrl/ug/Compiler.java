@@ -160,7 +160,6 @@ public class Compiler {
 
             System.out.println(">> UG-Build-Location (Automatic Compilation): " + scriptPath.getAbsolutePath());
             System.out.println(">> UG-Build-Location (Gradle Project):        " + gradleProjectPath.getAbsolutePath());
-            System.out.println(" -> INFO: UG_INFO.XML will be generated after the automatic compilation is done");
 
 
 
@@ -279,6 +278,10 @@ public class Compiler {
                     log(Level.SEVERE, null, ex);
         }
 
+
+        generateUGClassesInfoXML(classNames, gradleProjectPath, gradleProjectPathResMain, scriptPath);
+
+
         System.out.println(">> API code generation done.");
 
         try {
@@ -320,6 +323,8 @@ public class Compiler {
 
         gnerateMetaInformation(classNames, gradleProjectPath, gradleProjectPathResMain, scriptPath, cl);
 
+        Thread.currentThread().setContextClassLoader(cl);
+
         if (jarLocation != null) {
             try {
                 File srcFolder = new File(scriptPath.getAbsolutePath());
@@ -337,6 +342,36 @@ public class Compiler {
 
 //        UG.setNativeClasses(result);
         return result;
+    }
+
+    private void generateUGClassesInfoXML(ArrayList<String> classNames, File gradleProjectPath, File gradleProjectPathResMain, File scriptPath) {
+        // write ug classes xml
+        File ugInfoPath = new File(scriptPath.getAbsolutePath()
+                + "/edu/gcsc/vrl/ug/api/");
+        File ugInfoPathGradle = new File(gradleProjectPath.getAbsolutePath()
+                + "/edu/gcsc/vrl/ug/api/");
+
+        ugInfoPath.mkdirs();
+        ugInfoPathGradle.mkdirs();
+
+        AbstractUGAPIInfo abstractUGAPIInfo = new AbstractUGAPIInfo(classNames);
+        try(XMLEncoder encoder = new XMLEncoder(
+                new FileOutputStream(
+                        ugInfoPath.getAbsolutePath() + "/UG_INFO.XML"))) {
+            encoder.writeObject(abstractUGAPIInfo);
+        } catch (FileNotFoundException e) {
+            Logger.getLogger(
+                    Compiler.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        try(XMLEncoder encoder = new XMLEncoder(
+                new FileOutputStream(
+                        gradleProjectPathResMain.getAbsolutePath() + "/UG_INFO.XML"))) {
+            encoder.writeObject(abstractUGAPIInfo);
+        } catch (FileNotFoundException e) {
+            Logger.getLogger(
+                    Compiler.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
 
     /**
@@ -368,28 +403,7 @@ public class Compiler {
             manifest.write(new FileOutputStream(
                     new File(meta_inf.getAbsolutePath() + "/MANIFEST.MF")));
 
-            // write ug classes
-            File ugInfoPath = new File(scriptPath.getAbsolutePath()
-                    + "/edu/gcsc/vrl/ug/api/");
-            File ugInfoPathGradle = new File(gradleProjectPath.getAbsolutePath()
-                    + "/edu/gcsc/vrl/ug/api/");
 
-            ugInfoPath.mkdirs();
-
-            Thread.currentThread().setContextClassLoader(cl);
-
-            AbstractUGAPIInfo abstractUGAPIInfo = new AbstractUGAPIInfo(classNames);
-            try(XMLEncoder encoder = new XMLEncoder(
-                    new FileOutputStream(
-                            ugInfoPath.getAbsolutePath() + "/UG_INFO.XML"))) {
-                encoder.writeObject(abstractUGAPIInfo);
-            }
-
-            try(XMLEncoder encoder = new XMLEncoder(
-                    new FileOutputStream(
-                            gradleProjectPathResMain.getAbsolutePath() + "/UG_INFO.XML"))) {
-                encoder.writeObject(abstractUGAPIInfo);
-            }
 
         } catch (IOException ex) {
             Logger.getLogger(
