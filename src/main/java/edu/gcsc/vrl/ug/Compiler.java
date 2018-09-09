@@ -160,6 +160,7 @@ public class Compiler {
 
             System.out.println(">> UG-Build-Location (Automatic Compilation): " + scriptPath.getAbsolutePath());
             System.out.println(">> UG-Build-Location (Gradle Project):        " + gradleProjectPath.getAbsolutePath());
+            System.out.println(" -> INFO: UG_INFO.XML will be generated after the automatic compilation is done");
 
 
 
@@ -317,6 +318,36 @@ public class Compiler {
         Class<?>[] result = new Class<?>[classes.size()];
         classes.toArray(result);
 
+        gnerateMetaInformation(classNames, gradleProjectPath, gradleProjectPathResMain, scriptPath, cl);
+
+        if (jarLocation != null) {
+            try {
+                File srcFolder = new File(scriptPath.getAbsolutePath());
+                File destZipFile = new File(jarLocation + "/" + API_JAR_NAME);
+
+                IOUtil.zipContentOfFolder(srcFolder, destZipFile);
+
+            } catch (IOException ex) {
+                Logger.getLogger(Compiler.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            }
+        }
+
+        deleteClassFiles(scriptPath);
+
+//        UG.setNativeClasses(result);
+        return result;
+    }
+
+    /**
+     * Generates meta information
+     * @param classNames class names
+     * @param gradleProjectPath project path (greadle project)
+     * @param gradleProjectPathResMain resource folder inside the gradle project
+     * @param scriptPath script path (location of auto-gen project, pre-gradle)
+     * @param cl class loader used for accessing the compiled classes
+     */
+    private void gnerateMetaInformation(ArrayList<String> classNames, File gradleProjectPath, File gradleProjectPathResMain, File scriptPath, ClassLoader cl) {
         try {
 
             // Construct a string version of a manifest
@@ -353,6 +384,7 @@ public class Compiler {
                             ugInfoPath.getAbsolutePath() + "/UG_INFO.XML"))) {
                 encoder.writeObject(abstractUGAPIInfo);
             }
+
             try(XMLEncoder encoder = new XMLEncoder(
                     new FileOutputStream(
                             gradleProjectPathResMain.getAbsolutePath() + "/UG_INFO.XML"))) {
@@ -363,31 +395,6 @@ public class Compiler {
             Logger.getLogger(
                     Compiler.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-//        try {
-//            IOUtil.zipContentOfFolder(scriptPath.getAbsolutePath(),
-//                    "/home/miho/tmp/VRL-UG-API.jar");
-//        } catch (IOException ex) {
-//            Logger.getLogger(Compiler.class.getName()).
-//                    log(Level.SEVERE, null, ex);
-//        }
-        if (jarLocation != null) {
-            try {
-                File srcFolder = new File(scriptPath.getAbsolutePath());
-                File destZipFile = new File(jarLocation + "/" + API_JAR_NAME);
-
-                IOUtil.zipContentOfFolder(srcFolder, destZipFile);
-
-            } catch (IOException ex) {
-                Logger.getLogger(Compiler.class.getName()).
-                        log(Level.SEVERE, null, ex);
-            }
-        }
-
-        deleteClassFiles(scriptPath);
-
-//        UG.setNativeClasses(result);
-        return result;
     }
 
     private static boolean isUGPrimitive(String name) {
