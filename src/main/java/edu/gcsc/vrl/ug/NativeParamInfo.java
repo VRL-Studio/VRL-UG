@@ -411,7 +411,7 @@ public class NativeParamInfo implements Serializable {
                 result = CodeUtils.interfaceName(getClassName(), true);
                 break;
             default:
-                System.err.println(result);
+                //System.err.println(result);
         }
 
         //
