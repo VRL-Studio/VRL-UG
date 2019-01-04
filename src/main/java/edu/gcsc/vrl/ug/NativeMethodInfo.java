@@ -107,15 +107,7 @@ public class NativeMethodInfo implements Serializable {
      * Returns the method name.
      * @return the method name
      */
-    public String getName() {
-        if (name.equals("synapse_at_location"))
-        {
-            if (parameters[0].getClassName().equals("Vec1d"))
-            {
-                int i = 0;
-            }
-        }
-        
+    public String getName() {       
         return name;
     }
 
