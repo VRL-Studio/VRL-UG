@@ -331,7 +331,7 @@ public class Configurator extends VPluginConfigurator {
             // request restart
             if (UG.getInstance().isRecompiled()) {
 
-                VDialog.showMessageDialog(vCanvas, "Restart neccessary:",
+                VDialog.showMessageDialog(vCanvas, "Restart necessary:",
                         " UG-API had to be recompiled."
                         + " VRL-Studio will be closed now."
                         + " Restart it to use the new API.");
@@ -373,7 +373,7 @@ public class Configurator extends VPluginConfigurator {
 //        System.out.println(" ****CONFIGURATOR.init( iAPI) UG.getRemoteType() = "
 //                + UG.getRemoteType());
 
-        //set pluginConfiguration first possiblity here to set / get it
+        //set pluginConfiguration first possibility here to set / get it
         //is needed for interaction with config file
         pluginConfiguration = iApi.getConfiguration();
 

@@ -354,7 +354,7 @@ public class UG {
     }
 
     /**
-     * Loads all native librarties in the specified folder and optionally all of
+     * Loads all native libraries in the specified folder and optionally all of
      * its subfolders. Please ensure that all libraries in the folder are
      * compatible with the current os. <p><b>Note: </b>this method is an EXACT
      * copy of
