@@ -795,10 +795,8 @@ public class UG {
 //                        + " --> date: present="
 //                        + apiDate + ", requested=" + ug.getCompileDate()));
 //            }
-        } catch (ClassNotFoundException ex) {
-        } catch (NoSuchMethodException ex) {
-        } catch (IllegalAccessException ex) {
-        } catch (InvocationTargetException ex) {
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
         }
 
 //        System.err.println("FAILED");
