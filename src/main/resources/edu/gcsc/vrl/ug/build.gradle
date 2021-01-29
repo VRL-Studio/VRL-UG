@@ -154,6 +154,6 @@ task installVRLPlugin(dependsOn: [clean,jar]) {
 tasks.withType(GroovyCompile) {
     configure(groovyOptions.forkOptions) {
         memoryMaximumSize = '1g'
-        jvmArgs = ['-XX:MaxPermSize=512m', '-Xms512m', '-Xmx4096g']
+        jvmArgs = ['-XX:MaxPermSize=512m', '-Xms512m', '-Xmx4096m']
     }
 }
